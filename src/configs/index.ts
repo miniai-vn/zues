@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
 
 // Add response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => response.data,
   (error) => {
     // Handle errors globally
     console.error("Axios error:", error.response?.data || error.message);

@@ -1,52 +1,84 @@
 "use client";
 import TableDemo from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 
+import { Input } from "@/components/ui/input";
 import { ColumnDef } from "@tanstack/react-table";
+import { AddMeterial, Meterial } from "./add-meterial";
+import { useMaterials } from "@/hooks/data/useMaterials";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
-
-const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "id",
-    header: "id",
-  },
-  {
-    accessorKey: "title",
-    header: "Title",
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: (row) => {
-      return <Badge onClick={() => console.log(row)}>Sync</Badge>;
-    },
-  },
-];
-
-const data = [
-  {
-    id: "728ed52f",
-    title: "Tài liệu nhân viên",
-    description: "Tài liệu hướng dẫn nhân viên",
-  },
-  // ...
-];
 const Meterials = () => {
+  const { materials, createMaterial, deleteMeterial } = useMaterials();
+  const columns: ColumnDef<Meterial>[] = [
+    {
+      accessorKey: "id",
+      header: "id",
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: (row) => {
+        const original = row.row.original;
+        return (
+          <Switch
+            checked={original?.status === "active"}
+            onChange={(checked) => console.log(checked)}
+          />
+        );
+      },
+    },
+    {
+      id: "sync",
+      header: "Sync",
+      cell: (row) => {
+        return <Badge onClick={() => console.log(row)}>Sync</Badge>;
+      },
+    },
+
+    {
+      id: "actions",
+      header: "Actions",
+      cell: (row) => {
+        return (
+          <div className="flex gap-2">
+            <Badge
+              className="border bg-white text-green-700 border-green-700"
+              onClick={() => console.log(row)}
+            >
+              Add items
+            </Badge>
+            <Badge
+              className="border bg-white text-red-700 border-red-700"
+              onClick={() =>
+                row.row.original.id && deleteMeterial(row.row.original.id)
+              }
+            >
+              Delete
+            </Badge>
+          </div>
+        );
+      },
+    },
+  ];
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <TableDemo columns={columns} data={data} />
+      <div className="flex justify-between items-center mb-4">
+        <Input
+          placeholder="Filter name..."
+          className="max-w-sm w-full flex-1"
+        />
+        <AddMeterial onChange={createMaterial} />
+      </div>
+      <TableDemo columns={columns} data={materials ?? []} />
     </div>
   );
 };
