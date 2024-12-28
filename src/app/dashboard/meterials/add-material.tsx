@@ -57,7 +57,11 @@ export function AddMeterial({ meterial, onChange }: AddMeterialProps) {
                 <div className="flex items-center">
                   <Label htmlFor="description">Description</Label>
                 </div>
-                <Textarea id="description" placeholder="Type your message here." required />
+                <Textarea
+                  id="description"
+                  placeholder="Type your message here."
+                  required
+                />
               </div>
             </div>
             <DialogFooter className="mt-4">

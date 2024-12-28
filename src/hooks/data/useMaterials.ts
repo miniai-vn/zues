@@ -1,4 +1,4 @@
-import { Meterial } from "@/app/dashboard/meterials/add-meterial";
+import { Meterial } from "@/app/dashboard/meterials/add-material";
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -7,11 +7,12 @@ export const useMaterials = () => {
     data: materials,
     isLoading: materialsLoading,
     error: materialsError,
+    refetch: refetchMaterials,
   } = useQuery({
     queryKey: ["materials"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/api/materials");
-      return data;
+      const data = await axiosInstance.get("/api/materials");
+      return data ?? [];
     },
   });
 
@@ -28,7 +29,9 @@ export const useMaterials = () => {
       return response;
     },
 
-    onSuccess: () => {},
+    onSuccess: () => {
+      refetchMaterials();
+    },
     onError: () => {},
   });
 

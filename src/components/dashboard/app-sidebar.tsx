@@ -50,6 +50,12 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
     },
+    {
+      title: "Meterial Items",
+      url: "/dashboard/material-items",
+      icon: SquareTerminal,
+      isActive: true,
+    },
   ],
 };
 

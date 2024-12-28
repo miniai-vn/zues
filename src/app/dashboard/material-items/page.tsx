@@ -1,16 +1,20 @@
 "use client";
 import TableDemo from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 
 import { Input } from "@/components/ui/input";
-import { useMaterials } from "@/hooks/data/useMaterials";
+import useMaterialItems, { MaterialItem } from "@/hooks/data/useMaterialItems";
 import { ColumnDef } from "@tanstack/react-table";
-import { AddMeterial, Meterial } from "./add-material";
+import { AddMeterialItemModal } from "./components/add-meterial-items";
 
 const Meterials = () => {
-  const { materials, createMaterial, deleteMeterial } = useMaterials();
-  const columns: ColumnDef<Meterial>[] = [
+  const {
+    materialItems,
+    createMaterialItem,
+    deleteMaterialItem,
+    syncMaterialItem,
+  } = useMaterialItems();
+  const columns: ColumnDef<MaterialItem>[] = [
     {
       accessorKey: "id",
       header: "id",
@@ -20,27 +24,23 @@ const Meterials = () => {
       header: "Name",
     },
     {
-      accessorKey: "description",
-      header: "Description",
+      accessorKey: "text",
+      header: "Text",
     },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: (row) => {
-        const original = row.row.original;
-        return (
-          <Switch
-            checked={original?.status === "active"}
-            onChange={(checked) => console.log(checked)}
-          />
-        );
-      },
-    },
+
     {
       id: "sync",
       header: "Sync",
       cell: (row) => {
-        return <Badge onClick={() => console.log(row)}>Sync</Badge>;
+        return (
+          <Badge
+            onClick={() =>
+              row.row.original.id && syncMaterialItem(row.row.original.id)
+            }
+          >
+            Sync
+          </Badge>
+        );
       },
     },
 
@@ -50,10 +50,11 @@ const Meterials = () => {
       cell: (row) => {
         return (
           <div className="flex gap-2">
+          
             <Badge
               className="border bg-white text-red-700 border-red-700"
               onClick={() =>
-                row.row.original.id && deleteMeterial(row.row.original.id)
+                row.row.original.id && deleteMaterialItem(row.row.original.id)
               }
             >
               Delete
@@ -63,7 +64,6 @@ const Meterials = () => {
       },
     },
   ];
-  console.log("materials", materials);
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="flex justify-between items-center mb-4">
@@ -71,9 +71,9 @@ const Meterials = () => {
           placeholder="Filter name..."
           className="max-w-sm w-full flex-1"
         />
-        <AddMeterial onChange={createMaterial} />
+        <AddMeterialItemModal onChange={createMaterialItem} />
       </div>
-      <TableDemo columns={columns} data={materials ?? []} />
+      <TableDemo columns={columns} data={materialItems ?? []} />
     </div>
   );
 };
