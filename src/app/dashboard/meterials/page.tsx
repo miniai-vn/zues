@@ -4,13 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 
 import { Input } from "@/components/ui/input";
-import { useMaterials } from "@/hooks/data/useMaterials";
+import { Material, useMaterials } from "@/hooks/data/useMaterials";
 import { ColumnDef } from "@tanstack/react-table";
-import { AddMeterial, Meterial } from "./add-material";
+import { MaterialModal } from "./modal-material";
 
 const Meterials = () => {
   const { materials, createMaterial, deleteMeterial } = useMaterials();
-  const columns: ColumnDef<Meterial>[] = [
+  const columns: ColumnDef<Material>[] = [
     {
       accessorKey: "id",
       header: "id",
@@ -34,13 +34,6 @@ const Meterials = () => {
             onChange={(checked) => console.log(checked)}
           />
         );
-      },
-    },
-    {
-      id: "sync",
-      header: "Sync",
-      cell: (row) => {
-        return <Badge onClick={() => console.log(row)}>Sync</Badge>;
       },
     },
 
@@ -71,7 +64,7 @@ const Meterials = () => {
           placeholder="Filter name..."
           className="max-w-sm w-full flex-1"
         />
-        <AddMeterial onChange={createMaterial} />
+        <MaterialModal onChange={createMaterial} />
       </div>
       <TableDemo columns={columns} data={materials ?? []} />
     </div>

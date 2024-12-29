@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import useMaterialItems, { MaterialItem } from "@/hooks/data/useMaterialItems";
 import { ColumnDef } from "@tanstack/react-table";
-import { AddMeterialItemModal } from "./components/add-meterial-items";
+import { AddMeterialItemModal } from "./add-meterial-items";
 
 const Meterials = () => {
   const {
@@ -20,12 +20,48 @@ const Meterials = () => {
       header: "id",
     },
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "material",
+      header: "Material",
+      cell: (row) => {
+        return (
+          <div className="break-all line-clamp-2 w-1/2">
+            {row.row.original?.material?.name}
+          </div>
+        );
+      },
+    },
+    // {
+    //   accessorKey: "text",
+    //   header: "Text",
+    //   cell: (row) => {
+    //     return (
+    //       <div className="break-all line-clamp-2 w-1/2">
+    //         {row.row.original.text}
+    //       </div>
+    //     );
+    //   },
+    // },
+    {
+      accessorKey: "file",
+      header: "File",
+      cell: (row) => {
+        return (
+          <div className="break-all line-clamp-2 w-1/2">
+            {row.row.original.file as string}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "text",
-      header: "Text",
+      accessorKey: "url",
+      header: "URL",
+      cell: (row) => {
+        return (
+          <div className="break-all line-clamp-2 w-1/2">
+            {row.row.original.url}
+          </div>
+        );
+      },
     },
 
     {
@@ -50,7 +86,6 @@ const Meterials = () => {
       cell: (row) => {
         return (
           <div className="flex gap-2">
-          
             <Badge
               className="border bg-white text-red-700 border-red-700"
               onClick={() =>

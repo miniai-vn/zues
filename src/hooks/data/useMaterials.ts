@@ -1,7 +1,13 @@
-import { Meterial } from "@/app/dashboard/meterials/add-material";
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
+export type Material = {
+  id?: number;
+  name: string;
+  description?: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
 export const useMaterials = () => {
   const {
     data: materials,
@@ -11,8 +17,8 @@ export const useMaterials = () => {
   } = useQuery({
     queryKey: ["materials"],
     queryFn: async () => {
-      const data = await axiosInstance.get("/api/materials");
-      return data ?? [];
+      const res = await axiosInstance.get("/api/materials");
+      return (res.data as Material[]) ?? [];
     },
   });
 
@@ -21,12 +27,12 @@ export const useMaterials = () => {
     isSuccess: createMaterialSuccess,
     isError: createMaterialError,
   } = useMutation({
-    mutationFn: async (data: Meterial) => {
+    mutationFn: async (data: Material) => {
       const response = await axiosInstance.post("/api/materials", {
         ...data,
         status: "active",
       });
-      return response;
+      return response.data;
     },
 
     onSuccess: () => {
@@ -40,7 +46,7 @@ export const useMaterials = () => {
     isSuccess: updateMeterialSuccess,
     isError: updateMeterialError,
   } = useMutation({
-    mutationFn: async (data: Meterial) => {
+    mutationFn: async (data: Material) => {
       const response = await axiosInstance.put(
         `/api/materials/${data.id}`,
         data
@@ -57,7 +63,7 @@ export const useMaterials = () => {
     isSuccess: updateStatusSuccess,
     isError: updateStatusError,
   } = useMutation({
-    mutationFn: async (data: Meterial) => {
+    mutationFn: async (data: Material) => {
       const response = await axiosInstance.put(
         `/api/materials/${data.id}`,
         data
@@ -70,11 +76,13 @@ export const useMaterials = () => {
 
   // handle ddelete meterial
   const { mutate: deleteMeterial } = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       const response = await axiosInstance.delete(`/api/materials/${id}`);
       return response;
     },
-    onSuccess: () => {},
+    onSuccess: () => {
+      refetchMaterials();
+    },
     onError: () => {},
   });
 

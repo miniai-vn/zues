@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { MaterialSelector } from "../../meterials/components/material-selector";
+import { MaterialSelector } from "../meterials/components/material-selector";
 import { MaterialItem } from "@/hooks/data/useMaterialItems";
 import { useEffect, useState } from "react";
 
@@ -61,9 +61,6 @@ export function AddMeterialItemModal({
   }, [meterial, form]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    console.log("Form Data:", data);
-
-    // Handle form submission logic here
     onChange({
       materialId: Number(data.materialId),
       text: data.text,

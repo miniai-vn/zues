@@ -1,11 +1,13 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Material } from "./useMaterials";
 export type MaterialItem = {
   id?: number;
   materialId: number;
   text?: string;
   url?: string;
-  file?: File;
+  file?: File | string;
+  material?: Material;
 };
 const useMaterialItems = () => {
   const {
@@ -24,7 +26,9 @@ const useMaterialItems = () => {
     mutationFn: async (data: MaterialItem) => {
       const response = await axiosInstance.post("/api/material-items", {
         ...data,
-        ...(data.file ? { file: await handleUploadFile(data.file) } : {}),
+        ...(data.file
+          ? { file: await handleUploadFile(data.file as File) }
+          : {}),
       });
       return response;
     },
@@ -71,7 +75,7 @@ const useMaterialItems = () => {
       }
     );
 
-    return response.data;
+    return response.data.path;
   };
   return {
     deleteMaterialItem,

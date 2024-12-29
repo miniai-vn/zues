@@ -8,7 +8,6 @@ const useAuth = () => {
       return response;
     },
     onSuccess(data) {
-      console.log(data);
       localStorage.setItem("token", data?.token);
     },
   });
