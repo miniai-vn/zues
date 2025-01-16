@@ -10,52 +10,47 @@ import {
 } from "@/components/ui/dialog";
 
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { Material } from "@/hooks/data/useMaterials";
-
+import { Input } from "@/components/ui/input";
+import { MaterialItem } from "@/hooks/data/useMaterialItems";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  name: z.string({
-    required_error: "Please enter text.",
+  materialId: z.string({
+    required_error: "Please select a material.",
   }),
-  description: z
+  text: z
+    .string({
+      required_error: "Please enter text.",
+    })
+    .optional(),
+  url: z
     .string({
       required_error: "Please enter a URL.",
     })
     .optional(),
+  file: z.instanceof(File).optional(),
 });
 
-interface AddMaterialProps {
-  material?: Material;
-  onChange: (data: Material) => void;
+interface AddMeterialProps {
+  meterialItem?: MaterialItem;
+  onChange: (data: MaterialItem) => void;
 }
 
-export function MaterialModal({
-  onChange,
-  material: material,
-}: AddMaterialProps) {
+export function LinkModal({ onChange }: AddMeterialProps) {
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
-  useEffect(() => {
-    if (material) {
-      form.setValue("name", material.name ?? "");
-      form.setValue("description", material.description ?? "");
-    } else {
-      form.reset();
-    }
-  }, [material, form]);
-
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     onChange({
-      name: data.name,
-      description: data.description,
+      materialId: Number(data.materialId),
+      text: data.text,
+      url: data.url,
+      file: data.file || undefined,
     });
 
     form.reset();
@@ -72,20 +67,20 @@ export function MaterialModal({
       <DialogTrigger asChild>
         <Button>+ Create</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[720px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Material</DialogTitle>
+          <DialogTitle>Link modal</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="name"
+                name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <Textarea
+                    <FormLabel>Link</FormLabel>
+                    <Input
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full"
@@ -94,22 +89,17 @@ export function MaterialModal({
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL</FormLabel>
-                    <Textarea
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full"
-                    />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit">Submit</Button>
+              <div className="w-full flex gap-4">
+                <Button
+                  type="submit"
+                  className="w-full bg-white text-black border"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="w-full">
+                  Submit
+                </Button>
+              </div>
             </form>
           </Form>
         </div>

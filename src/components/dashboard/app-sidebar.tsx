@@ -16,8 +16,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main";
-import { NavUser } from "./nav-user";
-import { TeamSwitcher } from "./team-switcher";
 
 // This is sample data.
 const data = {
@@ -45,16 +43,38 @@ const data = {
   ],
   navMain: [
     {
-      title: "Meterials",
+      title: "Commom",
       url: "/dashboard/meterials",
       icon: SquareTerminal,
       isActive: true,
+      items: [
+        {
+          title: "Bot",
+          url: "/dashboard/bot",
+          icon: SquareTerminal,
+          isActive: true,
+        },
+      ],
     },
     {
-      title: "Meterial Items",
+      title: "Data source",
       url: "/dashboard/material-items",
       icon: SquareTerminal,
       isActive: true,
+      items: [
+        {
+          title: "Links",
+          url: "/dashboard/link",
+          icon: SquareTerminal,
+          isActive: true,
+        },
+        {
+          title: "Files",
+          url: "/dashboard/file",
+          icon: SquareTerminal,
+          isActive: true,
+        },
+      ],
     },
   ],
 };
@@ -62,15 +82,11 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader>
+      <SidebarHeader>{/* <TeamSwitcher teams={data.teams} /> */}</SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

@@ -1,15 +1,17 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Material } from "./useMaterials";
 export type MaterialItem = {
   id?: number;
   materialId: number;
   text?: string;
   url?: string;
   file?: File | string;
-  material?: Material;
+  name?: string;
+  type?: string;
+  size?: string;
+  updatedAt?: string;
 };
-const useMaterialItems = () => {
+const useMaterialItems = ({ id, type }: { id?: string; type?: string }) => {
   const {
     data: materialItems,
     isLoading: materialItemsLoading,
@@ -17,25 +19,15 @@ const useMaterialItems = () => {
   } = useQuery({
     queryKey: ["materialItems"],
     queryFn: async () => {
-      const data = await axiosInstance.get("/api/material-items");
+      const data = await axiosInstance.get(`/api/material-items/`, {
+        params: {
+          type,
+        },
+      });
       return data ?? [];
     },
-  });
-
-  const { mutate: createMaterialItem } = useMutation({
-    mutationFn: async (data: MaterialItem) => {
-      const response = await axiosInstance.post("/api/material-items", {
-        ...data,
-        ...(data.file
-          ? { file: await handleUploadFile(data.file as File) }
-          : {}),
-      });
-      return response;
-    },
-    onSuccess: () => {
-      refetchMaterialItems();
-    },
-    onError: () => {},
+    enabled: !!type,
+    refetchOnWindowFocus: false,
   });
 
   const { mutate: deleteMaterialItem } = useMutation({
@@ -49,18 +41,9 @@ const useMaterialItems = () => {
     onError: () => {},
   });
 
-  const { mutate: syncMaterialItem } = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await axiosInstance.patch(
-        `/api/material-items/${id}/sync`
-      );
-      return response;
-    },
-    onSuccess: () => {
-      refetchMaterialItems();
-    },
-    onError: () => {},
-  });
+  /*
+   * upload file
+   */
 
   const handleUploadFile = async (file: File) => {
     const formData = new FormData();
@@ -77,12 +60,30 @@ const useMaterialItems = () => {
 
     return response.data.path;
   };
+
+  /*
+   * fetch chunks of material item
+   */
+
+  const { data: chunks, isFetching: isFetchingChunk } = useQuery({
+    queryKey: ["chunks"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get(
+        `/api/material-items/${id}/chunks`
+      );
+      return data ?? [];
+    },
+    enabled: !!id,
+  });
+
   return {
     deleteMaterialItem,
     materialItems,
-    syncMaterialItem,
     materialItemsLoading,
-    createMaterialItem,
+    chunks,
+    handleUploadFile,
+    refetchMaterialItems,
+    isFetchingChunk,
   };
 };
 

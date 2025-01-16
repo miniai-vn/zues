@@ -16,7 +16,7 @@ import {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      return (
+      (
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -27,9 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Building Your Application
-                    </BreadcrumbLink>
+                    <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>

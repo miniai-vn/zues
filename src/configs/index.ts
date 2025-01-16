@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const axiosInstance = axios.create({
   baseURL: "http://localhost:8080", // Example: Set your API URL
-  timeout: 10000, // Optional: Set timeout for requests
+  timeout: 30000, // Optional: Set timeout for requests
   headers: {
     "Content-Type": "application/json",
   },
