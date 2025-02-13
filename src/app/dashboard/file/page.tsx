@@ -4,7 +4,7 @@ import { LoadingSpinner } from "@/components/Loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useMaterialItems, { MaterialItem } from "@/hooks/data/useMaterialItems";
+import useKnowledge, { MaterialItem } from "@/hooks/data/useKnowledge";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -17,12 +17,13 @@ const Meterials = () => {
     handleUploadFile,
     deleteMaterialItem,
     refetchMaterialItems,
-  } = useMaterialItems({
+    chunkFileAndStore,
+    syncKnowLedgeToVector,
+  } = useKnowledge({
     type: "file",
   });
 
   const [isFetching, setIsFetching] = useState(false);
-
   const onHandleUploadFile = async (file: File) => {
     try {
       setIsFetching(true);
@@ -89,13 +90,20 @@ const Meterials = () => {
         return (
           <div className="flex gap-2">
             <Badge
-              onClick={() =>
-                router.push(`/dashboard/material-items/${row.row.original.id}`)
-              }
+              onClick={() => {
+                chunkFileAndStore(Number(row.row.original.id));
+                router.push(`/dashboard/chunks/${row.row.original.id}`);
+              }}
             >
               Update
             </Badge>
-            <Badge>Sync</Badge>
+            <Badge
+              onClick={() => {
+                syncKnowLedgeToVector(Number(row.row.original.id));
+              }}
+            >
+              Sync
+            </Badge>
             <Badge
               onClick={() =>
                 row.row.original.id !== undefined &&

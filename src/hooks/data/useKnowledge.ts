@@ -11,15 +11,19 @@ export type MaterialItem = {
   size?: string;
   updatedAt?: string;
 };
-const useMaterialItems = ({ id, type }: { id?: string; type?: string }) => {
+
+export type LinkKnowLedge = {
+  url: string;
+};
+const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
   const {
     data: materialItems,
     isLoading: materialItemsLoading,
     refetch: refetchMaterialItems,
   } = useQuery({
-    queryKey: ["materialItems"],
+    queryKey: ["knowledge", type],
     queryFn: async () => {
-      const data = await axiosInstance.get(`/api/material-items/`, {
+      const data = await axiosInstance.get(`/api/knowledge/`, {
         params: {
           type,
         },
@@ -49,7 +53,7 @@ const useMaterialItems = ({ id, type }: { id?: string; type?: string }) => {
     const formData = new FormData();
     formData.append("file", file);
     const response = await axiosInstance.post(
-      "/api/material-items/upload",
+      "/api/knowledge/upload-file",
       formData,
       {
         headers: {
@@ -68,23 +72,59 @@ const useMaterialItems = ({ id, type }: { id?: string; type?: string }) => {
   const { data: chunks, isFetching: isFetchingChunk } = useQuery({
     queryKey: ["chunks"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get(
-        `/api/material-items/${id}/chunks`
-      );
+      const data = await axiosInstance.get(`/api/knowledge/chunks/${id}`);
       return data ?? [];
     },
     enabled: !!id,
   });
 
+  const { mutate: chunkFileAndStore } = useMutation({
+    mutationFn: async (knowledgeId: number) => {
+      const data = await axiosInstance.post("/knowledge", {
+        knowledge_id: knowledgeId,
+      });
+      console.log(data);
+      return data || [];
+    },
+    onSuccess: () => {},
+  });
+
+  const { mutate: syncKnowLedgeToVector } = useMutation({
+    mutationFn: async (knowledgeId: number) => {
+      const data = await axiosInstance.get(
+        `/api/knowledge/sync/${knowledgeId}`
+      );
+      return data || [];
+    },
+  });
+
+  const { mutate: createLinkKnowLedge } = useMutation({
+    mutationFn: async ({ url }: LinkKnowLedge) => {
+      const data = await axiosInstance.post("/api/knowledge/link", {
+        url,
+      });
+      return data || [];
+    },
+    onSuccess: () => {
+      refetchMaterialItems();
+    },
+    onError: () => {
+      refetchMaterialItems();
+    },
+  });
+
   return {
     deleteMaterialItem,
+    createLinkKnowLedge,
+    chunkFileAndStore,
     materialItems,
     materialItemsLoading,
     chunks,
     handleUploadFile,
     refetchMaterialItems,
     isFetchingChunk,
+    syncKnowLedgeToVector,
   };
 };
 
-export default useMaterialItems;
+export default useKnowledge;

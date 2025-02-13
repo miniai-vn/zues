@@ -3,7 +3,7 @@ import TableDemo from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
 
 import { Input } from "@/components/ui/input";
-import useMaterialItems, { MaterialItem } from "@/hooks/data/useMaterialItems";
+import useKnowledge, { MaterialItem } from "@/hooks/data/useKnowledge";
 import { ColumnDef } from "@tanstack/react-table";
 import { AddMeterialItemModal } from "./add-meterial-items";
 
@@ -13,7 +13,7 @@ const Meterials = () => {
     createMaterialItem,
     deleteMaterialItem,
     syncMaterialItem,
-  } = useMaterialItems();
+  } = useKnowledge();
   const columns: ColumnDef<MaterialItem>[] = [
     {
       accessorKey: "id",

@@ -2,7 +2,7 @@
 import { LoadingSpinner } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import useMaterialItems from "@/hooks/data/useMaterialItems";
+import useKnowledge from "@/hooks/data/useKnowledge";
 
 interface ChunkProps {
   params: {
@@ -13,8 +13,9 @@ type Chunk = {
   id: string;
   text: string;
 };
+
 const MaterialChunk = ({ params: { id } }: ChunkProps) => {
-  const { chunks, isFetchingChunk } = useMaterialItems({
+  const { chunks, isFetchingChunk } = useKnowledge({
     id,
   });
 

@@ -3,13 +3,13 @@ import TableDemo from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
 
 import { Input } from "@/components/ui/input";
-import useMaterialItems, { MaterialItem } from "@/hooks/data/useMaterialItems";
+import useKnowledge, { MaterialItem } from "@/hooks/data/useKnowledge";
 import { ColumnDef } from "@tanstack/react-table";
 import { LinkModal } from "./create-link-modal";
 
 const Meterials = () => {
-  const { materialItems, deleteMaterialItem, syncMaterialItem } =
-    useMaterialItems({
+  const { materialItems, deleteMaterialItem, createLinkKnowLedge } =
+    useKnowledge({
       type: "link",
     });
   const columns: ColumnDef<MaterialItem>[] = [
@@ -66,13 +66,7 @@ const Meterials = () => {
       cell: (row) => {
         return (
           <div className="flex gap-2">
-            <Badge
-              onClick={() =>
-                row.row.original.id && syncMaterialItem(row.row.original.id)
-              }
-            >
-              Sync
-            </Badge>
+            <Badge>Sync</Badge>
             <Badge
               className="border bg-white text-red-700 border-red-700"
               onClick={() =>
@@ -93,7 +87,7 @@ const Meterials = () => {
           placeholder="Tìm kiếm tài tên tài liệu"
           className="mr-4 w-full flex-1"
         />
-        <LinkModal onChange={() => {}} />
+        <LinkModal onChange={createLinkKnowLedge} />
       </div>
       <TableDemo columns={columns} data={materialItems ?? []} />
     </div>

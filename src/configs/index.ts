@@ -1,18 +1,18 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080", // Example: Set your API URL
-  timeout: 30000, // Optional: Set timeout for requests
+  baseURL: "http://127.0.0.1:5000",
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
   },
 });
 
 // Add request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Add custom logic before the request is sent, e.g., attach tokens
-    const token = localStorage.getItem("token"); // Example: Use your preferred storage
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
 
 // Add response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response.data,
+  (response) => response.data.data,
   (error) => {
     // Handle errors globally
     console.error("Axios error:", error.response?.data || error.message);

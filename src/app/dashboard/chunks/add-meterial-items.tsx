@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { MaterialSelector } from "../meterials/components/material-selector";
-import { MaterialItem } from "@/hooks/data/useMaterialItems";
+import { MaterialItem } from "@/hooks/data/useKnowledge";
 import { useEffect, useState } from "react";
 
 const FormSchema = z.object({

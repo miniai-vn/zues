@@ -1,4 +1,5 @@
 import axiosInstance from "@/configs";
+import { useQuery } from "@tanstack/react-query";
 export type Message = {
   id: number;
   content: string;
@@ -12,7 +13,19 @@ const useChat = () => {
     });
     return response.data;
   };
-  return { sendMessage };
+
+  const {
+    data: mesages,
+    isFetching: isFetchingChunk,
+    refetch: refetchFetchMessages,
+  } = useQuery({
+    queryKey: ["load_messages"],
+    queryFn: async () => {
+      const data = await axiosInstance.get(`/api/conversation/messages`);
+      return data ?? [];
+    },
+  });
+  return { sendMessage, mesages, isFetchingChunk, refetchFetchMessages };
 };
 
 export { useChat };

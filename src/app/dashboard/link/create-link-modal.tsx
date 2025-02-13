@@ -11,32 +11,21 @@ import {
 
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MaterialItem } from "@/hooks/data/useMaterialItems";
+import { LinkKnowLedge, MaterialItem } from "@/hooks/data/useKnowledge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  materialId: z.string({
-    required_error: "Please select a material.",
+  url: z.string({
+    required_error: "Please enter a URL.",
   }),
-  text: z
-    .string({
-      required_error: "Please enter text.",
-    })
-    .optional(),
-  url: z
-    .string({
-      required_error: "Please enter a URL.",
-    })
-    .optional(),
-  file: z.instanceof(File).optional(),
 });
 
 interface AddMeterialProps {
   meterialItem?: MaterialItem;
-  onChange: (data: MaterialItem) => void;
+  onChange: ({ url }: LinkKnowLedge) => void;
 }
 
 export function LinkModal({ onChange }: AddMeterialProps) {
@@ -46,13 +35,7 @@ export function LinkModal({ onChange }: AddMeterialProps) {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    onChange({
-      materialId: Number(data.materialId),
-      text: data.text,
-      url: data.url,
-      file: data.file || undefined,
-    });
-
+    onChange(data as LinkKnowLedge);
     form.reset();
     setIsOpen(false);
   };

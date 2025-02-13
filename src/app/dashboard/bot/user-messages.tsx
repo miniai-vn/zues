@@ -21,7 +21,7 @@ const UserMessages = ({ messages, type }: UserMessages) => {
   return (
     <div
       className={`flex items-center ${
-        type !== "user" ? "flex-row" : "flex-row-reverser"
+        type !== "user" ? "flex-row" : "flex-row-reverser float-right"
       }`}
     >
       {type === "assitance" && (
@@ -29,11 +29,11 @@ const UserMessages = ({ messages, type }: UserMessages) => {
           A
         </div>
       )}
-      <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
+      <div className="ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
         <ConvertToHTML input={messages} />
       </div>
       {type === "user" && (
-        <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+        <div className="ml-3 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
           A
         </div>
       )}
