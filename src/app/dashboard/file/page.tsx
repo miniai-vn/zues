@@ -10,20 +10,21 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const Meterials = () => {
+const FileComponent = () => {
   const router = useRouter();
   const {
     materialItems,
     handleUploadFile,
     deleteMaterialItem,
     refetchMaterialItems,
-    chunkFileAndStore,
     syncKnowLedgeToVector,
+    isSyncKnowledge,
   } = useKnowledge({
     type: "file",
   });
 
   const [isFetching, setIsFetching] = useState(false);
+
   const onHandleUploadFile = async (file: File) => {
     try {
       setIsFetching(true);
@@ -35,87 +36,74 @@ const Meterials = () => {
       refetchMaterialItems();
     }
   };
+
   const columns: ColumnDef<MaterialItem>[] = [
     {
       accessorKey: "name",
-      header: "name",
-      cell: (row) => {
-        return (
-          <div className="break-all line-clamp-2 w-1/2">
-            {row.row.original?.name}
-          </div>
-        );
-      },
+      header: "Name",
+      cell: (row) => (
+        <div className="break-all line-clamp-2 w-1/2">
+          {row.row.original?.name}
+        </div>
+      ),
     },
-
     {
       accessorKey: "type",
       header: "Type File",
-      cell: (row) => {
-        return (
-          <div className="break-all line-clamp-2 w-1/2">
-            {row.row.original.type}
-          </div>
-        );
-      },
+      cell: (row) => (
+        <div className="break-all line-clamp-2 w-1/2">
+          {row.row.original.type}
+        </div>
+      ),
     },
     {
       accessorKey: "size",
       header: "Size",
-      cell: (row) => {
-        return (
-          <div className="break-all line-clamp-2 w-1/2">
-            {row.row.original.size}
-          </div>
-        );
-      },
+      cell: (row) => (
+        <div className="break-all line-clamp-2 w-1/2">
+          {row.row.original.size}
+        </div>
+      ),
     },
-
     {
-      accessorKey: "Cập nhật lúc",
+      accessorKey: "updatedAt",
       header: "Update At",
-      cell: (row) => {
-        return (
-          <div className="break-all line-clamp-2 w-1/2">
-            {dayjs(row.row.original.updatedAt).format("DD/MM/YYYY")}
-          </div>
-        );
-      },
+      cell: (row) => (
+        <div className="break-all line-clamp-2 w-1/2">
+          {dayjs(row.row.original.updatedAt).format("DD/MM/YYYY")}
+        </div>
+      ),
     },
-
     {
       id: "actions",
       header: "Actions",
-      cell: (row) => {
-        return (
-          <div className="flex gap-2">
-            <Badge
-              onClick={() => {
-                chunkFileAndStore(Number(row.row.original.id));
-                router.push(`/dashboard/chunks/${row.row.original.id}`);
-              }}
-            >
-              Update
-            </Badge>
-            <Badge
-              onClick={() => {
-                syncKnowLedgeToVector(Number(row.row.original.id));
-              }}
-            >
-              Sync
-            </Badge>
-            <Badge
-              onClick={() =>
-                row.row.original.id !== undefined &&
-                deleteMaterialItem(row.row.original.id)
-              }
-              className="border bg-white text-red-700 border-red-700"
-            >
-              Delete
-            </Badge>
-          </div>
-        );
-      },
+      cell: (row) => (
+        <div className="flex gap-2">
+          <Badge
+            onClick={() => {
+              router.push(`/dashboard/chunks/${row.row.original.id}?type=file`);
+            }}
+          >
+            Update
+          </Badge>
+          <Badge
+            onClick={() => {
+              syncKnowLedgeToVector(Number(row.row.original.id));
+            }}
+          >
+            {isSyncKnowledge ? <LoadingSpinner /> : "Sync"}
+          </Badge>
+          <Badge
+            onClick={() =>
+              row.row.original.id !== undefined &&
+              deleteMaterialItem(row.row.original.id)
+            }
+            className="border bg-white text-red-700 border-red-700"
+          >
+            Delete
+          </Badge>
+        </div>
+      ),
     },
   ];
 
@@ -145,4 +133,4 @@ const Meterials = () => {
   );
 };
 
-export default Meterials;
+export default FileComponent;

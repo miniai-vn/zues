@@ -6,11 +6,7 @@ interface DataTableProps {
 }
 
 const TableDemo = ({ columns, data }: DataTableProps) => {
-  return (
-    
-      <DataTable columns={columns} data={data} />
-  
-  );
+  return <DataTable columns={columns} data={data} />;
 };
 
 export default TableDemo;

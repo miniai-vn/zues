@@ -12,23 +12,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/data/useAuth";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+
+const useRegisterForm = () => {
+  const { register } = useAuth();
+  const router = useRouter();
+
+  const authenticate = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const username = form.username.value;
+      const password = form.password.value;
+      await register({ username, password });
+      router.push("/login");
+    },
+    [register, router]
+  );
+
+  return { authenticate };
+};
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const { register } = useAuth();
-  // defind router with next
-  const router = useRouter();
-  const authenticate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const username = form.username.value;
-    const password = form.password.value;
-    await register({ username, password });
-    // Redirect to dashboard
-    router.push("/login");
-  };
+  const { authenticate } = useRegisterForm();
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

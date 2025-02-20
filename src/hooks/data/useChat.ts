@@ -1,11 +1,13 @@
 import axiosInstance from "@/configs";
 import { useQuery } from "@tanstack/react-query";
+
 export type Message = {
   id: number;
   content: string;
-  createAt: string;
+  createdAt: string; // Fixed typo: createAt -> createdAt
   isBot: boolean;
 };
+
 const useChat = () => {
   const sendMessage = async (data: string) => {
     const response = await axiosInstance.post("/api/chat", {
@@ -15,7 +17,7 @@ const useChat = () => {
   };
 
   const {
-    data: mesages,
+    data: messages, // Fixed typo: mesages -> messages
     isFetching: isFetchingChunk,
     refetch: refetchFetchMessages,
   } = useQuery({
@@ -25,7 +27,8 @@ const useChat = () => {
       return data ?? [];
     },
   });
-  return { sendMessage, mesages, isFetchingChunk, refetchFetchMessages };
+
+  return { sendMessage, messages, isFetchingChunk, refetchFetchMessages };
 };
 
 export { useChat };

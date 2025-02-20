@@ -1,6 +1,7 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 export type MaterialItem = {
+  material: any;
   id?: number;
   materialId: number;
   text?: string;
@@ -78,25 +79,15 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
     enabled: !!id,
   });
 
-  const { mutate: chunkFileAndStore } = useMutation({
-    mutationFn: async (knowledgeId: number) => {
-      const data = await axiosInstance.post("/knowledge", {
-        knowledge_id: knowledgeId,
-      });
-      console.log(data);
-      return data || [];
-    },
-    onSuccess: () => {},
-  });
-
-  const { mutate: syncKnowLedgeToVector } = useMutation({
-    mutationFn: async (knowledgeId: number) => {
-      const data = await axiosInstance.get(
-        `/api/knowledge/sync/${knowledgeId}`
-      );
-      return data || [];
-    },
-  });
+  const { mutate: syncKnowLedgeToVector, isPending: isSyncKnowledge } =
+    useMutation({
+      mutationFn: async (knowledgeId: number) => {
+        const data = await axiosInstance.get(
+          `/api/knowledge/sync/${knowledgeId}`
+        );
+        return data || [];
+      },
+    });
 
   const { mutate: createLinkKnowLedge } = useMutation({
     mutationFn: async ({ url }: LinkKnowLedge) => {
@@ -113,17 +104,30 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
     },
   });
 
+  const { mutate: syncDataFromUrlToVector, isPending: isSyncUrl } = useMutation(
+    {
+      mutationFn: async (knowledgeId: number) => {
+        const data = await axiosInstance.get(
+          `/api/knowledge/sync-web/${knowledgeId}`
+        );
+        return data || [];
+      },
+    }
+  );
+
   return {
     deleteMaterialItem,
     createLinkKnowLedge,
-    chunkFileAndStore,
     materialItems,
     materialItemsLoading,
     chunks,
     handleUploadFile,
     refetchMaterialItems,
+    syncDataFromUrlToVector,
+    isSyncUrl,
     isFetchingChunk,
     syncKnowLedgeToVector,
+    isSyncKnowledge,
   };
 };
 

@@ -1,8 +1,10 @@
 "use client";
+import { useEffect, useState } from "react";
 import { LoadingSpinner } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import useKnowledge from "@/hooks/data/useKnowledge";
+import useChunk from "@/hooks/data/useChunk";
+import { useSearchParams } from "next/navigation";
 
 interface ChunkProps {
   params: {
@@ -14,15 +16,26 @@ type Chunk = {
   text: string;
 };
 
-const MaterialChunk = ({ params: { id } }: ChunkProps) => {
-  const { chunks, isFetchingChunk } = useKnowledge({
-    id,
+const MaterialChunk = ({ params: initialParams }: ChunkProps) => {
+  const [params, setParams] = useState<ChunkProps["params"] | null>(null);
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+
+  useEffect(() => {
+    (async () => {
+      const resolvedParams = await initialParams;
+      setParams(resolvedParams);
+    })();
+  }, [initialParams]);
+
+  const { chunks, isFetchingChunk } = useChunk({
+    id: params?.id || "",
+    type,
   });
 
   if (isFetchingChunk) {
     return <LoadingSpinner />;
   }
-
   return (
     <div>
       <div className="px-4 flex flex-end gap-4 py-4">

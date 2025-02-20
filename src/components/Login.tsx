@@ -27,7 +27,6 @@ export function LoginForm({
     const password = form.password.value;
     await signIn({ username, password });
     if (isSuccess) {
-      // Redirect to dashboard
       router.push("/dashboard");
     }
   };
