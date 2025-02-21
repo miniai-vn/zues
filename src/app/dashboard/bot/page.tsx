@@ -11,7 +11,7 @@ export enum sendType {
 }
 
 export default function Page() {
-  const { sendMessage, mesages: allMessages, refetchFetchMessages } = useChat();
+  const { sendMessage, messages, refetchFetchMessages } = useChat();
   const [message, setMessages] = useState<string>("");
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
@@ -35,7 +35,7 @@ export default function Page() {
           <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
             <div className="flex flex-col h-full overflow-x-auto mb-4">
               <div className="flex flex-col h-full">
-                <ChatMessages allMessages={allMessages} />
+                <ChatMessages allMessages={messages} />
                 {isFetching && <LoadingSpinner />}
               </div>
             </div>

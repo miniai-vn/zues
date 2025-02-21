@@ -20,11 +20,15 @@ import { Button } from "@/components/ui/button";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  page?: number;
+  onChange?: (value?: any) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  page,
+  onChange,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -85,16 +89,14 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => onChange && onChange((page ?? 0) - 1)}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => onChange && onChange((page ?? 0) + 1)}
           >
             Next
           </Button>

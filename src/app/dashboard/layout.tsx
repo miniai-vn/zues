@@ -16,7 +16,6 @@ import {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      (
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -40,7 +39,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <main>{children}</main>
         </SidebarInset>
       </SidebarProvider>
-      );
     </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
-import TableDemo from "@/components/dashboard/tables";
+import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import Tables from "@/components/dashboard/tables";
 import { LoadingSpinner } from "@/components/Loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,10 +16,10 @@ const FileComponent = () => {
   const {
     materialItems,
     handleUploadFile,
-    deleteMaterialItem,
     refetchMaterialItems,
     syncKnowLedgeToVector,
     isSyncKnowledge,
+    deleteFileKnowledge,
   } = useKnowledge({
     type: "file",
   });
@@ -93,15 +94,15 @@ const FileComponent = () => {
           >
             {isSyncKnowledge ? <LoadingSpinner /> : "Sync"}
           </Badge>
-          <Badge
-            onClick={() =>
-              row.row.original.id !== undefined &&
-              deleteMaterialItem(row.row.original.id)
+          <AlertDialogComponent
+            description="
+            Do you want to delete this file?"
+            title="Confirm delete"
+            onConfirm={() =>
+              row.row.original.id && deleteFileKnowledge(row.row.original.id)
             }
-            className="border bg-white text-red-700 border-red-700"
-          >
-            Delete
-          </Badge>
+            onCancel={() => {}}
+          />
         </div>
       ),
     },
@@ -127,7 +128,7 @@ const FileComponent = () => {
       {isFetching ? (
         <LoadingSpinner />
       ) : (
-        <TableDemo columns={columns} data={materialItems ?? []} />
+        <Tables columns={columns} data={materialItems ?? []} />
       )}
     </div>
   );

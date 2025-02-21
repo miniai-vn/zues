@@ -1,5 +1,5 @@
 "use client";
-import TableDemo from "@/components/dashboard/tables";
+import Tables from "@/components/dashboard/tables";
 import { LoadingSpinner } from "@/components/Loading";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -7,9 +7,18 @@ import { FAQs, useFAQs } from "@/hooks/data/useFAQs";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { FaqsModal } from "./faqs-modal";
+import { useState } from "react";
+import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
 
 const FAQsComponent = () => {
-  const { faqs, isLoadingFAQs, createFAQ, updateFAQ, deleteFAQ } = useFAQs();
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { faqs, isLoadingFAQs, createFAQ, updateFAQ, deleteFAQ } = useFAQs({
+    page,
+    limit,
+    search,
+  });
 
   const columns: ColumnDef<FAQs>[] = [
     {
@@ -63,17 +72,16 @@ const FAQsComponent = () => {
             >
               Update
             </Badge>
-            <Badge
-              onClick={() => {
-                const faqId = row.row.original.id;
-                if (faqId) {
-                  deleteFAQ(faqId);
-                }
-              }}
-              className="border bg-white text-red-700 border-red-700"
-            >
-              Delete
-            </Badge>
+
+            <AlertDialogComponent
+              description="
+                        Do you want to delete this faq?"
+              title="Confirm delete"
+              onConfirm={() =>
+                row.row.original.id && deleteFAQ(row.row.original.id)
+              }
+              onCancel={() => {}}
+            />
           </div>
         );
       },
@@ -92,7 +100,12 @@ const FAQsComponent = () => {
       {isLoadingFAQs ? (
         <LoadingSpinner />
       ) : (
-        <TableDemo columns={columns} data={faqs ?? []} />
+        <Tables
+          page={page}
+          onChange={(value) => setPage(value)}
+          columns={columns}
+          data={faqs ?? []}
+        />
       )}
     </div>
   );

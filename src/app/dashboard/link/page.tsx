@@ -1,5 +1,5 @@
 "use client";
-import TableDemo from "@/components/dashboard/tables";
+import Tables from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import useKnowledge, { MaterialItem } from "@/hooks/data/useKnowledge";
@@ -7,14 +7,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { LinkModal } from "./create-link-modal";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/Loading";
+import { AlertDialogComponent } from "../../../components/dashboard/alert-modal";
 
 const LinkComponents = () => {
   const {
     materialItems,
-    deleteMaterialItem,
     createLinkKnowLedge,
     syncDataFromUrlToVector,
     isSyncUrl,
+    deleteLink,
   } = useKnowledge({
     type: "link",
   });
@@ -66,14 +67,14 @@ const LinkComponents = () => {
           >
             {isSyncUrl ? <LoadingSpinner /> : "Sync"}
           </Badge>
-          <Badge
-            className="border bg-white text-red-700 border-red-700"
-            onClick={() =>
-              row.row.original.id && deleteMaterialItem(row.row.original.id)
+          <AlertDialogComponent
+            description="Bạn có chắc chắn muốn xóa tài liệu này không?"
+            title="Xác nhận xóa"
+            onConfirm={() =>
+              row.row.original.id && deleteLink(row.row.original.id)
             }
-          >
-            Delete
-          </Badge>
+            onCancel={() => {}}
+          />
         </div>
       ),
     },
@@ -88,7 +89,7 @@ const LinkComponents = () => {
         />
         <LinkModal onChange={createLinkKnowLedge} />
       </div>
-      <TableDemo columns={columns} data={materialItems ?? []} />
+      <Tables columns={columns} data={materialItems ?? []} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 "use client";
-import TableDemo from "@/components/dashboard/tables";
+import Tables from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
 
 import { Input } from "@/components/ui/input";
@@ -108,7 +108,7 @@ const Meterials = () => {
         />
         <AddMeterialItemModal onChange={createMaterialItem} />
       </div>
-      <TableDemo columns={columns} data={materialItems ?? []} />
+      <Tables columns={columns} data={materialItems ?? []} />
     </div>
   );
 };

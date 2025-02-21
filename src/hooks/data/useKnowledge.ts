@@ -1,5 +1,6 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useToast } from "../use-toast";
 export type MaterialItem = {
   material: any;
   id?: number;
@@ -17,6 +18,8 @@ export type LinkKnowLedge = {
   url: string;
 };
 const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
+  const { toast } = useToast();
+
   const {
     data: materialItems,
     isLoading: materialItemsLoading,
@@ -33,17 +36,6 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
     },
     enabled: !!type,
     refetchOnWindowFocus: false,
-  });
-
-  const { mutate: deleteMaterialItem } = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await axiosInstance.delete(`/api/material-items/${id}`);
-      return response;
-    },
-    onSuccess: () => {
-      refetchMaterialItems();
-    },
-    onError: () => {},
   });
 
   /*
@@ -97,9 +89,17 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
       return data || [];
     },
     onSuccess: () => {
+      toast({
+        title: "Created",
+        description: `Created at ${new Date().toLocaleTimeString()}`,
+      });
       refetchMaterialItems();
     },
     onError: () => {
+      toast({
+        title: "Error",
+        description: `Error at ${new Date().toLocaleTimeString()}`,
+      });
       refetchMaterialItems();
     },
   });
@@ -115,9 +115,44 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
     }
   );
 
+  const { mutate: deleteLink } = useMutation({
+    mutationFn: async (knowledgeId: number) => {
+      const data = await axiosInstance.delete(
+        `/api/knowledge/link/${knowledgeId}`
+      );
+      return data || [];
+    },
+    onSuccess: () => {
+      toast({
+        title: "Deleted",
+        description: `Deleted at ${new Date().toLocaleTimeString()}`,
+      });
+      refetchMaterialItems();
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: `
+          Error at ${new Date().toLocaleTimeString()}
+          `,
+      });
+      refetchMaterialItems();
+    },
+  });
+
+  const { mutate: deleteFileKnowledge } = useMutation({
+    mutationFn: async (knowledgeId: number) => {
+      const data = await axiosInstance.delete(
+        `/api/knowledge/file/${knowledgeId}`
+      );
+      return data || [];
+    },
+  });
+
   return {
-    deleteMaterialItem,
     createLinkKnowLedge,
+    deleteLink,
+    deleteFileKnowledge,
     materialItems,
     materialItemsLoading,
     chunks,

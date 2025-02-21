@@ -4,7 +4,6 @@ import UserMessages from "./user-messages";
 interface ChatMessagesProps {
   allMessages: { senderType: string; content: string }[];
 }
-
 const ChatMessages = ({ allMessages }: ChatMessagesProps) => {
   return (
     <div className="grid grid-cols-12 gap-y-2">

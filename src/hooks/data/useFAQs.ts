@@ -1,6 +1,8 @@
+"use client";
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
+import { useToast } from "../use-toast";
+import { totalmem } from "os";
 export type FAQs = {
   id?: string;
   question: string;
@@ -8,26 +10,48 @@ export type FAQs = {
   updatedAt?: string;
   createdAt?: string;
 };
-const useFAQs = () => {
+
+interface UseFAQsProps {
+  page: number;
+  limit: number;
+  search: string;
+}
+
+const fetchFAQs = async (page: number, limit: number, search: string) => {
+  const response = await axiosInstance.get("/api/faqs/", {
+    params: { page, limit, search },
+  });
+  return response.faqs || [];
+};
+
+const useFAQs = ({ page, limit, search }: UseFAQsProps) => {
+  const { toast } = useToast();
   const {
     data: faqs,
     isLoading: isLoadingFAQs,
     refetch,
   } = useQuery({
-    queryKey: ["faqs"],
-    queryFn: async () => {
-      const response = await axiosInstance.get("/api/faqs");
-      return response.data;
-    },
+    queryKey: ["faqs", page, limit],
+    queryFn: () => fetchFAQs(page, limit, search),
   });
 
   const { mutate: createFAQ } = useMutation({
     mutationFn: async (data: { question: string; answer: string }) => {
-      const response = await axiosInstance.post("/api/faqs", data);
+      const response = await axiosInstance.post("/api/faqs/", data);
       return response.data;
     },
     onSuccess: () => {
+      toast({
+        title: "Create FAQ",
+        description: "Create FAQ successfully",
+      });
       refetch();
+    },
+    onError: (error) => {
+      toast({
+        title: "Create FAQ",
+        description: error.message,
+      });
     },
   });
 
@@ -41,7 +65,18 @@ const useFAQs = () => {
       return response.data;
     },
     onSuccess: () => {
+      toast({
+        title: "Update FAQ",
+        description: "Update FAQ successfully",
+      });
       refetch();
+    },
+
+    onError: (error) => {
+      toast({
+        title: "Update FAQ",
+        description: error.message,
+      });
     },
   });
 
@@ -52,6 +87,16 @@ const useFAQs = () => {
     },
     onSuccess: () => {
       refetch();
+      toast({
+        title: "Delete FAQ",
+        description: "Delete FAQ successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Delete FAQ",
+        description: error.message,
+      });
     },
   });
 
