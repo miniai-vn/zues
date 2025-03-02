@@ -1,34 +1,71 @@
 import axiosInstance from "@/configs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export type Message = {
   id: number;
   content: string;
-  createdAt: string; // Fixed typo: createAt -> createdAt
+  createdAt: string;
+  senderType: string;
   isBot: boolean;
 };
 
 const useChat = () => {
-  const sendMessage = async (data: string) => {
-    const response = await axiosInstance.post("/api/chat", {
-      content: data,
-    });
-    return response.data;
-  };
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const {
-    data: messages, // Fixed typo: mesages -> messages
-    isFetching: isFetchingChunk,
-    refetch: refetchFetchMessages,
+    data: fetchedMessages,
+    isFetching: isLoading,
+    refetch: reload,
+    error: fetchMessagesError,
   } = useQuery({
     queryKey: ["load_messages"],
     queryFn: async () => {
-      const data = await axiosInstance.get(`/api/conversation/messages`);
-      return data ?? [];
+      const response = await axiosInstance.get(`/api/conversation/messages`);
+      setMessages(response);
+      return response.data ?? [];
     },
   });
 
-  return { sendMessage, messages, isFetchingChunk, refetchFetchMessages };
+  const {
+    mutate: sendMessage,
+    isPending: isSendingMessage,
+    error: sendMessageError,
+  } = useMutation({
+    mutationFn: async (content: string) => {
+      const response = await axiosInstance.post("/api/chat", { content });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
+      reload();
+    },
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage(input);
+      setInput("");
+    }
+  };
+
+  return {
+    messages,
+    setMessages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading: isLoading || isSendingMessage,
+    reload,
+    fetchMessagesError,
+    sendMessageError,
+  };
 };
 
 export { useChat };
