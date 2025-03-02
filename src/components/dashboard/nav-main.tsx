@@ -18,6 +18,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
+import { useAuth, useUserStore } from "@/hooks/data/useAuth";
 
 export function NavMain({
   items,
@@ -27,18 +28,27 @@ export function NavMain({
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
+    role: string[];
     items?: {
       title: string;
       url: string;
+      role: string[];
     }[];
   }[];
 }) {
   const router = useRouter();
+  const { user } = useUserStore();
+  const { loadUserFromLocalStorage } = useAuth();
+  if (!user) return loadUserFromLocalStorage();
+  const filteredItems = items?.filter((item) =>
+    item?.role?.includes(user?.role || "")
+  );
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <Collapsible
             key={item.title}
             asChild
@@ -58,15 +68,17 @@ export function NavMain({
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
+                  {item.items
+                    ?.filter((subItem) => subItem.role.includes(user?.role))
+                    .map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <a href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>

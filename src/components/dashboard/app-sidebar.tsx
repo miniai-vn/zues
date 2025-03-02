@@ -15,6 +15,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Role } from "@/configs/protect-route";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 
@@ -48,12 +49,14 @@ const data = {
       url: "/dashboard/meterials",
       icon: SquareTerminal,
       isActive: true,
+      role: [Role.Manager, Role.Staff],
       items: [
         {
           title: "Bot",
           url: "/dashboard/bot",
           icon: SquareTerminal,
           isActive: true,
+          role: [Role.Staff, Role.Manager],
         },
       ],
     },
@@ -62,24 +65,44 @@ const data = {
       url: "/dashboard/material-items",
       icon: SquareTerminal,
       isActive: true,
+      role: [Role.Manager],
       items: [
         {
           title: "Links",
           url: "/dashboard/link",
           icon: SquareTerminal,
           isActive: true,
+          role: [Role.Manager],
         },
         {
           title: "Files",
           url: "/dashboard/file",
           icon: SquareTerminal,
           isActive: true,
+          role: [Role.Manager],
         },
         {
           title: "FAQs",
           url: "/dashboard/faqs",
           icon: SquareTerminal,
           isActive: true,
+          role: [Role.Manager],
+        },
+      ],
+    },
+    {
+      title: "Manager",
+      url: "/dashboard/material-items",
+      icon: SquareTerminal,
+      isActive: true,
+      role: [Role.Manager],
+      items: [
+        {
+          title: "Users",
+          url: "/dashboard/users",
+          icon: SquareTerminal,
+          isActive: true,
+          role: [Role.Manager],
         },
       ],
     },
@@ -94,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

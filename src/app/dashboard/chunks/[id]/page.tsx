@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import useChunk from "@/hooks/data/useChunk";
 import { useSearchParams } from "next/navigation";
+import ProtectedRoute, { Role } from "@/configs/protect-route";
 
 interface ChunkProps {
   params: {
@@ -37,7 +38,7 @@ const MaterialChunk = ({ params: initialParams }: ChunkProps) => {
     return <LoadingSpinner />;
   }
   return (
-    <div>
+    <ProtectedRoute requiredRole={[Role.Manager]}>
       <div className="px-4 flex flex-end gap-4 py-4">
         <Button className="px-4 ">Xác nhận</Button>
       </div>
@@ -46,7 +47,7 @@ const MaterialChunk = ({ params: initialParams }: ChunkProps) => {
           return <Textarea key={index} className="h-52" value={chunk.text} />;
         })}
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 

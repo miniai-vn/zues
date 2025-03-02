@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Tables from "@/components/dashboard/tables";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,10 @@ import { LoadingSpinner } from "@/components/Loading";
 import { AlertDialogComponent } from "../../../components/dashboard/alert-modal";
 
 const LinkComponents = () => {
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+
   const {
     materialItems,
     createLinkKnowLedge,
@@ -18,7 +23,11 @@ const LinkComponents = () => {
     deleteLink,
   } = useKnowledge({
     type: "link",
+    search,
+    limit,
+    page,
   });
+
   const router = useRouter();
 
   const columns: ColumnDef<MaterialItem>[] = [
@@ -86,10 +95,19 @@ const LinkComponents = () => {
         <Input
           placeholder="Tìm kiếm tài tên tài liệu"
           className="mr-4 w-full flex-1"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <LinkModal onChange={createLinkKnowLedge} />
       </div>
-      <Tables columns={columns} data={materialItems ?? []} />
+      <Tables
+        columns={columns}
+        data={materialItems ?? []}
+        onChange={(page) => {
+          setPage(page);
+        }}
+        page={page}
+      />
     </div>
   );
 };

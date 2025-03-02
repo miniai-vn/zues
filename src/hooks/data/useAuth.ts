@@ -1,8 +1,47 @@
 import axiosInstance from "@/configs";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-const useAuth = () => {
+import { create } from "zustand";
+import { useToast } from "../use-toast";
+export type UserData = {
+  id?: string;
+  username: string;
+  password: string;
+};
+
+export type User = {
+  id: string;
+  username: string;
+  role: string;
+};
+
+export const useUserStore = create<{
+  user?: User;
+  setUser: (user: User) => void;
+}>((set) => ({
+  user: undefined,
+  setUser: (user: User) => set({ user }),
+}));
+
+const useAuth = (page = 1, limit = 10, search = "") => {
+  const { setUser, user } = useUserStore();
   const router = useRouter();
+
+  const { toast } = useToast();
+  const {
+    data: users,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ["user", { page, limit, search }],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/auth/users", {
+        params: { page, limit, search },
+      });
+      return response ?? [];
+    },
+    enabled: !!user,
+  });
 
   const { mutate: signIn, isSuccess } = useMutation({
     mutationFn: async (data: { username: string; password: string }) => {
@@ -11,7 +50,9 @@ const useAuth = () => {
     },
     onSuccess(data: any) {
       const token = data.token;
+      setUser(data.user);
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(data.user));
       router.push("/dashboard/bot");
     },
   });
@@ -22,7 +63,99 @@ const useAuth = () => {
       return response;
     },
   });
-  return { signIn, isSuccess, register };
+
+  const { mutate: createUser } = useMutation({
+    mutationFn: async (data: UserData) => {
+      const response = await axiosInstance.post("/api/auth/users", data);
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Created",
+        description: `Created at ${new Date().toLocaleTimeString()}`,
+      });
+      refetch();
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: `Error at ${new Date().toLocaleTimeString()}`,
+      });
+      refetch();
+    },
+  });
+
+  const { mutate: readUser } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await axiosInstance.get(`/api/auth/users/${id}`);
+      return response;
+    },
+  });
+
+  const { mutate: updateUser } = useMutation({
+    mutationFn: async (data: UserData) => {
+      const response = await axiosInstance.post(
+        `/api/auth/users/${data.id}`,
+        data
+      );
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Updated",
+        description: `Updated at ${new Date().toLocaleTimeString()}`,
+      });
+      refetch();
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: `Error at ${new Date().toLocaleTimeString()}`,
+      });
+      refetch();
+    },
+  });
+
+  const { mutate: deleteUser } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await axiosInstance.delete(`/api/auth/users/${id}`);
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Deleted",
+        description: `Deleted at ${new Date().toLocaleTimeString()}`,
+      });
+      refetch();
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: `Error at ${new Date().toLocaleTimeString()}`,
+      });
+      refetch();
+    },
+  });
+
+  const loadUserFromLocalStorage = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  };
+
+  return {
+    users,
+    isFetching,
+    signIn,
+    isSuccess,
+    register,
+    createUser,
+    readUser,
+    updateUser,
+    deleteUser,
+    loadUserFromLocalStorage,
+  };
 };
 
 export { useAuth };

@@ -17,7 +17,19 @@ export type MaterialItem = {
 export type LinkKnowLedge = {
   url: string;
 };
-const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
+const useKnowledge = ({
+  id,
+  type,
+  search,
+  limit,
+  page,
+}: {
+  id?: string;
+  type?: string;
+  search?: string;
+  limit?: number;
+  page?: number;
+}) => {
   const { toast } = useToast();
 
   const {
@@ -25,11 +37,14 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
     isLoading: materialItemsLoading,
     refetch: refetchMaterialItems,
   } = useQuery({
-    queryKey: ["knowledge", type],
+    queryKey: ["knowledge", type, search, limit, page],
     queryFn: async () => {
       const data = await axiosInstance.get(`/api/knowledge/`, {
         params: {
           type,
+          search,
+          limit,
+          page,
         },
       });
       return data ?? [];
@@ -146,6 +161,23 @@ const useKnowledge = ({ id, type }: { id?: string; type?: string }) => {
         `/api/knowledge/file/${knowledgeId}`
       );
       return data || [];
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: `
+          Error at ${new Date().toLocaleTimeString()}
+          `,
+      });
+      refetchMaterialItems();
+    },
+
+    onSuccess: () => {
+      toast({
+        title: "Deleted",
+        description: `Deleted at ${new Date().toLocaleTimeString()}`,
+      });
+      refetchMaterialItems();
     },
   });
 

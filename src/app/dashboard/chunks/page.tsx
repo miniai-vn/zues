@@ -6,14 +6,10 @@ import { Input } from "@/components/ui/input";
 import useKnowledge, { MaterialItem } from "@/hooks/data/useKnowledge";
 import { ColumnDef } from "@tanstack/react-table";
 import { AddMeterialItemModal } from "./add-meterial-items";
+import ProtectedRoute, { Role } from "@/configs/protect-route";
 
 const Meterials = () => {
-  const {
-    materialItems,
-    createMaterialItem,
-    deleteMaterialItem,
-    syncMaterialItem,
-  } = useKnowledge();
+  const { materialItems } = useKnowledge();
   const columns: ColumnDef<MaterialItem>[] = [
     {
       accessorKey: "id",
@@ -100,16 +96,18 @@ const Meterials = () => {
     },
   ];
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder="Filter name..."
-          className="max-w-sm w-full flex-1"
-        />
-        <AddMeterialItemModal onChange={createMaterialItem} />
+    <ProtectedRoute requiredRole={[Role.Manager]}>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex justify-between items-center mb-4">
+          <Input
+            placeholder="Filter name..."
+            className="max-w-sm w-full flex-1"
+          />
+          <AddMeterialItemModal onChange={createMaterialItem} />
+        </div>
+        <Tables columns={columns} data={materialItems ?? []} />
       </div>
-      <Tables columns={columns} data={materialItems ?? []} />
-    </div>
+    </ProtectedRoute>
   );
 };
 

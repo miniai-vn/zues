@@ -1,18 +1,25 @@
 "use client";
-import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 import Tables from "@/components/dashboard/tables";
-import { LoadingSpinner } from "@/components/Loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/Loading";
+import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import ProtectedRoute, { Role } from "@/configs/protect-route";
 import useKnowledge, { MaterialItem } from "@/hooks/data/useKnowledge";
 import { ColumnDef } from "@tanstack/react-table";
-import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 const FileComponent = () => {
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+
   const router = useRouter();
+
   const {
     materialItems,
     handleUploadFile,
@@ -22,9 +29,10 @@ const FileComponent = () => {
     deleteFileKnowledge,
   } = useKnowledge({
     type: "file",
+    search,
+    limit,
+    page,
   });
-
-  const [isFetching, setIsFetching] = useState(false);
 
   const onHandleUploadFile = async (file: File) => {
     try {
@@ -95,8 +103,7 @@ const FileComponent = () => {
             {isSyncKnowledge ? <LoadingSpinner /> : "Sync"}
           </Badge>
           <AlertDialogComponent
-            description="
-            Do you want to delete this file?"
+            description="Do you want to delete this file?"
             title="Confirm delete"
             onConfirm={() =>
               row.row.original.id && deleteFileKnowledge(row.row.original.id)
@@ -109,28 +116,39 @@ const FileComponent = () => {
   ];
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <Input
-        placeholder="Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)"
-        type="file"
-        onChange={(e) =>
-          e.target.files && onHandleUploadFile(e.target.files[0])
-        }
-        className="w-full h-14 center"
-      />
-      <div className="flex justify-between items-center mb-4">
+    <ProtectedRoute requiredRole={[Role.Manager]}>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <Input
-          placeholder="Tìm kiếm tài tên tài liệu"
-          className="mr-4 w-full flex-1"
+          placeholder="Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)"
+          type="file"
+          onChange={(e) =>
+            e.target.files && onHandleUploadFile(e.target.files[0])
+          }
+          className="w-full h-14 center"
         />
-        <Button>Tìm kiếm</Button>
+        <div className="flex justify-between items-center mb-4">
+          <Input
+            placeholder="Tìm kiếm tài tên tài liệu"
+            className="mr-4 w-full flex-1"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button onClick={() => refetchMaterialItems()}>Tìm kiếm</Button>
+        </div>
+        {isFetching ? (
+          <LoadingSpinner />
+        ) : (
+          <Tables
+            columns={columns}
+            data={materialItems ?? []}
+            page={page}
+            onChange={(page) => {
+              setPage(page);
+            }}
+          />
+        )}
       </div>
-      {isFetching ? (
-        <LoadingSpinner />
-      ) : (
-        <Tables columns={columns} data={materialItems ?? []} />
-      )}
-    </div>
+    </ProtectedRoute>
   );
 };
 
