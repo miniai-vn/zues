@@ -12,7 +12,6 @@ export type Message = {
 
 const useChat = () => {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
 
   const {
     data: fetchedMessages,
@@ -22,9 +21,10 @@ const useChat = () => {
   } = useQuery({
     queryKey: ["load_messages"],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/api/conversation/messages`);
-      setMessages(response);
-      return response.data ?? [];
+      const response = (await axiosInstance.get(
+        `/api/conversation/messages`
+      )) as Message[];
+      return response ?? [];
     },
   });
 
@@ -37,8 +37,7 @@ const useChat = () => {
       const response = await axiosInstance.post("/api/chat", { content });
       return response.data;
     },
-    onSuccess: (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+    onSuccess: () => {
       reload();
     },
   });
@@ -56,14 +55,13 @@ const useChat = () => {
   };
 
   return {
-    messages,
-    setMessages,
     input,
     handleInputChange,
     handleSubmit,
     isLoading: isLoading || isSendingMessage,
     reload,
     fetchMessagesError,
+    fetchedMessages,
     sendMessageError,
   };
 };

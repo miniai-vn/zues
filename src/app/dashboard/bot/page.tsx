@@ -1,5 +1,7 @@
 "use client";
 
+import CodeDisplayBlock from "@/components/code-display-block";
+import { Button } from "@/components/ui/button";
 import {
   ChatBubble,
   ChatBubbleAction,
@@ -8,7 +10,7 @@ import {
 } from "@/components/ui/chat/chat-bubble";
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
-import { Button } from "@/components/ui/button";
+import { useChat } from "@/hooks/data/useChat";
 import {
   CopyIcon,
   CornerDownLeft,
@@ -17,12 +19,9 @@ import {
   RefreshCcw,
   Volume2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { useEffect, useRef } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import CodeDisplayBlock from "@/components/code-display-block";
-import { useChat } from "@/hooks/data/useChat";
 
 const ChatAiIcons = [
   {
@@ -40,9 +39,8 @@ const ChatAiIcons = [
 ];
 
 export default function Home() {
-  const [isGenerating, setIsGenerating] = useState(false);
   const {
-    messages,
+    fetchedMessages,
     input,
     handleInputChange,
     handleSubmit,
@@ -57,19 +55,16 @@ export default function Home() {
     if (messagesRef.current) {
       messagesRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
-
+  }, [fetchedMessages]);
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsGenerating(true);
     handleSubmit(e);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (isGenerating || isLoading || !input) return;
-      setIsGenerating(true);
+      if (isLoading || !input) return;
       onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
@@ -77,20 +72,18 @@ export default function Home() {
   const handleActionClick = async (action: string, messageIndex: number) => {
     console.log("Action clicked:", action, "Message index:", messageIndex);
     if (action === "Refresh") {
-      setIsGenerating(true);
       try {
         await reload();
       } catch (error) {
         console.error("Error reloading:", error);
       } finally {
-        setIsGenerating(false);
       }
     }
 
     if (action === "Copy") {
-      const message = messages[messageIndex];
+      const message = fetchedMessages ? fetchedMessages[messageIndex] : null;
       if (message && message.senderType === "assistant") {
-        navigator.clipboard.writeText(message.content);
+        navigator.clipboard.writeText(message?.content);
       }
     }
   };
@@ -100,25 +93,25 @@ export default function Home() {
       <div className="flex-1 w-full overflow-y-auto py-6 mb-8">
         <ChatMessageList>
           {/* Initial Message */}
-          {messages?.length === 0 && (
+          {fetchedMessages?.length === 0 && (
             <div className="w-full bg-background shadow-sm border rounded-lg p-8 flex flex-col gap-2">
               <h1 className="font-bold">Welcome to this example app.</h1>
             </div>
           )}
 
           {/* Messages */}
-          {messages &&
-            messages.map((message, index) => (
+          {fetchedMessages &&
+            fetchedMessages.map((message, index) => (
               <ChatBubble
                 key={index}
-                variant={message.senderType == "user" ? "sent" : "received"}
+                variant={message?.senderType == "user" ? "sent" : "received"}
               >
                 <ChatBubbleAvatar
                   src=""
-                  fallback={message.senderType == "user" ? "👨🏽" : "🤖"}
+                  fallback={message?.senderType == "user" ? "👨🏽" : "🤖"}
                 />
                 <ChatBubbleMessage>
-                  {message.content
+                  {message?.content
                     .split("```")
                     .map((part: string, index: number) => {
                       if (index % 2 === 0) {
@@ -137,9 +130,9 @@ export default function Home() {
                     })}
 
                   {message.senderType === "assistant" &&
-                    messages.length - 1 === index && (
+                    fetchedMessages.length - 1 === index && (
                       <div className="flex items-center mt-1.5 gap-1">
-                        {!isGenerating && (
+                        {!isLoading && (
                           <>
                             {ChatAiIcons.map((icon, iconIndex) => {
                               const Icon = icon.icon;
@@ -164,7 +157,7 @@ export default function Home() {
             ))}
 
           {/* Loading */}
-          {isGenerating && (
+          {isLoading && (
             <ChatBubble variant="received">
               <ChatBubbleAvatar src="" fallback="🤖" />
               <ChatBubbleMessage isLoading />
