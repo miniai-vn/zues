@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
-
+import { useEffect } from "react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,29 +20,61 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    role: string[];
-    items?: {
-      title: string;
-      url: string;
-      role: string[];
-    }[];
-  }[];
-}) {
+// Type definitions for better maintainability
+type SubMenuItem = {
+  title: string;
+  url: string;
+  role: string[];
+};
+
+type MenuItem = {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  role: string[];
+  items?: SubMenuItem[];
+};
+
+export default function NavMain({ items }: { items: MenuItem[] }) {
   const router = useRouter();
   const { user } = useUserStore();
   const { loadUserFromLocalStorage } = useAuth();
-  if (!user) return loadUserFromLocalStorage();
+
+  // Use useEffect for side effects
+  useEffect(() => {
+    if (!user) {
+      loadUserFromLocalStorage();
+    }
+  }, [user, loadUserFromLocalStorage]);
+
+  // If no user, show loading state or null
+  if (!user) return null;
+
+  // Filter items based on user role
   const filteredItems = items?.filter((item) =>
     item?.role?.includes(user?.role || "")
   );
+
+  // Helper function to render sub-items
+  const renderSubItems = (subItems?: SubMenuItem[]) => {
+    if (!subItems?.length) return null;
+
+    return subItems
+      .filter((subItem) => subItem.role.includes(user?.role || ""))
+      .map((subItem) => (
+        <SidebarMenuSubItem key={subItem.title}>
+          <SidebarMenuSubButton
+            asChild
+            onClick={() => router.push(subItem.url)}
+          >
+            <a href={subItem.url}>
+              <span>{subItem.title}</span>
+            </a>
+          </SidebarMenuSubButton>
+        </SidebarMenuSubItem>
+      ));
+  };
 
   return (
     <SidebarGroup>
@@ -63,24 +95,16 @@ export function NavMain({
                 >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  {(item.items ?? []).length > 0 && (
+                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  )}
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items
-                    ?.filter((subItem) => subItem.role.includes(user?.role))
-                    .map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild>
-                          <a href={subItem.url}>
-                            <span>{subItem.title}</span>
-                          </a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
+              {(item.items ?? []).length > 0 && (
+                <CollapsibleContent>
+                  <SidebarMenuSub>{renderSubItems(item.items)}</SidebarMenuSub>
+                </CollapsibleContent>
+              )}
             </SidebarMenuItem>
           </Collapsible>
         ))}

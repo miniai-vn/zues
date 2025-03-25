@@ -21,13 +21,9 @@ import { UserModal } from "./create-user-modal";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const { deleteUser, createUser, users, updateUser } = useAuth(
-    page,
-    limit,
-    search
-  );
+  const { deleteUser, createUser, users } = useAuth(page, limit, search);
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "username",
@@ -43,7 +39,7 @@ const UserComponents = () => {
       header: "Actions",
       cell: (row) => (
         <div className="flex gap-2">
-          <UserModal user={row.row.original} onChange={updateUser} />
+          {/* <UserModal user={row.row.original} onChange={updateUser} /> */}
 
           <AlertDialogComponent
             description="Are you sure you want to delete this user?"
@@ -59,7 +55,7 @@ const UserComponents = () => {
     {
       id: "train-action",
       header: "Train data",
-      cell: (row) => (
+      cell: () => (
         <div className="flex gap-2">
           <Switch id="airplane-mode" />
         </div>

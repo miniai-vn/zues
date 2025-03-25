@@ -14,7 +14,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 const FileComponent = () => {
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [page, setPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
 

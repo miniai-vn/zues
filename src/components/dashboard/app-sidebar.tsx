@@ -16,8 +16,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Role } from "@/configs/protect-route";
-import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
+import NavMain from "./nav-main";
 
 // This is sample data.
 const data = {

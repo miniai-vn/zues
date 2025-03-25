@@ -2,7 +2,7 @@ import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export type MaterialItem = {
-  material: any;
+  material: unknown;
   id?: number;
   materialId: number;
   text?: string;

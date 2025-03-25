@@ -17,10 +17,10 @@ export type User = {
 
 export const useUserStore = create<{
   user?: User;
-  setUser: (user: User) => void;
+  setUser: (user: User | undefined) => void;
 }>((set) => ({
   user: undefined,
-  setUser: (user: User) => set({ user }),
+  setUser: (user: User | undefined) => set({ user }),
 }));
 
 const useAuth = (page = 1, limit = 10, search = "") => {
@@ -46,13 +46,13 @@ const useAuth = (page = 1, limit = 10, search = "") => {
   const { mutate: signIn, isSuccess } = useMutation({
     mutationFn: async (data: { username: string; password: string }) => {
       const response = await axiosInstance.post("/api/auth/login", data);
+      const token = response.data.token;
+      setUser(response.data.user);
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       return response;
     },
-    onSuccess(data: any) {
-      const token = data.token;
-      setUser(data.user);
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+    onSuccess() {
       router.push("/dashboard/bot");
     },
   });

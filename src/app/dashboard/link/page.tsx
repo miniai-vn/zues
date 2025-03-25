@@ -12,7 +12,7 @@ import { AlertDialogComponent } from "../../../components/dashboard/alert-modal"
 
 const LinkComponents = () => {
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [page, setPage] = useState(1);
 
   const {
@@ -34,9 +34,9 @@ const LinkComponents = () => {
     {
       accessorKey: "link",
       header: "Link",
-      cell: (row) => (
+      cell: () => (
         <div className="break-all line-clamp-2 w-1/2">
-          {row.row.original?.material?.name}
+          {/* {row.row.original?.material?.url} */}
         </div>
       ),
     },

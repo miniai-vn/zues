@@ -2,7 +2,6 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
-import { totalmem } from "os";
 export type FAQs = {
   id?: string;
   question: string;
@@ -21,7 +20,7 @@ const fetchFAQs = async (page: number, limit: number, search: string) => {
   const response = await axiosInstance.get("/api/faqs/", {
     params: { page, limit, search },
   });
-  return response.faqs || [];
+  return response.data.faqs || [];
 };
 
 const useFAQs = ({ page, limit, search }: UseFAQsProps) => {

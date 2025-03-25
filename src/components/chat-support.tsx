@@ -20,27 +20,16 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import CodeDisplayBlock from "./code-display-block";
 import { useChat } from "@/hooks/data/useChat";
+
 export default function ChatSupport() {
   const [isGenerating, setIsGenerating] = useState(false);
   const {
-    messages,
-    setMessages,
     input,
     handleInputChange,
     handleSubmit,
     isLoading,
-  } = useChat({
-    onResponse(response) {
-      if (response) {
-        setIsGenerating(false);
-      }
-    },
-    onError(error) {
-      if (error) {
-        setIsGenerating(false);
-      }
-    },
-  });
+    fetchedMessages: messages,
+  } = useChat();
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -72,9 +61,7 @@ export default function ChatSupport() {
         <h1 className="text-xl font-semibold">Chat with our AI ✨</h1>
         <p>Ask any question for our AI to answer</p>
         <div className="flex gap-2 items-center pt-2">
-          <Button variant="secondary" onClick={() => setMessages([])}>
-            New Chat
-          </Button>
+          <Button variant="secondary">New Chat</Button>
           <Button variant="secondary">See FAQ</Button>
         </div>
       </ExpandableChatHeader>
@@ -84,7 +71,7 @@ export default function ChatSupport() {
           <ChatBubble variant="received">
             <ChatBubbleAvatar src="" fallback="🤖" />
             <ChatBubbleMessage>
-              Hello! I'm the AI assistant. How can I help you today?
+              Hello! I am the AI assistant. How can I help you today?
             </ChatBubbleMessage>
           </ChatBubble>
 
@@ -93,14 +80,14 @@ export default function ChatSupport() {
             messages.map((message, index) => (
               <ChatBubble
                 key={index}
-                variant={message.role == "user" ? "sent" : "received"}
+                variant={message.senderType == "user" ? "sent" : "received"}
               >
                 <ChatBubbleAvatar
                   src=""
-                  fallback={message.role == "user" ? "👨🏽" : "🤖"}
+                  fallback={message.senderType == "user" ? "👨🏽" : "🤖"}
                 />
                 <ChatBubbleMessage
-                  variant={message.role == "user" ? "sent" : "received"}
+                  variant={message.senderType == "user" ? "sent" : "received"}
                 >
                   {message.content
                     .split("```")

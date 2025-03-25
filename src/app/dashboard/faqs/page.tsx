@@ -11,9 +11,9 @@ import { useState } from "react";
 import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
 
 const FAQsComponent = () => {
-  const [search, setSearch] = useState("");
+  const [search] = useState("");
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const { faqs, isLoadingFAQs, createFAQ, updateFAQ, deleteFAQ } = useFAQs({
     page,
     limit,
