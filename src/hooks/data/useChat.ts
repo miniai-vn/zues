@@ -21,10 +21,8 @@ const useChat = () => {
   } = useQuery({
     queryKey: ["load_messages"],
     queryFn: async () => {
-      const response = (await axiosInstance.get(
-        `/api/conversation/messages`
-      )) as Message[];
-      return response ?? [];
+      const response = await axiosInstance.get(`/api/conversation/messages`);
+      return response.data ?? ([] as Message[]);
     },
   });
 
