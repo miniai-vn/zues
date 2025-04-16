@@ -70,7 +70,6 @@ export default function Home() {
   };
 
   const handleActionClick = async (action: string, messageIndex: number) => {
-    console.log("Action clicked:", action, "Message index:", messageIndex);
     if (action === "Refresh") {
       try {
         await reload();

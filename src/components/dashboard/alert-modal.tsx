@@ -10,11 +10,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface AlertDialogProps {
   title: string;
   description: string;
+  children?: React.ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -24,13 +24,18 @@ export function AlertDialogComponent({
   description,
   onConfirm,
   onCancel,
+  children,
 }: AlertDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Badge className="border bg-white text-red-700 border-red-700">
-          Delete
-        </Badge>
+        {children ? (
+          children
+        ) : (
+          <Badge className="border bg-white text-red-700 border-red-700">
+            Delete
+          </Badge>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

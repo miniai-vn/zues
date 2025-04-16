@@ -50,18 +50,21 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
 
   // If no user, show loading state or null
   if (!user) return null;
-
   // Filter items based on user role
-  const filteredItems = items?.filter((item) =>
-    item?.role?.includes(user?.role || "")
-  );
+  const filteredItems = items?.filter((item) => {
+    const userRolesSet = new Set(user.roles);
+    return item.role.some((role) => userRolesSet.has(role));
+  });
 
   // Helper function to render sub-items
   const renderSubItems = (subItems?: SubMenuItem[]) => {
     if (!subItems?.length) return null;
 
     return subItems
-      .filter((subItem) => subItem.role.includes(user?.role || ""))
+      .filter((item) => {
+        const userRolesSet = new Set(user.roles);
+        return item.role.some((role) => userRolesSet.has(role));
+      })
       .map((subItem) => (
         <SidebarMenuSubItem key={subItem.title}>
           <SidebarMenuSubButton

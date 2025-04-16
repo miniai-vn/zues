@@ -12,7 +12,7 @@ export type UserData = {
 export type User = {
   id: string;
   username: string;
-  role: string;
+  roles: string[];
 };
 
 export const useUserStore = create<{
@@ -38,7 +38,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       const response = await axiosInstance.get("/api/auth/users", {
         params: { page, limit, search },
       });
-      return response ?? [];
+      return response.data ?? [];
     },
     enabled: !!user,
   });

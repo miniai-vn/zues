@@ -15,7 +15,6 @@ const fetchChunks = async (id: string, type: string | null) => {
   const response = await axiosInstance.get(`/api/chunks/${id}`, {
     params: { type },
   });
-  console.log(response);
   return response || [];
 };
 

@@ -2,27 +2,22 @@ import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export type MaterialItem = {
-  material: unknown;
   id?: number;
-  materialId: number;
-  text?: string;
   url?: string;
   file?: File | string;
   name?: string;
   type?: string;
   size?: string;
-  updatedAt?: string;
+  status?: string;
+  createdAt?: string;
 };
 
 export type LinkKnowLedge = {
   url: string;
 };
-const useKnowledge = ({
+const useResource = ({
   id,
   type,
-  search,
-  limit,
-  page,
 }: {
   id?: string;
   type?: string;
@@ -35,21 +30,13 @@ const useKnowledge = ({
   const {
     data: materialItems,
     isLoading: materialItemsLoading,
-    refetch: refetchMaterialItems,
+    refetch: refetchResource,
   } = useQuery({
-    queryKey: ["knowledge", type, search, limit, page],
+    queryKey: ["resource", id],
     queryFn: async () => {
-      const data = await axiosInstance.get(`/api/knowledge/`, {
-        params: {
-          type,
-          search,
-          limit,
-          page,
-        },
-      });
-      return data ?? [];
+      const res = await axiosInstance.get(`/api/resources/by-department/${id}`);
+      return res.data ?? [];
     },
-    enabled: !!type,
     refetchOnWindowFocus: false,
   });
 
@@ -61,7 +48,7 @@ const useKnowledge = ({
     const formData = new FormData();
     formData.append("file", file);
     const response = await axiosInstance.post(
-      "/api/knowledge/upload-file",
+      "/api/resource/upload-file",
       formData,
       {
         headers: {
@@ -80,7 +67,8 @@ const useKnowledge = ({
   const { data: chunks, isFetching: isFetchingChunk } = useQuery({
     queryKey: ["chunks"],
     queryFn: async () => {
-      const data = await axiosInstance.get(`/api/knowledge/chunks/${id}`);
+      return [];
+      const data = await axiosInstance.get(`/api/resource/chunks/${id}`);
       return data ?? [];
     },
     enabled: !!id,
@@ -90,7 +78,7 @@ const useKnowledge = ({
     useMutation({
       mutationFn: async (knowledgeId: number) => {
         const data = await axiosInstance.get(
-          `/api/knowledge/sync/${knowledgeId}`
+          `/api/resource/sync/${knowledgeId}`
         );
         return data || [];
       },
@@ -98,7 +86,7 @@ const useKnowledge = ({
 
   const { mutate: createLinkKnowLedge } = useMutation({
     mutationFn: async ({ url }: LinkKnowLedge) => {
-      const data = await axiosInstance.post("/api/knowledge/link", {
+      const data = await axiosInstance.post("/api/resource/link", {
         url,
       });
       return data || [];
@@ -108,14 +96,14 @@ const useKnowledge = ({
         title: "Created",
         description: `Created at ${new Date().toLocaleTimeString()}`,
       });
-      refetchMaterialItems();
+      refetchResource();
     },
     onError: () => {
       toast({
         title: "Error",
         description: `Error at ${new Date().toLocaleTimeString()}`,
       });
-      refetchMaterialItems();
+      refetchResource();
     },
   });
 
@@ -123,7 +111,7 @@ const useKnowledge = ({
     {
       mutationFn: async (knowledgeId: number) => {
         const data = await axiosInstance.get(
-          `/api/knowledge/sync-web/${knowledgeId}`
+          `/api/resource/sync-web/${knowledgeId}`
         );
         return data || [];
       },
@@ -133,7 +121,7 @@ const useKnowledge = ({
   const { mutate: deleteLink } = useMutation({
     mutationFn: async (knowledgeId: number) => {
       const data = await axiosInstance.delete(
-        `/api/knowledge/link/${knowledgeId}`
+        `/api/resource/link/${knowledgeId}`
       );
       return data || [];
     },
@@ -142,7 +130,7 @@ const useKnowledge = ({
         title: "Deleted",
         description: `Deleted at ${new Date().toLocaleTimeString()}`,
       });
-      refetchMaterialItems();
+      refetchResource();
     },
     onError: () => {
       toast({
@@ -151,14 +139,14 @@ const useKnowledge = ({
           Error at ${new Date().toLocaleTimeString()}
           `,
       });
-      refetchMaterialItems();
+      refetchResource();
     },
   });
 
   const { mutate: deleteFileKnowledge } = useMutation({
     mutationFn: async (knowledgeId: number) => {
       const data = await axiosInstance.delete(
-        `/api/knowledge/file/${knowledgeId}`
+        `/api/resource/file/${knowledgeId}`
       );
       return data || [];
     },
@@ -169,7 +157,7 @@ const useKnowledge = ({
           Error at ${new Date().toLocaleTimeString()}
           `,
       });
-      refetchMaterialItems();
+      refetchResource();
     },
 
     onSuccess: () => {
@@ -177,7 +165,7 @@ const useKnowledge = ({
         title: "Deleted",
         description: `Deleted at ${new Date().toLocaleTimeString()}`,
       });
-      refetchMaterialItems();
+      refetchResource();
     },
   });
 
@@ -189,7 +177,7 @@ const useKnowledge = ({
     materialItemsLoading,
     chunks,
     handleUploadFile,
-    refetchMaterialItems,
+    refetchMaterialItems: refetchResource,
     syncDataFromUrlToVector,
     isSyncUrl,
     isFetchingChunk,
@@ -198,4 +186,4 @@ const useKnowledge = ({
   };
 };
 
-export default useKnowledge;
+export default useResource;
