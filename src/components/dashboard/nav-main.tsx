@@ -23,13 +23,14 @@ import { useAuth, useUserStore } from "@/hooks/data/useAuth";
 // Type definitions for better maintainability
 type SubMenuItem = {
   title: string;
-  url: string;
+  url?: string;
   role: string[];
+  isActive?: boolean; // Add isActive property to track active state
 };
 
 type MenuItem = {
   title: string;
-  url: string;
+  url?: string;
   icon?: LucideIcon;
   isActive?: boolean;
   role: string[];
@@ -69,7 +70,13 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
         <SidebarMenuSubItem key={subItem.title}>
           <SidebarMenuSubButton
             asChild
-            onClick={() => router.push(subItem.url)}
+            onClick={() => {
+              if (subItem.url) {
+                router.push(subItem.url);
+              }
+            }}
+            data-active={subItem.isActive}
+            className={subItem.isActive ? "bg-accent" : ""}
           >
             <a href={subItem.url}>
               <span>{subItem.title}</span>
@@ -93,7 +100,11 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton
-                  onClick={() => router.push(`${item.url}`)}
+                  onClick={() => {
+                    if (item.url) {
+                      router.push(item.url);
+                    }
+                  }}
                   tooltip={item.title}
                 >
                   {item.icon && <item.icon />}

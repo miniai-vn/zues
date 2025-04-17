@@ -46,7 +46,6 @@ const data = {
   navMain: [
     {
       title: "Commom",
-      url: "/dashboard/meterials",
       icon: SquareTerminal,
       isActive: true,
       role: [Role.Manager, Role.Staff],
@@ -62,28 +61,13 @@ const data = {
     },
     {
       title: "Data source",
-      url: "/dashboard/material-items",
       icon: SquareTerminal,
-      isActive: true,
+      isActive: false,
       role: [Role.Manager],
       items: [
         {
-          title: "Links",
-          url: "/dashboard/link",
-          icon: SquareTerminal,
-          isActive: true,
-          role: [Role.Manager],
-        },
-        {
-          title: "Files",
-          url: "/dashboard/file",
-          icon: SquareTerminal,
-          isActive: true,
-          role: [Role.Manager],
-        },
-        {
-          title: "FAQs",
-          url: "/dashboard/faqs",
+          title: "Quản lý phòng ban",
+          url: "/dashboard/departments",
           icon: SquareTerminal,
           isActive: true,
           role: [Role.Manager],
@@ -92,7 +76,6 @@ const data = {
     },
     {
       title: "Manager",
-      url: "/dashboard/material-items",
       icon: SquareTerminal,
       isActive: true,
       role: [Role.Manager],

@@ -17,7 +17,6 @@ export type LinkKnowLedge = {
 };
 const useResource = ({
   id,
-  type,
 }: {
   id?: string;
   type?: string;
@@ -27,11 +26,7 @@ const useResource = ({
 }) => {
   const { toast } = useToast();
 
-  const {
-    data: materialItems,
-    isLoading: materialItemsLoading,
-    refetch: refetchResource,
-  } = useQuery({
+  const { data: materialItems, refetch: refetchResource } = useQuery({
     queryKey: ["resource", id],
     queryFn: async () => {
       const res = await axiosInstance.get(`/api/resources/by-department/${id}`);
@@ -48,7 +43,7 @@ const useResource = ({
     const formData = new FormData();
     formData.append("file", file);
     const response = await axiosInstance.post(
-      "/api/resource/upload-file",
+      "/api/resources/upload-file",
       formData,
       {
         headers: {
@@ -57,132 +52,99 @@ const useResource = ({
       }
     );
 
-    return response.data.path;
+    return response.data;
   };
 
-  /*
-   * fetch chunks of material item
-   */
-
-  const { data: chunks, isFetching: isFetchingChunk } = useQuery({
-    queryKey: ["chunks"],
-    queryFn: async () => {
-      return [];
-      const data = await axiosInstance.get(`/api/resource/chunks/${id}`);
-      return data ?? [];
-    },
-    enabled: !!id,
-  });
-
-  const { mutate: syncKnowLedgeToVector, isPending: isSyncKnowledge } =
-    useMutation({
-      mutationFn: async (knowledgeId: number) => {
-        const data = await axiosInstance.get(
-          `/api/resource/sync/${knowledgeId}`
-        );
-        return data || [];
-      },
-    });
-
-  const { mutate: createLinkKnowLedge } = useMutation({
-    mutationFn: async ({ url }: LinkKnowLedge) => {
-      const data = await axiosInstance.post("/api/resource/link", {
-        url,
-      });
-      return data || [];
-    },
-    onSuccess: () => {
-      toast({
-        title: "Created",
-        description: `Created at ${new Date().toLocaleTimeString()}`,
-      });
-      refetchResource();
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
-      });
-      refetchResource();
-    },
-  });
-
-  const { mutate: syncDataFromUrlToVector, isPending: isSyncUrl } = useMutation(
-    {
-      mutationFn: async (knowledgeId: number) => {
-        const data = await axiosInstance.get(
-          `/api/resource/sync-web/${knowledgeId}`
-        );
-        return data || [];
-      },
-    }
-  );
-
-  const { mutate: deleteLink } = useMutation({
-    mutationFn: async (knowledgeId: number) => {
-      const data = await axiosInstance.delete(
-        `/api/resource/link/${knowledgeId}`
+  const { mutate: createResource } = useMutation({
+    mutationFn: async ({
+      file,
+      departmentId,
+    }: {
+      file: File;
+      departmentId: string;
+    }) => {
+      debugger;
+      const data = await handleUploadFile(file);
+      const response = await axiosInstance.post(
+        `/api/resources/`,
+        {
+          department_id: departmentId,
+          extra: data,
+          path: data.path,
+          name: data.name,
+          type: "document",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      return data || [];
+      return response.data;
     },
     onSuccess: () => {
       toast({
-        title: "Deleted",
-        description: `Deleted at ${new Date().toLocaleTimeString()}`,
+        title: "Tải lên thành công",
+        description: "Tải lên tài liệu thành công",
       });
       refetchResource();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `
-          Error at ${new Date().toLocaleTimeString()}
-          `,
+        title: "Tải lên thất bại",
+        description: "Tải lên tài liệu thất bại",
       });
-      refetchResource();
     },
   });
 
-  const { mutate: deleteFileKnowledge } = useMutation({
-    mutationFn: async (knowledgeId: number) => {
-      const data = await axiosInstance.delete(
-        `/api/resource/file/${knowledgeId}`
+  const { mutate: deleteResource } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await axiosInstance.delete(`/api/resources/${id}`, {});
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Xóa thành công",
+        description: "Xóa tài liệu thành công",
+      });
+      refetchResource();
+    },
+    onError: () => {
+      toast({
+        title: "Xóa thất bại",
+        description: "Xóa tài liệu thất bại",
+      });
+    },
+  });
+
+  const { mutate: createChunks } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await axiosInstance.patch(
+        `/api/resources/create-chunks/${id}`
       );
-      return data || [];
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Tạo thành công",
+        description: "Tạo tài liệu thành công",
+      });
+      refetchResource();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `
-          Error at ${new Date().toLocaleTimeString()}
-          `,
+        title: "Tạo thất bại",
+        description: "Tạo tài liệu thất bại",
       });
-      refetchResource();
-    },
-
-    onSuccess: () => {
-      toast({
-        title: "Deleted",
-        description: `Deleted at ${new Date().toLocaleTimeString()}`,
-      });
-      refetchResource();
     },
   });
-
   return {
-    createLinkKnowLedge,
-    deleteLink,
-    deleteFileKnowledge,
+    deleteResource,
+    createResource,
+    createChunks,
     materialItems,
-    materialItemsLoading,
-    chunks,
     handleUploadFile,
     refetchMaterialItems: refetchResource,
-    syncDataFromUrlToVector,
-    isSyncUrl,
-    isFetchingChunk,
-    syncKnowLedgeToVector,
-    isSyncKnowledge,
   };
 };
 

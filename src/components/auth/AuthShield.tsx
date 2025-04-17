@@ -15,7 +15,7 @@ export default function AuthShield({
   const router = useRouter();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
-  const [setIsAuthorized] = useState(false);
+  const [, setIsAuthorized] = useState<boolean>(false);
 
   useEffect(() => {
     // Check for token and user in localStorage
