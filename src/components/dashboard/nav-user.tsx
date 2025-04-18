@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, LogOut, Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -31,6 +31,10 @@ export function NavUser() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     router.push("/login");
+  };
+
+  const updateProfile = () => {
+    router.push("/dashboard/users/update");
   };
 
   return (
@@ -77,6 +81,11 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
+            <DropdownMenuItem onClick={updateProfile}>
+              <Edit />
+              Update Profile
+            </DropdownMenuItem>
 
             <DropdownMenuItem onClick={logout}>
               <LogOut />
