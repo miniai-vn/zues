@@ -9,11 +9,11 @@ export type UserData = {
   id?: string;
   username: string;
   password: string;
-  name: string;
-  roles: string[];
-  email: string;
-  phone: string;
-  avatar: string;
+  name?: string;
+  // roles: string[];
+  email?: string;
+  phone?: string;
+  avatar?: string;
 };
 
 export type UserUpdateData = {

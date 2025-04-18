@@ -18,12 +18,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { AlertDialogComponent } from "../../../components/dashboard/alert-modal";
 import { UserModal } from "./create-user-modal";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const { deleteUser, createUser, users } = useAuth(page, limit, search);
+  const debouncedSearch = useDebouncedValue(search, 500);
+  const { deleteUser, createUser, users } = useAuth(page, limit, debouncedSearch);
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "username",

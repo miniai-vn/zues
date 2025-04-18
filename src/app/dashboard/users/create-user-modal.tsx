@@ -20,7 +20,11 @@ import { z } from "zod";
 
 const FormSchema = z.object({
   username: z.string().nonempty("Please enter a username."),
-  password: z.string().nonempty("Please enter a password."),
+  password: z.string().min(8, "Password must be at least 8 characters long.").nonempty("Please enter a password."),
+  name: z.string().optional(),
+  email: z.string().email("Invalid email address.").optional(),
+  phone: z.string().regex(/^\d+$/, "Phone number must be a number").optional(),
+  avatar: z.string().url().optional(),
 });
 
 interface AddUserProps {
@@ -57,7 +61,7 @@ export function UserModal({ onChange, user }: AddUserProps) {
       <DialogTrigger asChild>
         {user ? <Badge>Update</Badge> : <Button>+ Create</Button>}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{user ? "Update user" : "Create user"}</DialogTitle>
         </DialogHeader>
@@ -87,7 +91,67 @@ export function UserModal({ onChange, user }: AddUserProps) {
                     <FormLabel>Password</FormLabel>
                     <Input
                       type="password"
-                      value={field.value ?? "123123"}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full"
+                    />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      type="text"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full"
+                    />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <Input
+                      type="email"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full"
+                    />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <Input
+                      type="text"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full"
+                    />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="avatar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Avatar</FormLabel>
+                    <Input
+                      type="text"
+                      value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full"
                     />
