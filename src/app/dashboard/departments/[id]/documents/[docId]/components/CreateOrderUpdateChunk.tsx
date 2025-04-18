@@ -8,123 +8,131 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { Chunk } from "@/hooks/data/useChunk";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const FormSchema = z.object({
-  name: z.string({
-    required_error: "Please enter a chunk name.",
-  }),
-  description: z.string({
-    required_error: "Please enter a chunk description.",
-  }),
+// Define schema for form validation
+const chunkFormSchema = z.object({
+  text: z.string().min(1, "Please enter chunk text"),
 });
 
-interface CreateOrUpdateChunktModalProps {
-  chunk?: any;
-  onChange: (data: {
-    id?: string;
-    name: string;
-    description: string;
-    isPublic?: boolean;
-  }) => void;
+type ChunkFormValues = z.infer<typeof chunkFormSchema>;
+
+interface CreateOrUpdateChunkModalProps {
+  chunk?: Chunk;
+  onChange: (data: Chunk) => void;
 }
 
 export function CreateOrUpdateChunkModal({
   chunk,
   onChange,
-}: CreateOrUpdateChunktModalProps) {
+}: CreateOrUpdateChunkModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: chunk || { name: "", description: "" },
+
+  const form = useForm<ChunkFormValues>({
+    resolver: zodResolver(chunkFormSchema),
+    defaultValues: {
+      text: chunk?.text || "",
+    },
   });
 
+  // Reset form when chunk props change
   useEffect(() => {
-    if (chunk) {
-      form.reset(chunk);
+    if (chunk && isOpen) {
+      form.reset({
+        text: chunk.text || "",
+      });
     }
-  }, [chunk, form]);
+  }, [chunk, form, isOpen]);
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    onChange({ ...data, id: chunk?.id, isPublic: false });
+  const onSubmit = (data: ChunkFormValues) => {
+    onChange({
+      id: chunk?.id || crypto.randomUUID(),
+      text: data.text,
+      isPublic: false,
+    });
+    form.reset();
+    setIsOpen(false);
+  };
+
+  const handleClose = () => {
     form.reset();
     setIsOpen(false);
   };
 
   return (
     <Dialog
+      open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
+        if (!open) {
+          form.reset();
+        }
+        if (open && chunk) {
+          form.reset({
+            text: chunk.text || "",
+          });
+        }
       }}
-      open={isOpen}
     >
       <DialogTrigger asChild>
         {chunk ? (
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8"
+            aria-label="Edit chunk"
+          >
             <Pencil className="h-4 w-4 text-gray-500" />
           </Button>
         ) : (
           <Button>+ Tạo phân đoạn mới</Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-[800px] max-w-[90vw]">
         <DialogHeader>
-          <DialogTitle>{chunk ? "Chỉnh sửa" : "Tạo phòng ban"}</DialogTitle>
+          <DialogTitle>
+            {chunk ? "Chỉnh sửa phân đoạn" : "Tạo phân đoạn mới"}
+          </DialogTitle>
         </DialogHeader>
-        <div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tên phòng ban</FormLabel>
-                    <Textarea
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full"
-                    />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mô tả</FormLabel>
-                    <Textarea
-                      value={field.value ?? ""}
-                      placeholder="Mô tả này như prompt và được sử dụng để hướng dẫn AI"
-                      onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full h-40"
-                    />
-                  </FormItem>
-                )}
-              />
-              <div className="w-full flex gap-4">
-                <Button
-                  type="button"
-                  className="w-full bg-white text-black border"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Hủy bỏ
-                </Button>
-                <Button type="submit" className="w-full">
-                  {chunk ? "Lưu" : "Tạo"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="text"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Textarea
+                    {...field}
+                    placeholder="Nhập nội dung phân đoạn..."
+                    className="w-full h-80"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex gap-4 w-full">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleClose}
+              >
+                Hủy bỏ
+              </Button>
+              <Button type="submit" className="w-full">
+                {chunk ? "Lưu" : "Tạo"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
