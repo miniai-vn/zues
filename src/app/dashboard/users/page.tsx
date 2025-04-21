@@ -36,23 +36,6 @@ const UserComponents = () => {
   const { deleteUser, createUser, users } = useAuth(page, limit, debouncedSearch);
   const columns: ColumnDef<User>[] = [
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox 
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox 
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
       accessorKey: "name",
       header: "Tên nhân viên",
       cell: ({ row }) => (
@@ -177,10 +160,14 @@ const UserComponents = () => {
             </UserModal>
           </div>
           <Tables
-            onChange={(page) => {
-              setPage(page);
+            // onChange={(page) => {
+            //   setPage(page);
+            // }}
+            pagination={{
+              page: page,
+              limit: limit,
+              search: debouncedSearch,
             }}
-            page={page}
             columns={columns}
             data={users ?? []}
           />
