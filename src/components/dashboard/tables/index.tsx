@@ -3,13 +3,16 @@ import { DataTable } from "./data-table";
 interface DataTableProps {
   columns: any;
   data: any;
-  onChange?: (value: any) => void;
-  page?: number;
+  pagination: {
+    page: number;
+    limit: number;
+    search?: string;
+  }
 }
 
-const Tables = ({ columns, data, onChange, page }: DataTableProps) => {
+const Tables = ({ columns, data, pagination }: DataTableProps) => {
   return (
-    <DataTable page={page} columns={columns} data={data} onChange={onChange} />
+    <DataTable pagination={pagination} columns={columns} data={data}/>
   );
 };
 

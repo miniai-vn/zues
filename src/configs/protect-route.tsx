@@ -1,6 +1,7 @@
 // components/ProtectedRoute.tsx
 import { useUserStore } from "@/hooks/data/useAuth";
 import { ReactNode, useEffect, useState } from "react";
+import { Role as RoleModel } from "@/hooks/data/useRoles";
 
 export enum Role {
   Manager = "manager",
@@ -28,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         setIsRedirecting(true);
       }
     } else if (
-      !user.roles.some((role: string) => requiredRole.includes(role))
+      !user.roles.some((role: RoleModel) => requiredRole.includes(role.name))
     ) {
       setIsRedirecting(true);
     }

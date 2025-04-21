@@ -10,39 +10,49 @@ import {
 } from "@/components/ui/dialog";
 
 import { Badge } from "@/components/ui/badge";
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UserData } from "@/hooks/data/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { User, UserData } from "@/hooks/data/useAuth";
+import { Eye, EyeOff } from "lucide-react";
+import useDepartments from "@/hooks/data/useDepartments";
+import useRoles from "@/hooks/data/useRoles";
 
 const FormSchema = z.object({
   username: z.string().nonempty("Please enter a username."),
-  password: z.string().nonempty("Please enter a password."),
+  password: z.string().min(8, "Password must be at least 8 characters long.").nonempty("Please enter a password."),
+  phone: z.string().regex(/^\d+$/, "Phone number must be a number").optional(),
+  roles: z.array(z.string()).nonempty("Please select at least one role."),
+  departments: z.array(z.string()).nonempty("Please select at least one department."),
 });
 
 interface AddUserProps {
-  user?: UserData;
+  user?: User;
   onChange?: (data: UserData) => void;
+  children?: React.ReactNode;
 }
 
-export function UserModal({ onChange, user }: AddUserProps) {
+export function UserModal({ user, children, onChange }: AddUserProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: user || { username: "", password: "" },
+    defaultValues: {
+      username: user?.username || "",
+      password: "",
+      phone: user?.phone || "",
+      roles: user?.roles?.map(role => role.name) || [],
+      departments: user?.departments?.map(dept => dept.id) || [],
+    },
   });
-
-  useEffect(() => {
-    if (user) {
-      form.reset(user);
-    }
-  }, [user, form]);
+  const { departments } = useDepartments();
+  const { roles } = useRoles();
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    onChange?.({ ...data, ...(user?.id ? { id: user.id } : {}) });
+    onChange?.({...data, id: user?.id}); // Update later
     setIsOpen(false);
     form.reset();
   };
@@ -55,55 +65,161 @@ export function UserModal({ onChange, user }: AddUserProps) {
       open={isOpen}
     >
       <DialogTrigger asChild>
-        {user ? <Badge>Update</Badge> : <Button>+ Create</Button>}
+        {children ? (
+          children
+        ) : (
+          <Badge className="border bg-white text-blue-700 border-blue-700">
+            {user ? "Update" : "Create"}
+          </Badge>
+        )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{user ? "Update user" : "Create user"}</DialogTitle>
+          <DialogTitle>{user ? "Cập nhật tài khoản nhân viên" : "Tạo tài khoản nhân viên"}</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <Input
-                      type="email"
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full"
-                    />
+                    <FormLabel>Tài khoản</FormLabel>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        className="w-full pr-20"
+                      />
+                      <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                        @gmail.com
+                      </span>
+                    </div>
+                    {fieldState.error && (
+                      <FormMessage>{fieldState.error.message}</FormMessage>
+                    )}
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <Input
-                      type="password"
-                      value={field.value ?? "123123"}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full"
-                    />
+                    <FormLabel>Mật khẩu</FormLabel>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        className="w-full pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                      >
+                        {showPassword ? <Eye /> : <EyeOff />}
+                      </button>
+                    </div>
+                    {fieldState.error && (
+                      <FormMessage>{fieldState.error.message}</FormMessage>
+                    )}
                   </FormItem>
                 )}
               />
-              <div className="w-full flex gap-4">
-                <Button
-                  type="button"
-                  className="w-full bg-white text-black border"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="w-full">
-                  Submit
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel>Số điện thoại</FormLabel>
+                    <Input
+                      type="text"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full"
+                    />
+                    {fieldState.error && (
+                      <FormMessage>{fieldState.error.message}</FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <div className="flex gap-4">
+                <FormField
+                  control={form.control}
+                  name="roles"
+                  render={({ field, fieldState }) => (
+                    <FormItem className="w-1/2">
+                      <FormLabel>Vai trò</FormLabel>
+                      <div className="flex flex-wrap gap-2">
+                        {roles?.map((role) => (
+                          <label key={role.id} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              value={role.name}
+                              checked={field.value.includes(role.name)}
+                              onChange={(e) => {
+                                const value = role.name;
+                                if (e.target.checked) {
+                                  field.onChange([...field.value, value]);
+                                } else {
+                                  field.onChange(field.value.filter((v) => v !== value));
+                                }
+                              }}
+                              className="form-checkbox h-4 w-4 text-blue-600"
+                            />
+                            <span>{role.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {fieldState.error && (
+                        <FormMessage>{fieldState.error.message}</FormMessage>
+                      )}
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="departments"
+                  render={({ field, fieldState }) => (
+                    <FormItem className="w-1/2">
+                      <FormLabel>Bộ phận</FormLabel>
+                      <div className="flex flex-wrap gap-2">
+                        {departments?.map((department) => (
+                          <label key={department.id} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              value={String(department.id)}
+                              checked={Array.isArray(field.value) && field.value.includes(String(department.id) ?? "")}
+                              onChange={(e) => {
+                                const value = String(department.id);
+                                const currentValue = Array.isArray(field.value) ? field.value : [];
+                                if (e.target.checked) {
+                                  field.onChange([...currentValue, value]);
+                                } else {
+                                  field.onChange(currentValue.filter((v) => v !== value));
+                                }
+                              }}
+                              className="form-checkbox h-4 w-4 text-blue-600"
+                            />
+                            <span>{department.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {fieldState.error && (
+                        <FormMessage></FormMessage>
+                      )}
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="w-full flex justify-end">
+                <Button type="submit" className="bg-blue-600 text-white">
+                  {user ? "Cập nhật" : "Tạo tài khoản"}
                 </Button>
               </div>
             </form>

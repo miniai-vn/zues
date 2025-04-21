@@ -3,16 +3,38 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { create } from "zustand";
 import { useToast } from "../use-toast";
+import { UserUpdateFormValues } from '../../components/dashboard/user-update-form';
+import { Role } from "./useRoles";
+import { Department } from "./useDepartments";
+
 export type UserData = {
   id?: string;
   username: string;
   password: string;
+  name?: string;
+  roles: string[];
+  email?: string;
+  phone?: string;
+  avatar?: string;
+  departments: string[];
+  position?: string;
 };
+
+export type UserUpdateData = {
+  id: string | undefined;
+} & UserUpdateFormValues;
 
 export type User = {
   id: string;
   username: string;
-  roles: string[];
+  password: string;
+  name: string;
+  roles: Role[];
+  email: string;
+  phone: string;
+  avatar: string;
+  departments: Department[];
+  position: string;
 };
 
 export const useUserStore = create<{
@@ -41,6 +63,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return (response.data as User[]) ?? [];
     },
     enabled: !!user,
+    placeholderData: prev => prev,
   });
 
   const { mutate: signIn, isSuccess } = useMutation({
@@ -91,11 +114,16 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return response;
     },
   });
-
+  
   const { mutate: updateUser } = useMutation({
-    mutationFn: async (data: UserData) => {
+    mutationFn: async (data: UserUpdateData) => {
+      const { id, ..._ } = data;
+      if (!id) {
+        throw new Error("User ID is required for update");
+      }
+
       const response = await axiosInstance.post(
-        `/api/auth/users/${data.id}`,
+        `/api/auth/users/${data?.id}`,
         data
       );
       return response;
