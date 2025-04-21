@@ -6,6 +6,7 @@ export interface Chunk {
   text: string;
   createdAt: string;
   updatedAt: string;
+  isActive: boolean;
   resourceId: string;
 }
 

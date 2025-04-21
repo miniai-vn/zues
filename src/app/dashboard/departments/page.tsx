@@ -4,12 +4,20 @@ import useDepartments from "@/hooks/data/useDepartments";
 import { useState } from "react";
 import CardDepartmentList from "./components/CardDepartmentList";
 import { CreateDeptModal } from "./components/CreateDeptModal";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
-const DepartmentComponent = () => {
+export default function DepartmentPageComponent() {
   const { departments, createDepartment } = useDepartments();
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
 
-  // Handle individual department selection
   const toggleDepartmentSelection = (id: string, selected: boolean) => {
     if (selected) {
       setSelectedDepartments((prev) => [...prev, id]);
@@ -20,6 +28,18 @@ const DepartmentComponent = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="flex items-center gap-2 py-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">Quản lý phòng ban</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
       <div className="flex justify-between gap-4 items-center">
         <Input
           placeholder="Search by question"
@@ -43,6 +63,4 @@ const DepartmentComponent = () => {
       )}
     </div>
   );
-};
-
-export default DepartmentComponent;
+}

@@ -1,10 +1,11 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
-export type MaterialItem = {
+export type Resource = {
   id?: number;
   url?: string;
   file?: File | string;
+  isActive?: boolean;
   name?: string;
   type?: string;
   size?: string;
@@ -17,6 +18,10 @@ export type LinkKnowLedge = {
 };
 const useResource = ({
   id,
+  type,
+  search,
+  limit = 10,
+  page = 1,
 }: {
   id?: string;
   type?: string;
@@ -27,10 +32,29 @@ const useResource = ({
   const { toast } = useToast();
 
   const { data: materialItems, refetch: refetchResource } = useQuery({
-    queryKey: ["resource", id],
+    queryKey: ["resource", id, page, limit, search, type],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/api/resources/by-department/${id}`);
-      return res.data ?? [];
+      // Build query parameters for pagination
+      const params = new URLSearchParams();
+      if (page) params.append("page", page.toString());
+      if (limit) params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+      if (type) params.append("type", type);
+
+      const queryString = params.toString();
+      const endpoint = `/api/resources/by-department/${id}${
+        queryString ? `?${queryString}` : ""
+      }`;
+
+      const res = await axiosInstance.get(endpoint);
+
+      // Assuming the API returns data in the format { items: [...], total: number }
+      return {
+        items: res.data.items || res.data || [], // Adapt based on your API response structure
+        totalCount: res.data.totalCount || res.data?.length || 0,
+        page: page,
+        limit: limit,
+      };
     },
     refetchOnWindowFocus: false,
   });
@@ -138,11 +162,32 @@ const useResource = ({
       });
     },
   });
+
+  const { mutate: syncResource } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await axiosInstance.patch(`/api/resources/sync/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Tạo thành công",
+        description: "Tạo tài liệu thành công",
+      });
+      refetchResource();
+    },
+    onError: () => {
+      toast({
+        title: "Tạo thất bại",
+        description: "Tạo tài liệu thất bại",
+      });
+    },
+  });
   return {
     deleteResource,
     createResource,
     createChunks,
     materialItems,
+    syncResource,
     handleUploadFile,
     refetchMaterialItems: refetchResource,
   };
