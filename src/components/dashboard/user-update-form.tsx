@@ -25,6 +25,7 @@ export function UserForm({ onSubmit, initialData }: UserFormProps) {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<UserUpdateFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -34,6 +35,16 @@ export function UserForm({ onSubmit, initialData }: UserFormProps) {
       avatar: initialData?.avatar || "",
     },
   });
+
+  const handleFormSubmit = (data: UserUpdateFormValues) => {
+    onSubmit(data);
+    reset({
+      name: "",
+      email: "",
+      phone: "",
+      avatar: "",
+    });
+  };
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
@@ -52,7 +63,7 @@ export function UserForm({ onSubmit, initialData }: UserFormProps) {
   return (
     <form
       className="space-y-6 w-full max-w-3xl mx-auto p-8"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)}
     >
       <div className="space-y-8">
         <div className="space-y-1">

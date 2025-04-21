@@ -4,16 +4,20 @@ import { useRouter } from "next/navigation";
 import { create } from "zustand";
 import { useToast } from "../use-toast";
 import { UserUpdateFormValues } from '../../components/dashboard/user-update-form';
+import { Role } from "./useRoles";
+import { Department } from "./useDepartments";
 
 export type UserData = {
   id?: string;
   username: string;
   password: string;
   name?: string;
-  // roles: string[];
+  roles: string[];
   email?: string;
   phone?: string;
   avatar?: string;
+  departments: string[];
+  position?: string;
 };
 
 export type UserUpdateData = {
@@ -23,11 +27,14 @@ export type UserUpdateData = {
 export type User = {
   id: string;
   username: string;
+  password: string;
   name: string;
-  roles: string[];
+  roles: Role[];
   email: string;
   phone: string;
   avatar: string;
+  departments: Department[];
+  position: string;
 };
 
 export const useUserStore = create<{
@@ -56,6 +63,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return response.data ?? [];
     },
     enabled: !!user,
+    placeholderData: prev => prev,
   });
 
   const { mutate: signIn, isSuccess } = useMutation({

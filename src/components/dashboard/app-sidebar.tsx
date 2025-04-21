@@ -75,13 +75,13 @@ const data = {
       ],
     },
     {
-      title: "Manager",
+      title: "Quản lý",
       icon: SquareTerminal,
       isActive: true,
       role: [Role.Manager],
       items: [
         {
-          title: "Users",
+          title: "Quản lý nhân viên",
           url: "/dashboard/users",
           icon: SquareTerminal,
           isActive: true,
