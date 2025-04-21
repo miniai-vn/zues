@@ -1,24 +1,15 @@
 "use client";
+import { PageHeader } from "@/components/dashboard/common/page-header";
 import ActionPopover from "@/components/dashboard/popever";
 import { DataTable } from "@/components/dashboard/tables/data-table";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
@@ -74,7 +65,7 @@ const DepartmentDetailComponent = () => {
   const columns: ColumnDef<Resource>[] = [
     {
       id: "index",
-      header: "STT",
+      header: () => <div className="text-center">STT</div>, // Add this to center the header
       cell: ({ row }) => (
         <div className="flex items-center justify-center">{row.index + 1}</div>
       ),
@@ -126,7 +117,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       id: "actions",
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div className="text-center">Hành động</div>,
       cell: (row) => {
         const documentId = row.row.original.id as unknown as string;
         const isActive = row.row.original.isActive === true;
@@ -165,21 +156,19 @@ const DepartmentDetailComponent = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="flex items-center gap-2 py-2 px-4">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">Quản lý phòng ban</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Quản lý tài liệu</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
+      <PageHeader
+        backButtonHref="/dashboard/departments"
+        breadcrumbs={[
+          {
+            label: "Quản lý phòng ban",
+            href: "/dashboard/departments",
+          },
+          {
+            label: "Quản lý tài liệu",
+            isCurrentPage: true,
+          },
+        ]}
+      />
       <Input
         placeholder="Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)"
         type="file"

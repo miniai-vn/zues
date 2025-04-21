@@ -88,7 +88,7 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Tính năng</SidebarGroupLabel>
       <SidebarMenu>
         {filteredItems.map((item) => (
           <Collapsible

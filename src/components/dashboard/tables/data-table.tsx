@@ -5,10 +5,12 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  RowSelectionState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Pagination,
   PaginationContent,
@@ -19,6 +21,13 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -26,14 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface PaginationMeta {
   page: number;
@@ -46,8 +48,9 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   pagination?: PaginationMeta;
   onPaginationChange?: (page: number) => void;
-  onPageSizeChange?: (limit: number) => void; // Add this prop
+  onPageSizeChange?: (limit: number) => void;
   onSortingChange?: (sorting: SortingState) => void;
+  onRowSelectionChange?: (selectedRows: TData[]) => void;
   isLoading?: boolean;
 }
 
@@ -56,36 +59,28 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   onPaginationChange,
-  onPageSizeChange, // Add this parameter
+  onPageSizeChange,
   onSortingChange,
+  onRowSelectionChange,
   isLoading = false,
 }: DataTableProps<TData, TValue>) {
-  // Initialize sorting state
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  // Add filtered data state
   const [filteredData, setFilteredData] = useState<TData[]>(data);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  // Determine if we're using server-side pagination
   const hasServerPagination = Boolean(pagination && onPaginationChange);
-
-  // Calculate total pages
   const totalItems = pagination?.total || data.length;
   const pageSize = pagination?.limit || 10;
   const totalPages = Math.ceil(totalItems / pageSize);
   const currentPage = pagination?.page || 1;
 
-  // Handle sorting changes
   const handleSortingChange = (updatedSorting: SortingState) => {
     setSorting(updatedSorting);
-
-    // If server-side sorting is enabled, call the callback
     if (onSortingChange) {
       onSortingChange(updatedSorting);
     }
   };
 
-  // Add handler for page size changes
   const handlePageSizeChange = (value: string) => {
     const newSize = parseInt(value);
     if (onPageSizeChange) {
@@ -93,26 +88,62 @@ export function DataTable<TData, TValue>({
     }
   };
 
-  // Update filteredData based on pagination and data
   useEffect(() => {
-    // If we're using client-side pagination, slice the data
     if (!hasServerPagination) {
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
       setFilteredData(data.slice(start, end));
     } else {
-      // For server-side pagination, use the full data as is
       setFilteredData(data);
     }
   }, [data, currentPage, pageSize, hasServerPagination]);
 
-  // Initialize the table
+  useEffect(() => {
+    if (onRowSelectionChange) {
+      const selectedRows = Object.keys(rowSelection).map(
+        (key) => filteredData[parseInt(key)]
+      );
+      onRowSelectionChange(selectedRows);
+    }
+  }, [rowSelection, filteredData, onRowSelectionChange]);
+
+  const columnsWithSelection = [
+    {
+      id: "select",
+      header: ({ table }: { table: any }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="translate-y-[2px]"
+        />
+      ),
+      cell: ({ row }: { row: any }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-[2px]"
+        />
+      ),
+      enableSorting: false,
+      size: 40,
+    },
+    ...columns,
+  ];
+
   const table = useReactTable({
-    data: filteredData, // Use filteredData here instead of data
-    columns,
+    data: filteredData,
+    columns: columnsWithSelection,
     state: {
       sorting,
+      rowSelection,
     },
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: (updaterOrValue) => {
       const updatedSorting =
         typeof updaterOrValue === "function"
@@ -122,10 +153,9 @@ export function DataTable<TData, TValue>({
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    manualSorting: Boolean(onSortingChange), // Tell the table you're handling sorting manually if callback provided
+    manualSorting: Boolean(onSortingChange),
   });
 
-  // Handle page changes
   const handlePageChange = (newPage: number) => {
     if (onPaginationChange) {
       onPaginationChange(newPage);
@@ -135,7 +165,6 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-md border">
       <div className="relative">
-        {/* Loading overlay */}
         {isLoading && (
           <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
             <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
@@ -245,7 +274,6 @@ export function DataTable<TData, TValue>({
                   />
                 </PaginationItem>
 
-                {/* First page */}
                 <PaginationItem>
                   <PaginationLink
                     href="#"
@@ -259,14 +287,12 @@ export function DataTable<TData, TValue>({
                   </PaginationLink>
                 </PaginationItem>
 
-                {/* Show ellipsis if needed */}
                 {currentPage > 3 && (
                   <PaginationItem>
                     <PaginationEllipsis />
                   </PaginationItem>
                 )}
 
-                {/* Pages around current page */}
                 {Array.from({ length: 3 }, (_, i) => {
                   const pageNumber = currentPage - 1 + i;
                   if (pageNumber <= 1 || pageNumber >= totalPages) return null;
@@ -286,14 +312,12 @@ export function DataTable<TData, TValue>({
                   );
                 })}
 
-                {/* Show ellipsis if needed */}
                 {currentPage < totalPages - 2 && (
                   <PaginationItem>
                     <PaginationEllipsis />
                   </PaginationItem>
                 )}
 
-                {/* Last page (only if different from first page) */}
                 {totalPages > 1 && (
                   <PaginationItem>
                     <PaginationLink
