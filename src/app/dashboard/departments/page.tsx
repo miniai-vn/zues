@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import useDepartments from "@/hooks/data/useDepartments";
 import { useState } from "react";
 import CardDepartmentList from "./components/CardDepartmentList";
-import { CreateDeptModal } from "./components/CreateDeptModal";
+import CreateDeptModal from "./components/CreateDeptModal";
 
 export default function DepartmentPageComponent() {
   const { departments, createDepartment } = useDepartments();

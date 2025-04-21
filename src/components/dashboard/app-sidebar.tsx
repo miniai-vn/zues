@@ -6,6 +6,7 @@ import {
   Command,
   CompassIcon,
   GalleryVerticalEnd,
+  Settings,
   SquareTerminal,
 } from "lucide-react";
 import * as React from "react";
@@ -81,6 +82,24 @@ const data = {
     {
       title: "Quản lý nhân viên",
       icon: SquareTerminal,
+      isActive: true,
+      role: [Role.Manager],
+      url: "/dashboard/users",
+
+      // items: [
+      //   {
+      //     title: "Users",
+      //     url: "/dashboard/users",
+      //     icon: SquareTerminal,
+      //     isActive: true,
+      //     role: [Role.Manager],
+      //   },
+      // ],
+    },
+
+    {
+      title: "Cài đặt",
+      icon: Settings,
       isActive: true,
       role: [Role.Manager],
       url: "/dashboard/users",

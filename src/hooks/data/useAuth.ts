@@ -38,7 +38,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       const response = await axiosInstance.get("/api/auth/users", {
         params: { page, limit, search },
       });
-      return response.data ?? [];
+      return (response.data as User[]) ?? [];
     },
     enabled: !!user,
   });

@@ -10,6 +10,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
+import { Search } from "lucide-react";
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
@@ -169,14 +171,14 @@ const DepartmentDetailComponent = () => {
           },
         ]}
       />
-      <Input
+      {/* <Input
         placeholder="Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)"
         type="file"
         onChange={(e) =>
           e.target.files && onHandleUploadFile(e.target.files[0])
         }
         className="w-full h-14 center"
-      />
+      /> */}
       <div className="flex justify-between items-center mb-4">
         <Input
           placeholder="Tìm kiếm tài tên tài liệu"
@@ -184,7 +186,19 @@ const DepartmentDetailComponent = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button onClick={() => refetchMaterialItems()}>Tìm kiếm</Button>
+        <div className="flex items-center gap-3">
+          <CreateOrUpdateResource
+            onHandleUploadFile={onHandleUploadFile}
+            resource={undefined}
+          />
+          <Button
+            onClick={() => refetchMaterialItems()}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md flex items-center gap-2"
+          >
+            <Search />
+            Tìm kiếm
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={columns}
