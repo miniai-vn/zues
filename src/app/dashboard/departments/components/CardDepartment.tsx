@@ -33,7 +33,7 @@ import {
 import { useAuth } from "@/hooks/data/useAuth";
 import dayjs from "dayjs";
 import { useState } from "react";
-import { CreateDeptModal } from "./CreateDeptModal";
+import CreateDeptModal from "./CreateDeptModal";
 
 function PopoverDept({ department }: { department: Department }) {
   const { addUserToDept } = useDepartments();
@@ -209,12 +209,10 @@ export function CardDepartment({ department }: CardDepartmentProps) {
             className="flex items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <CreateDeptModal
-                onChange={updateDepartment}
-                department={department}
-              />
-            </Button>
+            <CreateDeptModal
+              onChange={updateDepartment}
+              department={department}
+            />
             <div className="popover-trigger">
               <PopoverDept department={department} />
             </div>

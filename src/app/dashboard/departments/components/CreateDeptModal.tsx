@@ -37,7 +37,7 @@ interface CreateDeptModalProps {
   }) => void;
 }
 
-export function CreateDeptModal({
+export default function CreateDeptModal({
   department,
   onChange,
 }: CreateDeptModalProps) {

@@ -88,7 +88,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex w-full  max-w-3xl flex-col items-center mx-auto">
+    <div className="flex w-full  max-w-5xl flex-col items-center mx-auto">
       <div className="flex-1 w-full overflow-y-auto py-6 mb-8">
         <ChatMessageList>
           {/* Initial Message */}

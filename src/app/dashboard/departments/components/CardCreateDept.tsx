@@ -8,7 +8,7 @@ import {
 import useDepartments from "@/hooks/data/useDepartments";
 import { cn } from "@/lib/utils";
 import { User2 } from "lucide-react";
-import { CreateDeptModal } from "./CreateDeptModal";
+import CreateDeptModal from "./CreateDeptModal";
 
 export function CardCreateDepartment() {
   const { createDepartment } = useDepartments();

@@ -1,22 +1,19 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-interface Chunk {
+export interface Chunk {
   id: string;
   text: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  resourceId: string;
 }
 
 interface UseChunkProps {
   id: string;
-  type: string | null;
+  type?: string | null;
 }
-
-const fetchChunks = async (id: string, type: string | null) => {
-  const response = await axiosInstance.get(`/api/chunks/${id}`, {
-    params: { type },
-  });
-  return response || [];
-};
 
 const updateChunk = async (chunk: Chunk) => {
   const response = await axiosInstance.put(`/api/chunks/${chunk.id}`, chunk);
@@ -28,14 +25,19 @@ const deleteChunk = async (id: string) => {
   return response.data;
 };
 
-const useChunk = ({ id, type }: UseChunkProps) => {
+const useChunk = ({ id }: UseChunkProps) => {
   const {
     data: chunks,
     isLoading: isFetchingChunk,
     refetch,
   } = useQuery({
-    queryKey: ["chunks", id, type],
-    queryFn: () => fetchChunks(id, type),
+    queryKey: ["chunks", id],
+    queryFn: async () => {
+      const res = await axiosInstance.get(
+        `/api/chunks/get-by-resource-id/${id}`
+      );
+      return res.data || [];
+    },
     enabled: !!id,
   });
 

@@ -1,15 +1,15 @@
 "use client";
+import { PageHeader } from "@/components/dashboard/common/page-header";
 import { Input } from "@/components/ui/input";
 import useDepartments from "@/hooks/data/useDepartments";
 import { useState } from "react";
 import CardDepartmentList from "./components/CardDepartmentList";
-import { CreateDeptModal } from "./components/CreateDeptModal";
+import CreateDeptModal from "./components/CreateDeptModal";
 
-const DepartmentComponent = () => {
+export default function DepartmentPageComponent() {
   const { departments, createDepartment } = useDepartments();
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
 
-  // Handle individual department selection
   const toggleDepartmentSelection = (id: string, selected: boolean) => {
     if (selected) {
       setSelectedDepartments((prev) => [...prev, id]);
@@ -20,6 +20,19 @@ const DepartmentComponent = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <PageHeader
+        backButtonHref="/dashboard/departments"
+        breadcrumbs={[
+          {
+            label: "Quản lý phòng ban",
+            href: "/dashboard/departments",
+          },
+          {
+            label: "Quản lý tài liệu",
+            isCurrentPage: true,
+          },
+        ]}
+      />
       <div className="flex justify-between gap-4 items-center">
         <Input
           placeholder="Search by question"
@@ -43,6 +56,4 @@ const DepartmentComponent = () => {
       )}
     </div>
   );
-};
-
-export default DepartmentComponent;
+}

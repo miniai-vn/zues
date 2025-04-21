@@ -27,7 +27,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       } else {
         setIsRedirecting(true);
       }
-    } else if (!user.roles.some((role: string) => requiredRole.includes(role))) {
+    } else if (
+      !user.roles.some((role: string) => requiredRole.includes(role))
+    ) {
       setIsRedirecting(true);
     }
   }, [user, requiredRole, setUser]);
