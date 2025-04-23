@@ -22,11 +22,11 @@ import useDepartments from "@/hooks/data/useDepartments";
 import useRoles from "@/hooks/data/useRoles";
 
 const FormSchema = z.object({
-  username: z.string().nonempty("Please enter a username."),
-  password: z.string().min(8, "Password must be at least 8 characters long.").nonempty("Please enter a password."),
-  phone: z.string().regex(/^\d+$/, "Phone number must be a number").optional(),
-  roles: z.array(z.string()).nonempty("Please select at least one role."),
-  departments: z.array(z.string()).nonempty("Please select at least one department."),
+  username: z.string().optional(),
+  password: z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự.").optional(),
+  phone: z.string().regex(/^\d+$/, "Số điện thoại phải là số.").optional(),
+  roles: z.array(z.string()).optional(),
+  departments: z.array(z.number()).optional(),
 });
 
 interface AddUserProps {
@@ -52,7 +52,13 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
   const { roles } = useRoles();
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    onChange?.({...data, id: user?.id}); // Update later
+    onChange?.({
+      ...data,
+      username: data.username || "",
+      password: data.password || "",
+      roles: data.roles || [],
+      departments: data.departments || [],
+    });
     setIsOpen(false);
     form.reset();
   };
@@ -60,6 +66,7 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
   return (
     <Dialog
       onOpenChange={(open) => {
+        form.reset();
         setIsOpen(open);
       }}
       open={isOpen}
@@ -161,13 +168,13 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
                             <input
                               type="checkbox"
                               value={role.name}
-                              checked={field.value.includes(role.name)}
+                              checked={field.value?.includes(role.name)}
                               onChange={(e) => {
                                 const value = role.name;
                                 if (e.target.checked) {
-                                  field.onChange([...field.value, value]);
+                                  field.onChange([...field.value ?? [], value]);
                                 } else {
-                                  field.onChange(field.value.filter((v) => v !== value));
+                                  field.onChange(field.value?.filter((v) => v !== value) ?? []);
                                 }
                               }}
                               className="form-checkbox h-4 w-4 text-blue-600"
@@ -194,9 +201,9 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
                             <input
                               type="checkbox"
                               value={String(department.id)}
-                              checked={Array.isArray(field.value) && field.value.includes(String(department.id) ?? "")}
+                              checked={Array.isArray(field.value) && field.value.includes(department.id || -1)}
                               onChange={(e) => {
-                                const value = String(department.id);
+                                const value = department.id || -1;
                                 const currentValue = Array.isArray(field.value) ? field.value : [];
                                 if (e.target.checked) {
                                   field.onChange([...currentValue, value]);

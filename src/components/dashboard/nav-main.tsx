@@ -53,7 +53,8 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
   if (!user) return null;
   // Filter items based on user role
   const filteredItems = items?.filter((item) => {
-    const userRolesSet = new Set(user.roles);
+    const roleNames = user.roles.map((role) => role.name);
+    const userRolesSet = new Set(roleNames);
     return item.role.some((role) => userRolesSet.has(role));
   });
 
@@ -63,7 +64,8 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
 
     return subItems
       .filter((item) => {
-        const userRolesSet = new Set(user.roles);
+        const roleNames = user.roles.map((role) => role.name);
+        const userRolesSet = new Set(roleNames);
         return item.role.some((role) => userRolesSet.has(role));
       })
       .map((subItem) => (

@@ -4,7 +4,7 @@ import { useToast } from "../use-toast";
 import { User } from "./useAuth";
 
 export type Department = {
-  id?: string;
+  id?: number;
   name?: string;
   description?: string;
   createdAt?: string;

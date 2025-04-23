@@ -1,5 +1,5 @@
 "use client";
-import Tables from "@/components/dashboard/tables";
+import { DataTable } from "@/components/dashboard/tables/data-table";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,17 +23,27 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { UserModal } from "./create-user-modal";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import { Badge } from "@/components/ui/badge";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 500);
-  const { deleteUser, createUser, users } = useAuth(page, limit, debouncedSearch);
+  const { deleteUser, createUser, users, updateUser } = useAuth(page, limit, debouncedSearch);
+
+  const handlePaginationChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setLimit(newSize);
+    setPage(1);
+  };
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "name",
@@ -67,7 +77,11 @@ const UserComponents = () => {
       header: "Quyền",
       cell: ({ row }) => (
         <p className="break-all line-clamp-2 w-1/2">
-          {row.original.roles?.map((role) => role.name).join(", ") ?? "Trống"}
+          {row.original.roles?.map((role, index) => (
+            <Badge key={index} className="bg-blue-500 text-white ml-1">
+              {role.name.toString()}
+            </Badge>       
+          )) ?? "Trống"}
         </p>
       ),
     },
@@ -89,7 +103,7 @@ const UserComponents = () => {
                     e.preventDefault();
                   }}
                 >
-                  <UserModal onChange={createUser} user={row.original}>
+                  <UserModal onChange={updateUser} user={row.original}>
                     <div className="flex items-center">
                       <Pencil className="mr-2 h-4 w-4" />
                       Chỉnh sửa
@@ -159,17 +173,16 @@ const UserComponents = () => {
               <Button variant="default">Thêm nhân viên</Button>
             </UserModal>
           </div>
-          <Tables
-            // onChange={(page) => {
-            //   setPage(page);
-            // }}
+          <DataTable
+            columns={columns}
+            data={users ?? []}
             pagination={{
               page: page,
               limit: limit,
-              search: debouncedSearch,
             }}
-            columns={columns}
-            data={users ?? []}
+            onPaginationChange={handlePaginationChange}
+            onPageSizeChange={handlePageSizeChange}
+            isLoading={!users}
           />
         </div>
       </div>

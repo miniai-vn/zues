@@ -16,13 +16,9 @@ export type UserData = {
   email?: string;
   phone?: string;
   avatar?: string;
-  departments: string[];
+  departments: number[];
   position?: string;
 };
-
-export type UserUpdateData = {
-  id: string | undefined;
-} & UserUpdateFormValues;
 
 export type User = {
   id: string;
@@ -94,15 +90,15 @@ const useAuth = (page = 1, limit = 10, search = "") => {
     },
     onSuccess: () => {
       toast({
-        title: "Created",
-        description: `Created at ${new Date().toLocaleTimeString()}`,
+        title: "Thêm thành công",
+        description: `Thêm người dùng thành công`,
       });
       refetch();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
+        title: "Thất bại",
+        description: `Thêm người dùng thất bại`,
       });
       refetch();
     },
@@ -116,7 +112,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
   });
   
   const { mutate: updateUser } = useMutation({
-    mutationFn: async (data: UserUpdateData) => {
+    mutationFn: async (data: UserData) => {
       const { id, ..._ } = data;
       if (!id) {
         throw new Error("User ID is required for update");
@@ -130,15 +126,15 @@ const useAuth = (page = 1, limit = 10, search = "") => {
     },
     onSuccess: () => {
       toast({
-        title: "Updated",
-        description: `Updated at ${new Date().toLocaleTimeString()}`,
+        title: "Cập nhật thành công",
+        description: `Cập nhật người dùng thành công`,
       });
       refetch();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
+        title: "Thất bại",
+        description: `Cập nhật người dùng thất bại`,
       });
       refetch();
     },
@@ -151,15 +147,15 @@ const useAuth = (page = 1, limit = 10, search = "") => {
     },
     onSuccess: () => {
       toast({
-        title: "Deleted",
-        description: `Deleted at ${new Date().toLocaleTimeString()}`,
+        title: "Xóa thành công",
+        description: `Xóa người dùng thành công`,
       });
       refetch();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
+        title: "Thất bại",
+        description: `Xóa người dùng thất bại`,
       });
       refetch();
     },
