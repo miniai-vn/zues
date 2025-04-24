@@ -51,7 +51,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["user", { page, limit, search }],
+    queryKey: ["user", page, limit, search],
     queryFn: async () => {
       const response = await axiosInstance.get("/api/auth/users", {
         params: { page, limit, search },
@@ -59,7 +59,6 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return (response.data as User[]) ?? [];
     },
     enabled: !!user,
-    placeholderData: prev => prev,
   });
 
   const { mutate: signIn, isSuccess } = useMutation({
