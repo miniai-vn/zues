@@ -1,9 +1,9 @@
-import { RegisterForm } from "@/components/Register";
+import { ForgotPasswordForm } from "@/components/ForgotPassword";
 
 export default function Page() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white">
-      <RegisterForm />
+      <ForgotPasswordForm />
     </div>
   );
 }

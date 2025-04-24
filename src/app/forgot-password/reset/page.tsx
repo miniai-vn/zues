@@ -1,9 +1,9 @@
-import { RegisterForm } from "@/components/Register";
+import ResetPasswordForm from "@/components/ResetPassword";
 
 export default function Page() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white">
-      <RegisterForm />
+      <ResetPasswordForm />
     </div>
   );
 }

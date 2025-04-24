@@ -1,25 +1,16 @@
 "use client";
-import { cn } from "@/lib/utils";
+
+import { AuthLayout } from "@/components/layouts/AuthLayout";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/data/useAuth";
 import { useRouter } from "next/navigation";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function LoginForm() {
   const { signIn, isSuccess } = useAuth();
-  // defind router with next
   const router = useRouter();
+
   const authenticate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -30,43 +21,40 @@ export function LoginForm({
       router.push("/dashboard");
     }
   };
+
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={authenticate}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="username">Email</Label>
-                <Input
-                  id="username"
-                  type="username"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Input id="password" type="password" required />
-              </div>
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Sign up
-              </a>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <AuthLayout title="Chào Mừng Bạn Đến Với Chúng Tôi">
+      <h2 className="text-xl font-semibold mb-1">Đăng nhập</h2>
+      <p className="text-sm text-gray-600 mb-4">Dùng tài khoản bạn được cung cấp</p>
+      <form onSubmit={authenticate} className="space-y-4">
+        <div>
+          <Label htmlFor="username">Email</Label>
+          <Input
+            id="username"
+            type="text"
+            placeholder="m@example.com"
+            required
+            className="mt-1 w-full"
+          />
+        </div>
+        <div>
+          <Label htmlFor="password">Mật khẩu</Label>
+          <Input
+            id="password"
+            type="password"
+            required
+            className="mt-1 w-full"
+          />
+        </div>
+        <Button type="submit" className="w-full bg-blue-600 text-white py-2">
+          Đăng nhập
+        </Button>
+      </form>
+      <div className="mt-4 text-center text-sm">
+        <a href="/forgot-password" className="underline text-blue-600">
+          Quên mật khẩu?
+        </a>
+      </div>
+    </AuthLayout>
   );
 }

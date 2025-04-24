@@ -1,9 +1,9 @@
-import { RegisterForm } from "@/components/Register";
+import ResetSuccess from "@/components/ResetSuccess";
 
 export default function Page() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white">
-      <RegisterForm />
+      <ResetSuccess />
     </div>
   );
 }

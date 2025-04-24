@@ -180,16 +180,18 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
                     <FormItem className="w-1/2">
                       <FormLabel>Vai trò</FormLabel>
                       <div className="space-y-2">
-                        <Select
-                          value={field.value?.join(", ") || ""}
-                          onValueChange={(value) => {
-                            if (!field.value?.includes(value)) {
-                              field.onChange([...(field.value || []), value]);
-                            } else {
-                              field.onChange(field.value.filter((id) => id !== value));
-                            }
-                          }}
-                        >
+                      <Select
+                        value=""
+                        onValueChange={(value) => {
+                          const current = field.value || [];
+                          const exists = current.includes(value);
+                          if (exists) {
+                            field.onChange(current.filter((v) => v !== value));
+                          } else {
+                            field.onChange([...current, value]);
+                          }
+                        }}
+                      >
                           <SelectTrigger>
                             <div className="flex flex-wrap gap-2">
                               {field.value?.map((role, index) => (
@@ -227,13 +229,14 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
                       <FormLabel>Bộ phận</FormLabel>
                       <div className="space-y-2">
                         <Select
-                          value={field.value?.join(", ") || ""}
+                          value=""
                           onValueChange={(value) => {
-                            const numericValue = Number(value);
-                            if (!field.value?.includes(numericValue)) {
-                              field.onChange([...(field.value || []), numericValue]);
+                            const current = field.value || [];
+                            const exists = current.includes(Number(value));
+                            if (exists) {
+                              field.onChange(current.filter((v) => v !== Number(value)));
                             } else {
-                              field.onChange(field.value.filter((id) => id !== numericValue));
+                              field.onChange([...current, Number(value)]);
                             }
                           }}
                         >
