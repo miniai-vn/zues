@@ -76,13 +76,13 @@ const UserComponents = () => {
       accessorKey: "roles",
       header: "Quyền",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
+        <div className="break-all line-clamp-2 w-1/2">
           {row.original.roles?.map((role, index) => (
             <Badge key={index} className="bg-blue-500 text-white ml-1">
               {role.name.toString()}
             </Badge>       
           )) ?? "Trống"}
-        </p>
+        </div>
       ),
     },
     {
