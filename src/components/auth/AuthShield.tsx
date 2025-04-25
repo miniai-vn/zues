@@ -18,18 +18,11 @@ export default function AuthShield({
   const [, setIsAuthorized] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check for token and user in localStorage
     const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
 
-    // Verify if we're on a public route
-    const isPublicRoute = publicRoutes.includes(pathname);
-
-    if (!token && !isPublicRoute) {
-      // No token and trying to access protected route
+    if (!token) {
       router.push("/login");
-    } else if (token && storedUser && isPublicRoute && pathname !== "/login") {
-      // Has token but on public route (except login which might have redirect logic)
+    } else if (token && pathname == "/login") {
       router.push("/dashboard");
     } else {
       // Either authorized or on public route

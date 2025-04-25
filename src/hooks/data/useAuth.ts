@@ -63,7 +63,6 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return (response.data as User[]) ?? [];
     },
     enabled: !!user,
-    placeholderData: prev => prev,
   });
 
   const { mutate: signIn, isSuccess } = useMutation({
@@ -76,6 +75,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return response;
     },
     onSuccess() {
+      console.log("Login successful");
       router.push("/dashboard/bot");
     },
   });
