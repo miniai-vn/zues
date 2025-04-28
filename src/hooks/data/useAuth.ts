@@ -31,6 +31,8 @@ export type User = {
   avatar: string;
   departments: Department[];
   position: string;
+  permissions: string[];
+  status: boolean;
 };
 
 export const useUserStore = create<{

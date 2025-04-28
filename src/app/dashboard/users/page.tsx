@@ -49,7 +49,7 @@ const UserComponents = () => {
       accessorKey: "name",
       header: "Tên nhân viên",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
+        <p className="break-all line-clamp-2 w-1/2 text-sm p-1 leading-tight">
           {row.original.name ?? "Trống"}
         </p>
       ),
@@ -58,8 +58,8 @@ const UserComponents = () => {
       accessorKey: "position",
       header: "Chức vụ",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
-          {row.original.position ?? "Trống"}
+        <p className="break-all line-clamp-2 text-sm p-1 leading-tight w-1/2">
+          {row.original.position ?? "Nhân viên"}
         </p>
       ),
     },
@@ -67,22 +67,56 @@ const UserComponents = () => {
       accessorKey: "phone",
       header: "Số điện thoại",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
+        <p className="break-all line-clamp-2 w-1/2 text-sm p-1 leading-tight">
           {row.original.phone ?? "Trống"}
         </p>
       ),
     },
     {
-      accessorKey: "roles",
-      header: "Quyền",
+      accessorKey: "departments",
+      header: "Bộ phận",
       cell: ({ row }) => (
-        <div className="break-all line-clamp-2 w-1/2">
-          {row.original.roles?.map((role, index) => (
-            <Badge key={index} className="bg-blue-500 text-white ml-1">
-              {role.name.toString()}
-            </Badge>       
+        <div className="break-all line-clamp-2 w-1/2 flex flex-wrap items-center gap-1 text-sm p-1 leading-tight">
+          {row.original.departments?.map((department, index) => (
+            <span key={index} className="flex items-center">
+              {department.name?.toString()}
+              {index < row.original.departments.length - 1 && (
+          <Separator orientation="vertical" className="mx-2 h-4" />
+              )}
+            </span>
           )) ?? "Trống"}
         </div>
+      ),
+    },
+    {
+      accessorKey: "permissions",
+      header: "Quyền",
+      cell: ({ row }) => (
+        <div className="break-all line-clamp-2 w-1/2 flex flex-wrap items-center gap-1 text-sm p-1 leading-tight">
+          {row.original.permissions?.map((permission, index) => (
+            <span key={index} className="flex items-center">
+              {permission}
+              {index < row.original.permissions.length - 1 && (
+          <Separator orientation="vertical" className="mx-2 h-4" />
+              )}
+            </span>
+          )) ?? "Trống"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Tình trạng",
+      cell: ({ row }) => (
+        <Badge
+          className={`text-sm p-1 leading-tight ${
+            row.original.status
+              ? "bg-green-500 text-white"
+              : "bg-white text-black border border-gray-300"
+          }`}
+        >
+          {row.original.status ? "Hoạt động" : "Không hoạt động"}
+        </Badge>
       ),
     },
     {
@@ -134,7 +168,7 @@ const UserComponents = () => {
           </>
         );
       },
-    },     
+    },
   ];
 
   useEffect(() => {
