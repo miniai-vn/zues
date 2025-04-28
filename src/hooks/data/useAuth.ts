@@ -71,6 +71,7 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return response;
     },
     onSuccess() {
+      console.log("Login successful");
       router.push("/dashboard/bot");
     },
   });
