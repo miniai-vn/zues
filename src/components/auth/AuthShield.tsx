@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { isTokenValid, useTokenManager } from '../../hooks/useTokenManager';
 
 interface AuthShieldProps {
   children: React.ReactNode;
@@ -10,37 +11,53 @@ interface AuthShieldProps {
 
 export default function AuthShield({
   children,
-  publicRoutes = ["/login", "/register", "/forgot-password", "/forgot-password/reset", "/forgot-password/reset/success"],
+  publicRoutes = ["/", "/login", "/register", "/forgot-password", "/forgot-password/reset", "/forgot-password/reset/success"],
 }: AuthShieldProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
-  const [, setIsAuthorized] = useState<boolean>(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.replace("/login");
+  }
+  useTokenManager(token, logout);
 
   useEffect(() => {
-    // Check for token and user in localStorage
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+    const checkAuth = async () => {
+      const isPublicRoute = publicRoutes.includes(pathname);
 
-    // Verify if we're on a public route
-    const isPublicRoute = publicRoutes.includes(pathname);
+      if (token) {
+        const isValid = isTokenValid(token);
 
-    if (!token && !isPublicRoute) {
-      // No token and trying to access protected route
-      router.push("/login");
-    } else if (token && storedUser && isPublicRoute && pathname !== "/login") {
-      // Has token but on public route (except login which might have redirect logic)
-      router.push("/dashboard");
-    } else {
-      // Either authorized or on public route
-      setIsAuthorized(true);
-    }
+        if (isValid) {
+          if (isPublicRoute) {
+            router.replace("/dashboard");
+            return;
+          }
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          if (!isPublicRoute) {
+            router.replace("/login");
+            return;
+          }
+        }
+      } else if (!isPublicRoute) {
+        router.replace("/login");
+        return;
+      }
 
-    // Finish loading after auth check
-    setIsLoading(false);
+      setShouldRender(true);
+      setIsLoading(false);
+    };
+
+    checkAuth();
   }, [pathname, router, publicRoutes]);
 
-  // Show loading indicator while checking auth
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -49,5 +66,5 @@ export default function AuthShield({
     );
   }
 
-  return <>{children}</>;
+  return shouldRender ? <>{children}</> : null;
 }
