@@ -48,7 +48,7 @@ export default function ActionPopover({
             onClick={onArchive}
           >
             <Archive size={16} />
-            <span>Lưu Trữ</span>
+            <span>Đồng bộ dữ liệu</span>
           </Button>
 
           <Button

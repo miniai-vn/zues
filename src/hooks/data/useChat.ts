@@ -1,7 +1,7 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 export type Message = {
   id: number;
   content: string;
@@ -10,8 +10,17 @@ export type Message = {
   isBot: boolean;
 };
 
-const useChat = () => {
+type Conversation = {
+  name: string;
+  id?: string;
+  content: string;
+  createdAt?: string;
+  type: "direct";
+};
+
+const useChat = ({ id }: { id?: string }) => {
   const [input, setInput] = useState("");
+  const router = useRouter();
 
   const {
     data: fetchedMessages,
@@ -21,9 +30,10 @@ const useChat = () => {
   } = useQuery({
     queryKey: ["load_messages"],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/api/conversation/messages`);
-      return response.data ?? ([] as Message[]);
+      const response = await axiosInstance.get(`/api/conversations/${id}`);
+      return (response.data as Message[]) ?? ([] as Message[]);
     },
+    enabled: !!id,
   });
 
   const {
@@ -31,12 +41,21 @@ const useChat = () => {
     isPending: isSendingMessage,
     error: sendMessageError,
   } = useMutation({
-    mutationFn: async (content: string) => {
-      const response = await axiosInstance.post("/api/chat", { content });
+    mutationFn: async ({
+      content,
+      conversation_id,
+    }: {
+      content: string;
+      conversation_id: number;
+    }) => {
+      const response = await axiosInstance.post("/api/chat", {
+        content,
+        conversation_id,
+      });
       return response.data;
     },
-    onSuccess: () => {
-      reload();
+    onError: (error) => {
+      console.error("Error sending message:", error);
     },
   });
 
@@ -44,15 +63,58 @@ const useChat = () => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    conversation_id: number
+  ) => {
     e.preventDefault();
     if (input.trim()) {
-      sendMessage(input);
+      sendMessage({ content: input, conversation_id: conversation_id });
       setInput("");
     }
   };
 
+  const {
+    data: conversations,
+    isLoading: isFetchingConversation,
+    refetch,
+  } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/api/conversations`);
+      return (res.data as Conversation[]) || [];
+    },
+    enabled: !id,
+  });
+
+  const { data: conversation } = useQuery({
+    queryKey: ["conversation", id],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/api/conversations/${id}`);
+      return res.data || [];
+    },
+    enabled: !!id,
+  });
+
+  const { mutate: createConversation } = useMutation({
+    mutationFn: async (data: Conversation) => {
+      const res = await axiosInstance.post(`/api/conversations`, data);
+      return res.data as Conversation;
+    },
+    onSuccess: (data: Conversation) => {
+      router.push(`/dashboard/bot/${data.id}`);
+      sendMessage({
+        content: data.content,
+        conversation_id: Number(data.id as string),
+      });
+    },
+    onError: (error) => {},
+  });
+
   return {
+    createConversation,
+    conversations,
+    conversation,
     input,
     handleInputChange,
     handleSubmit,

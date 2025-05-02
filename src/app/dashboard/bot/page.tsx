@@ -1,16 +1,7 @@
 "use client";
 
+import { BotComponent } from "./components/BotPage";
 
-
-import dynamic from 'next/dynamic'
-
-const BotComponent = dynamic(() => import('../bot/botPage'), {
-  ssr: false
-})
-
-export default function Home() {
-
-
-
+export default function ChatPageComponent() {
   return <BotComponent />
 }

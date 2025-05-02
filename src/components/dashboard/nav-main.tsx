@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
-import { useEffect } from "react";
+import { ChevronRight, PlusCircle, type LucideIcon } from "lucide-react";
+import React, { useEffect } from "react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
+import { Button } from "../ui/button";
 
 // Type definitions for better maintainability
 type SubMenuItem = {
@@ -35,6 +36,7 @@ type MenuItem = {
   isActive?: boolean;
   role: string[];
   items?: SubMenuItem[];
+  children?: React.ReactNode;
 };
 
 export default function NavMain({ items }: { items: MenuItem[] }) {
@@ -42,25 +44,25 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
   const { user } = useUserStore();
   const { loadUserFromLocalStorage } = useAuth();
 
-  // Use useEffect for side effects
   useEffect(() => {
     if (!user) {
       loadUserFromLocalStorage();
     }
   }, [user, loadUserFromLocalStorage]);
 
-  // If no user, show loading state or null
   if (!user) return null;
-  // Filter items based on user role
   const filteredItems = items?.filter((item) => {
     const userRolesSet = new Set(user.roles.map((role) => role.name));
     return item.role.some((role) => userRolesSet.has(role));
   });
 
   // Helper function to render sub-items
-  const renderSubItems = (subItems?: SubMenuItem[]) => {
+  const renderSubItems = (
+    subItems?: SubMenuItem[],
+    children?: React.ReactNode
+  ) => {
+    if (children) return children;
     if (!subItems?.length) return null;
-
     return subItems
       .filter((item) => {
         const userRolesSet = new Set(user.roles.map((role) => role.name));
@@ -88,8 +90,18 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Tính năng</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="w-full"
+            onClick={() => {
+              router.push("/dashboard/bot");
+            }}
+          >
+            <PlusCircle /> Tạo đoạn chat mới
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
         {filteredItems.map((item) => (
           <Collapsible
             key={item.title}
@@ -114,11 +126,12 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
                   )}
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              {(item.items ?? []).length > 0 && (
-                <CollapsibleContent>
-                  <SidebarMenuSub>{renderSubItems(item.items)}</SidebarMenuSub>
-                </CollapsibleContent>
-              )}
+
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {renderSubItems(item.items, item.children)}
+                </SidebarMenuSub>
+              </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
         ))}

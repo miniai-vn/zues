@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  AudioWaveform,
-  BotIcon,
-  Command,
-  CompassIcon,
-  GalleryVerticalEnd,
-  Settings,
-  SquareTerminal,
-} from "lucide-react";
-import * as React from "react";
-import Image from "next/image";
+import { SideChat } from "@/app/dashboard/bot/components/SideChat";
 import {
   Sidebar,
   SidebarContent,
@@ -19,9 +9,22 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Role } from "@/configs/protect-route";
-import { NavUser } from "./nav-user";
+import {
+  AudioWaveform,
+  BotIcon,
+  Command,
+  CompassIcon,
+  GalleryVerticalEnd,
+  PlusCircle,
+  Settings,
+  SquareTerminal,
+} from "lucide-react";
+import Image from "next/image";
+import * as React from "react";
+import { Button } from "../ui/button";
 import NavMain from "./nav-main";
-
+import { NavUser } from "./nav-user";
+import { useRouter } from "next/navigation";
 const data = {
   user: {
     name: "shadcn",
@@ -47,77 +50,45 @@ const data = {
   ],
   navMain: [
     {
-      title: "Trò chuyện với bot",
+      title: "Quản lý",
       url: "/dashboard/bot",
       icon: BotIcon,
       isActive: true,
       role: [Role.Staff, Role.Manager],
-      // items: [
-      //   {
-      // title: "Bot",
-      // url: "/dashboard/bot",
-      // icon: SquareTerminal,
-      // isActive: true,
-      // role: [Role.Staff, Role.Manager],
-      //   },
-      // ],
-    },
-    {
-      title: "Quản lý phòng ban",
-      icon: CompassIcon,
-      isActive: false,
-      role: [Role.Manager],
-      url: "/dashboard/departments",
+      items: [
+        {
+          title: "Quản lý phòng ban",
+          icon: CompassIcon,
+          isActive: false,
+          role: [Role.Manager],
+          url: "/dashboard/departments",
+        },
+        {
+          title: "Quản lý nhân viên",
+          icon: SquareTerminal,
+          isActive: true,
+          role: [Role.Manager],
+          url: "/dashboard/users",
 
-      // items: [
-      //   {
-      //     title: "Quản lý phòng ban",
-      //     url: "/dashboard/departments",
-      //     icon: SquareTerminal,
-      //     isActive: true,
-      //     role: [Role.Manager],
-      //   },
-      // ],
-    },
-    {
-      title: "Quản lý nhân viên",
-      icon: SquareTerminal,
-      isActive: true,
-      role: [Role.Manager],
-      url: "/dashboard/users",
+        },
 
-      // items: [
-      //   {
-      //     title: "Users",
-      //     url: "/dashboard/users",
-      //     icon: SquareTerminal,
-      //     isActive: true,
-      //     role: [Role.Manager],
-      //   },
-      // ],
+        {
+          title: "Cài đặt",
+          icon: Settings,
+          isActive: true,
+          role: [Role.Manager],
+          url: "/dashboard/users",
+
+
+        },
+      ]
     },
 
-    {
-      title: "Cài đặt",
-      icon: Settings,
-      isActive: true,
-      role: [Role.Manager],
-      url: "/dashboard/users",
-
-      // items: [
-      //   {
-      //     title: "Users",
-      //     url: "/dashboard/users",
-      //     icon: SquareTerminal,
-      //     isActive: true,
-      //     role: [Role.Manager],
-      //   },
-      // ],
-    },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -133,6 +104,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+        <div className="flex-1 overflow-y-auto">
+          <SideChat />
+        </div>
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

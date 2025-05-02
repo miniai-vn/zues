@@ -27,6 +27,7 @@ const DepartmentDetailComponent = () => {
     createResource,
     refetchMaterialItems,
     deleteResource,
+    createChunks,
     syncResource,
   } = useResource({
     id: departmentId,
@@ -131,7 +132,7 @@ const DepartmentDetailComponent = () => {
                 id={`status-switch-${documentId}`}
                 checked={isActive}
                 onCheckedChange={(checked) => {
-                  syncResource(documentId);
+                  createChunks(documentId);
                   console.log(
                     `Document ${documentId} status changed to ${
                       checked ? "active" : "inactive"
@@ -142,6 +143,7 @@ const DepartmentDetailComponent = () => {
               />
             </div>
             <ActionPopover
+              onArchive={() => syncResource(documentId)}
               onDelete={() => deleteResource(documentId)}
               onConfigure={() => {
                 router.push(
