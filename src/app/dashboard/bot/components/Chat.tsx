@@ -3,9 +3,8 @@ import CodeDisplayBlock from "@/components/code-display-block";
 import { Button } from "@/components/ui/button";
 import {
   ChatBubble,
-  ChatBubbleAction,
   ChatBubbleAvatar,
-  ChatBubbleMessage,
+  ChatBubbleMessage
 } from "@/components/ui/chat/chat-bubble";
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
@@ -19,8 +18,7 @@ import {
   RefreshCcw,
   Volume2,
 } from "lucide-react";
-import { parse } from "path";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 const ChatAiIcons = [
@@ -38,9 +36,8 @@ const ChatAiIcons = [
   },
 ];
 
-export function BotComponent({ id }: { id?: string }) {
+export function ChatComponent({ id }: { id?: string }) {
   const { socket } = useSocket();
-
   const {
     fetchedMessages,
     input,
@@ -50,50 +47,79 @@ export function BotComponent({ id }: { id?: string }) {
     reload,
     createConversation,
   } = useChat(id ? { id } : {});
+
   const messagesRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [streamingContent, setStreamingContent] = useState<string>("");
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const handleStreamingChunk = (data: any) => {
+    setStreamingContent((prev) => prev + (data?.chunk || ""));
+  };
+
+  const handleStreamingEnd = () => {
+    setStreamingContent("");
+    setIsStreaming(false);
+  };
+  const handleStreamingStart = () => {
+    setIsStreaming(true);
+  };
 
   useEffect(() => {
-    console.log("Socket:", socket);
     if (socket && id) {
       socket.emit("join_room", {
         room: `conversation:${id}`,
       });
-      socket.on('room_joined', (data) => {
+      socket.on("room_joined", (data) => {
         console.log(`Joined room: `, data);
       });
+
+      socket.on("streaming_chunk", handleStreamingChunk);
+
+     
+      socket.on("streaming_end", handleStreamingEnd);
+      socket.on("streaming_start", handleStreamingStart);
       
-      const handleStartStreaming = (data: any) => {
-        console.log("start_Streming event received:", data);
-      };
-      socket.on("streaming_chunk", handleStartStreaming);
 
       return () => {
         socket.emit("leave", `conversation:${id}`);
         socket.off("message");
-        socket.off("streaming_chunk", handleStartStreaming);
+        socket.off("streaming_chunk", handleStreamingChunk);
+        socket.off("streaming_end", handleStreamingEnd);
       };
     }
   }, [socket, id]);
 
-  useEffect(() => {
+  const handleScrollY = () => {
     if (messagesRef.current) {
       messagesRef.current?.scrollIntoView({ behavior: "smooth" });
     }
+  };
+  useEffect(() => {
+    handleScrollY();
   }, [fetchedMessages]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (isStreaming) return;
     e.preventDefault();
-
     if (!id) {
       return createConversation({
         createdAt: new Date().toISOString(),
-        name: "New Conversation", // Default name
-        content: input || "", // Use the current input as content
+        name: "New Conversation",
+        content: input || "",
         type: "direct",
       });
     }
     handleSubmit(e, parseInt(id));
+    fetchedMessages?.push({
+      content: input || "",
+      senderType: "user",
+      createdAt: new Date().toISOString(),
+      id: 0,
+      isBot: false,
+    });
+    handleScrollY();
+
     formRef.current?.reset();
   };
 
@@ -127,13 +153,15 @@ export function BotComponent({ id }: { id?: string }) {
     <div
       className={`flex w-full h-full  ${
         id ? "" : "justify-center"
-      } max-w-4xl flex-col items-center my-auto mx-auto`}
+      } max-w-5xl flex-col items-center my-auto mx-auto`}
     >
       <div className={`${id ? "flex-1" : ""} w-full overflow-y-auto`}>
         <ChatMessageList>
-          <div className="w-full text-center bg-background shadow-sm rounded-lg p-8 flex flex-col gap-2">
-            <h1 className="font-bold text-4xl">Tôi giúp gì được cho bạn?.</h1>
-          </div>
+          {fetchedMessages?.length === 0 && (
+            <div className="w-full text-center bg-background shadow-sm rounded-lg p-8 flex flex-col gap-2">
+              <h1 className="font-bold text-4xl">Tôi giúp gì được cho bạn?.</h1>
+            </div>
+          )}
 
           {fetchedMessages &&
             fetchedMessages.map((message, index) => (
@@ -148,23 +176,23 @@ export function BotComponent({ id }: { id?: string }) {
                 <ChatBubbleMessage>
                   {message?.content
                     .split("```")
-                    .map((part: string, index: number) => {
-                      if (index % 2 === 0) {
+                    .map((part: string, idx: number) => {
+                      if (idx % 2 === 0) {
                         return (
-                          <Markdown key={index} remarkPlugins={[remarkGfm]}>
+                          <Markdown key={idx} remarkPlugins={[remarkGfm]}>
                             {part}
                           </Markdown>
                         );
                       } else {
                         return (
-                          <pre className="whitespace-pre-wrap pt-2" key={index}>
+                          <pre className="whitespace-pre-wrap pt-2" key={idx}>
                             <CodeDisplayBlock code={part} lang="" />
                           </pre>
                         );
                       }
                     })}
 
-                  {message.senderType === "assistant" &&
+                  {/* {message.senderType === "assistant" &&
                     fetchedMessages.length - 1 === index && (
                       <div className="flex items-center mt-1.5 gap-1">
                         {!isLoading && (
@@ -186,13 +214,25 @@ export function BotComponent({ id }: { id?: string }) {
                           </>
                         )}
                       </div>
-                    )}
+                    )} */}
                 </ChatBubbleMessage>
               </ChatBubble>
             ))}
 
-          {/* Loading */}
-          {isLoading && (
+          {/* Streaming assistant message */}
+          {isLoading && streamingContent && (
+            <ChatBubble variant="received">
+              <ChatBubbleAvatar src="" fallback="🤖" />
+              <ChatBubbleMessage>
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {streamingContent}
+                </Markdown>
+              </ChatBubbleMessage>
+            </ChatBubble>
+          )}
+
+          {/* Loading fallback */}
+          {isLoading && !streamingContent && (
             <ChatBubble variant="received">
               <ChatBubbleAvatar src="" fallback="🤖" />
               <ChatBubbleMessage isLoading />

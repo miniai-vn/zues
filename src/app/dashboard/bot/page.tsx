@@ -1,7 +1,7 @@
 "use client";
 
-import { BotComponent } from "./components/BotPage";
+import { ChatComponent } from "./components/Chat";
 
 export default function ChatPageComponent() {
-  return <BotComponent />
+  return <ChatComponent />
 }

@@ -28,10 +28,10 @@ const useChat = ({ id }: { id?: string }) => {
     refetch: reload,
     error: fetchMessagesError,
   } = useQuery({
-    queryKey: ["load_messages"],
+    queryKey: ["load_messages", id],
     queryFn: async () => {
       const response = await axiosInstance.get(`/api/conversations/${id}`);
-      return (response.data as Message[]) ?? ([] as Message[]);
+      return (response.data.messages as Message[]) ?? ([] as Message[]);
     },
     enabled: !!id,
   });
