@@ -30,8 +30,13 @@ const useChat = ({ id }: { id?: string }) => {
   } = useQuery({
     queryKey: ["load_messages", id],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/api/conversations/${id}`);
+      try {
+        const response = await axiosInstance.get(`/api/conversations/${id}`);
       return (response.data.messages as Message[]) ?? ([] as Message[]);
+      } catch (error) {
+        router.push("/dashboard/bot");
+        throw new Error("Failed to fetch messages");
+      }
     },
     enabled: !!id,
   });
@@ -77,7 +82,7 @@ const useChat = ({ id }: { id?: string }) => {
   const {
     data: conversations,
     isLoading: isFetchingConversation,
-    refetch,
+    refetch: fetchConversations,
   } = useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
@@ -107,6 +112,7 @@ const useChat = ({ id }: { id?: string }) => {
         content: data.content,
         conversation_id: Number(data.id as string),
       });
+      fetchConversations();
     },
     onError: (error) => {},
   });

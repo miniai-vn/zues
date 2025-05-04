@@ -4,37 +4,25 @@ import { Button } from "@/components/ui/button";
 import {
   ChatBubble,
   ChatBubbleAvatar,
-  ChatBubbleMessage
+  ChatBubbleMessage,
 } from "@/components/ui/chat/chat-bubble";
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { useChat } from "@/hooks/data/useChat";
 import { useSocket } from "@/hooks/useSocket";
-import {
-  CopyIcon,
-  CornerDownLeft,
-  Mic,
-  Paperclip,
-  RefreshCcw,
-  Volume2,
-} from "lucide-react";
+import { CornerDownLeft, Mic, Paperclip } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-const ChatAiIcons = [
-  {
-    icon: CopyIcon,
-    label: "Copy",
-  },
-  {
-    icon: RefreshCcw,
-    label: "Refresh",
-  },
-  {
-    icon: Volume2,
-    label: "Volume",
-  },
-];
+
+export enum SocketEvent {
+  JoinRoom = "join_room",
+  RoomJoined = "room_joined",
+  StreamingChunk = "streaming_chunk",
+  StreamingEnd = "streaming_end",
+  StreamingStart = "streaming_start",
+  Leave = "leave",
+}
 
 export function ChatComponent({ id }: { id?: string }) {
   const { socket } = useSocket();
@@ -44,7 +32,6 @@ export function ChatComponent({ id }: { id?: string }) {
     handleInputChange,
     handleSubmit,
     isLoading,
-    reload,
     createConversation,
   } = useChat(id ? { id } : {});
 
@@ -58,34 +45,32 @@ export function ChatComponent({ id }: { id?: string }) {
   };
 
   const handleStreamingEnd = () => {
-    setStreamingContent("");
     setIsStreaming(false);
   };
   const handleStreamingStart = () => {
+    setStreamingContent("");
     setIsStreaming(true);
   };
 
   useEffect(() => {
     if (socket && id) {
-      socket.emit("join_room", {
+      socket.emit(SocketEvent.JoinRoom, {
         room: `conversation:${id}`,
       });
-      socket.on("room_joined", (data) => {
+      socket.on(SocketEvent.RoomJoined, (data) => {
         console.log(`Joined room: `, data);
       });
 
-      socket.on("streaming_chunk", handleStreamingChunk);
-
-     
-      socket.on("streaming_end", handleStreamingEnd);
-      socket.on("streaming_start", handleStreamingStart);
-      
+      socket.on(SocketEvent.StreamingStart, handleStreamingStart);
+      socket.on(SocketEvent.StreamingChunk, handleStreamingChunk);
+      socket.on(SocketEvent.StreamingEnd, handleStreamingEnd);
 
       return () => {
-        socket.emit("leave", `conversation:${id}`);
-        socket.off("message");
-        socket.off("streaming_chunk", handleStreamingChunk);
-        socket.off("streaming_end", handleStreamingEnd);
+        socket.emit(SocketEvent.Leave, `conversation:${id}`);
+        socket.off(SocketEvent.StreamingChunk, handleStreamingChunk);
+        socket.off(SocketEvent.StreamingEnd, handleStreamingEnd);
+        socket.off(SocketEvent.StreamingStart, handleStreamingStart);
+        socket.off(SocketEvent.RoomJoined);
       };
     }
   }, [socket, id]);
@@ -110,7 +95,6 @@ export function ChatComponent({ id }: { id?: string }) {
         type: "direct",
       });
     }
-    handleSubmit(e, parseInt(id));
     fetchedMessages?.push({
       content: input || "",
       senderType: "user",
@@ -118,9 +102,9 @@ export function ChatComponent({ id }: { id?: string }) {
       id: 0,
       isBot: false,
     });
+    handleSubmit(e, parseInt(id));
     handleScrollY();
-
-    formRef.current?.reset();
+    // formRef.current?.reset();
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -131,31 +115,17 @@ export function ChatComponent({ id }: { id?: string }) {
     }
   };
 
-  const handleActionClick = async (action: string, messageIndex: number) => {
-    if (action === "Refresh") {
-      try {
-        await reload();
-      } catch (error) {
-        console.error("Error reloading:", error);
-      } finally {
-      }
-    }
-
-    if (action === "Copy") {
-      const message = fetchedMessages ? fetchedMessages[messageIndex] : null;
-      if (message && message.senderType === "assistant") {
-        navigator.clipboard.writeText(message?.content);
-      }
-    }
-  };
-
   return (
     <div
       className={`flex w-full h-full  ${
         id ? "" : "justify-center"
       } max-w-5xl flex-col items-center my-auto mx-auto`}
     >
-      <div className={`${id ? "flex-1" : ""} w-full overflow-y-auto`}>
+      <div
+        className={`${
+          id ? "flex-1" : ""
+        } w-full scroll-y-auto overflow-y-auto bg-background shadow-sm rounded-lg`}
+      >
         <ChatMessageList>
           {fetchedMessages?.length === 0 && (
             <div className="w-full text-center bg-background shadow-sm rounded-lg p-8 flex flex-col gap-2">
@@ -164,63 +134,48 @@ export function ChatComponent({ id }: { id?: string }) {
           )}
 
           {fetchedMessages &&
-            fetchedMessages.map((message, index) => (
-              <ChatBubble
-                key={index}
-                variant={message?.senderType == "user" ? "sent" : "received"}
-              >
-                <ChatBubbleAvatar
-                  src=""
-                  fallback={message?.senderType == "user" ? "👨🏽" : "🤖"}
-                />
-                <ChatBubbleMessage>
-                  {message?.content
-                    .split("```")
-                    .map((part: string, idx: number) => {
-                      if (idx % 2 === 0) {
-                        return (
-                          <Markdown key={idx} remarkPlugins={[remarkGfm]}>
-                            {part}
-                          </Markdown>
-                        );
-                      } else {
-                        return (
-                          <pre className="whitespace-pre-wrap pt-2" key={idx}>
-                            <CodeDisplayBlock code={part} lang="" />
-                          </pre>
-                        );
-                      }
-                    })}
-
-                  {/* {message.senderType === "assistant" &&
-                    fetchedMessages.length - 1 === index && (
-                      <div className="flex items-center mt-1.5 gap-1">
-                        {!isLoading && (
-                          <>
-                            {ChatAiIcons.map((icon, iconIndex) => {
-                              const Icon = icon.icon;
-                              return (
-                                <ChatBubbleAction
-                                  variant="outline"
-                                  className="size-5"
-                                  key={iconIndex}
-                                  icon={<Icon className="size-3" />}
-                                  onClick={() =>
-                                    handleActionClick(icon.label, index)
-                                  }
-                                />
-                              );
-                            })}
-                          </>
-                        )}
-                      </div>
-                    )} */}
-                </ChatBubbleMessage>
-              </ChatBubble>
-            ))}
+            (isStreaming ? fetchedMessages.slice(-1) : fetchedMessages).map(
+              (message, index) => (
+                <>
+                  <ChatBubble
+                    key={index}
+                    variant={
+                      message?.senderType == "user" ? "sent" : "received"
+                    }
+                  >
+                    <ChatBubbleAvatar
+                      src=""
+                      fallback={message?.senderType == "user" ? "👨🏽" : "🤖"}
+                    />
+                    <ChatBubbleMessage>
+                      {message?.content
+                        .split("```")
+                        .map((part: string, idx: number) => {
+                          if (idx % 2 === 0) {
+                            return (
+                              <Markdown key={idx} remarkPlugins={[remarkGfm]}>
+                                {part}
+                              </Markdown>
+                            );
+                          } else {
+                            return (
+                              <pre
+                                className="whitespace-pre-wrap pt-2"
+                                key={idx}
+                              >
+                                <CodeDisplayBlock code={part} lang="" />
+                              </pre>
+                            );
+                          }
+                        })}
+                    </ChatBubbleMessage>
+                  </ChatBubble>
+                </>
+              )
+            )}
 
           {/* Streaming assistant message */}
-          {isLoading && streamingContent && (
+          {streamingContent && (
             <ChatBubble variant="received">
               <ChatBubbleAvatar src="" fallback="🤖" />
               <ChatBubbleMessage>
@@ -232,16 +187,17 @@ export function ChatComponent({ id }: { id?: string }) {
           )}
 
           {/* Loading fallback */}
-          {isLoading && !streamingContent && (
+          {isStreaming && (
             <ChatBubble variant="received">
               <ChatBubbleAvatar src="" fallback="🤖" />
               <ChatBubbleMessage isLoading />
             </ChatBubble>
           )}
+          <div ref={messagesRef}></div>
         </ChatMessageList>
       </div>
 
-      <div ref={messagesRef} className="w-full px-4 pb-4">
+      <div className="w-full px-4 pb-4">
         <form
           ref={formRef}
           onSubmit={onSubmit}

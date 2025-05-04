@@ -10,6 +10,7 @@ export function useSocket() {
     const socketIo = io(process.env.NEXT_PUBLIC_SOCKET_URL as string);
 
     socketIo.on("connect", () => {
+      console.log("Connected to socket server");
       setIsConnected(true);
     });
 
