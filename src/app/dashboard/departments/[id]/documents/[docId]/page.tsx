@@ -8,9 +8,7 @@ import { useParams } from "next/navigation";
 import DocumentCartList from "./components/ChunksList";
 import { PageHeader } from "@/components/dashboard/common/page-header";
 
-export default function DocumentDetailsPage({}: {
-  params: { id: string; docId: string };
-}) {
+export default function DocumentDetailsPage() {
   const params = useParams();
   const docId = params.docId as string;
 

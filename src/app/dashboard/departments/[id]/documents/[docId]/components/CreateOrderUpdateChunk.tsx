@@ -56,6 +56,10 @@ export function CreateOrUpdateChunkModal({
       id: chunk?.id || crypto.randomUUID(),
       text: data.text,
       isPublic: false,
+      createdAt: "",
+      updatedAt: "",
+      isActive: false,
+      resourceId: ""
     });
     form.reset();
     setIsOpen(false);

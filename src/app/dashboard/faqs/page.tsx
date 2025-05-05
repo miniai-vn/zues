@@ -89,25 +89,26 @@ const FAQsComponent = () => {
   ];
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder="Search by question"
-          className="mr-4 w-full flex-1"
-        />
-        <FaqsModal onChange={createFAQ} />
-      </div>
-      {isLoadingFAQs ? (
-        <LoadingSpinner />
-      ) : (
-        <Tables
-          page={page}
-          onChange={(value) => setPage(value)}
-          columns={columns}
-          data={faqs ?? []}
-        />
-      )}
-    </div>
+    <></>
+    // <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    //   <div className="flex justify-between items-center mb-4">
+    //     <Input
+    //       placeholder="Search by question"
+    //       className="mr-4 w-full flex-1"
+    //     />
+    //     <FaqsModal onChange={createFAQ} />
+    //   </div>
+    //   {isLoadingFAQs ? (
+    //     <LoadingSpinner />
+    //   ) : (
+    //     <Tables
+    //       page={page}
+    //       onChange={(value) => setPage(value)}
+    //       columns={columns}
+    //       data={faqs ?? []}
+    //     />
+    //   )}
+    // </div>
   );
 };
 
