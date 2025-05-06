@@ -32,7 +32,7 @@ const useChat = ({ id }: { id?: string }) => {
     queryFn: async () => {
       try {
         const response = await axiosInstance.get(`/api/conversations/${id}`);
-      return (response.data.messages as Message[]) ?? ([] as Message[]);
+        return (response.data.messages as Message[]) ?? ([] as Message[]);
       } catch (error) {
         router.push("/dashboard/bot");
         throw new Error("Failed to fetch messages");
@@ -49,13 +49,16 @@ const useChat = ({ id }: { id?: string }) => {
     mutationFn: async ({
       content,
       conversation_id,
+      department_id,
     }: {
       content: string;
       conversation_id: number;
+      department_id: string[];
     }) => {
       const response = await axiosInstance.post("/api/chat", {
         content,
         conversation_id,
+        department_id,
       });
       return response.data;
     },
@@ -70,11 +73,16 @@ const useChat = ({ id }: { id?: string }) => {
 
   const handleSubmit = (
     e: React.FormEvent<HTMLFormElement>,
-    conversation_id: number
+    conversation_id: number,
+    department_id: string[]
   ) => {
     e.preventDefault();
     if (input.trim()) {
-      sendMessage({ content: input, conversation_id: conversation_id });
+      sendMessage({
+        content: input,
+        conversation_id: conversation_id,
+        department_id: department_id,
+      });
       setInput("");
     }
   };
@@ -111,6 +119,7 @@ const useChat = ({ id }: { id?: string }) => {
       sendMessage({
         content: data.content,
         conversation_id: Number(data.id as string),
+        department_id: [data.name] as string[],
       });
       fetchConversations();
     },

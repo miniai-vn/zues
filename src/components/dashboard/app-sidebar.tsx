@@ -59,14 +59,12 @@ const data = {
         {
           title: "Quản lý phòng ban",
           icon: CompassIcon,
-          isActive: false,
           role: [Role.Manager],
           url: "/dashboard/departments",
         },
         {
           title: "Quản lý nhân viên",
           icon: SquareTerminal,
-          isActive: true,
           role: [Role.Manager],
           url: "/dashboard/users",
 
@@ -75,11 +73,8 @@ const data = {
         {
           title: "Cài đặt",
           icon: Settings,
-          isActive: true,
           role: [Role.Manager],
           url: "/dashboard/users",
-
-
         },
       ]
     },

@@ -146,7 +146,6 @@ const DepartmentDetailComponent = () => {
                     }`
                   );
                 }}
-                className="data-[state=checked]:bg-green-500"
               />
             </div>
             <ActionPopover
@@ -173,6 +172,9 @@ const DepartmentDetailComponent = () => {
           {
             label: "Quản lý phòng ban",
             href: "/dashboard/departments",
+          },
+          {
+            label: "Quản lý tài liệu",
             isCurrentPage: true,
           },
         ]}
@@ -191,7 +193,7 @@ const DepartmentDetailComponent = () => {
           />
           <Button
             onClick={() => refetchMaterialItems()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md flex items-center gap-2"
+            className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
           >
             <Search />
             Tìm kiếm

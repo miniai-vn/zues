@@ -28,8 +28,8 @@ export enum SocketEvent {
 
 export function ChatComponent({ id }: { id?: string }) {
   const { socket } = useSocket();
-  const { departments } = useDepartments();
-  const [departmentId, setDepartmentId] = useState<string | null>(null);
+  const { departments = [] } = useDepartments();
+  const [departmentId, setDepartmentId] = useState<string>("");
   const {
     fetchedMessages,
     input,
@@ -43,6 +43,12 @@ export function ChatComponent({ id }: { id?: string }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
+
+  useEffect(() => {
+    if (departments && departments.length > 0) {
+      setDepartmentId(departments?.[0]?.id as string);
+    }
+  }, [departments]);
 
   const handleStreamingChunk = (data: any) => {
     setStreamingContent((prev) => prev + (data?.chunk || ""));
@@ -94,7 +100,7 @@ export function ChatComponent({ id }: { id?: string }) {
     if (!id) {
       return createConversation({
         createdAt: new Date().toISOString(),
-        name: "New Conversation",
+        name: departmentId?.toString() || "",
         content: input || "",
         type: "direct",
         // departmentId: departmentId,
@@ -108,7 +114,7 @@ export function ChatComponent({ id }: { id?: string }) {
       isBot: false,
       // departmentId: departmentId,
     });
-    handleSubmit(e, parseInt(id));
+    handleSubmit(e, parseInt(id), [departmentId] as string[]);
     handleScrollY();
   };
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -118,7 +124,7 @@ export function ChatComponent({ id }: { id?: string }) {
       onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
-
+  console.log(departmentId)
   return (
     <div
       className={`flex w-full h-full  ${
@@ -140,41 +146,34 @@ export function ChatComponent({ id }: { id?: string }) {
           {fetchedMessages &&
             (isStreaming ? fetchedMessages.slice(-1) : fetchedMessages).map(
               (message, index) => (
-                <>
-                  <ChatBubble
-                    key={index}
-                    variant={
-                      message?.senderType == "user" ? "sent" : "received"
-                    }
-                  >
-                    <ChatBubbleAvatar
-                      src=""
-                      fallback={message?.senderType == "user" ? "👨🏽" : "🤖"}
-                    />
-                    <ChatBubbleMessage>
-                      {message?.content
-                        .split("```")
-                        .map((part: string, idx: number) => {
-                          if (idx % 2 === 0) {
-                            return (
-                              <Markdown key={idx} remarkPlugins={[remarkGfm]}>
-                                {part}
-                              </Markdown>
-                            );
-                          } else {
-                            return (
-                              <pre
-                                className="whitespace-pre-wrap pt-2"
-                                key={idx}
-                              >
-                                <CodeDisplayBlock code={part} lang="" />
-                              </pre>
-                            );
-                          }
-                        })}
-                    </ChatBubbleMessage>
-                  </ChatBubble>
-                </>
+                <ChatBubble
+                  key={index}
+                  variant={message?.senderType == "user" ? "sent" : "received"}
+                >
+                  <ChatBubbleAvatar
+                    src=""
+                    fallback={message?.senderType == "user" ? "👨🏽" : "🤖"}
+                  />
+                  <ChatBubbleMessage>
+                    {message?.content
+                      .split("```")
+                      .map((part: string, idx: number) => {
+                        if (idx % 2 === 0) {
+                          return (
+                            <Markdown key={idx} remarkPlugins={[remarkGfm]}>
+                              {part}
+                            </Markdown>
+                          );
+                        } else {
+                          return (
+                            <pre className="whitespace-pre-wrap pt-2" key={idx}>
+                              <CodeDisplayBlock code={part} lang="" />
+                            </pre>
+                          );
+                        }
+                      })}
+                  </ChatBubbleMessage>
+                </ChatBubble>
               )
             )}
 
@@ -214,7 +213,7 @@ export function ChatComponent({ id }: { id?: string }) {
           />
           <div className="flex items-center p-3 pt-0">
             <Selector
-              items={(departments || []).map((dept) => {
+              items={departments.map((dept) => {
                 return {
                   label: dept.name as string,
                   value: dept.id as string,

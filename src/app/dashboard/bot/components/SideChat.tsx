@@ -9,7 +9,9 @@ export function SideChat() {
   const { id: currentChatId } = useParams(); 
     return (
     <div className="px-2">
-        <span className="px-2 py-1 text-xs">Lịch sử trò chuyện</span>
+      <div className="sticky top-0 z-10 py-2 mb-1 border-b backdrop-blur-sm  dark:bg-black/90">
+        <span className="px-2 py-1 text-xs font-medium">Lịch sử trò chuyện</span>
+      </div>
       {conversations?.map((conversation) => (
         <Link
           key={conversation.id}

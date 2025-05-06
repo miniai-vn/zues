@@ -1,4 +1,5 @@
 "use client";
+import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
 import Tables from "@/components/dashboard/tables";
 import {
   Breadcrumb,
@@ -8,6 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,14 +21,11 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import ProtectedRoute, { Role } from "@/configs/protect-route";
 import { useAuth, User } from "@/hooks/data/useAuth";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UserModal } from "./create-user-modal";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);

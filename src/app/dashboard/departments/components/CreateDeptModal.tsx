@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Department } from "@/hooks/data/useDepartments";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +17,18 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  name: z.string({
-    required_error: "Please enter a department name.",
-  }),
-  description: z.string({
-    required_error: "Please enter a department description.",
-  }),
+  name: z
+    .string()
+    .min(2, "Department name must be at least 2 characters.")
+    .trim()
+    .refine((val) => val.length > 0, "Department name is required."),
+
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters.")
+    .max(500, "Description cannot exceed 500 characters.")
+    .trim()
+    .refine((val) => val.length > 0, "Description is required."),
 });
 
 interface CreateDeptModalProps {
@@ -87,12 +93,15 @@ export default function CreateDeptModal({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tên phòng ban</FormLabel>
+                    <FormLabel>
+                      Tên phòng ban <span className="text-red-500">*</span>
+                    </FormLabel>
                     <Textarea
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full"
                     />
+                    <FormMessage /> {/* Add this to display validation errors */}
                   </FormItem>
                 )}
               />
@@ -101,13 +110,16 @@ export default function CreateDeptModal({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mô tả</FormLabel>
+                    <FormLabel>
+                      Mô tả <span className="text-red-500">*</span>
+                    </FormLabel>
                     <Textarea
                       value={field.value ?? ""}
                       placeholder="Chức năng này giúp bạn xây dựng tính cách, phong cách trả lời của trợ lý AI. Càng cung cấp dữ liệu đầy đủ, hệ thống sẽ càng hiểu hơn về loại tính cách, giọng văn, kiểu phong cách bạn muốn xây dựng cho trợ lý."
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full h-40"
                     />
+                    <FormMessage /> {/* Add this to display validation errors */}
                   </FormItem>
                 )}
               />

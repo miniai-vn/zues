@@ -10,6 +10,8 @@ import { CreateOrUpdateChunkModal } from "./components/CreateOrderUpdateChunk";
 export default function DocumentDetailsPage() {
   const params = useParams();
   const docId = params.docId as string;
+  const departmentId = params.id as string;
+
 
   const { chunks, createChunk, deleteChunk, updateChunk } = useChunk({
     id: docId,
@@ -25,7 +27,7 @@ export default function DocumentDetailsPage() {
           },
           {
             label: "Quản lý tài liệu",
-            href: "/dashboard/departments/" + docId,
+            href: "/dashboard/departments/" + departmentId,
           },
           {
             label: "Phân đoạn",

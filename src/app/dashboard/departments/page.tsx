@@ -24,11 +24,12 @@ export default function DepartmentPageComponent() {
         backButtonHref="/dashboard/departments"
         breadcrumbs={[
           {
-            label: "Quản lý phòng ban",
-            href: "/dashboard/departments",
+            label: "Quản lý",
+            href: "/dashboard/bot",
           },
           {
-            label: "Quản lý tài liệu",
+            label: "Quản lý phòng ban",
+            href: "/dashboard/departments",
             isCurrentPage: true,
           },
         ]}
@@ -42,9 +43,7 @@ export default function DepartmentPageComponent() {
       </div>
 
       {departments?.length === 0 ? (
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <p className="text-center text-gray-500">Xếp theo thứ tự</p>
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0"></div>
       ) : (
         <>
           <CardDepartmentList
