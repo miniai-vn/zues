@@ -8,12 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -24,7 +18,7 @@ import { useEffect, useState } from "react";
 import { UserModal } from "./create-user-modal";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { PencilLine, X } from "lucide-react";
 import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
 import { Badge } from "@/components/ui/badge";
 
@@ -49,7 +43,7 @@ const UserComponents = () => {
       accessorKey: "name",
       header: "Tên nhân viên",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2 text-sm p-1 leading-tight">
+        <p className="break-all line-clamp-2 text-xs leading-tight">
           {row.original.name ?? "Trống"}
         </p>
       ),
@@ -58,7 +52,7 @@ const UserComponents = () => {
       accessorKey: "position",
       header: "Chức vụ",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 text-sm p-1 leading-tight w-1/2">
+        <p className="break-all line-clamp-2 text-xs leading-tight">
           {row.original.position ?? "Nhân viên"}
         </p>
       ),
@@ -67,7 +61,7 @@ const UserComponents = () => {
       accessorKey: "phone",
       header: "Số điện thoại",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2 text-sm p-1 leading-tight">
+        <p className="break-all line-clamp-2 text-xs leading-tight">
           {row.original.phone ?? "Trống"}
         </p>
       ),
@@ -76,12 +70,12 @@ const UserComponents = () => {
       accessorKey: "departments",
       header: "Bộ phận",
       cell: ({ row }) => (
-        <div className="break-all line-clamp-2 w-1/2 flex flex-wrap items-center gap-1 text-sm p-1 leading-tight">
+        <div className="break-all line-clamp-2 w-1/2 flex flex-wrap items-center gap-1 text-xs leading-tight">
           {row.original.departments?.map((department, index) => (
             <span key={index} className="flex items-center">
               {department.name?.toString()}
               {index < row.original.departments.length - 1 && (
-          <Separator orientation="vertical" className="mx-2 h-4" />
+                <Separator orientation="vertical" className="mx-2 h-4" />
               )}
             </span>
           )) ?? "Trống"}
@@ -90,14 +84,14 @@ const UserComponents = () => {
     },
     {
       accessorKey: "permissions",
-      header: "Quyền",
+      header: "Quyền hạn",
       cell: ({ row }) => (
-        <div className="break-all line-clamp-2 w-1/2 flex flex-wrap items-center gap-1 text-sm p-1 leading-tight">
+        <div className="break-all line-clamp-2 w-1/2 flex flex-wrap items-center gap-1 text-xs leading-tight">
           {row.original.permissions?.map((permission, index) => (
             <span key={index} className="flex items-center">
               {permission}
               {index < row.original.permissions.length - 1 && (
-          <Separator orientation="vertical" className="mx-2 h-4" />
+                <Separator orientation="vertical" className="mx-2 h-4" />
               )}
             </span>
           )) ?? "Trống"}
@@ -109,10 +103,10 @@ const UserComponents = () => {
       header: "Tình trạng",
       cell: ({ row }) => (
         <Badge
-          className={`text-sm p-1 leading-tight ${
+          className={`text-xs leading-tight ${
             row.original.status
-              ? "bg-green-500 text-white"
-              : "bg-white text-black border border-gray-300"
+              ? "bg-green-500 text-white font-normal"
+              : "bg-white text-black border border-gray-300 font-normal"
           }`}
         >
           {row.original.status ? "Hoạt động" : "Không hoạt động"}
@@ -124,48 +118,25 @@ const UserComponents = () => {
       header: "Thao tác",
       cell: ({ row }) => {
         return (
-          <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  <UserModal onChange={updateUser} user={row.original}>
-                    <div className="flex items-center">
-                      <Pencil className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
-                    </div>
-                  </UserModal>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  <AlertDialogComponent
-                    title="Xóa người dùng"
-                    description="Bạn có chắc chắn muốn xóa người dùng này không?"
-                    onConfirm={() => {
-                      deleteUser(row.original.id);
-                    }}
-                    onCancel={() => {}}
-                  >
-                    <div className="flex items-center">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Xóa
-                    </div>
-                  </AlertDialogComponent>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
+          <div className="flex items-center">
+            <UserModal onChange={updateUser} user={row.original}>
+              <Button variant="ghost" size="sm">
+                <PencilLine className="h-1 w-1"/>
+              </Button>
+            </UserModal>
+            <AlertDialogComponent
+              title="Xóa người dùng"
+              description="Bạn có chắc chắn muốn xóa người dùng này không?"
+              onConfirm={() => {
+              deleteUser(row.original.id);
+                }}
+              onCancel={() => {}}
+            >
+              <Button variant="ghost" size="sm">
+                <X className="h-1 w-1" />
+              </Button>
+            </AlertDialogComponent>
+          </div>
         );
       },
     },
@@ -204,7 +175,9 @@ const UserComponents = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
             <UserModal onChange={createUser}>
-              <Button variant="default">Thêm nhân viên</Button>
+                <Button variant="default" className="bg-[#3569E0] text-white">
+                Tạo tài khoản nhân viên
+                </Button>
             </UserModal>
           </div>
           <DataTable

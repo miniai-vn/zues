@@ -36,6 +36,7 @@ const FormSchema = (isEditMode: boolean) =>
       : z.string().regex(/^\d+$/, "* Số điện thoại phải là số."),
     roles: z.array(z.string()).optional(),
     departments: z.array(z.number()).optional(),
+    position: z.string().nonempty("* Vui lòng chọn chức vụ."),
   });
 
 interface AddUserProps {
@@ -169,6 +170,31 @@ export function UserModal({ user, children, onChange }: AddUserProps) {
                     {fieldState.error && (
                       <FormMessage>{fieldState.error.message}</FormMessage>
                     )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="position"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel>Chức vụ</FormLabel>
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={(value) => field.onChange(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn chức vụ" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roles?.map((role) => (
+                          <SelectItem key={role.id} value={role.name}>
+                            {role.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
                   </FormItem>
                 )}
               />
