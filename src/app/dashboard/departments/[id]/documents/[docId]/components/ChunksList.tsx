@@ -1,20 +1,30 @@
 import { Chunk } from "@/hooks/data/useChunk";
-import DocumentCard from "./ChunkCart";
+import ChunkCard from "./ChunkCard";
 
 // Define item structure
 
 // Define props for the component
 interface DocumentCartListProps {
   chunks: Chunk[];
+  deleteChunk: (id: string) => void;
+  updateChunk: (chunk: Chunk) => void;
 }
 
-export default function DocumentCartList({ chunks }: DocumentCartListProps) {
+export default function DocumentCartList({
+  chunks,
+  deleteChunk,
+  updateChunk,
+}: DocumentCartListProps) {
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {chunks.map((chunk) => (
           <div key={chunk.id} className="relative">
-            <DocumentCard chunk={chunk} />
+            <ChunkCard
+              deleteChunk={deleteChunk}
+              updateChunk={updateChunk}
+              chunk={chunk}
+            />
           </div>
         ))}
       </div>

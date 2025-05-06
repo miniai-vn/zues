@@ -1,5 +1,6 @@
 "use client";
 import CodeDisplayBlock from "@/components/code-display-block";
+import { Selector } from "@/components/dashboard/selector";
 import { Button } from "@/components/ui/button";
 import {
   ChatBubble,
@@ -9,6 +10,7 @@ import {
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { useChat } from "@/hooks/data/useChat";
+import useDepartments from "@/hooks/data/useDepartments";
 import { useSocket } from "@/hooks/useSocket";
 import { CornerDownLeft, Mic, Paperclip } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -26,6 +28,8 @@ export enum SocketEvent {
 
 export function ChatComponent({ id }: { id?: string }) {
   const { socket } = useSocket();
+  const { departments } = useDepartments();
+  const [departmentId, setDepartmentId] = useState<string | null>(null);
   const {
     fetchedMessages,
     input,
@@ -93,6 +97,7 @@ export function ChatComponent({ id }: { id?: string }) {
         name: "New Conversation",
         content: input || "",
         type: "direct",
+        // departmentId: departmentId,
       });
     }
     fetchedMessages?.push({
@@ -101,12 +106,11 @@ export function ChatComponent({ id }: { id?: string }) {
       createdAt: new Date().toISOString(),
       id: 0,
       isBot: false,
+      // departmentId: departmentId,
     });
     handleSubmit(e, parseInt(id));
     handleScrollY();
-    // formRef.current?.reset();
   };
-
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -127,7 +131,7 @@ export function ChatComponent({ id }: { id?: string }) {
         } w-full scroll-y-auto overflow-y-auto bg-background shadow-sm rounded-lg`}
       >
         <ChatMessageList>
-          {fetchedMessages?.length === 0 && (
+          {(!fetchedMessages || fetchedMessages?.length === 0) && (
             <div className="w-full text-center bg-background shadow-sm rounded-lg p-8 flex flex-col gap-2">
               <h1 className="font-bold text-4xl">Tôi giúp gì được cho bạn?.</h1>
             </div>
@@ -174,7 +178,6 @@ export function ChatComponent({ id }: { id?: string }) {
               )
             )}
 
-          {/* Streaming assistant message */}
           {streamingContent && (
             <ChatBubble variant="received">
               <ChatBubbleAvatar src="" fallback="🤖" />
@@ -186,7 +189,6 @@ export function ChatComponent({ id }: { id?: string }) {
             </ChatBubble>
           )}
 
-          {/* Loading fallback */}
           {isStreaming && (
             <ChatBubble variant="received">
               <ChatBubbleAvatar src="" fallback="🤖" />
@@ -211,6 +213,18 @@ export function ChatComponent({ id }: { id?: string }) {
             className="rounded-lg bg-background border-0 shadow-none focus-visible:ring-0"
           />
           <div className="flex items-center p-3 pt-0">
+            <Selector
+              items={(departments || []).map((dept) => {
+                return {
+                  label: dept.name as string,
+                  value: dept.id as string,
+                };
+              })}
+              value={departmentId}
+              placeholder="Chọn phòng ban"
+              onChange={(value) => setDepartmentId(value as string)}
+            />
+
             <Button variant="ghost" size="icon">
               <Paperclip className="size-4" />
               <span className="sr-only">Attach file</span>

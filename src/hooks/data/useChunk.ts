@@ -1,19 +1,19 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useToast } from "../use-toast";
 
 export interface Chunk {
   id: string;
   text: string;
-  createdAt: string;
+  createdAt?: string;
   isPublic?: boolean;
-  updatedAt: string;
+  updatedAt?: string;
   isActive: boolean;
   resourceId: string;
 }
 
 interface UseChunkProps {
-  id: string;
-  type?: string | null;
+  id?: string;
 }
 
 const updateChunk = async (chunk: Chunk) => {
@@ -27,6 +27,7 @@ const deleteChunk = async (id: string) => {
 };
 
 const useChunk = ({ id }: UseChunkProps) => {
+  const { toast } = useToast();
   const {
     data: chunks,
     isLoading: isFetchingChunk,
@@ -42,30 +43,73 @@ const useChunk = ({ id }: UseChunkProps) => {
     enabled: !!id,
   });
 
-  const updateMutation = useMutation({
+  const { mutate: updateMutation } = useMutation({
     mutationFn: (chunk: Chunk) => updateChunk(chunk),
     onSuccess: () => {
+      toast({
+        title: "Cập nhật thành công",
+        description: "Đã cập nhật đoạn văn bản",
+        variant: "default",
+      });
       refetch();
     },
     onError: () => {
       refetch();
+      toast({
+        title: "Cập nhật không thành công",
+        description: "Có lỗi xảy ra trong quá trình cập nhật",
+        variant: "destructive",
+      });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteChunk(id),
     onSuccess: () => {
+      toast({
+        title: "Xóa thành công",
+        description: "Đã xóa đoạn văn bản",
+        variant: "default",
+      });
       refetch();
     },
     onError: () => {
+      toast({
+        title: "Xóa không thành công",
+        description: "Có lỗi xảy ra trong quá trình xóa",
+        variant: "destructive",
+      });
       refetch();
+    },
+  });
+
+  const { mutate: createChunk } = useMutation({
+    mutationFn: async (chunk: Chunk) => {
+      await axiosInstance.post(`/api/chunks`, chunk);
+    },
+    onSuccess: () => {
+      refetch();
+      toast({
+        title: "Tạo thành công",
+        description: "Đã tạo đoạn văn bản",
+        variant: "default",
+      });
+    },
+    onError: () => {
+      refetch();
+      toast({
+        title: "Tạo không thành công",
+        description: "Có lỗi xảy ra trong quá trình tạo",
+        variant: "destructive",
+      });
     },
   });
 
   return {
     chunks,
     isFetchingChunk,
-    updateChunk: updateMutation.mutate,
+    createChunk,
+    updateChunk: updateMutation,
     deleteChunk: deleteMutation.mutate,
   };
 };

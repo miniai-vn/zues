@@ -29,6 +29,7 @@ const DepartmentDetailComponent = () => {
     deleteResource,
     createChunks,
     syncResource,
+    isCreateChunks: isLoadCreateChunks,
   } = useResource({
     id: departmentId,
     page,
@@ -105,15 +106,21 @@ const DepartmentDetailComponent = () => {
       header: () => <div className="text-center">Trạng thái</div>,
       cell: (row) => (
         <div className="flex items-center justify-center w-full">
-          <span
-            className={`px-2 py-1 rounded-full text-xs font-medium ${
-              row.row.original.status === "active"
-                ? "bg-green-100 text-green-800"
-                : "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {row.row.original.status}
-          </span>
+          {isLoadCreateChunks ? (
+            <div className="flex items-center justify-center z-10">
+              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
+            </div>
+          ) : (
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                row.row.original.status === "active"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {row.row.original.status}
+            </span>
+          )}
         </div>
       ),
       size: 100,
@@ -166,21 +173,10 @@ const DepartmentDetailComponent = () => {
           {
             label: "Quản lý phòng ban",
             href: "/dashboard/departments",
-          },
-          {
-            label: "Quản lý tài liệu",
             isCurrentPage: true,
           },
         ]}
       />
-      {/* <Input
-        placeholder="Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)"
-        type="file"
-        onChange={(e) =>
-          e.target.files && onHandleUploadFile(e.target.files[0])
-        }
-        className="w-full h-14 center"
-      /> */}
       <div className="flex justify-between items-center mb-4">
         <Input
           placeholder="Tìm kiếm tài tên tài liệu"

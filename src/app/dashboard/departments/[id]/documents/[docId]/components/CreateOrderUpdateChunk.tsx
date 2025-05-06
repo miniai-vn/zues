@@ -53,13 +53,13 @@ export function CreateOrUpdateChunkModal({
 
   const onSubmit = (data: ChunkFormValues) => {
     onChange({
-      id: chunk?.id || crypto.randomUUID(),
+      id: chunk?.id as string,
       text: data.text,
       isPublic: false,
       createdAt: "",
       updatedAt: "",
       isActive: false,
-      resourceId: ""
+      resourceId: "",
     });
     form.reset();
     setIsOpen(false);

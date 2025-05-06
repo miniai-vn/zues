@@ -141,7 +141,7 @@ const useResource = ({
     },
   });
 
-  const { mutate: createChunks } = useMutation({
+  const { mutate: createChunks, isPending: isCreateChunks } = useMutation({
     mutationFn: async (id: string) => {
       const response = await axiosInstance.patch(
         `/api/resources/create-chunks/${id}`
@@ -170,14 +170,14 @@ const useResource = ({
     },
     onSuccess: () => {
       toast({
-        title: "Tạo thành công",
+        title: "Đồng bộ thành công",
         description: "Tạo tài liệu thành công",
       });
       refetchResource();
     },
     onError: () => {
       toast({
-        title: "Tạo thất bại",
+        title: "Đồng bộ thất bại",
         description: "Tạo tài liệu thất bại",
       });
     },
@@ -186,6 +186,7 @@ const useResource = ({
     deleteResource,
     createResource,
     createChunks,
+    isCreateChunks,
     materialItems,
     syncResource,
     handleUploadFile,

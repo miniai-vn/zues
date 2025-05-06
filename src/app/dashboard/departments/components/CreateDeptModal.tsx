@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Department } from "@/hooks/data/useDepartments";
@@ -106,7 +104,7 @@ export default function CreateDeptModal({
                     <FormLabel>Mô tả</FormLabel>
                     <Textarea
                       value={field.value ?? ""}
-                      placeholder="Mô tả này như prompt và được sử dụng để hướng dẫn AI"
+                      placeholder="Chức năng này giúp bạn xây dựng tính cách, phong cách trả lời của trợ lý AI. Càng cung cấp dữ liệu đầy đủ, hệ thống sẽ càng hiểu hơn về loại tính cách, giọng văn, kiểu phong cách bạn muốn xây dựng cho trợ lý."
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full h-40"
                     />
