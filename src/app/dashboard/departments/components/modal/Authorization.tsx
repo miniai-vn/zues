@@ -1,0 +1,143 @@
+import React, { useState, useMemo, useEffect, use } from "react";
+import { Search, Plus, MoreHorizontal, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import AddMemberDialog from "./AddmemberDialog";
+import { DataTable } from "@/components/dashboard/tables/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import useDepartments, { Department } from "@/hooks/data/useDepartments";
+import { Switch } from "@/components/ui/switch";
+import ActionPopover from "@/components/dashboard/popever";
+import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import { User } from "@/hooks/data/useAuth";
+
+export default function AccessControl({
+  department,
+}: {
+  department: Department;
+}) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [members, setMembers] = useState<User[]>([]);
+  const { removeUserFromDept } = useDepartments();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const handlePaginationChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
+  useEffect(() => {
+    if (department) {
+      const membersData = department.users?.map((user) => ({
+        id: user.id,
+        name: user.username,
+        phone: user.phone,
+      })) as User[];
+      setMembers(membersData);
+    }
+  }, [department]);
+  // Define columns for the DataTable
+  const columns: ColumnDef<User>[] = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: "TÊN",
+      },
+      {
+        accessorKey: "phone",
+        header: "SỐ ĐIỆN THOẠI",
+      },
+      {
+        accessorKey: "role",
+        header: "VAI TRÒ",
+      },
+      {
+        id: "actions",
+        header: () => <div className="text-center">Thao tác</div>,
+        cell: ({ row }) => {
+          return (
+            <div className="flex justify-center">
+              <AlertDialogComponent
+                children={
+                  <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                    <Trash2 className="h-4 w-4 text-gray-500" />
+                  </Button>
+                }
+                description="Bạn có chắc chắn muốn xóa thành viên này không?"
+                title="Xác nhận xóa thành viên"
+                onConfirm={() =>
+                  removeUserFromDept({
+                    department_id: department.id as string,
+                    user_id: row.original.id,
+                  })
+                }
+                onCancel={() => {}}
+              />
+            </div>
+          );
+        },
+      },
+    ],
+    []
+  );
+
+  return (
+    <Card className="w-full">
+      <CardHeader className="pb-0">
+        <h2 className="text-blue-600 font-medium text-lg">
+          Cài đặt truy cập nội bộ
+        </h2>
+        <p className="text-sm text-gray-700">
+          Thêm email của các thành viên trong dự án để kiểm soát quyền truy cập
+          vào Bot này ở AI Store.
+        </p>
+        <p className="text-sm text-gray-700">
+          Khi phân quyền truy cập Bot, người dùng trong AI Store không thuộc dự
+          án sẽ không thể truy cập Bot này.
+        </p>
+      </CardHeader>
+
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between mb-6 gap-3">
+          <div className="flex items-center border border-gray-300 rounded-md overflow-hidden flex-1">
+            <Search className="text-gray-500 w-4 h-4 ml-3" />
+            <Input
+              type="text"
+              placeholder="Tìm kiếm theo email và tên"
+              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <AddMemberDialog department={department} />
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={members}
+          pagination={{
+            page: page,
+            limit: pageSize,
+            total: department.users?.length ?? 0,
+          }}
+          onPaginationChange={handlePaginationChange}
+          onPageSizeChange={handlePageSizeChange}
+          noResultsMessage={
+            <div className="flex flex-col items-center justify-center py-10">
+              <p className="text-gray-700 mb-2">
+                Bot chưa được phân quyền truy cập.
+              </p>
+              <p className="text-gray-700 mb-6">
+                Thêm thành viên để phân quyền truy cập Bot này.
+              </p>
+            </div>
+          }
+        />
+      </CardContent>
+    </Card>
+  );
+}

@@ -2,18 +2,25 @@ import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 import { User } from "./useAuth";
+import { useEffect, useState } from "react";
 
 export type Department = {
   id?: string;
-  name?: string;
-  description?: string;
+  name: string;
+  description: string;
+  prompt: string;
   createdAt?: string;
   updatedAt?: string;
   isPublic?: boolean;
   users?: User[];
 };
+
 const useDepartments = () => {
   const { toast } = useToast();
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<
+    string | null
+  >(localStorage.getItem("selectedDepartmentId"));
+
   const {
     data: departments,
     isLoading: isFetchingDepartments,
@@ -28,6 +35,21 @@ const useDepartments = () => {
     },
   });
 
+  useEffect(() => {
+    if (departments?.length && !selectedDepartmentId) {
+      const firstDeptId = departments[0]?.id;
+      if (firstDeptId) {
+        localStorage.setItem("selectedDepartmentId", firstDeptId);
+        setSelectedDepartmentId(firstDeptId);
+      }
+    }
+  }, [departments, selectedDepartmentId]);
+
+  const changeDepartment = (departmentId: string) => {
+    localStorage.setItem("selectedDepartmentId", departmentId);
+    setSelectedDepartmentId(departmentId);
+  };
+
   const { mutate: createDepartment, isSuccess: isCreatedDepartment } =
     useMutation({
       mutationFn: async (data: Department) => {
@@ -35,6 +57,7 @@ const useDepartments = () => {
           name: data.name,
           description: data.description,
           is_public: data.isPublic,
+          prompt: data.prompt,
         });
         return res.data;
       },
@@ -79,6 +102,28 @@ const useDepartments = () => {
     },
   });
 
+  const { mutate: removeUserFromDept } = useMutation({
+    mutationFn: async (data: { user_id: string; department_id: string }) => {
+      const res = await axiosInstance.delete("/api/departments/delete-user", {
+        params: data,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      refetchDepartments();
+      toast({
+        title: "Remove User from Department",
+        description: "Remove User from Department successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Remove User from Department",
+        description: error.message,
+      });
+    },
+  });
+
   const { mutate: deleteDepartment } = useMutation({
     mutationFn: async (id: string) => {
       await axiosInstance.delete(`/api/departments/${id}`);
@@ -104,6 +149,7 @@ const useDepartments = () => {
         name: data.name,
         description: data.description,
         is_public: data.isPublic,
+        prompt: data.prompt,
       });
       return res.data;
     },
@@ -121,15 +167,19 @@ const useDepartments = () => {
       });
     },
   });
+
   return {
     updateDepartment,
     deleteDepartment,
     createDepartment,
+    removeUserFromDept,
     isCreatedDepartment,
     addUserToDept,
     departments,
     isFetchingDepartments,
     refetchDepartments,
+    selectedDepartmentId,
+    changeDepartment,
   };
 };
 

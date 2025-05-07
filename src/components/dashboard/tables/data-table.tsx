@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   ColumnDef,
   flexRender,
@@ -52,6 +53,7 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: (sorting: SortingState) => void;
   onRowSelectionChange?: (selectedRows: TData[]) => void;
   isLoading?: boolean;
+  noResultsMessage?: React.ReactNode; // Updated to accept string or JSX
 }
 
 export function DataTable<TData, TValue>({
@@ -63,6 +65,7 @@ export function DataTable<TData, TValue>({
   onSortingChange,
   onRowSelectionChange,
   isLoading = false,
+  noResultsMessage = "No results.", // Default value can be string
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filteredData, setFilteredData] = useState<TData[]>(data);
@@ -222,10 +225,10 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+                  colSpan={columns.length + 1} // +1 for the selection column
+                  className="h-24 text-center w-full"
                 >
-                  {isLoading ? "Loading..." : "No results."}
+                  {isLoading ? "" : noResultsMessage}
                 </TableCell>
               </TableRow>
             )}

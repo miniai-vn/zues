@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronRight, PlusCircle, type LucideIcon } from "lucide-react";
+import {
+  ChartArea,
+  ChevronRight,
+  MessageCircleMore,
+  PlusCircle,
+  type LucideIcon,
+} from "lucide-react";
 import React, { useEffect } from "react";
 import {
   Collapsible,
@@ -20,6 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
 import { Button } from "../ui/button";
+import { SideChat } from "@/app/dashboard/bot/components/SideChat";
 
 // Type definitions for better maintainability
 type SubMenuItem = {
@@ -135,6 +142,17 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
             </SidebarMenuItem>
           </Collapsible>
         ))}
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="w-full"
+            onClick={() => {
+              router.push("/dashboard/bot");
+            }}
+          >
+            <MessageCircleMore /> Lịch sử trò chuyện
+          </SidebarMenuButton>
+          <SideChat />
+        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   );

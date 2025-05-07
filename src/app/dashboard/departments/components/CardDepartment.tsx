@@ -33,7 +33,7 @@ import {
 import { useAuth } from "@/hooks/data/useAuth";
 import dayjs from "dayjs";
 import { useState } from "react";
-import CreateDeptModal from "./CreateDeptModal";
+import CreateOrUpdateDeptModal from "./modal/CreateDeptModal";
 
 function PopoverDept({ department }: { department: Department }) {
   const { addUserToDept } = useDepartments();
@@ -71,7 +71,6 @@ function PopoverDept({ department }: { department: Department }) {
         <ChevronDown className="cursor-pointer" />
       </PopoverTrigger>
       <PopoverContent className="w-64 p-0 rounded-lg">
-        {/* Email selection area */}
         <div className="p-2 flex flex-wrap gap-1 min-h-10 border-b">
           <div className="flex flex-wrap gap-1 mb-1">
             {emails.map((email) => (
@@ -209,7 +208,7 @@ export function CardDepartment({ department }: CardDepartmentProps) {
             className="flex items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <CreateDeptModal
+            <CreateOrUpdateDeptModal
               onChange={updateDepartment}
               department={department}
             />

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import useDepartments from "@/hooks/data/useDepartments";
 import { useState } from "react";
 import CardDepartmentList from "./components/CardDepartmentList";
-import CreateDeptModal from "./components/CreateDeptModal";
+import CreateOrUpdateDeptModal from "./components/modal/CreateDeptModal";
 
 export default function DepartmentPageComponent() {
   const { departments, createDepartment } = useDepartments();
@@ -39,7 +39,7 @@ export default function DepartmentPageComponent() {
           placeholder="Search by question"
           className="mr-4 w-full flex-1"
         />
-        <CreateDeptModal onChange={createDepartment} />
+        <CreateOrUpdateDeptModal onChange={createDepartment} />
       </div>
 
       {departments?.length === 0 ? (

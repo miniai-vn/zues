@@ -99,9 +99,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <div className="flex-1 overflow-y-auto">
-          <SideChat />
-        </div>
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

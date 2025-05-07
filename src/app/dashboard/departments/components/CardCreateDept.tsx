@@ -8,16 +8,15 @@ import {
 import useDepartments from "@/hooks/data/useDepartments";
 import { cn } from "@/lib/utils";
 import { User2 } from "lucide-react";
-import CreateDeptModal from "./CreateDeptModal";
+import CreateOrUpdateDeptModal from "./modal/CreateDeptModal";
 
 export function CardCreateDepartment() {
   const { createDepartment } = useDepartments();
-
   return (
     <Card>
       <CardHeader className="h-[72px] overflow-hidden">
         <CardTitle className={cn("flex items-center")}>
-          <CreateDeptModal onChange={createDepartment} />
+          <CreateOrUpdateDeptModal onChange={createDepartment} />
           <p className="ml-2">Tạo tài liệu mới</p>
         </CardTitle>
       </CardHeader>
