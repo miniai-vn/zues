@@ -69,7 +69,6 @@ const data = {
           url: "/dashboard/users",
 
         },
-
         {
           title: "Cài đặt",
           icon: Settings,
@@ -83,7 +82,6 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const router = useRouter();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

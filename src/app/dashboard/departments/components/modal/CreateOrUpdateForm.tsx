@@ -76,7 +76,7 @@ export default function CreateOrUpdateForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
         <FormField
           control={form.control}
           name="name"
@@ -106,7 +106,7 @@ export default function CreateOrUpdateForm({
                 value={field.value ?? ""}
                 placeholder="Nội dung của phòng ban này cung cấp thông tin chuyên môn, giúp hệ thống AI hiểu rõ bối cảnh và yêu cầu công việc. Nhờ đó, AI có thể đưa ra câu trả lời chính xác, phù hợp với chức năng và nghiệp vụ của phòng Nhân sự, hỗ trợ hiệu quả hơn trong các tác vụ như tuyển dụng, đào tạo hay quản lý nhân sự.."
                 onChange={(e) => field.onChange(e.target.value)}
-                className="w-full"
+                className="w-full h-24"
               />
               <FormMessage />{" "}
             </FormItem>
@@ -125,7 +125,7 @@ export default function CreateOrUpdateForm({
                 value={field.value ?? ""}
                 placeholder="Chức năng này giúp bạn xây dựng tính cách, phong cách trả lời của trợ lý AI. Càng cung cấp dữ liệu đầy đủ, hệ thống sẽ càng hiểu hơn về loại tính cách, giọng văn, kiểu phong cách bạn muốn xây dựng cho trợ lý."
                 onChange={(e) => field.onChange(e.target.value)}
-                className="w-full"
+                className="w-full h-24"
               />
               <FormMessage />
             </FormItem>

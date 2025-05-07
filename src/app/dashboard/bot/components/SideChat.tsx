@@ -3,15 +3,31 @@
 import { useChat } from "@/hooks/data/useChat";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function SideChat() {
-  const { conversations } = useChat({});
-  const { id: currentChatId } = useParams(); 
+  const { conversations, isLoading } = useChat({});
+  const { id: currentChatId } = useParams();
+
+  if (isLoading) {
     return (
+      <div className="px-2">
+        {Array(8)
+          .fill(0)
+          .map((_, index) => (
+            <div
+              key={index}
+              className="flex items-center pb-1.5 pt-1 text-sm rounded-lg mb-1"
+            >
+              <Skeleton className="h-5 w-full" />
+            </div>
+          ))}
+      </div>
+    );
+  }
+
+  return (
     <div className="px-2">
-      {/* <div className="sticky top-0 z-10 py-2 mb-1 border-b backdrop-blur-sm  dark:bg-black/90">
-        <span className="px-2 py-1 text-xs font-medium">Lịch sử trò chuyện</span>
-      </div> */}
       {conversations?.map((conversation) => (
         <Link
           key={conversation.id}

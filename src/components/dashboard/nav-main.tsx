@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ChartArea,
-  ChevronRight,
-  MessageCircleMore,
-  PlusCircle,
-  type LucideIcon,
-} from "lucide-react";
-import React, { useEffect } from "react";
+import { SideChat } from "@/app/dashboard/bot/components/SideChat";
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,18 +8,22 @@ import {
 } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarMenuSubItem
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
-import { Button } from "../ui/button";
-import { SideChat } from "@/app/dashboard/bot/components/SideChat";
+import {
+  ChevronRight,
+  MessageCircleMore,
+  PlusCircle,
+  type LucideIcon
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 // Type definitions for better maintainability
 type SubMenuItem = {
@@ -64,11 +61,7 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
   });
 
   // Helper function to render sub-items
-  const renderSubItems = (
-    subItems?: SubMenuItem[],
-    children?: React.ReactNode
-  ) => {
-    if (children) return children;
+  const renderSubItems = (subItems?: SubMenuItem[]) => {
     if (!subItems?.length) return null;
     return subItems
       .filter((item) => {
@@ -79,7 +72,8 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
         <SidebarMenuSubItem key={subItem.title}>
           <SidebarMenuSubButton
             asChild
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               if (subItem.url) {
                 router.push(subItem.url);
               }
@@ -135,9 +129,7 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
               </CollapsibleTrigger>
 
               <CollapsibleContent>
-                <SidebarMenuSub>
-                  {renderSubItems(item.items, item.children)}
-                </SidebarMenuSub>
+                <SidebarMenuSub>{renderSubItems(item.items)}</SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>

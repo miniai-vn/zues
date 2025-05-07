@@ -212,9 +212,6 @@ export function CardDepartment({ department }: CardDepartmentProps) {
               onChange={updateDepartment}
               department={department}
             />
-            <div className="popover-trigger">
-              <PopoverDept department={department} />
-            </div>
           </div>
         </div>
       </CardHeader>
