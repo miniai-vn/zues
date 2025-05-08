@@ -53,7 +53,7 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: (sorting: SortingState) => void;
   onRowSelectionChange?: (selectedRows: TData[]) => void;
   isLoading?: boolean;
-  noResultsMessage?: React.ReactNode; // Updated to accept string or JSX
+  noResultsMessage?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -65,7 +65,7 @@ export function DataTable<TData, TValue>({
   onSortingChange,
   onRowSelectionChange,
   isLoading = false,
-  noResultsMessage = "No results.", // Default value can be string
+  noResultsMessage = "No results.",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filteredData, setFilteredData] = useState<TData[]>(data);
@@ -167,7 +167,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="rounded-md border">
-      <div className="relative">
+      <div className="relative min-h-[24rem]">
         {isLoading && (
           <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
             <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
@@ -205,7 +205,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="min-h-[24rem]">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -223,10 +223,10 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow className="h-[24rem]">
                 <TableCell
-                  colSpan={columns.length + 1} // +1 for the selection column
-                  className="h-24 text-center w-full"
+                  colSpan={columns.length + 1}
+                  className="text-center w-full"
                 >
                   {isLoading ? "" : noResultsMessage}
                 </TableCell>
@@ -237,7 +237,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {hasServerPagination && (
-        <div className="flex items-center justify-between  px-4 py-4">
+        <div className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Select

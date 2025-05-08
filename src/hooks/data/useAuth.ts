@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { create } from "zustand";
 import { useToast } from "../use-toast";
-import { UserUpdateFormValues } from '../../components/dashboard/user-update-form';
+import { UserUpdateFormValues } from "../../components/dashboard/user-update-form";
 import { Role } from "./useRoles";
 import { Department } from "./useDepartments";
 
@@ -12,11 +12,11 @@ export type UserData = {
   username: string;
   password: string;
   name?: string;
-  roles: string[];
+  roles: number[];
   email?: string;
   phone?: string;
   avatar?: string;
-  departments: string[];
+  departments: number[];
   position?: string;
 };
 
@@ -45,20 +45,24 @@ export const useUserStore = create<{
   setUser: (user: User | undefined) => set({ user }),
 }));
 
-const useAuth = (page = 1, limit = 10, search = "") => {
+const useAuth = ({
+  page = undefined,
+  limit = undefined,
+  search = "",
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}) => {
   const { setUser, user } = useUserStore();
   const router = useRouter();
 
   const { toast } = useToast();
-  const {
-    data: users,
-    isFetching,
-    refetch,
-  } = useQuery({
-    queryKey: ["user", { page, limit, search }],
+  const { data: users, isFetching } = useQuery({
+    queryKey: ["user"],
     queryFn: async () => {
       const response = await axiosInstance.get("/api/auth/users", {
-        params: { page, limit, search },
+        params: { search },
       });
       return (response.data as User[]) ?? [];
     },
@@ -114,14 +118,10 @@ const useAuth = (page = 1, limit = 10, search = "") => {
       return response;
     },
   });
-  
+
   const { mutate: updateUser } = useMutation({
     mutationFn: async (data: UserUpdateData) => {
       const { id, ..._ } = data;
-      if (!id) {
-        throw new Error("User ID is required for update");
-      }
-
       const response = await axiosInstance.post(
         `/api/auth/users/${data?.id}`,
         data
@@ -172,8 +172,30 @@ const useAuth = (page = 1, limit = 10, search = "") => {
     }
   };
 
+  const {
+    data: userHasPagination,
+    refetch: refetch,
+    isFetching: isUserHasPaginationLoading,
+  } = useQuery({
+    queryKey: ["user", { page, limit, search }],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/auth/users", {
+        params: { page, limit, search },
+      });
+      return {
+        items: response.data.items || response.data || [],
+        totalCount: response.data.totalCount || response.data?.length || 0,
+        page: page,
+        limit: limit,
+      };
+    },
+    enabled: !!user && !!page && !!limit,
+  });
+
   return {
     users,
+    userHasPagination,
+    isUserHasPaginationLoading,
     isFetching,
     signIn,
     isSuccess,

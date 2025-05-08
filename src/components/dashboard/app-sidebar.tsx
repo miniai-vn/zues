@@ -67,7 +67,12 @@ const data = {
           icon: SquareTerminal,
           role: [Role.Manager],
           url: "/dashboard/users",
-
+        },
+        {
+          title: "Cài đặt phân quyền",
+          icon: SquareTerminal,
+          role: [Role.Manager],
+          url: "/dashboard/permissions",
         },
         {
           title: "Cài đặt",
@@ -75,9 +80,8 @@ const data = {
           role: [Role.Manager],
           url: "/dashboard/users",
         },
-      ]
+      ],
     },
-
   ],
 };
 

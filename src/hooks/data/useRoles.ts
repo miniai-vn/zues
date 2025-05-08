@@ -1,10 +1,18 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
-
-export type Role = {
+export type Permission = {
   id: string;
   name: string;
+  description?: string;
+  code: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+export type Role = {
+  id: number;
+  name: string;
+  permissions: Record<string, boolean>;
   description?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -12,6 +20,15 @@ export type Role = {
 
 const useRoles = () => {
   const { toast } = useToast();
+  const { data: permissions, isLoading: isFetchingPermissions } = useQuery({
+    queryKey: ["permissions"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/api/permissions/get-all", {
+        params: {},
+      });
+      return (res.data as Permission[]) || [];
+    },
+  });
   const {
     data: roles,
     isLoading: isFetchingRoles,
@@ -95,6 +112,7 @@ const useRoles = () => {
       const res = await axiosInstance.put(`/api/roles/${data.id}`, {
         name: data.name,
         description: data.description,
+        permissions: data.permissions,
       });
       return res.data;
     },
@@ -122,6 +140,8 @@ const useRoles = () => {
     roles,
     isFetchingRoles,
     refetchRoles,
+    permissions,
+    isFetchingPermissions,
   };
 };
 

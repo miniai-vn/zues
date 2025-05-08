@@ -24,7 +24,7 @@ interface AddMemberDialogProps {
 }
 
 export default function AddMemberDialog({ department }: AddMemberDialogProps) {
-  const { users } = useAuth();
+  const { users } = useAuth({});
   const { addUserToDept } = useDepartments();
   const [userId, setUserId] = React.useState<string>("");
   const onChangeUserId = (value: string) => {

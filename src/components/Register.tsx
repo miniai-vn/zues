@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 const useRegisterForm = () => {
-  const { register } = useAuth();
+  const { register } = useAuth({});
   const router = useRouter();
 
   const authenticate = useCallback(

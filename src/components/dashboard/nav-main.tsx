@@ -46,7 +46,7 @@ type MenuItem = {
 export default function NavMain({ items }: { items: MenuItem[] }) {
   const router = useRouter();
   const { user } = useUserStore();
-  const { loadUserFromLocalStorage } = useAuth();
+  const { loadUserFromLocalStorage } = useAuth({});
 
   useEffect(() => {
     if (!user) {

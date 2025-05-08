@@ -1,14 +1,7 @@
 "use client";
 import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
-import Tables from "@/components/dashboard/tables";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { PageHeader } from "@/components/dashboard/common/page-header";
+import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,22 +10,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
 import ProtectedRoute, { Role } from "@/configs/protect-route";
 import { useAuth, User } from "@/hooks/data/useAuth";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { UserModal } from "./create-user-modal";
+import { AddOrUpdateUserModal } from "./components/CreateOrUpdateModal";
+
+const RoleName = {
+  manager: "Quản lý",
+  staff: "Nhân viên",
+  admin: "Quản lý hệ thống",
+};
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 500);
-  const { deleteUser, createUser, users } = useAuth(page, limit, debouncedSearch);
+  const handlePaginationChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
+  const {
+    deleteUser,
+    createUser,
+    updateUser,
+    userHasPagination: users,
+  } = useAuth({ page, limit: pageSize, search });
+
+  useEffect(() => {
+    if (users) {
+      setPage(users.page || 1);
+      setPageSize(users.limit || 10);
+    }
+  }, [users]);
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "name",
@@ -44,12 +62,10 @@ const UserComponents = () => {
       ),
     },
     {
-      accessorKey: "position",
+      accessorKey: "username",
       header: "Chức vụ",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
-          {row.original.position ?? "Trống"}
-        </p>
+        <p className="break-all line-clamp-2 w-1/2">{row.original.username}</p>
       ),
     },
     {
@@ -64,11 +80,56 @@ const UserComponents = () => {
     {
       accessorKey: "roles",
       header: "Quyền",
-      cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
-          {row.original.roles?.map((role) => role.name).join(", ") ?? "Trống"}
-        </p>
-      ),
+      cell: ({ row }) => {
+        const roles = row.original.roles;
+
+        if (!roles || roles.length === 0) {
+          return <></>;
+        }
+
+        return (
+          <div className="flex flex-wrap gap-1 max-w-xs">
+            {roles.map((role) => {
+              return (
+                <Badge
+                  key={role.id}
+                  variant={"default"}
+                  className="whitespace-nowrap"
+                >
+                  {RoleName[role.name as keyof typeof RoleName]}
+                </Badge>
+              );
+            })}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "departments",
+      header: "Phòng ban",
+      cell: ({ row }) => {
+        const departments = row.original.departments;
+
+        if (!departments || departments.length === 0) {
+          return <></>;
+        }
+
+        return (
+          <div className="flex flex-wrap gap-1 max-w-xs">
+            {departments.map((dept) => {
+              return (
+                <Badge
+                  key={dept.id}
+                  variant={"default"}
+                  className="whitespace-nowrap"
+                >
+                  {dept.name}
+                </Badge>
+              );
+            })}
+          </div>
+        );
+      },
     },
     {
       id: "actions",
@@ -88,12 +149,19 @@ const UserComponents = () => {
                     e.preventDefault();
                   }}
                 >
-                  <UserModal onChange={createUser} user={row.original}>
+                  <AddOrUpdateUserModal
+                    onChange={(data) => {
+                      if ("id" in data) {
+                        updateUser(data as any);
+                      }
+                    }}
+                    user={row.original}
+                  >
                     <div className="flex items-center">
                       <Pencil className="mr-2 h-4 w-4" />
                       Chỉnh sửa
                     </div>
-                  </UserModal>
+                  </AddOrUpdateUserModal>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onSelect={(e) => {
@@ -119,58 +187,62 @@ const UserComponents = () => {
           </>
         );
       },
-    },     
+    },
   ];
-
-  useEffect(() => {
-    if (users) {
-      console.log("users", users);
-    }
-  }, [page, limit, debouncedSearch]);
 
   return (
     <ProtectedRoute requiredRole={[Role.Manager]}>
-      <div>
-        <div className="flex items-center gap-2 py-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Quản lý</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Nhân viên</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex justify-between items-center mb-4">
-            <Input
-              placeholder="Tìm kiếm nhân viên"
-              className="mr-4 w-full flex-1"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <UserModal onChange={createUser}>
-              <Button variant="default">Thêm nhân viên</Button>
-            </UserModal>
-          </div>
-          <Tables
-            // onChange={(page) => {
-            //   setPage(page);
-            // }}
-            pagination={{
-              page: page,
-              limit: limit,
-              search: debouncedSearch,
-            }}
-            columns={columns}
-            data={users ?? []}
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <PageHeader
+          backButtonHref="/dashboard"
+          breadcrumbs={[
+            {
+              label: "Quản lý",
+              href: "/dashboard/users",
+            },
+            {
+              label: "Quản lý người dùng",
+              isCurrentPage: true,
+            },
+          ]}
+        />
+        <div className="flex justify-between items-center mb-4">
+          <Input
+            placeholder="Tìm kiếm tài tên tài liệu"
+            className="mr-4 w-full flex-1"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
+
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => {}}
+              className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
+            >
+              <Search />
+              Tìm kiếm
+            </Button>
+            <AddOrUpdateUserModal
+              onChange={(data) => {
+                if ("username" in data && "password" in data) {
+                  createUser(data);
+                }
+              }}
+            />
+          </div>
         </div>
+        <DataTable
+          columns={columns}
+          data={users?.items || []}
+          pagination={{
+            page: page,
+            limit: pageSize,
+            total: users?.totalCount || 0,
+          }}
+          onPaginationChange={handlePaginationChange}
+          onPageSizeChange={handlePageSizeChange}
+          isLoading={!users}
+        />
       </div>
     </ProtectedRoute>
   );

@@ -20,16 +20,8 @@ export default function AccessControl({
   const [searchQuery, setSearchQuery] = useState("");
   const [members, setMembers] = useState<User[]>([]);
   const { removeUserFromDept } = useDepartments();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const handlePaginationChange = (newPage: number) => {
-    setPage(newPage);
-  };
 
-  const handlePageSizeChange = (newSize: number) => {
-    setPageSize(newSize);
-    setPage(1);
-  };
+
   useEffect(() => {
     if (department) {
       const membersData = department.users?.map((user) => ({
@@ -119,13 +111,6 @@ export default function AccessControl({
         <DataTable
           columns={columns}
           data={members}
-          pagination={{
-            page: page,
-            limit: pageSize,
-            total: department.users?.length ?? 0,
-          }}
-          onPaginationChange={handlePaginationChange}
-          onPageSizeChange={handlePageSizeChange}
           noResultsMessage={
             <div className="flex flex-col items-center justify-center py-10">
               <p className="text-gray-700 mb-2">

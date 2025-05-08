@@ -14,7 +14,7 @@ import ProtectedRoute, { Role } from "@/configs/protect-route";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
 
 const UserUpdateComponents = () => {
-  const { updateUser } = useAuth();
+  const { updateUser } = useAuth({});
   const { user } = useUserStore();
 
   const handleUpdateUser = async (data: UserUpdateFormValues) => {

@@ -17,7 +17,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const { signIn, isSuccess } = useAuth();
+  const { signIn, isSuccess } = useAuth({});
   // defind router with next
   const router = useRouter();
   const authenticate = async (e: React.FormEvent<HTMLFormElement>) => {
