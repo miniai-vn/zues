@@ -47,12 +47,9 @@ const CardDepartmentList = ({
   }
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {departments.map((department) => (
-        <div
-          key={department.id}
-          className="w-[calc(33.333%-16px)] min-w-[300px]"
-        >
+        <div key={department.id}>
           <CardDepartment department={department} />
         </div>
       ))}

@@ -13,14 +13,14 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
 import {
   ChevronRight,
   MessageCircleMore,
   PlusCircle,
-  type LucideIcon
+  type LucideIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -119,6 +119,12 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
                     }
                   }}
                   tooltip={item.title}
+                  data-active={item.isActive}
+                  className={
+                    item.isActive
+                      ? "bg-accent text-accent-foreground font-semibold"
+                      : ""
+                  }
                 >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>

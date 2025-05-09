@@ -79,7 +79,7 @@ const useAuth = ({
       return response;
     },
     onSuccess() {
-      console.log("Login successful");
+      console.log("Đăng nhập thành công");
       router.push("/dashboard/bot");
     },
   });
@@ -98,15 +98,15 @@ const useAuth = ({
     },
     onSuccess: () => {
       toast({
-        title: "Created",
-        description: `Created at ${new Date().toLocaleTimeString()}`,
+        title: "Tạo mới",
+        description: `Tạo mới lúc ${new Date().toLocaleTimeString()}`,
       });
       refetch();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
+        title: "Lỗi",
+        description: `Lỗi lúc ${new Date().toLocaleTimeString()}`,
       });
       refetch();
     },
@@ -130,15 +130,15 @@ const useAuth = ({
     },
     onSuccess: () => {
       toast({
-        title: "Updated",
-        description: `Updated at ${new Date().toLocaleTimeString()}`,
+        title: "Cập nhật",
+        description: `Cập nhật lúc ${new Date().toLocaleTimeString()}`,
       });
       refetch();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
+        title: "Lỗi",
+        description: `Lỗi lúc ${new Date().toLocaleTimeString()}`,
       });
       refetch();
     },
@@ -151,15 +151,15 @@ const useAuth = ({
     },
     onSuccess: () => {
       toast({
-        title: "Deleted",
-        description: `Deleted at ${new Date().toLocaleTimeString()}`,
+        title: "Đã xóa",
+        description: `Đã xóa lúc ${new Date().toLocaleTimeString()}`,
       });
       refetch();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: `Error at ${new Date().toLocaleTimeString()}`,
+        title: "Lỗi",
+        description: `Lỗi xóa người dùng lúc ${new Date().toLocaleTimeString()}`,
       });
       refetch();
     },
@@ -201,6 +201,7 @@ const useAuth = ({
     isSuccess,
     register,
     createUser,
+    refetch,
     readUser,
     updateUser,
     deleteUser,

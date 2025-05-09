@@ -32,7 +32,7 @@ export function ChatComponent({ id }: { id?: string }) {
     selectedDepartmentId,
     departments = [],
     changeDepartment,
-  } = useDepartments();
+  } = useDepartments({});
 
   const {
     fetchedMessages,
@@ -218,8 +218,10 @@ export function ChatComponent({ id }: { id?: string }) {
               })}
               value={selectedDepartmentId}
               placeholder="Chọn phòng ban"
-              onChange={(value: string | number) => {
-                return changeDepartment(value as string);
+              onChange={(value: string | number | (string | number)[]) => {
+                if (typeof value === "string" || typeof value === "number") {
+                  return changeDepartment(value.toString());
+                }
               }}
             />
 

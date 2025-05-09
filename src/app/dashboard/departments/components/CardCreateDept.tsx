@@ -11,7 +11,7 @@ import { User2 } from "lucide-react";
 import CreateOrUpdateDeptModal from "./modal/CreateDeptModal";
 
 export function CardCreateDepartment() {
-  const { createDepartment } = useDepartments();
+  const { createDepartment } = useDepartments({});
   return (
     <Card>
       <CardHeader className="h-[72px] overflow-hidden">

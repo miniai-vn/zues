@@ -17,7 +17,7 @@ export default function AccessControl({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [members, setMembers] = useState<User[]>([]);
-  const { removeUserFromDept } = useDepartments();
+  const { removeUserFromDept } = useDepartments({});
 
 
   useEffect(() => {

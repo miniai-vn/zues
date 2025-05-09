@@ -29,7 +29,8 @@ const UserComponents = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebouncedValue(search, 500);
+  useDebouncedValue(search, 500);
+  
   const handlePaginationChange = (newPage: number) => {
     setPage(newPage);
   };
@@ -43,6 +44,7 @@ const UserComponents = () => {
     createUser,
     updateUser,
     userHasPagination: users,
+    refetch,
   } = useAuth({ page, limit: pageSize, search });
 
   useEffect(() => {
@@ -51,6 +53,7 @@ const UserComponents = () => {
       setPageSize(users.limit || 10);
     }
   }, [users]);
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "name",
@@ -164,6 +167,7 @@ const UserComponents = () => {
                   </AddOrUpdateUserModal>
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  className="cursor-pointer hover:text-red-600"
                   onSelect={(e) => {
                     e.preventDefault();
                   }}
@@ -176,7 +180,7 @@ const UserComponents = () => {
                     }}
                     onCancel={() => {}}
                   >
-                    <div className="flex items-center">
+                    <div className="flex hover:text-red-600 items-center transition-colors ">
                       <Trash2 className="mr-2 h-4 w-4" />
                       Xóa
                     </div>
@@ -216,7 +220,7 @@ const UserComponents = () => {
 
           <div className="flex items-center gap-3">
             <Button
-              onClick={() => {}}
+              onClick={() => refetch()}
               className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
             >
               <Search />

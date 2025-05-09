@@ -15,31 +15,23 @@ export type Department = {
   users?: User[];
 };
 
-const useDepartments = (id?: string) => {
+const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   const { toast } = useToast();
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<
     string | null
   >(localStorage.getItem("selectedDepartmentId"));
-  const { data: departmentDetail } = useQuery({
-    queryKey: ["departmentDetail", id],
-    queryFn: async () => {
-      if (!id) return null;
-      const res = await axiosInstance.get(`/api/departments/${id}`, {
-        params: {},
-      });
-      return (res.data as Department) || null;
-    },
-    enabled: !!id,
-  });
+
   const {
     data: departments,
     isLoading: isFetchingDepartments,
     refetch: refetchDepartments,
   } = useQuery({
-    queryKey: ["departments"],
+    queryKey: ["departments", search],
     queryFn: async () => {
       const res = await axiosInstance.get("/api/departments/get-all", {
-        params: {},
+        params: {
+          search,
+        },
       });
       return (res.data as Department[]) || [];
     },

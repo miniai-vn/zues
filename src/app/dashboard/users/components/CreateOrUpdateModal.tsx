@@ -63,7 +63,7 @@ export function AddOrUpdateUserModal({
       departments: user?.departments?.map((dept) => Number(dept.id)),
     },
   });
-  const { departments } = useDepartments();
+  const { departments } = useDepartments({});
   const { roles } = useRoles();
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {

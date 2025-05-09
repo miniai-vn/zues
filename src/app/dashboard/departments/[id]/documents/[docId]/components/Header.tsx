@@ -1,44 +1,17 @@
-import { useState } from "react";
 import {
-  ChevronLeft,
-  FileSpreadsheet,
-  MoreHorizontal,
-  Layers,
-  Settings,
-  User,
-  Bell,
-  HelpCircle,
-  PanelRight,
+  MoreHorizontal
 } from "lucide-react";
 
 // Import shadcn/ui components
 import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { Resource } from "@/hooks/data/useResource";
 import { getFileIcon } from "../../../page";
-import { get } from "http";
 interface ResourceHeaderProps {
   resource: Resource;
 }

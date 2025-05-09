@@ -33,7 +33,7 @@ export function AlertDialogComponent({
           children
         ) : (
           <Badge className="border bg-white text-red-700 border-red-700">
-            Delete
+            Xóa
           </Badge>
         )}
       </AlertDialogTrigger>
@@ -43,8 +43,13 @@ export function AlertDialogComponent({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Continue</AlertDialogAction>
+          <AlertDialogCancel onClick={onCancel}>Hủy</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-red-600 hover:bg-red-700 text-white"
+            onClick={onConfirm}
+          >
+            Xác nhận
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

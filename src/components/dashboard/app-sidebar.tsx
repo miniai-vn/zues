@@ -53,7 +53,7 @@ const data = {
       role: [Role.Staff, Role.Admin],
       items: [
         {
-          title: "Quản lý phòng ban",
+          title: "Quản lý nhóm tài liệu",
           icon: CompassIcon,
           role: [Role.Admin],
           url: "/dashboard/departments",

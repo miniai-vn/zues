@@ -61,12 +61,12 @@ export function PageHeader({
             size="icon"
             onClick={handleBackClick}
             className="-ml-1"
-            aria-label="Back"
+            aria-label="Quay lại"
           >
-            <ChevronLeft className="h-5 w-5" />
+             <ChevronLeft className="h-5 w-5" />
           </Button>
         ) : (
-          <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger className="h-5 w-5" aria-label="Mở menu" />
         )}
 
         <Separator orientation="vertical" className="mr-2 h-4" />

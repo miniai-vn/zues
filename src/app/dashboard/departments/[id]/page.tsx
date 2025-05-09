@@ -12,6 +12,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
 import { File, FileText, Image, Search } from "lucide-react";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 export const getFileIcon = (type: string) => {
   console.log(type);
@@ -55,6 +56,7 @@ const DepartmentDetailComponent = () => {
   const departmentId = params.id as string;
 
   const [search, setSearch] = useState("");
+  useDebouncedValue(search, 500);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -231,9 +233,10 @@ const DepartmentDetailComponent = () => {
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <PageHeader
         backButtonHref="/dashboard/departments"
+        showBackButton={true}
         breadcrumbs={[
           {
-            label: "Quản lý phòng ban",
+            label: "Quản lý nhóm tài liệu",
             href: "/dashboard/departments",
           },
           {
@@ -250,10 +253,6 @@ const DepartmentDetailComponent = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="flex items-center gap-3">
-          <CreateOrUpdateResource
-            onHandleUploadFile={onHandleUploadFile}
-            resource={undefined}
-          />
           <Button
             onClick={() => refetchMaterialItems()}
             className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
@@ -261,6 +260,10 @@ const DepartmentDetailComponent = () => {
             <Search />
             Tìm kiếm
           </Button>
+          <CreateOrUpdateResource
+            onHandleUploadFile={onHandleUploadFile}
+            resource={undefined}
+          />
         </div>
       </div>
       <DataTable

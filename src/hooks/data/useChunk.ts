@@ -15,6 +15,7 @@ export interface Chunk {
 
 interface UseChunkProps {
   id?: string;
+  search?: string;
 }
 
 const updateChunk = async (chunk: Chunk) => {
@@ -27,17 +28,20 @@ const deleteChunk = async (id: string) => {
   return response.data;
 };
 
-const useChunk = ({ id }: UseChunkProps) => {
+const useChunk = ({ id, search }: UseChunkProps) => {
   const { toast } = useToast();
   const {
     data: chunks,
     isLoading: isFetchingChunk,
-    refetch,
+    refetch: refetchChunk,
   } = useQuery({
-    queryKey: ["chunks", id],
+    queryKey: ["chunks", search],
     queryFn: async () => {
       const res = await axiosInstance.get(
-        `/api/chunks/get-by-resource-id/${id}`
+        `/api/chunks/get-by-resource-id/${id}`,
+        {
+          params: { search },
+        }
       );
       return res.data || [];
     },
@@ -52,10 +56,10 @@ const useChunk = ({ id }: UseChunkProps) => {
         description: "Đã cập nhật đoạn văn bản",
         variant: "default",
       });
-      refetch();
+      refetchChunk();
     },
     onError: () => {
-      refetch();
+      refetchChunk();
       toast({
         title: "Cập nhật không thành công",
         description: "Có lỗi xảy ra trong quá trình cập nhật",
@@ -72,7 +76,7 @@ const useChunk = ({ id }: UseChunkProps) => {
         description: "Đã xóa đoạn văn bản",
         variant: "default",
       });
-      refetch();
+      refetchChunk();
     },
     onError: () => {
       toast({
@@ -80,7 +84,7 @@ const useChunk = ({ id }: UseChunkProps) => {
         description: "Có lỗi xảy ra trong quá trình xóa",
         variant: "destructive",
       });
-      refetch();
+      refetchChunk();
     },
   });
 
@@ -89,7 +93,7 @@ const useChunk = ({ id }: UseChunkProps) => {
       await axiosInstance.post(`/api/chunks`, chunk);
     },
     onSuccess: () => {
-      refetch();
+      refetchChunk();
       toast({
         title: "Tạo thành công",
         description: "Đã tạo đoạn văn bản",
@@ -97,7 +101,7 @@ const useChunk = ({ id }: UseChunkProps) => {
       });
     },
     onError: () => {
-      refetch();
+      refetchChunk();
       toast({
         title: "Tạo không thành công",
         description: "Có lỗi xảy ra trong quá trình tạo",
@@ -110,6 +114,7 @@ const useChunk = ({ id }: UseChunkProps) => {
     chunks,
     isFetchingChunk,
     createChunk,
+    refetchChunk,
     updateChunk: updateMutation,
     deleteChunk: deleteMutation.mutate,
   };
