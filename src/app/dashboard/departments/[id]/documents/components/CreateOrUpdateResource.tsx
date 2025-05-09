@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
@@ -17,15 +18,31 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 // Define schema for file upload validation
+// Define schema for file upload validation
 const uploadFormSchema = z.object({
-  file: z.any().optional(),
+  file: z
+    .custom<string>()
+    .refine((file) => file !== undefined && file !== null, {
+      message: "Tệp là bắt buộc",
+    })
+    .refine(
+      (file) => {
+        if (!file) return false;
+        const extension = file.split(".").pop()?.toLowerCase();
+        return ["pdf", "txt", "docx", "doc"].includes(extension || "");
+      },
+      {
+        message: "Chỉ hỗ trợ tệp PDF, TXT, DOC, DOCX, XLS, XLSX và CSV",
+      }
+    ),
+  description: z.string().nonempty("Mô tả tài liệu là bắt buộc"),
 });
 
 type UploadFormValues = z.infer<typeof uploadFormSchema>;
 
 interface CreateOrUpdateResourceProps {
   resource?: any; // Use specific resource type if available
-  onHandleUploadFile: (file: File) => void;
+  onHandleUploadFile: (file: File, description: string) => void;
 }
 
 export function CreateOrUpdateResource({
@@ -39,6 +56,7 @@ export function CreateOrUpdateResource({
     resolver: zodResolver(uploadFormSchema),
     defaultValues: {
       file: undefined,
+      description: resource?.descriptions || "",
     },
   });
 
@@ -48,9 +66,9 @@ export function CreateOrUpdateResource({
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = (values: UploadFormValues) => {
     if (selectedFile) {
-      onHandleUploadFile(selectedFile);
+      onHandleUploadFile(selectedFile, values.description);
       form.reset();
       setSelectedFile(null);
       setIsOpen(false);
@@ -117,6 +135,21 @@ export function CreateOrUpdateResource({
                       {Math.round(selectedFile.size / 1024)} KB)
                     </div>
                   )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <Textarea
+                    {...field}
+                    placeholder="Nhập nội dung phân đoạn..."
+                    className="w-full h-80"
+                    aria-invalid={fieldState.invalid}
+                  />
                   <FormMessage />
                 </FormItem>
               )}

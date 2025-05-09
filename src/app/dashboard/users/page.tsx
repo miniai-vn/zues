@@ -191,7 +191,7 @@ const UserComponents = () => {
   ];
 
   return (
-    <ProtectedRoute requiredRole={[Role.Manager]}>
+    <ProtectedRoute requiredRole={[Role.Admin]}>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <PageHeader
           backButtonHref="/dashboard"

@@ -1,16 +1,14 @@
-import React, { useState, useMemo, useEffect, use } from "react";
-import { Search, Plus, MoreHorizontal, Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import AddMemberDialog from "./AddmemberDialog";
-import { DataTable } from "@/components/dashboard/tables/data-table";
-import { ColumnDef } from "@tanstack/react-table";
-import useDepartments, { Department } from "@/hooks/data/useDepartments";
-import { Switch } from "@/components/ui/switch";
-import ActionPopover from "@/components/dashboard/popever";
-import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import { Input } from "@/components/ui/input";
 import { User } from "@/hooks/data/useAuth";
+import useDepartments, { Department } from "@/hooks/data/useDepartments";
+import { ColumnDef } from "@tanstack/react-table";
+import { Search, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import AddMemberDialog from "./AddmemberDialog";
 
 export default function AccessControl({
   department,

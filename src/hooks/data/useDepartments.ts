@@ -15,12 +15,22 @@ export type Department = {
   users?: User[];
 };
 
-const useDepartments = () => {
+const useDepartments = (id?: string) => {
   const { toast } = useToast();
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<
     string | null
   >(localStorage.getItem("selectedDepartmentId"));
-
+  const { data: departmentDetail } = useQuery({
+    queryKey: ["departmentDetail", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const res = await axiosInstance.get(`/api/departments/${id}`, {
+        params: {},
+      });
+      return (res.data as Department) || null;
+    },
+    enabled: !!id,
+  });
   const {
     data: departments,
     isLoading: isFetchingDepartments,

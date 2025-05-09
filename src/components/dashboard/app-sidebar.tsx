@@ -1,6 +1,5 @@
 "use client";
 
-import { SideChat } from "@/app/dashboard/bot/components/SideChat";
 import {
   Sidebar,
   SidebarContent,
@@ -15,16 +14,13 @@ import {
   Command,
   CompassIcon,
   GalleryVerticalEnd,
-  PlusCircle,
   Settings,
-  SquareTerminal,
+  SquareTerminal
 } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
-import { Button } from "../ui/button";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
-import { useRouter } from "next/navigation";
 const data = {
   user: {
     name: "shadcn",
@@ -54,30 +50,30 @@ const data = {
       url: "/dashboard/bot",
       icon: BotIcon,
       isActive: true,
-      role: [Role.Staff, Role.Manager],
+      role: [Role.Staff, Role.Admin],
       items: [
         {
           title: "Quản lý phòng ban",
           icon: CompassIcon,
-          role: [Role.Manager],
+          role: [Role.Admin],
           url: "/dashboard/departments",
         },
         {
           title: "Quản lý nhân viên",
           icon: SquareTerminal,
-          role: [Role.Manager],
+          role: [Role.Admin],
           url: "/dashboard/users",
         },
         {
           title: "Cài đặt phân quyền",
           icon: SquareTerminal,
-          role: [Role.Manager],
+          role: [Role.Admin],
           url: "/dashboard/permissions",
         },
         {
           title: "Cài đặt",
           icon: Settings,
-          role: [Role.Manager],
+          role: [Role.Admin],
           url: "/dashboard/users",
         },
       ],

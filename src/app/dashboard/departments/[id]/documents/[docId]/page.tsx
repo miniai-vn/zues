@@ -3,17 +3,22 @@
 import { PageHeader } from "@/components/dashboard/common/page-header";
 import { Input } from "@/components/ui/input";
 import useChunk from "@/hooks/data/useChunk";
+import useResource from "@/hooks/data/useResource";
 import { useParams } from "next/navigation";
 import DocumentCartList from "./components/ChunksList";
 import { CreateOrUpdateChunkModal } from "./components/CreateOrderUpdateChunk";
+import ResourceHeader from "./components/Header";
 
 export default function DocumentDetailsPage() {
   const params = useParams();
   const docId = params.docId as string;
   const departmentId = params.id as string;
 
-
   const { chunks, createChunk, deleteChunk, updateChunk } = useChunk({
+    id: docId,
+  });
+
+  const { resourceDetail } = useResource({
     id: docId,
   });
   return (
@@ -35,6 +40,8 @@ export default function DocumentDetailsPage() {
           },
         ]}
       />
+      {resourceDetail && <ResourceHeader resource={resourceDetail} />}
+
       <div className="flex justify-between gap-4 items-center">
         <Input placeholder="Tìm kiếm...." className="mr-4 w-full flex-1" />
         <CreateOrUpdateChunkModal onChange={createChunk} />

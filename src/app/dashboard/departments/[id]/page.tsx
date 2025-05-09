@@ -11,7 +11,43 @@ import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
-import { Search } from "lucide-react";
+import { File, FileText, Image, Search } from "lucide-react";
+
+export const getFileIcon = (type: string) => {
+  console.log(type);
+  switch (type) {
+    case "pdf":
+      return <FileText className="h-6 w-6 text-red-500" />;
+    case "csv":
+    case "xlsx":
+    case "xls":
+      return <FileText className="h-6 w-6 text-green-500" />;
+    case "doc":
+    case "docx":
+    case "txt":
+      return <FileText className="h-6 w-6 text-blue-500" />;
+    case "jpg":
+    case "jpeg":
+    case "png":
+    case "gif":
+      return <Image className="h-6 w-6 text-purple-500" />;
+    default:
+      return <File className="h-6 w-6 text-gray-500" />;
+  }
+};
+
+export function convertBytesToMB(bytes: number, decimalPlaces = 2) {
+  if (bytes === 0) return "0 MB";
+
+  // 1 MB = 1024 KB = 1024 * 1024 bytes
+  const bytesInMB = 1024 * 1024;
+
+  // Chuyển đổi và làm tròn đến số chữ số thập phân mong muốn
+  const mb = (bytes / bytesInMB).toFixed(decimalPlaces);
+
+  // Trả về chuỗi có định dạng
+  return `${mb} MB`;
+}
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
@@ -31,7 +67,7 @@ const DepartmentDetailComponent = () => {
     syncResource,
     isCreateChunks: isLoadCreateChunks,
   } = useResource({
-    id: departmentId,
+    departmentId: departmentId,
     page,
     limit: pageSize,
     search,
@@ -44,11 +80,12 @@ const DepartmentDetailComponent = () => {
     }
   }, [materialItems]);
 
-  const onHandleUploadFile = async (file: File) => {
+  const onHandleUploadFile = async (file: File, description: string) => {
     try {
       await createResource({
         file,
         departmentId,
+        description,
       });
     } catch (error) {
       throw error;
@@ -78,9 +115,15 @@ const DepartmentDetailComponent = () => {
     {
       accessorKey: "name",
       header: "Tên tệp",
-      cell: (row) => (
-        <div className="break-all line-clamp-2">{row.row.original.name}</div>
-      ),
+      cell: (row) => {
+        console.log(row.row.original);
+        return (
+          <div className="break-all flex items-center gap-2 line-clamp-2">
+            <span>{getFileIcon(row.row.original.extra.extension)}</span>
+            <span>{row.row.original.name}</span>
+          </div>
+        );
+      },
       size: 250,
     },
     {
@@ -88,6 +131,26 @@ const DepartmentDetailComponent = () => {
       header: "Định dạng",
       cell: (row) => (
         <div className="break-all line-clamp-1">{row.row.original?.type}</div>
+      ),
+      size: 100,
+    },
+    {
+      accessorKey: "size",
+      header: "Dung lượng",
+      cell: (row) => (
+        <div className="break-all line-clamp-1">
+          {convertBytesToMB(row.row.original.extra.size)}
+        </div>
+      ),
+      size: 100,
+    },
+    {
+      accessorKey: "description",
+      header: "Mô tả",
+      cell: (row) => (
+        <div className="break-all line-clamp-1">
+          {row.row.original.description}
+        </div>
       ),
       size: 100,
     },

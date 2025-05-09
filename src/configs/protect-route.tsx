@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { Role as RoleModel } from "@/hooks/data/useRoles";
 
 export enum Role {
+  Admin = "admin",
   Manager = "manager",
   Staff = "staff",
 }

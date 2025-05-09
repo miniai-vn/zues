@@ -12,6 +12,7 @@ import { Calendar, Calendar1, Trash2 } from "lucide-react";
 import { CreateOrUpdateChunkModal } from "./CreateOrderUpdateChunk";
 import useChunk, { Chunk } from "@/hooks/data/useChunk";
 import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
+import { Badge } from "@/components/ui/badge";
 interface DocumentCardProps {
   chunk: Chunk;
   updateChunk: (chunk: Chunk) => void;
@@ -20,14 +21,12 @@ interface DocumentCardProps {
 const ChunkCard = ({ chunk, updateChunk, deleteChunk }: DocumentCardProps) => {
   return (
     <Card
-      className={`w-full max-w-md border shadow-sm transition-all p-4 text-base
+      className={`w-full max-w-md border shadow-sm transition-all bg-[#F9FAFB] px-2 py-1 text-base
       `}
     >
       <CardHeader className="space-y-0 flex flex-row w-full items-center justify-between p-0">
         <div className="flex flex-col">
-          <CardTitle className="text-blue-700 text-base font-medium ">
-            Đoạn văn bản: {chunk.id}
-          </CardTitle>
+          <Badge variant="default">{chunk.code}</Badge>
         </div>
         <div className="popover-trigger">
           <CreateOrUpdateChunkModal onChange={updateChunk} chunk={chunk} />

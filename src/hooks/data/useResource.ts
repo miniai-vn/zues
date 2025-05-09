@@ -11,6 +11,8 @@ export type Resource = {
   size?: string;
   status?: string;
   createdAt?: string;
+  description: string;
+  extra?: any;
 };
 
 export type LinkKnowLedge = {
@@ -18,6 +20,7 @@ export type LinkKnowLedge = {
 };
 const useResource = ({
   id,
+  departmentId,
   type,
   search,
   limit = 10,
@@ -26,13 +29,14 @@ const useResource = ({
   id?: string;
   type?: string;
   search?: string;
+  departmentId?: string;
   limit?: number;
   page?: number;
 }) => {
   const { toast } = useToast();
 
   const { data: materialItems, refetch: refetchResource } = useQuery({
-    queryKey: ["resource", id, page, limit, search, type],
+    queryKey: ["resource", page, limit, search, type],
     queryFn: async () => {
       // Build query parameters for pagination
       const params = new URLSearchParams();
@@ -42,13 +46,12 @@ const useResource = ({
       if (type) params.append("type", type);
 
       const queryString = params.toString();
-      const endpoint = `/api/resources/by-department/${id}${
+      const endpoint = `/api/resources/by-department/${departmentId}${
         queryString ? `?${queryString}` : ""
       }`;
 
       const res = await axiosInstance.get(endpoint);
 
-      // Assuming the API returns data in the format { items: [...], total: number }
       return {
         items: res.data.items || res.data || [], // Adapt based on your API response structure
         totalCount: res.data.totalCount || res.data?.length || 0,
@@ -57,6 +60,7 @@ const useResource = ({
       };
     },
     refetchOnWindowFocus: false,
+    enabled: !!departmentId,
   });
 
   /*
@@ -83,11 +87,12 @@ const useResource = ({
     mutationFn: async ({
       file,
       departmentId,
+      description,
     }: {
       file: File;
       departmentId: string;
+      description: string;
     }) => {
-      debugger;
       const data = await handleUploadFile(file);
       const response = await axiosInstance.post(
         `/api/resources/`,
@@ -97,6 +102,7 @@ const useResource = ({
           path: data.path,
           name: data.name,
           type: "document",
+          description: description,
         },
         {
           headers: {
@@ -182,12 +188,23 @@ const useResource = ({
       });
     },
   });
+
+  const { data: resourceDetail } = useQuery({
+    queryKey: ["resource", id],
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/api/resources/${id}`);
+      return response.data as Resource;
+    },
+    refetchOnWindowFocus: false,
+    enabled: !!id,
+  });
   return {
     deleteResource,
     createResource,
     createChunks,
     isCreateChunks,
     materialItems,
+    resourceDetail,
     syncResource,
     handleUploadFile,
     refetchMaterialItems: refetchResource,
