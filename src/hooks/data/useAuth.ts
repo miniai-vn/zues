@@ -55,7 +55,6 @@ const useAuth = ({
   search?: string;
 }) => {
   const { setUser, user } = useUserStore();
-  const router = useRouter();
 
   const { toast } = useToast();
   const { data: users, isFetching } = useQuery({
@@ -97,7 +96,7 @@ const useAuth = ({
     },
   });
 
-  const { mutate: createUser } = useMutation({
+  const { mutate: createUser, isPending: isPendingCreateUser } = useMutation({
     mutationFn: async (data: UserData) => {
       const response = await axiosInstance.post("/api/auth/users", data);
       return response;
@@ -125,7 +124,7 @@ const useAuth = ({
     },
   });
 
-  const { mutate: updateUser } = useMutation({
+  const { mutate: updateUser, isPending: isPendingUpdateUser } = useMutation({
     mutationFn: async (data: UserUpdateData) => {
       const { id, ..._ } = data;
       const response = await axiosInstance.post(
@@ -150,7 +149,7 @@ const useAuth = ({
     },
   });
 
-  const { mutate: deleteUser } = useMutation({
+  const { mutate: deleteUser, isPending: isPendingDeleteUser } = useMutation({
     mutationFn: async (id: string) => {
       const response = await axiosInstance.delete(`/api/auth/users/${id}`);
       return response;
@@ -181,7 +180,7 @@ const useAuth = ({
   const {
     data: userHasPagination,
     refetch: refetch,
-    isFetching: isUserHasPaginationLoading,
+    isFetching: isFetchingUserHasPagination,
   } = useQuery({
     queryKey: ["user", { page, limit, search }],
     queryFn: async () => {
@@ -200,9 +199,13 @@ const useAuth = ({
 
   return {
     users,
-    userHasPagination,
-    isUserHasPaginationLoading,
     isFetching,
+    user,
+    isPendingCreateUser,
+    isPendingUpdateUser,
+    isPendingDeleteUser,
+    userHasPagination,
+    isFetchingUserHasPagination,
     signIn,
     isSuccess,
     register,

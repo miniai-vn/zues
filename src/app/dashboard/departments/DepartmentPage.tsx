@@ -20,16 +20,6 @@ export function DepartmentDetailPage() {
   } = useDepartments({ search });
   useDebouncedValue(search, 500);
 
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-
-  const toggleDepartmentSelection = (id: string, selected: boolean) => {
-    if (selected) {
-      setSelectedDepartments((prev) => [...prev, id]);
-    } else {
-      setSelectedDepartments((prev) => prev.filter((deptId) => deptId !== id));
-    }
-  };
-
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <PageHeader
@@ -50,7 +40,7 @@ export function DepartmentDetailPage() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by question"
+          placeholder="Tìm kiếm theo tên nhóm tài liệu"
           className="mr-4 w-full flex-1"
         />
         <Button
@@ -64,16 +54,22 @@ export function DepartmentDetailPage() {
       </div>
 
       {departments?.length === 0 ? (
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0"></div>
-      ) : (
-        <>
-          <CardDepartmentList
-            isLoading={isFetchingDepartments}
-            departments={departments || []}
-            selectedDepartments={selectedDepartments}
-            onSelectionChange={toggleDepartmentSelection}
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 items-center justify-center">
+          <img
+            src="/logo.png"
+            alt="Không có nhóm tài liệu"
+            className="w-32 h-32 mb-4 opacity-70"
           />
-        </>
+          <span className="text-lg text-muted-foreground">
+            Bạn chưa có nhóm tài liệu nào.
+          </span>
+          <CreateDeptDialog onChange={createDepartment} />
+        </div>
+      ) : (
+        <CardDepartmentList
+          isLoading={isFetchingDepartments}
+          departments={departments || []}
+        />
       )}
     </div>
   );

@@ -8,9 +8,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Department } from "@/hooks/data/useDepartments";
-import { Pencil } from "lucide-react";
 import { useState } from "react";
-import CreateOrUpdateForm from "../modal/CreateOrUpdateForm";
+import CreateOrUpdateForm from "../form/CreateOrUpdateForm";
 
 interface CreateDeptModalProps {
   department?: Department;
@@ -48,7 +47,7 @@ export default function CreateDeptDialog({
         <div>
           <CreateOrUpdateForm
             department={department}
-            onSubmit={onChange}
+            onSubmit={({ data }) => onChange(data)}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
           />

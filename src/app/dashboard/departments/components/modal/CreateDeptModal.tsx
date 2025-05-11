@@ -11,8 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Department } from "@/hooks/data/useDepartments";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import CreateOrUpdateForm from "../form/CreateOrUpdateForm";
 import AccessControl from "./Authorization";
-import CreateOrUpdateForm from "./CreateOrUpdateForm";
 
 interface CreateDeptModalProps {
   department?: Department;
@@ -21,7 +21,6 @@ interface CreateDeptModalProps {
     name: string;
     description: string;
     prompt: string;
-    isPublic?: boolean;
   }) => void;
 }
 
@@ -44,13 +43,13 @@ export default function CreateOrUpdateDeptModal({
             <Pencil className="h-4 w-4 text-gray-500" />
           </Button>
         ) : (
-          <Button>+ Tạo phòng ban mới</Button>
+          <Button>+ Tạo nhóm tài liệu mới</Button>
         )}
       </DialogTrigger>
       <DialogContent className="w-[800px] max-w-[90vw]">
         <DialogHeader>
           <DialogTitle>
-            {department ? "Cài đặt phòng ban" : "Tạo phòng ban mới"}
+            {department ? "Cài đặt nhóm tài liệu" : "Tạo nhóm tài liệu mới"}
           </DialogTitle>
         </DialogHeader>
         <div>
@@ -63,16 +62,16 @@ export default function CreateOrUpdateDeptModal({
                 Quyền truy cập
               </TabsTrigger>
             </TabsList>
-            <div className="h-[480px] overflow-y-auto">
-              <TabsContent value="settings" className="mt-0 h-full">
+            <div className="overflow-y-auto">
+              <TabsContent value="settings" className="mt-4 h-full">
                 <CreateOrUpdateForm
                   department={department}
-                  onSubmit={onChange}
+                  onSubmit={({ data }) => onChange(data)}
                   isOpen={isOpen}
                   setIsOpen={setIsOpen}
                 />
               </TabsContent>
-              <TabsContent value="authorization" className="mt-0 h-full">
+              <TabsContent value="authorization" className="mt-4 h-[400px]">
                 {department && <AccessControl department={department} />}
               </TabsContent>
             </div>

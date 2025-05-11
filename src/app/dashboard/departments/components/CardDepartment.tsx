@@ -19,8 +19,6 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import CreateOrUpdateDeptModal from "./modal/CreateDeptModal";
 
-
-
 // Update the CardDepartment component to pass department
 export function CardDepartment({ department }: CardDepartmentProps) {
   const { deleteDepartment, updateDepartment } = useDepartments({});
@@ -50,9 +48,7 @@ export function CardDepartment({ department }: CardDepartmentProps) {
           <div className="mr-3">
             <Folder className="h-8 w-8" />
           </div>
-          <span className="flex-1 font-bold truncate">
-            {department.name}
-          </span>
+          <span className="flex-1 font-bold truncate">{department.name}</span>
           <div
             className="flex items-center"
             onClick={(e) => e.stopPropagation()}

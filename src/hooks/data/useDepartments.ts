@@ -26,7 +26,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     isLoading: isFetchingDepartments,
     refetch: refetchDepartments,
   } = useQuery({
-    queryKey: ["departments", search],
+    queryKey: ["departments"],
     queryFn: async () => {
       const res = await axiosInstance.get("/api/departments/get-all", {
         params: {
@@ -52,102 +52,13 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     setSelectedDepartmentId(departmentId);
   };
 
-  const { mutate: createDepartment, isSuccess: isCreatedDepartment } =
-    useMutation({
-      mutationFn: async (data: Department) => {
-        const res = await axiosInstance.post("/api/departments/", {
-          name: data.name,
-          description: data.description,
-          is_public: data.isPublic,
-          prompt: data.prompt,
-        });
-        return res.data;
-      },
-      onSuccess: () => {
-        refetchDepartments();
-        toast({
-          title: "Tạo phòng ban",
-          description: "Tạo phòng ban thành công",
-        });
-      },
-      onError: (error) => {
-        toast({
-          title: "Tạo phòng ban",
-          description: error.message,
-        });
-      },
-    });
-
-  const { mutate: addUserToDept } = useMutation({
-    mutationFn: async (data: { user_id: string; department_id: string }) => {
-      const res = await axiosInstance.post(
-        "/api/departments/create-user",
-        data,
-        {
-          params: {},
-        }
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      refetchDepartments();
-      toast({
-        title: "Thêm người dùng vào phòng ban",
-        description: "Thêm người dùng vào phòng ban thành công",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Thêm người dùng vào phòng ban",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: removeUserFromDept } = useMutation({
-    mutationFn: async (data: { user_id: string; department_id: string }) => {
-      const res = await axiosInstance.delete("/api/departments/delete-user", {
-        params: data,
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      refetchDepartments();
-      toast({
-        title: "Xóa người dùng khỏi phòng ban",
-        description: "Xóa người dùng khỏi phòng ban thành công",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Xóa người dùng khỏi phòng ban",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: deleteDepartment } = useMutation({
-    mutationFn: async (id: string) => {
-      await axiosInstance.delete(`/api/departments/${id}`);
-    },
-    onSuccess: () => {
-      refetchDepartments();
-      toast({
-        title: "Xóa phòng ban",
-        description: "Xóa phòng ban thành công",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Xóa phòng ban",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: updateDepartment } = useMutation({
+  const {
+    mutate: createDepartment,
+    isPending: isPendingCreateDept,
+    isSuccess: isCreatedDepartment,
+  } = useMutation({
     mutationFn: async (data: Department) => {
-      const res = await axiosInstance.put(`/api/departments/${data.id}`, {
+      const res = await axiosInstance.post("/api/departments/", {
         name: data.name,
         description: data.description,
         is_public: data.isPublic,
@@ -158,17 +69,115 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     onSuccess: () => {
       refetchDepartments();
       toast({
-        title: "Cập nhật phòng ban",
-        description: "Cập nhật phòng ban thành công",
+        title: "Tạo nhóm tài liệu",
+        description: "Tạo nhóm tài liệu thành công",
       });
     },
     onError: (error) => {
       toast({
-        title: "Cập nhật phòng ban",
+        title: "Tạo nhóm tài liệu",
         description: error.message,
       });
     },
   });
+
+  const { mutate: addUserToDept, isPending: isPendingAddUserToDept } =
+    useMutation({
+      mutationFn: async (data: { user_id: string; department_id: string }) => {
+        const res = await axiosInstance.post(
+          "/api/departments/create-user",
+          data,
+          {
+            params: {},
+          }
+        );
+        return res.data;
+      },
+      onSuccess: () => {
+        refetchDepartments();
+        toast({
+          title: "Thêm người dùng vào nhóm tài liệu",
+          description: "Thêm người dùng vào nhóm tài liệu thành công",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Thêm người dùng vào nhóm tài liệu",
+          description: error.message,
+        });
+      },
+    });
+
+  const { mutate: removeUserFromDept, isPending: isPendingRemoveUserFromDept } =
+    useMutation({
+      mutationFn: async (data: { user_id: string; department_id: string }) => {
+        const res = await axiosInstance.delete("/api/departments/delete-user", {
+          params: data,
+        });
+        return res.data;
+      },
+      onSuccess: () => {
+        refetchDepartments();
+        toast({
+          title: "Xóa người dùng khỏi nhóm tài liệu",
+          description: "Xóa người dùng khỏi nhóm tài liệu thành công",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Xóa người dùng khỏi nhóm tài liệu",
+          description: error.message,
+        });
+      },
+    });
+
+  const { mutate: deleteDepartment, isPending: isPendingDeleteDepartment } =
+    useMutation({
+      mutationFn: async (id: string) => {
+        await axiosInstance.delete(`/api/departments/${id}`);
+      },
+      onSuccess: () => {
+        refetchDepartments();
+        toast({
+          title: "Xóa nhóm tài liệu",
+          description: "Xóa nhóm tài liệu thành công",
+        });
+      },
+      onError: (error) => {
+        refetchDepartments();
+
+        toast({
+          title: "Xóa nhóm tài liệu",
+          description: error.message,
+        });
+      },
+    });
+
+  const { mutate: updateDepartment, isPending: isPendingUpdateDepartment } =
+    useMutation({
+      mutationFn: async (data: Department) => {
+        const res = await axiosInstance.put(`/api/departments/${data.id}`, {
+          name: data.name,
+          description: data.description,
+          is_public: data.isPublic,
+          prompt: data.prompt,
+        });
+        return res.data;
+      },
+      onSuccess: () => {
+        refetchDepartments();
+        toast({
+          title: "Cập nhật nhóm tài liệu",
+          description: "Cập nhật nhóm tài liệu thành công",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Cập nhật nhóm tài liệu",
+          description: error.message,
+        });
+      },
+    });
 
   return {
     updateDepartment,
@@ -182,6 +191,12 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     refetchDepartments,
     selectedDepartmentId,
     changeDepartment,
+    // Export all isPending states
+    isPendingCreateDept,
+    isPendingAddUserToDept,
+    isPendingRemoveUserFromDept,
+    isPendingDeleteDepartment,
+    isPendingUpdateDepartment,
   };
 };
 

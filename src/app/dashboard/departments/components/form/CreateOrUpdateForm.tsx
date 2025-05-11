@@ -11,33 +11,36 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Department } from "@/hooks/data/useDepartments";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FormSchema = z.object({
   name: z
     .string()
-    .min(2, "Department name must be at least 2 characters.")
+    .min(2, "Tên nhóm tài liệu phải có ít nhất 2 ký tự.")
     .trim()
-    .refine((val) => val.length > 0, "Department name is required."),
+    .refine((val) => val.length > 0, "Vui lòng nhập tên nhóm tài liệu."),
 
   description: z
     .string()
-    .min(10, "Description must be at least 10 characters.")
-    .max(500, "Description cannot exceed 500 characters.")
+    .min(10, "Mô tả phải có ít nhất 10 ký tự.")
+    .max(500, "Mô tả không được vượt quá 500 ký tự.")
     .trim()
-    .refine((val) => val.length > 0, "Description is required."),
+    .refine((val) => val.length > 0, "Vui lòng nhập mô tả."),
 
   prompt: z
     .string()
     .trim()
-    .refine((val) => val.length > 0, "Prompt is required."),
+    .refine((val) => val.length > 0, "Vui lòng nhập lời nhắc."),
 });
-
+type createDepartment = z.infer<typeof FormSchema>;
+type updateDepartment = z.infer<typeof FormSchema> & {
+  id?: string;
+};
 interface CreateOrUpdateFormProps {
   department?: Department;
-  onSubmit: (data: z.infer<typeof FormSchema>) => void;
+  onSubmit: ({ data }: { data: createDepartment | updateDepartment }) => void;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
@@ -60,17 +63,26 @@ export default function CreateOrUpdateForm({
   useEffect(() => {
     if (department) {
       form.reset({
-        name: department.name || "",
-        description: department.description || "",
-        prompt: department.prompt || "",
+        name: department.name,
+        description: department.description,
+        prompt: department.prompt,
       });
     }
   }, [department, form]);
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    await handleSubmit(data);
-    if (!department) {
-      form.reset();
+  const onSubmit = async (data: createDepartment | updateDepartment) => {
+    try {
+     
+      await handleSubmit({
+        data: {
+          ...(department ? { id: department.id } : {}),
+          ...data,
+        },
+      });
+    } catch (error) {
+      throw new Error("Error submitting form");
+    } finally {
+      setIsOpen(false);
     }
   };
 
@@ -83,14 +95,14 @@ export default function CreateOrUpdateForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Tên phòng ban <span className="text-red-500">*</span>
+                Tên nhóm tài liệu <span className="text-red-500">*</span>
               </FormLabel>
               <Textarea
                 value={field.value ?? ""}
                 onChange={(e) => field.onChange(e.target.value)}
                 className="w-full"
               />
-              <FormMessage />{" "}
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -104,11 +116,11 @@ export default function CreateOrUpdateForm({
               </FormLabel>
               <Textarea
                 value={field.value ?? ""}
-                placeholder="Nội dung của phòng ban này cung cấp thông tin chuyên môn, giúp hệ thống AI hiểu rõ bối cảnh và yêu cầu công việc. Nhờ đó, AI có thể đưa ra câu trả lời chính xác, phù hợp với chức năng và nghiệp vụ của phòng Nhân sự, hỗ trợ hiệu quả hơn trong các tác vụ như tuyển dụng, đào tạo hay quản lý nhân sự.."
+                placeholder="Nội dung của nhóm tài liệu này cung cấp thông tin chuyên môn, giúp hệ thống AI hiểu rõ bối cảnh và yêu cầu công việc. Nhờ đó, AI có thể đưa ra câu trả lời chính xác, phù hợp với chức năng và nghiệp vụ, hỗ trợ hiệu quả hơn trong các tác vụ chuyên môn."
                 onChange={(e) => field.onChange(e.target.value)}
                 className="w-full h-24"
               />
-              <FormMessage />{" "}
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -131,17 +143,19 @@ export default function CreateOrUpdateForm({
             </FormItem>
           )}
         />
-        <div className="w-full flex gap-4">
-          <Button
-            type="button"
-            className="w-full bg-white text-black border"
-            onClick={() => setIsOpen(false)}
-          >
-            Hủy bỏ
-          </Button>
-          <Button type="submit" className="w-full">
-            {department ? "Lưu" : "Tạo"}
-          </Button>
+        <div className="w-full">
+          <div className="w-full mt-auto flex gap-4">
+            <Button
+              type="button"
+              className="w-full bg-white text-black border"
+              onClick={() => setIsOpen(false)}
+            >
+              Hủy bỏ
+            </Button>
+            <Button type="submit" className="w-full">
+              {department ? "Lưu" : "Tạo"}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

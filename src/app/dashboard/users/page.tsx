@@ -18,19 +18,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Pencil, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddOrUpdateUserModal } from "./components/CreateOrUpdateModal";
-
-const RoleName = {
-  manager: "Quản lý",
-  staff: "Nhân viên",
-  admin: "Quản lý hệ thống",
-};
+import { RoleVietnameseNames } from "@/app/dashboard/permissions/page";
+import ActionPopover from "@/components/dashboard/popever";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   useDebouncedValue(search, 500);
-  
+
   const handlePaginationChange = (newPage: number) => {
     setPage(newPage);
   };
@@ -45,6 +41,10 @@ const UserComponents = () => {
     updateUser,
     userHasPagination: users,
     refetch,
+    isFetchingUserHasPagination,
+    isPendingUpdateUser,
+    isPendingDeleteUser,
+    isPendingCreateUser,
   } = useAuth({ page, limit: pageSize, search });
 
   useEffect(() => {
@@ -59,25 +59,27 @@ const UserComponents = () => {
       accessorKey: "name",
       header: "Tên nhân viên",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
-          {row.original.name ?? "Trống"}
-        </p>
+        <div className="w-full">
+          <p className="break-all line-clamp-2">{row.original.name ?? "Trống"}</p>
+        </div>
       ),
     },
     {
       accessorKey: "username",
       header: "Chức vụ",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">{row.original.username}</p>
+        <div className="w-full">
+          <p className="break-all line-clamp-2">{row.original.username}</p>
+        </div>
       ),
     },
     {
       accessorKey: "phone",
       header: "Số điện thoại",
       cell: ({ row }) => (
-        <p className="break-all line-clamp-2 w-1/2">
-          {row.original.phone ?? "Trống"}
-        </p>
+        <div className="w-full">
+          <p className="break-all line-clamp-2">{row.original.phone ?? "Trống"}</p>
+        </div>
       ),
     },
     {
@@ -85,24 +87,20 @@ const UserComponents = () => {
       header: "Quyền",
       cell: ({ row }) => {
         const roles = row.original.roles;
-
         if (!roles || roles.length === 0) {
-          return <></>;
+          return <div className="w-full"></div>;
         }
-
         return (
-          <div className="flex flex-wrap gap-1 max-w-xs">
-            {roles.map((role) => {
-              return (
-                <Badge
-                  key={role.id}
-                  variant={"default"}
-                  className="whitespace-nowrap"
-                >
-                  {RoleName[role.name as keyof typeof RoleName]}
-                </Badge>
-              );
-            })}
+          <div className="flex flex-wrap gap-1 max-w-xs w-full">
+            {roles.map((role) => (
+              <Badge
+                key={role.id}
+                variant={"default"}
+                className="whitespace-nowrap"
+              >
+                {RoleVietnameseNames[role.name] || role.name}
+              </Badge>
+            ))}
           </div>
         );
       },
@@ -112,24 +110,20 @@ const UserComponents = () => {
       header: "Phòng ban",
       cell: ({ row }) => {
         const departments = row.original.departments;
-
         if (!departments || departments.length === 0) {
-          return <></>;
+          return <div className="w-full"></div>;
         }
-
         return (
-          <div className="flex flex-wrap gap-1 max-w-xs">
-            {departments.map((dept) => {
-              return (
-                <Badge
-                  key={dept.id}
-                  variant={"default"}
-                  className="whitespace-nowrap"
-                >
-                  {dept.name}
-                </Badge>
-              );
-            })}
+          <div className="flex flex-wrap gap-1 max-w-xs w-full">
+            {departments.map((dept) => (
+              <Badge
+                key={dept.id}
+                variant={"default"}
+                className="whitespace-nowrap"
+              >
+                {dept.name}
+              </Badge>
+            ))}
           </div>
         );
       },
@@ -139,56 +133,35 @@ const UserComponents = () => {
       header: "Thao tác",
       cell: ({ row }) => {
         return (
-          <>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  <AddOrUpdateUserModal
-                    onChange={(data) => {
-                      if ("id" in data) {
-                        updateUser(data as any);
-                      }
-                    }}
-                    user={row.original}
+          <ActionPopover
+            className="w-40"
+            children={
+              <AddOrUpdateUserModal
+                children={
+                  <Button
+                    variant="ghost"
+                    className="flex items-center justify-start gap-2 w-full"
                   >
-                    <div className="flex items-center">
-                      <Pencil className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
-                    </div>
-                  </AddOrUpdateUserModal>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer hover:text-red-600"
-                  onSelect={(e) => {
-                    e.preventDefault();
-                  }}
-                >
-                  <AlertDialogComponent
-                    title="Xóa người dùng"
-                    description="Bạn có chắc chắn muốn xóa người dùng này không?"
-                    onConfirm={() => {
-                      deleteUser(row.original.id);
-                    }}
-                    onCancel={() => {}}
-                  >
-                    <div className="flex hover:text-red-600 items-center transition-colors ">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Xóa
-                    </div>
-                  </AlertDialogComponent>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
+                    <Pencil size={16} />
+                    <span>Chỉnh sửa</span>
+                  </Button>
+                }
+                onChange={(data) => {
+                  if ("id" in data) {
+                    updateUser(data as any);
+                  }
+                }}
+                user={row.original}
+              />
+            }
+            onDelete={() => {
+              // Xử lý khi nhấn xóa
+              // Ví dụ: gọi hàm xóa user
+              deleteUser(row.original.id);
+            }}
+          >
+            {/* Bạn có thể truyền thêm children nếu muốn */}
+          </ActionPopover>
         );
       },
     },
@@ -245,7 +218,12 @@ const UserComponents = () => {
           }}
           onPaginationChange={handlePaginationChange}
           onPageSizeChange={handlePageSizeChange}
-          isLoading={!users}
+          isLoading={
+            isFetchingUserHasPagination ||
+            isPendingUpdateUser ||
+            isPendingDeleteUser ||
+            isPendingCreateUser
+          }
         />
       </div>
     </ProtectedRoute>

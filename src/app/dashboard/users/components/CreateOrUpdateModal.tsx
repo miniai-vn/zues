@@ -26,18 +26,25 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { RoleVietnameseNames } from "@/app/dashboard/permissions/page";
 
 const FormSchema = z.object({
-  username: z.string().nonempty("Please enter a username."),
+  username: z.string().nonempty("Vui lòng nhập tài khoản."),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters long.")
-    .nonempty("Please enter a password."),
-  phone: z.string().regex(/^\d+$/, "Phone number must be a number").optional(),
-  roles: z.array(z.number()).nonempty("Please select at least one role."),
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự.")
+    .nonempty("Vui lòng nhập mật khẩu.")
+    .default(""),
+  name: z.string().nonempty("Vui lòng nhập họ và tên.").default(""),
+  phone: z.string().regex(/^\d+$/, "Số điện thoại phải là số").optional(),
+  roles: z
+    .array(z.number())
+    .min(1, { message: "Vui lòng chọn ít nhất một phòng ban." })
+    .default([]),
   departments: z
     .array(z.number())
-    .nonempty("Please select at least one department."),
+    .min(1, { message: "Vui lòng chọn ít nhất một phòng ban." })
+    .default([]),
 });
 
 interface AddUserProps {
@@ -58,6 +65,7 @@ export function AddOrUpdateUserModal({
     defaultValues: {
       username: user?.username || "",
       password: user?.password,
+      name: user?.name || "",
       phone: user?.phone || "",
       roles: user?.roles?.map((role) => role.id),
       departments: user?.departments?.map((dept) => Number(dept.id)),
@@ -82,7 +90,7 @@ export function AddOrUpdateUserModal({
       <DialogTrigger asChild>
         {children || <Button>+ Tạo nhân viên</Button>}
       </DialogTrigger>
-      <DialogContent className="w-[60%] overflow-y-auto">
+      <DialogContent className="w-[70vw] max-w-[70vw] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {user ? "Cập nhật tài khoản nhân viên" : "Tạo tài khoản nhân viên"}
@@ -96,13 +104,16 @@ export function AddOrUpdateUserModal({
                 name="username"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Tài khoản</FormLabel>
+                    <FormLabel>
+                      Tài khoản <span className="text-red-500">*</span>
+                    </FormLabel>
                     <div className="relative">
                       <Input
                         type="text"
                         value={field.value ?? ""}
                         onChange={(e) => field.onChange(e.target.value)}
                         className="w-full pr-20"
+                        placeholder="Nhập tài khoản"
                       />
                       <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
                         @gmail.com
@@ -119,13 +130,16 @@ export function AddOrUpdateUserModal({
                 name="password"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormLabel>
+                      Mật khẩu <span className="text-red-500">*</span>
+                    </FormLabel>
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
                         value={field.value ?? ""}
                         onChange={(e) => field.onChange(e.target.value)}
                         className="w-full pr-10"
+                        placeholder="Nhập mật khẩu"
                       />
                       <button
                         type="button"
@@ -143,6 +157,27 @@ export function AddOrUpdateUserModal({
               />
               <FormField
                 control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Họ và tên <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Input
+                      type="text"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      className="w-full"
+                      placeholder="Nhập họ và tên"
+                    />
+                    {fieldState.error && (
+                      <FormMessage>{fieldState.error.message}</FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="phone"
                 render={({ field, fieldState }) => (
                   <FormItem>
@@ -152,57 +187,72 @@ export function AddOrUpdateUserModal({
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       className="w-full"
+                      placeholder="Nhập số điện thoại"
                     />
+                    {fieldState.error && (
+                      <FormMessage>{fieldState.error.message}</FormMessage>
+                    )}
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="roles"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>Vai trò</FormLabel>
-                    <Selector
-                      className="w-full"
-                      items={(roles || []).map((role) => ({
-                        value: role.id,
-                        label: role.name,
-                      }))}
-                      multiple={true}
-                      placeholder="Chọn vai trò"
-                      value={field.value}
-                      onChange={(value) => {
-                        field.onChange(value);
-                      }}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="departments"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>Phòng ban</FormLabel>
-                    <Selector
-                      className="w-full"
-                      multiple={true}
-                      placeholder="Chọn phòng ban"
-                      items={(departments || [])
-                        .filter((department) => department.id !== undefined)
-                        .map((department) => ({
-                          value: department.id as string,
-                          label: department.name,
+              <div className="flex flex-col md:flex-row gap-4">
+                <FormField
+                  control={form.control}
+                  name="roles"
+                  render={({ field, fieldState }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        Vai trò <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Selector
+                        className="w-full"
+                        items={(roles || []).map((role) => ({
+                          value: role.id,
+                          label: RoleVietnameseNames[role.name] || role.name,
                         }))}
-                      value={field.value}
-                      onChange={(value) => {
-                        field.onChange(value);
-                      }}
-                    />
-                  </FormItem>
-                )}
-              />
+                        multiple={true}
+                        placeholder="Chọn vai trò"
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value);
+                        }}
+                      />
+                      {fieldState.error && (
+                        <FormMessage>{fieldState.error.message}</FormMessage>
+                      )}
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="departments"
+                  render={({ field, fieldState }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        Phòng ban <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Selector
+                        className="w-full"
+                        multiple={true}
+                        placeholder="Chọn phòng ban"
+                        items={(departments || [])
+                          .filter((department) => department.id !== undefined)
+                          .map((department) => ({
+                            value: department.id as string,
+                            label: department.name,
+                          }))}
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value);
+                        }}
+                      />
+                      {fieldState.error && (
+                        <FormMessage>{fieldState.error.message}</FormMessage>
+                      )}
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="w-full flex justify-end">
                 <Button type="submit" className="bg-blue-600 text-white">
                   {user ? "Cập nhật" : "Tạo tài khoản"}

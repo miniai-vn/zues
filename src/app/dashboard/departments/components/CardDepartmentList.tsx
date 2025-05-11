@@ -1,12 +1,9 @@
-import { Department } from "@/hooks/data/useDepartments";
+import useDepartments, { Department } from "@/hooks/data/useDepartments";
 import { CardDepartment } from "./CardDepartment";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface CardDepartmentListProps {
   departments: Department[];
-  selectedDepartments: string[];
-  onSelectionChange: (id: string, selected: boolean) => void;
-  isLoading?: boolean;
 }
 
 const CardDepartmentSkeleton = () => (
@@ -30,11 +27,10 @@ const CardDepartmentSkeleton = () => (
   </div>
 );
 
-const CardDepartmentList = ({
-  departments,
-  isLoading = false,
-}: CardDepartmentListProps) => {
-  if (isLoading) {
+const CardDepartmentList = ({ departments }: CardDepartmentListProps) => {
+  const { isFetchingDepartments, isPendingCreateDept, isPendingDeleteDepartment } =
+    useDepartments({});
+  if (isFetchingDepartments || isPendingCreateDept || isPendingDeleteDepartment) {
     return (
       <div className="flex flex-wrap gap-4">
         {Array(6)
