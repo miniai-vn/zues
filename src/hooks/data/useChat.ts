@@ -109,10 +109,10 @@ const useChat = ({ id }: { id?: string }) => {
     enabled: !!id,
   });
 
-  const { mutate: createConversation } = useMutation({
+  const { mutateAsync: createConversation } = useMutation({
     mutationFn: async (data: Conversation) => {
       const res = await axiosInstance.post(`/api/conversations`, data);
-      return res.data as Conversation;
+      return res.data;
     },
     onSuccess: (data: Conversation) => {
       router.push(`/dashboard/bot/${data.id}`);

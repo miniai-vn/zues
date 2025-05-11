@@ -16,6 +16,7 @@ import { CornerDownLeft, Mic, Paperclip } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useRouter } from "next/navigation";
 
 export enum SocketEvent {
   JoinRoom = "join_room",
@@ -28,6 +29,7 @@ export enum SocketEvent {
 
 export function ChatComponent({ id }: { id?: string }) {
   const { socket } = useSocket();
+  const router = useRouter();
   const {
     selectedDepartmentId,
     departments = [],
@@ -96,13 +98,17 @@ export function ChatComponent({ id }: { id?: string }) {
     if (isStreaming) return;
     e.preventDefault();
     if (!id) {
-      return createConversation({
+      const conversation = await createConversation({
         createdAt: new Date().toISOString(),
         name: selectedDepartmentId?.toString() || "",
         content: input || "",
         type: "direct",
         // departmentId: departmentId,
       });
+      if (conversation) {
+        router.push(`/dashboard/bot/${conversation.id}`);
+      }
+      return;
     }
     fetchedMessages?.push({
       content: input || "",

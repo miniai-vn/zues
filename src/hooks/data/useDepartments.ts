@@ -45,7 +45,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
         setSelectedDepartmentId(firstDeptId);
       }
     }
-  }, [departments, selectedDepartmentId]);
+  }, [departments]);
 
   const changeDepartment = (departmentId: string) => {
     localStorage.setItem("selectedDepartmentId", departmentId);
