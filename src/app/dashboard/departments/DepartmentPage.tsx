@@ -66,10 +66,7 @@ export function DepartmentDetailPage() {
           <CreateDeptDialog onChange={createDepartment} />
         </div>
       ) : (
-        <CardDepartmentList
-          isLoading={isFetchingDepartments}
-          departments={departments || []}
-        />
+        <CardDepartmentList departments={departments || []} />
       )}
     </div>
   );

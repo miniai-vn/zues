@@ -67,7 +67,10 @@ const DepartmentDetailComponent = () => {
     deleteResource,
     createChunks,
     syncResource,
-    isCreateChunks: isLoadCreateChunks,
+    isPendingCreateChunks,
+    isPendingCreateResource,
+    isPendingDeleteResource,
+    isPendingFetchingItem,
   } = useResource({
     departmentId: departmentId,
     page,
@@ -130,7 +133,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "type",
-      header: "Định dạng",
+      header: "Loại tài liệu",
       cell: (row) => (
         <div className="break-all line-clamp-1">{row.row.original?.type}</div>
       ),
@@ -171,7 +174,7 @@ const DepartmentDetailComponent = () => {
       header: () => <div className="text-center">Trạng thái</div>,
       cell: (row) => (
         <div className="flex items-center justify-center w-full">
-          {isLoadCreateChunks ? (
+          {isPendingCreateChunks ? (
             <div className="flex items-center justify-center z-10">
               <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
             </div>
@@ -198,7 +201,7 @@ const DepartmentDetailComponent = () => {
         const isActive = row.row.original.isActive === true;
 
         return (
-          <div className="flex items-center justify-center w-full gap-3">
+          <div className="flex items-center justify-center w-full gap-2">
             <div className="flex items-center">
               <Switch
                 id={`status-switch-${documentId}`}
@@ -221,6 +224,8 @@ const DepartmentDetailComponent = () => {
                   `/dashboard/departments/${departmentId}/documents/${documentId}`
                 );
               }}
+              deleteDescription="Bạn có chắc chắn muốn xóa tài liệu này không?"
+              deleteTitle="Xóa tài liệu"
             />
           </div>
         );
@@ -276,7 +281,11 @@ const DepartmentDetailComponent = () => {
         }}
         onPaginationChange={handlePaginationChange}
         onPageSizeChange={handlePageSizeChange}
-        isLoading={!materialItems}
+        isLoading={
+          isPendingFetchingItem ||
+          isPendingCreateResource ||
+          isPendingDeleteResource
+        }
       />
     </div>
   );

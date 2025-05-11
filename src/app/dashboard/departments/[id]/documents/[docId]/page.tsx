@@ -63,7 +63,18 @@ export default function DocumentDetailsPage() {
         </Button>
         <CreateOrUpdateChunkModal onChange={createChunk} />
       </div>
-
+      {chunks?.length === 0 && (
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 items-center justify-center">
+          <img
+            src="/logo.png"
+            alt="Không có nhóm tài liệu"
+            className="w-32 h-32 mb-4 opacity-70"
+          />
+          <span className="text-lg text-muted-foreground">
+            Bạn chưa phân đoạn tài liệu nào
+          </span>
+        </div>
+      )}
       <DocumentCartList
         deleteChunk={deleteChunk}
         updateChunk={updateChunk}

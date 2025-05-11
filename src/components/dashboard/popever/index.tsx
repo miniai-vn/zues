@@ -17,7 +17,9 @@ interface ActionPopoverProps {
   onDelete?: () => void;
   onEdit?: () => void;
   children?: React.ReactNode;
-  className?: string; // Thêm dòng này
+  className?: string;
+  deleteTitle?: string; // thêm prop này
+  deleteDescription?: string; // thêm prop này
 }
 
 export default function ActionPopover({
@@ -27,7 +29,9 @@ export default function ActionPopover({
   onDelete,
   onEdit,
   children,
-  className = "w-56", // Thêm dòng này, mặc định là w-56
+  className = "w-56",
+  deleteTitle = "Xóa người dùng", // mặc định
+  deleteDescription = "Bạn có chắc chắn muốn xóa người dùng này không?", // mặc định
 }: ActionPopoverProps) {
   return (
     <Popover>
@@ -77,8 +81,8 @@ export default function ActionPopover({
 
           {onDelete && (
             <AlertDialogComponent
-              title="Xóa người dùng"
-              description="Bạn có chắc chắn muốn xóa người dùng này không?"
+              title={deleteTitle}
+              description={deleteDescription}
               onConfirm={onDelete}
               onCancel={() => {}}
             >

@@ -35,10 +35,13 @@ const useResource = ({
 }) => {
   const { toast } = useToast();
 
-  const { data: materialItems, refetch: refetchResource } = useQuery({
+  const {
+    data: materialItems,
+    isPending: isPendingFetchingItem,
+    refetch: refetchResource,
+  } = useQuery({
     queryKey: ["resource", page, limit, search, type],
     queryFn: async () => {
-      // Build query parameters for pagination
       const params = new URLSearchParams();
       if (page) params.append("page", page.toString());
       if (limit) params.append("limit", limit.toString());
@@ -83,111 +86,115 @@ const useResource = ({
     return response.data;
   };
 
-  const { mutate: createResource } = useMutation({
-    mutationFn: async ({
-      file,
-      departmentId,
-      description,
-    }: {
-      file: File;
-      departmentId: string;
-      description: string;
-    }) => {
-      const data = await handleUploadFile(file);
-      const response = await axiosInstance.post(
-        `/api/resources/`,
-        {
-          department_id: departmentId,
-          extra: data,
-          path: data.path,
-          name: data.name,
-          type: "document",
-          description: description,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
+  const { mutate: createResource, isPending: isPendingCreateResource } =
+    useMutation({
+      mutationFn: async ({
+        file,
+        departmentId,
+        description,
+      }: {
+        file: File;
+        departmentId: string;
+        description: string;
+      }) => {
+        const data = await handleUploadFile(file);
+        const response = await axiosInstance.post(
+          `/api/resources/`,
+          {
+            department_id: departmentId,
+            extra: data,
+            path: data.path,
+            name: data.name,
+            type: "document",
+            description: description,
           },
-        }
-      );
-      return response.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Tải lên thành công",
-        description: "Tải lên tài liệu thành công",
-      });
-      refetchResource();
-    },
-    onError: () => {
-      toast({
-        title: "Tải lên thất bại",
-        description: "Tải lên tài liệu thất bại",
-      });
-    },
-  });
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        return response.data;
+      },
+      onSuccess: () => {
+        toast({
+          title: "Tải lên thành công",
+          description: "Tải lên tài liệu thành công",
+        });
+        refetchResource();
+      },
+      onError: () => {
+        toast({
+          title: "Tải lên thất bại",
+          description: "Tải lên tài liệu thất bại",
+        });
+      },
+    });
 
-  const { mutate: deleteResource } = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await axiosInstance.delete(`/api/resources/${id}`, {});
-      return response.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Xóa thành công",
-        description: "Xóa tài liệu thành công",
-      });
-      refetchResource();
-    },
-    onError: () => {
-      toast({
-        title: "Xóa thất bại",
-        description: "Xóa tài liệu thất bại",
-      });
-    },
-  });
+  const { mutate: deleteResource, isPending: isPendingDeleteResource } =
+    useMutation({
+      mutationFn: async (id: string) => {
+        const response = await axiosInstance.delete(`/api/resources/${id}`, {});
+        return response.data;
+      },
+      onSuccess: () => {
+        toast({
+          title: "Xóa thành công",
+          description: "Xóa tài liệu thành công",
+        });
+        refetchResource();
+      },
+      onError: () => {
+        toast({
+          title: "Xóa thất bại",
+          description: "Xóa tài liệu thất bại",
+        });
+      },
+    });
 
-  const { mutate: createChunks, isPending: isCreateChunks } = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await axiosInstance.patch(
-        `/api/resources/create-chunks/${id}`
-      );
-      return response.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Tạo thành công",
-        description: "Tạo tài liệu thành công",
-      });
-      refetchResource();
-    },
-    onError: () => {
-      toast({
-        title: "Tạo thất bại",
-        description: "Tạo tài liệu thất bại",
-      });
-    },
-  });
+  const { mutate: createChunks, isPending: isPendingCreateChunks } =
+    useMutation({
+      mutationFn: async (id: string) => {
+        const response = await axiosInstance.patch(
+          `/api/resources/create-chunks/${id}`
+        );
+        return response.data;
+      },
+      onSuccess: () => {
+        toast({
+          title: "Tạo thành công",
+          description: "Tạo tài liệu thành công",
+        });
+        refetchResource();
+      },
+      onError: () => {
+        toast({
+          title: "Tạo thất bại",
+          description: "Tạo tài liệu thất bại",
+        });
+      },
+    });
 
-  const { mutate: syncResource } = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await axiosInstance.patch(`/api/resources/sync/${id}`);
-      return response.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Đồng bộ thành công",
-        description: "Tạo tài liệu thành công",
-      });
-      refetchResource();
-    },
-    onError: () => {
-      toast({
-        title: "Đồng bộ thất bại",
-        description: "Tạo tài liệu thất bại",
-      });
-    },
-  });
+  const { mutate: syncResource, isPending: isPendingSyncResource } =
+    useMutation({
+      mutationFn: async (id: string) => {
+        const response = await axiosInstance.patch(`/api/resources/sync/${id}`);
+        return response.data;
+      },
+      onSuccess: () => {
+        toast({
+          title: "Đồng bộ thành công",
+          description: "Tạo tài liệu thành công",
+        });
+        refetchResource();
+      },
+      onError: () => {
+        toast({
+          title: "Đồng bộ thất bại",
+          description: "Tạo tài liệu thất bại",
+        });
+      },
+    });
 
   const { data: resourceDetail } = useQuery({
     queryKey: ["resource", id],
@@ -202,10 +209,14 @@ const useResource = ({
     deleteResource,
     createResource,
     createChunks,
-    isCreateChunks,
+    syncResource,
+    isPendingFetchingItem,
+    isPendingCreateResource,
+    isPendingDeleteResource,
+    isPendingCreateChunks,
+    isPendingSyncResource,
     materialItems,
     resourceDetail,
-    syncResource,
     handleUploadFile,
     refetchMaterialItems: refetchResource,
   };
