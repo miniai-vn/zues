@@ -15,7 +15,7 @@ import {
   CompassIcon,
   GalleryVerticalEnd,
   Settings,
-  SquareTerminal
+  SquareTerminal,
 } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
@@ -85,14 +85,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className="flex items-center gap-2">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={32}
-            height={32}
-            className="w-full h-auto"
-          />
+        <div className="flex items-center justify-center gap-2">
+          <img src="/logo.png" alt="logo" className="h-12 w-full px-4" />
         </div>
       </SidebarHeader>
       <SidebarContent>

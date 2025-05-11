@@ -66,13 +66,13 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
       onSuccess: () => {
         refetchDepartments();
         toast({
-          title: "Create Department",
-          description: "Create Department successfully",
+          title: "Tạo phòng ban",
+          description: "Tạo phòng ban thành công",
         });
       },
       onError: (error) => {
         toast({
-          title: "Create Department",
+          title: "Tạo phòng ban",
           description: error.message,
         });
       },
@@ -92,13 +92,13 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     onSuccess: () => {
       refetchDepartments();
       toast({
-        title: "Add User to Department",
-        description: "Add User to Department successfully",
+        title: "Thêm người dùng vào phòng ban",
+        description: "Thêm người dùng vào phòng ban thành công",
       });
     },
     onError: (error) => {
       toast({
-        title: "Add User to Department",
+        title: "Thêm người dùng vào phòng ban",
         description: error.message,
       });
     },
@@ -114,13 +114,13 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     onSuccess: () => {
       refetchDepartments();
       toast({
-        title: "Remove User from Department",
-        description: "Remove User from Department successfully",
+        title: "Xóa người dùng khỏi phòng ban",
+        description: "Xóa người dùng khỏi phòng ban thành công",
       });
     },
     onError: (error) => {
       toast({
-        title: "Remove User from Department",
+        title: "Xóa người dùng khỏi phòng ban",
         description: error.message,
       });
     },
@@ -133,13 +133,13 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     onSuccess: () => {
       refetchDepartments();
       toast({
-        title: "Delete Department",
-        description: "Delete Department successfully",
+        title: "Xóa phòng ban",
+        description: "Xóa phòng ban thành công",
       });
     },
     onError: (error) => {
       toast({
-        title: "Delete Department",
+        title: "Xóa phòng ban",
         description: error.message,
       });
     },
@@ -158,13 +158,13 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     onSuccess: () => {
       refetchDepartments();
       toast({
-        title: "Update Department",
-        description: "Update Department successfully",
+        title: "Cập nhật phòng ban",
+        description: "Cập nhật phòng ban thành công",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update Department",
+        title: "Cập nhật phòng ban",
         description: error.message,
       });
     },

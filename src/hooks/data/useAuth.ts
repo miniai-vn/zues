@@ -70,17 +70,23 @@ const useAuth = ({
   });
 
   const { mutate: signIn, isSuccess } = useMutation({
-    mutationFn: async (data: { username: string; password: string }) => {
-      const response = await axiosInstance.post("/api/auth/login", data);
-      const token = response.data.token;
-      setUser(response.data.user);
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      return response;
+    mutationFn: async ({
+      username,
+      password,
+    }: {
+      username: string;
+      password: string;
+    }) => {
+      const response = await axiosInstance.post("/api/auth/login", {
+        username,
+        password,
+      });
+      return response.data;
     },
-    onSuccess() {
-      console.log("Đăng nhập thành công");
-      router.push("/dashboard/bot");
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
     },
   });
 

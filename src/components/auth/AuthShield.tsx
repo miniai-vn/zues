@@ -18,29 +18,29 @@ export default function AuthShield({
   const [, setIsAuthorized] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
-    if (!token) {
-      router.push("/login");
-    } else if (token && pathname == "/login") {
-      router.push("/dashboard");
-    } else {
-      // Either authorized or on public route
-      setIsAuthorized(true);
-    }
+    // if (!token) {
+    //   router.push("/login");
+    // } else if (token && pathname == "/login") {
+    //   router.push("/dashboard");
+    // } else {
+    //   // Either authorized or on public route
+    //   setIsAuthorized(true);
+    // }
 
-    // Finish loading after auth check
-    setIsLoading(false);
+    // // Finish loading after auth check
+    // setIsLoading(false);
   }, [pathname, router, publicRoutes]);
 
   // Show loading indicator while checking auth
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen w-full items-center justify-center">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  //     </div>
+  //   );
+  // }
 
   return <>{children}</>;
 }
