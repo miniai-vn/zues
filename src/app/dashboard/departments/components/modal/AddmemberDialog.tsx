@@ -48,13 +48,12 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
         <DialogHeader className="p-6 pb-3">
           <div className="flex items-center justify-between w-full">
             <DialogTitle className="text-lg font-medium">
-              Thêm thành viên để truy cập Bot
+              Thêm thành viên để truy cập nhóm tài liệu
             </DialogTitle>
           </div>
           <DialogDescription className="text-sm text-gray-600">
-            Thành viên được thêm sẽ có thể truy cập Bot trong AI Store
+            Thành viên được thêm sẽ có thể truy cập nhóm tài liệu
             <br />
-            (Chủ sở hữu và Quản trị viên mặc định có thể truy cập Bot này)
           </DialogDescription>
         </DialogHeader>
 

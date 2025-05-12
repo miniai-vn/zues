@@ -27,7 +27,7 @@ export function DepartmentDetailPage() {
         breadcrumbs={[
           {
             label: "Quản lý",
-            href: "/dashboard/bot",
+            href: "/dashboard/chat",
           },
           {
             label: "Quản lý nhóm tài liệu",

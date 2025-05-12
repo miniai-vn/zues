@@ -3,11 +3,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 export type Message = {
-  id: number;
+  id?: number;
   content: string;
-  createdAt: string;
+  createdAt?: string;
   senderType: string;
-  isBot: boolean;
 };
 
 type Conversation = {
@@ -32,9 +31,10 @@ const useChat = ({ id }: { id?: string }) => {
     queryFn: async () => {
       try {
         const response = await axiosInstance.get(`/api/conversations/${id}`);
+        // console.log(response.data);
         return (response.data.messages as Message[]) ?? ([] as Message[]);
       } catch (error) {
-        router.push("/dashboard/bot");
+        router.push("/dashboard/chat");
         throw new Error("Failed to fetch messages");
       }
     },
@@ -115,7 +115,7 @@ const useChat = ({ id }: { id?: string }) => {
       return res.data;
     },
     onSuccess: (data: Conversation) => {
-      router.push(`/dashboard/bot/${data.id}`);
+      router.push(`/dashboard/chat/${data.id}`);
       sendMessage({
         content: data.content,
         conversation_id: Number(data.id as string),

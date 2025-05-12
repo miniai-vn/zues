@@ -1,6 +1,6 @@
 "use client";
 
-import { SideChat } from "@/app/dashboard/bot/components/SideChat";
+import { SideChat } from "@/app/dashboard/chat/components/SideChat";
 import {
   Collapsible,
   CollapsibleContent,
@@ -96,7 +96,7 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
           <SidebarMenuButton
             className="w-full"
             onClick={() => {
-              router.push("/dashboard/bot");
+              router.push("/dashboard/chat");
             }}
           >
             <PlusCircle /> Tạo đoạn chat mới
@@ -142,9 +142,9 @@ export default function NavMain({ items }: { items: MenuItem[] }) {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton
-            className="w-full"
+            className="w-full mt-2"
             onClick={() => {
-              router.push("/dashboard/bot");
+              router.push("/dashboard/chat");
             }}
           >
             <MessageCircleMore /> Lịch sử trò chuyện

@@ -26,7 +26,7 @@ export function LoginForm({
         password,
       });
       if (res) {
-        router.push("/dashboard/bot");
+        router.push("/dashboard/chat");
       }
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);

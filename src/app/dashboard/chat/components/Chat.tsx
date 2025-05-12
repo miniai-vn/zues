@@ -1,6 +1,5 @@
 "use client";
 import CodeDisplayBlock from "@/components/code-display-block";
-import { Selector } from "@/components/dashboard/selector";
 import { Button } from "@/components/ui/button";
 import {
   ChatBubble,
@@ -9,14 +8,16 @@ import {
 } from "@/components/ui/chat/chat-bubble";
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
-import { useChat } from "@/hooks/data/useChat";
+import { Message, useChat } from "@/hooks/data/useChat";
 import useDepartments from "@/hooks/data/useDepartments";
 import { useSocket } from "@/hooks/useSocket";
 import { CornerDownLeft, Mic, Paperclip } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useRouter } from "next/navigation";
+import ChatHeader from "./Header";
+import { set } from "zod";
 
 export enum SocketEvent {
   JoinRoom = "join_room",
@@ -27,14 +28,10 @@ export enum SocketEvent {
   Leave = "leave",
 }
 
-export function ChatComponent({ id }: { id?: string }) {
+export default function ChatComponent({ id }: { id?: string }) {
   const { socket } = useSocket();
   const router = useRouter();
-  const {
-    selectedDepartmentId,
-    departments = [],
-    changeDepartment,
-  } = useDepartments({});
+  const { selectedDepartmentId } = useDepartments({});
 
   const {
     fetchedMessages,
@@ -45,19 +42,36 @@ export function ChatComponent({ id }: { id?: string }) {
     createConversation,
   } = useChat(id ? { id } : {});
 
+  const [displayMessages, setDisplayMessages] = useState<Message[]>([]);
+
   const messagesRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
 
+  useEffect(() => {
+    if (fetchedMessages) {
+      setDisplayMessages(fetchedMessages);
+    }
+  }, [fetchedMessages]);
+
   const handleStreamingChunk = (data: any) => {
     setStreamingContent((prev) => prev + (data?.chunk || ""));
   };
 
-  const handleStreamingEnd = () => {
+  const handleStreamingEnd = (data: any) => {
+    setDisplayMessages((prev) => [
+      ...prev,
+      {
+        content: data.content,
+        senderType: "assistant",
+      },
+    ]);
+    setStreamingContent("");
     setIsStreaming(false);
   };
   const handleStreamingStart = () => {
+    console.log("Streaming started");
     setStreamingContent("");
     setIsStreaming(true);
   };
@@ -97,6 +111,7 @@ export function ChatComponent({ id }: { id?: string }) {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (isStreaming) return;
     e.preventDefault();
+
     if (!id) {
       const conversation = await createConversation({
         createdAt: new Date().toISOString(),
@@ -106,18 +121,17 @@ export function ChatComponent({ id }: { id?: string }) {
         // departmentId: departmentId,
       });
       if (conversation) {
-        router.push(`/dashboard/bot/${conversation.id}`);
+        router.push(`/dashboard/chat/${conversation.id}`);
       }
       return;
     }
-    fetchedMessages?.push({
-      content: input || "",
-      senderType: "user",
-      createdAt: new Date().toISOString(),
-      id: 0,
-      isBot: false,
-      // departmentId: departmentId,
-    });
+    setDisplayMessages((prev) => [
+      ...prev,
+      {
+        content: input || "",
+        senderType: "user",
+      },
+    ]);
     handleSubmit(e, parseInt(id), [selectedDepartmentId] as string[]);
     handleScrollY();
   };
@@ -129,129 +143,117 @@ export function ChatComponent({ id }: { id?: string }) {
     }
   };
   return (
-    <div
-      className={`flex w-full h-full  ${
-        id ? "" : "justify-center"
-      } max-w-5xl flex-col items-center my-auto mx-auto`}
-    >
+    <div className="flex flex-col w-full h-full">
+      <ChatHeader />
       <div
-        className={`${
-          id ? "flex-1" : ""
-        } w-full scroll-y-auto overflow-y-auto bg-background shadow-sm rounded-lg`}
+        className={`flex flex-1 w-full h-full  ${
+          id ? "" : "justify-center"
+        } max-w-3xl flex-col items-center my-auto mx-auto`}
       >
-        <ChatMessageList>
-          {(!fetchedMessages || fetchedMessages?.length === 0) && (
-            <div className="w-full text-center bg-background shadow-sm rounded-lg p-8 flex flex-col gap-2">
-              <h1 className="font-bold text-4xl">Tôi giúp gì được cho bạn?.</h1>
-            </div>
-          )}
+        <div
+          className={`${
+            id ? "flex-1" : ""
+          } w-full overflow-y-auto bg-background shadow-sm rounded-lg`}
+        >
+          <ChatMessageList>
+            {!id && (
+              <div className="w-full text-center bg-background">
+                <h2 className="text-3xl">Tôi có thể giúp gì cho bạn?</h2>
+              </div>
+            )}
+            {displayMessages.length > 0 &&
+              displayMessages.map((message, index) => {
+                return (
+                  <ChatBubble
+                    key={index}
+                    variant={
+                      message?.senderType == "user" ? "sent" : "received"
+                    }
+                  >
+                    <ChatBubbleMessage>
+                      {message?.content
+                        .split("```")
+                        .map((part: string, idx: number) => {
+                          if (idx % 2 === 0) {
+                            return (
+                              <Markdown key={idx} remarkPlugins={[remarkGfm]}>
+                                {part}
+                              </Markdown>
+                            );
+                          } else {
+                            return (
+                              <pre
+                                className="whitespace-pre-wrap pt-2"
+                                key={idx}
+                              >
+                                <CodeDisplayBlock code={part} lang="" />
+                              </pre>
+                            );
+                          }
+                        })}
+                    </ChatBubbleMessage>
+                  </ChatBubble>
+                );
+              })}
 
-          {fetchedMessages &&
-            (isStreaming ? fetchedMessages.slice(-1) : fetchedMessages).map(
-              (message, index) => (
-                <ChatBubble
-                  key={index}
-                  variant={message?.senderType == "user" ? "sent" : "received"}
-                >
-                  <ChatBubbleAvatar
-                    src=""
-                    fallback={message?.senderType == "user" ? "👨🏽" : "🤖"}
-                  />
-                  <ChatBubbleMessage>
-                    {message?.content
-                      .split("```")
-                      .map((part: string, idx: number) => {
-                        if (idx % 2 === 0) {
-                          return (
-                            <Markdown key={idx} remarkPlugins={[remarkGfm]}>
-                              {part}
-                            </Markdown>
-                          );
-                        } else {
-                          return (
-                            <pre className="whitespace-pre-wrap pt-2" key={idx}>
-                              <CodeDisplayBlock code={part} lang="" />
-                            </pre>
-                          );
-                        }
-                      })}
-                  </ChatBubbleMessage>
-                </ChatBubble>
-              )
+            {streamingContent && (
+              <ChatBubble variant="received">
+                <ChatBubbleMessage>
+                  <div className="animate-pulse-fadein">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                      {streamingContent}
+                    </Markdown>
+                  </div>
+                </ChatBubbleMessage>
+              </ChatBubble>
             )}
 
-          {streamingContent && (
-            <ChatBubble variant="received">
-              <ChatBubbleAvatar src="" fallback="🤖" />
-              <ChatBubbleMessage>
-                <Markdown remarkPlugins={[remarkGfm]}>
-                  {streamingContent}
-                </Markdown>
-              </ChatBubbleMessage>
-            </ChatBubble>
-          )}
+            {isStreaming && (
+              <ChatBubble variant="received">
+                <ChatBubbleAvatar src="" fallback="🤖" />
+                <ChatBubbleMessage isLoading />
+              </ChatBubble>
+            )}
+            <div ref={messagesRef}></div>
+          </ChatMessageList>
+        </div>
 
-          {isStreaming && (
-            <ChatBubble variant="received">
-              <ChatBubbleAvatar src="" fallback="🤖" />
-              <ChatBubbleMessage isLoading />
-            </ChatBubble>
-          )}
-          <div ref={messagesRef}></div>
-        </ChatMessageList>
-      </div>
-
-      <div className="w-full px-4 pb-4">
-        <form
-          ref={formRef}
-          onSubmit={onSubmit}
-          className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
-        >
-          <ChatInput
-            value={input}
-            onKeyDown={onKeyDown}
-            onChange={handleInputChange}
-            placeholder="Type your message here..."
-            className="rounded-lg bg-background border-0 shadow-none focus-visible:ring-0"
-          />
-          <div className="flex items-center p-3 pt-0">
-            <Selector
-              items={(departments ?? []).map((dept) => {
-                return {
-                  label: dept.name as string,
-                  value: dept.id as string,
-                };
-              })}
-              value={selectedDepartmentId}
-              placeholder="Chọn phòng ban"
-              onChange={(value: string | number | (string | number)[]) => {
-                if (typeof value === "string" || typeof value === "number") {
-                  return changeDepartment(value.toString());
-                }
-              }}
+        <div className="w-full px-4 pb-4">
+          <form
+            ref={formRef}
+            onSubmit={onSubmit}
+            className="relative rounded-l-2xl rounded-2xl border bg-background focus-within:ring-1 focus-within:ring-ring"
+          >
+            <ChatInput
+              value={input}
+              onKeyDown={onKeyDown}
+              onChange={handleInputChange}
+              placeholder="Nhập tin nhắn..."
+              className="rounded-l-2xl rounded-2xl bg-background border-0 shadow-none focus-visible:ring-0"
             />
+            <div className="flex items-center p-2 pt-0">
+              <Button variant="ghost" size="icon">
+                <Paperclip className="size-4" />
+                <span className="sr-only">Đính kèm tệp</span>
+              </Button>
 
-            <Button variant="ghost" size="icon">
-              <Paperclip className="size-4" />
-              <span className="sr-only">Attach file</span>
-            </Button>
+              <Button variant="ghost" size="icon">
+                <Mic className="size-4" />
+                <span className="sr-only">Sử dụng micro</span>
+              </Button>
 
-            <Button variant="ghost" size="icon">
-              <Mic className="size-4" />
-              <span className="sr-only">Use Microphone</span>
-            </Button>
-
-            <Button
-              disabled={!input || isLoading}
-              type="submit"
-              size="sm"
-              className="ml-auto gap-1.5"
-            >
-              Send Message
-              <CornerDownLeft className="size-3.5" />
-            </Button>
-          </div>
-        </form>
+              <Button
+                disabled={!input || isLoading}
+                type="submit"
+                size="sm"
+                className="ml-auto gap-1.5"
+              >
+                Gửi
+                <CornerDownLeft className="size-3.5" />
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -15,8 +15,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
 
-
-
 const DepartmentDetailComponent = () => {
   const params = useParams();
   const router = useRouter();
@@ -58,6 +56,7 @@ const DepartmentDetailComponent = () => {
     isPendingCreateResource,
     isPendingDeleteResource,
     isPendingFetchingItem,
+    isPendingSyncResource,
   } = useResource({
     departmentId: departmentId,
     page,
@@ -161,26 +160,51 @@ const DepartmentDetailComponent = () => {
     {
       accessorKey: "status",
       header: () => <div className="text-center">Trạng thái</div>,
-      cell: (row) => (
-        <div className="flex items-center justify-center w-full">
-          {isPendingCreateChunks ? (
+      cell: (row) => {
+        const status = row.row.original.status;
+        let statusText = status;
+        let statusClass = "bg-gray-100 text-gray-800";
+
+        if (isPendingCreateChunks || isPendingSyncResource) {
+          return (
             <div className="flex items-center justify-center z-10">
               <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
             </div>
-          ) : (
+          );
+        }
+
+        switch (status) {
+          case "new":
+            statusText = "Mới";
+            statusClass = "bg-blue-100 text-blue-800";
+            break;
+          case "processing":
+            statusText = "Đã phân đoạn";
+            statusClass = "bg-yellow-100 text-yellow-800";
+            break;
+          case "finished":
+            statusText = "Đã train";
+            statusClass = "bg-green-100 text-green-800";
+            break;
+          case "active":
+            statusText = "Hoạt động";
+            statusClass = "bg-green-100 text-green-800";
+            break;
+          default:
+            break;
+        }
+
+        return (
+          <div className="flex items-center justify-center w-full">
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                row.row.original.status === "active"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
+              className={`px-2 py-1 rounded-full text-xs font-medium ${statusClass}`}
             >
-              {row.row.original.status}
+              {statusText}
             </span>
-          )}
-        </div>
-      ),
-      size: 100,
+          </div>
+        );
+      },
+      size: 120,
     },
     {
       id: "actions",

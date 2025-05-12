@@ -53,7 +53,7 @@ export default function ActionPopover({
               onClick={onConfigure}
             >
               <Settings size={16} />
-              <span>Cài đặt phân đoạn</span>
+              <span>Phân đoạn tài liệu</span>
             </Button>
           )}
 
@@ -64,7 +64,7 @@ export default function ActionPopover({
               onClick={onArchive}
             >
               <Archive size={16} />
-              <span>Đồng bộ dữ liệu</span>
+              <span>Đào tạo AI</span>
             </Button>
           )}
 

@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function SideChat() {
   const { conversations, isLoading } = useChat({});
   const { id: currentChatId } = useParams();
-
+  console.log(currentChatId)
   if (isLoading) {
     return (
       <div className="px-2">
@@ -31,12 +31,12 @@ export function SideChat() {
       {conversations?.map((conversation) => (
         <Link
           key={conversation.id}
-          className={`flex items-center pb-1.5 pt-1 text-black text-sm rounded-lg ${
+          className={`flex items-center px-2 pb-1.5 pt-1 text-sm rounded-sm ${
             conversation.id == currentChatId
-              ? "bg-transparent bg-gray-200 "
+              ? "bg-gray-200 "
               : "bg-transparent hover:bg-gray-100"
           }`}
-          href={`/dashboard/bot/${conversation.id}`}
+          href={`/dashboard/chat/${conversation.id}`}
         >
           <span className="w-full truncate">{conversation.content}</span>
         </Link>

@@ -8,7 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -127,8 +133,11 @@ export function CreateOrUpdateResource({
                       handleFileChange(e);
                     }}
                     className="w-full h-14 center"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv"
+                    accept=".pdf,.doc,.docx,.txt,"
                   />
+                  <FormDescription>
+                    Chấp nhận các định dạng: .pdf, .doc, .docx, .txt
+                  </FormDescription>
                   {selectedFile && (
                     <div className="mt-2 text-sm text-gray-500">
                       Selected file: {selectedFile.name} (
@@ -146,8 +155,8 @@ export function CreateOrUpdateResource({
                 <FormItem>
                   <Textarea
                     {...field}
-                    placeholder="Nhập nội dung phân đoạn..."
-                    className="w-full h-80"
+                    placeholder="Nhập mô tả tài liệu..."
+                    className="w-full h-40"
                     aria-invalid={fieldState.invalid}
                   />
                   <FormMessage />

@@ -79,15 +79,14 @@ export default function AccessControl({
     <Card className="w-full">
       <CardHeader className="pb-0">
         <h2 className="text-blue-600 font-medium text-lg">
-          Cài đặt truy cập nội bộ
+          Cài đặt phân quyền nhóm tài liệu
         </h2>
         <p className="text-sm text-gray-700">
           Thêm email của các thành viên trong dự án để kiểm soát quyền truy cập
-          vào Bot này ở AI Store.
+          vào nhóm tài liệu
         </p>
         <p className="text-sm text-gray-700">
-          Khi phân quyền truy cập Bot, người dùng trong AI Store không thuộc dự
-          án sẽ không thể truy cập Bot này.
+          Khi phân quyền truy cập nhóm tài liệu.
         </p>
       </CardHeader>
 

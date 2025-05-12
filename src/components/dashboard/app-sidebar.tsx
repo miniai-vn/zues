@@ -47,7 +47,7 @@ const data = {
   navMain: [
     {
       title: "Quản lý",
-      url: "/dashboard/bot",
+      url: "/dashboard/chat",
       icon: BotIcon,
       isActive: true,
       role: [Role.Staff, Role.Admin],
