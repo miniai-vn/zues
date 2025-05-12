@@ -25,9 +25,9 @@ export function LoginForm({
         username: email,
         password,
       });
-      
-      router.push("/dashboard/bot");
-
+      if (res) {
+        router.push("/dashboard/bot");
+      }
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
       alert("Đăng nhập thất bại!");

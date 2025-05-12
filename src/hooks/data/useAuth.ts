@@ -68,7 +68,7 @@ const useAuth = ({
     enabled: !!user,
   });
 
-  const { mutate: signIn, isSuccess } = useMutation({
+  const { mutateAsync: signIn, isSuccess } = useMutation({
     mutationFn: async ({
       username,
       password,
