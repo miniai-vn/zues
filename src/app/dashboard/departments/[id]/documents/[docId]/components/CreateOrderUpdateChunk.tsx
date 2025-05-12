@@ -60,6 +60,7 @@ export function CreateOrUpdateChunkModal({
       updatedAt: "",
       isActive: false,
       resourceId: "",
+      code: chunk?.code || "",
     });
     form.reset();
     setIsOpen(false);

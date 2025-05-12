@@ -1,6 +1,4 @@
-import {
-  MoreHorizontal
-} from "lucide-react";
+import { File, FileText, Image, MoreHorizontal } from "lucide-react";
 
 // Import shadcn/ui components
 import { Button } from "@/components/ui/button";
@@ -8,10 +6,30 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Resource } from "@/hooks/data/useResource";
-import { getFileIcon } from "../../../page";
+const getFileIcon = (type: string) => {
+  switch (type) {
+    case "pdf":
+      return <FileText className="h-6 w-6 text-red-500" />;
+    case "csv":
+    case "xlsx":
+    case "xls":
+      return <FileText className="h-6 w-6 text-green-500" />;
+    case "doc":
+    case "docx":
+    case "txt":
+      return <FileText className="h-6 w-6 text-blue-500" />;
+    case "jpg":
+    case "jpeg":
+    case "png":
+    case "gif":
+      return <Image className="h-6 w-6 text-purple-500" />;
+    default:
+      return <File className="h-6 w-6 text-gray-500" />;
+  }
+};
 interface ResourceHeaderProps {
   resource: Resource;
 }

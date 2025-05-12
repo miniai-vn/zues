@@ -17,6 +17,63 @@ export type Role = {
   createdAt?: string;
   updatedAt?: string;
 };
+export const RoleVietnameseNames: Record<string, string> = {
+  admin: "Quản trị viên",
+  moderator: "Người kiểm duyệt",
+  developer: "Nhà phát triển",
+  support_agent: "Nhân viên hỗ trợ",
+  content_creator: "Người tạo nội dung",
+  user: "Người dùng",
+  guest: "Khách",
+};
+
+export const PermissionVietnameseNames: Record<string, string> = {
+  // File
+  "file.create": "Tải lên tệp",
+  "file.read": "Xem tệp",
+  "file.update": "Chỉnh sửa thông tin tệp",
+  "file.delete": "Xoá tệp",
+  "file.download": "Tải xuống tệp",
+  "file.share": "Chia sẻ tệp",
+  "file.access_sensitive": "Truy cập tệp nhạy cảm",
+
+  // Chat
+  "chat.read": "Xem lịch sử trò chuyện",
+  "chat.create": "Gửi tin nhắn",
+  "chat.update": "Chỉnh sửa tin nhắn",
+  "chat.delete": "Xoá tin nhắn",
+  "chat.train": "Huấn luyện chatbot",
+  "chat.manage_settings": "Quản lý cài đặt chatbot",
+
+  // User
+  "user.create": "Tạo người dùng",
+  "user.read": "Xem người dùng",
+  "user.update": "Cập nhật người dùng",
+  "user.delete": "Xoá người dùng",
+  "user.ban": "Cấm hoặc mở cấm người dùng",
+  "user.assign_role": "Gán vai trò cho người dùng",
+
+  // Role & Permission
+  "role.create": "Tạo vai trò",
+  "role.read": "Xem vai trò",
+  "role.update": "Cập nhật vai trò",
+  "role.delete": "Xoá vai trò",
+  "permission.assign": "Gán quyền cho vai trò",
+  "permission.read": "Xem tất cả quyền",
+
+  // Settings
+  "setting.read": "Xem cài đặt hệ thống",
+  "setting.update": "Cập nhật cài đặt hệ thống",
+  "setting.reset": "Đặt lại hệ thống",
+
+  // Department
+  "department.create": "Tạo phòng ban",
+  "department.read": "Xem phòng ban và thành viên",
+  "department.update": "Cập nhật phòng ban",
+  "department.delete": "Xoá phòng ban",
+  "department.assign_user": "Gán người dùng vào phòng ban",
+  "department.manage_roles": "Quản lý vai trò cấp phòng ban",
+};
 
 const useRoles = () => {
   const { toast } = useToast();

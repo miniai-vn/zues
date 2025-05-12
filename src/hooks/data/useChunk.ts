@@ -8,7 +8,7 @@ export interface Chunk {
   createdAt?: string;
   isPublic?: boolean;
   updatedAt?: string;
-  code: string;
+  code?: string;
   isActive: boolean;
   resourceId: string;
 }

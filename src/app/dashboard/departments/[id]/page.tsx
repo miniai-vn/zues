@@ -6,49 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import useResource, { Resource } from "@/hooks/data/useResource";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { convertBytesToMB } from "@/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
+import { File, FileText, Image, Search } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
-import { File, FileText, Image, Search } from "lucide-react";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
-export const getFileIcon = (type: string) => {
-  console.log(type);
-  switch (type) {
-    case "pdf":
-      return <FileText className="h-6 w-6 text-red-500" />;
-    case "csv":
-    case "xlsx":
-    case "xls":
-      return <FileText className="h-6 w-6 text-green-500" />;
-    case "doc":
-    case "docx":
-    case "txt":
-      return <FileText className="h-6 w-6 text-blue-500" />;
-    case "jpg":
-    case "jpeg":
-    case "png":
-    case "gif":
-      return <Image className="h-6 w-6 text-purple-500" />;
-    default:
-      return <File className="h-6 w-6 text-gray-500" />;
-  }
-};
 
-export function convertBytesToMB(bytes: number, decimalPlaces = 2) {
-  if (bytes === 0) return "0 MB";
-
-  // 1 MB = 1024 KB = 1024 * 1024 bytes
-  const bytesInMB = 1024 * 1024;
-
-  // Chuyển đổi và làm tròn đến số chữ số thập phân mong muốn
-  const mb = (bytes / bytesInMB).toFixed(decimalPlaces);
-
-  // Trả về chuỗi có định dạng
-  return `${mb} MB`;
-}
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
@@ -59,7 +26,27 @@ const DepartmentDetailComponent = () => {
   useDebouncedValue(search, 500);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case "pdf":
+        return <FileText className="h-6 w-6 text-red-500" />;
+      case "csv":
+      case "xlsx":
+      case "xls":
+        return <FileText className="h-6 w-6 text-green-500" />;
+      case "doc":
+      case "docx":
+      case "txt":
+        return <FileText className="h-6 w-6 text-blue-500" />;
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+        return <Image className="h-6 w-6 text-purple-500" />;
+      default:
+        return <File className="h-6 w-6 text-gray-500" />;
+    }
+  };
   const {
     materialItems,
     createResource,
@@ -124,7 +111,9 @@ const DepartmentDetailComponent = () => {
         console.log(row.row.original);
         return (
           <div className="break-all flex items-center gap-2 line-clamp-2">
-            <span>{getFileIcon(row.row.original.extra.extension)}</span>
+            <span>
+              {getFileIcon(row.row.original.extra.extension as string)}
+            </span>
             <span>{row.row.original.name}</span>
           </div>
         );
@@ -144,7 +133,7 @@ const DepartmentDetailComponent = () => {
       header: "Dung lượng",
       cell: (row) => (
         <div className="break-all line-clamp-1">
-          {convertBytesToMB(row.row.original.extra.size)}
+          {convertBytesToMB(row.row.original.extra.size as number)}
         </div>
       ),
       size: 100,

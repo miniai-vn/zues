@@ -20,13 +20,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { User, UserData, UserUpdateData } from "@/hooks/data/useAuth";
 import useDepartments from "@/hooks/data/useDepartments";
-import useRoles from "@/hooks/data/useRoles";
+import useRoles, { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { RoleVietnameseNames } from "@/app/dashboard/permissions/page";
+import {  } from "@/app/dashboard/permissions/page";
 
 const FormSchema = z.object({
   username: z.string().nonempty("Vui lòng nhập tài khoản."),

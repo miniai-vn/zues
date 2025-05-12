@@ -1,25 +1,18 @@
 "use client";
-import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
 import { PageHeader } from "@/components/dashboard/common/page-header";
+import ActionPopover from "@/components/dashboard/popever";
 import { DataTable } from "@/components/dashboard/tables/data-table";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import ProtectedRoute, { Role } from "@/configs/protect-route";
 import { useAuth, User } from "@/hooks/data/useAuth";
+import { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Search, Trash2 } from "lucide-react";
+import { Pencil, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddOrUpdateUserModal } from "./components/CreateOrUpdateModal";
-import { RoleVietnameseNames } from "@/app/dashboard/permissions/page";
-import ActionPopover from "@/components/dashboard/popever";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);
