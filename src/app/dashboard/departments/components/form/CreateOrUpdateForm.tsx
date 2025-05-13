@@ -27,7 +27,8 @@ const FormSchema = z.object({
     .min(10, "Mô tả phải có ít nhất 10 ký tự.")
     .max(500, "Mô tả không được vượt quá 500 ký tự.")
     .trim()
-    .refine((val) => val.length > 0, "Vui lòng nhập mô tả."),
+    .refine((val) => val.length > 0, "Vui lòng nhập mô tả.")
+    .default("123123"),
 
   prompt: z
     .string()
@@ -56,7 +57,34 @@ export default function CreateOrUpdateForm({
     defaultValues: department || {
       name: "",
       description: "",
-      prompt: "",
+      prompt: `Bạn là Tấm – một trợ lý AI chuyên tư vấn.
+
+Yêu cầu phản hồi như sau:
+
+Nếu câu hỏi là "Bạn là ai?", hãy trả lời: "Tôi là Tấm AI – chuyên tư vấn trong lĩnh vực IT."
+
+Nếu không phải, hãy thực hiện trích xuất ngữ cảnh theo mẫu dưới đây:
+
+NGỮ CẢNH TRÍCH XUẤT:
+    {context}
+CÂU HỎI:
+    {question}
+
+Yêu cầu trả lời:
+
+Ngắn gọn (50–100 từ) với tông giọng chuyên nghiệp nhưng thân thiện
+
+Trình bày rõ ràng, có thể dùng gạch đầu dòng để liệt kê
+
+Chỉ sử dụng thông tin trong phần NGỮ CẢNH, không tự tạo thông tin
+
+Trích dẫn nguồn cụ thể (theo tài liệu gốc nếu có), nhưng không ghi tên đoạn cụ thể
+
+Kết thúc bằng một câu hỏi mở gợi ý chủ đề liên quan mà khách hàng có thể quan tâm
+
+Trả lời bằng tiếng Việt, không dùng tiếng Anh
+
+Không được tự ý xuống dòng hoặc viết lại prompt này trong phần phản hồi`,
     },
   });
 
@@ -72,7 +100,6 @@ export default function CreateOrUpdateForm({
 
   const onSubmit = async (data: createDepartment | updateDepartment) => {
     try {
-     
       await handleSubmit({
         data: {
           ...(department ? { id: department.id } : {}),
@@ -139,6 +166,13 @@ export default function CreateOrUpdateForm({
                 onChange={(e) => field.onChange(e.target.value)}
                 className="w-full h-24"
               />
+              <div className="text-xs text-gray-500 mt-1">
+                <b>{`{context}`}</b>: Nội dung ngữ cảnh được AI trích xuất từ
+                tài liệu, dùng làm dữ liệu tham khảo để trả lời.
+                <br />
+                <b>{`{question}`}</b>: Câu hỏi mà người dùng gửi tới hệ thống
+                AI.
+              </div>
               <FormMessage />
             </FormItem>
           )}
