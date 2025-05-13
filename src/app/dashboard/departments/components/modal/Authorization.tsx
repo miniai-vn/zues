@@ -35,7 +35,7 @@ export default function AccessControl({
     () => [
       {
         accessorKey: "name",
-        header: "TÊN",
+        header: "Email",
       },
       {
         accessorKey: "phone",

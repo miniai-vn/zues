@@ -71,7 +71,7 @@ export function CardDepartment({ department }: CardDepartmentProps) {
         <div className="flex items-center">
           <div className="flex items-center bg-blue-100 text-blue-700 rounded-md px-2 py-1">
             <User className="h-4 w-4 mr-1" />
-            <span className="text-xs font-medium">{"Gia Minh"}</span>
+            <span className="text-xs max-w-[60px] font-medium truncate">{department.username}</span>
           </div>
           <span className="mx-2 text-gray-300">•</span>
           <div className="flex items-center text-gray-500">

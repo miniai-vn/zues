@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner"; // hoặc thư viện toast bạn đang dùng
 
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -26,33 +27,29 @@ axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response) {
-      // Server responded with an error status
-      const { status } = error.response;
-
+      const { status, data } = error.response;
+      if (status === 403) {
+        alert("Bạn không có quyền truy cập vào tài nguyên này!");
+        window.history.back();
+        return;
+      }
       if (status === 401) {
-        // Unauthorized - token expired or invalid
-        // Redirect to login or refresh token
         localStorage.removeItem("token");
-        window.location.href = "/login";
-      } else if (status === 403) {
-        // Forbidden - insufficient permissions
-        console.error("Access forbidden");
+        toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1200);
       } else if (status === 404) {
-        // Not found
-        console.error("Resource not found");
+        toast.error("Không tìm thấy tài nguyên!");
+        window.history.back();
       } else if (status >= 500) {
-        // Server errors
-        console.error("Server error occurred");
+        toast.error("Lỗi máy chủ. Vui lòng thử lại sau!");
       }
     } else if (error.request) {
-      // Request made but no response received
-      console.error("No response received from server");
+      toast.error("Không nhận được phản hồi từ máy chủ!");
     } else {
-      // Request setup error
-      console.error("Request configuration error");
+      toast.error("Lỗi cấu hình request!");
     }
-
-    console.error("Axios error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

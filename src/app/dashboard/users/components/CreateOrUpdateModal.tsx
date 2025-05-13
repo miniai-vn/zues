@@ -229,7 +229,7 @@ export function AddOrUpdateUserModal({
                   render={({ field, fieldState }) => (
                     <FormItem className="flex-1">
                       <FormLabel>
-                        Phòng ban <span className="text-red-500">*</span>
+                        Phòng ban
                       </FormLabel>
                       <Selector
                         className="w-full"

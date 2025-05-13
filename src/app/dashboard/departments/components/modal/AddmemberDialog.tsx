@@ -1,3 +1,4 @@
+'use client";';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,7 +19,12 @@ import {
 import { useAuth } from "@/hooks/data/useAuth";
 import useDepartments, { Department } from "@/hooks/data/useDepartments";
 import { Plus } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+
+const PERMISSIONS = {
+  user: "Nhân viên",
+  admin: "Quản trị viên",
+};
 
 interface AddMemberDialogProps {
   department: Department;
@@ -25,6 +32,7 @@ interface AddMemberDialogProps {
 
 export default function AddMemberDialog({ department }: AddMemberDialogProps) {
   const { users } = useAuth({});
+  const [permission, setPermission] = useState("");
   const { addUserToDept } = useDepartments({});
   const [userId, setUserId] = React.useState<string>("");
   const onChangeUserId = (value: string) => {
@@ -57,22 +65,53 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 pb-2">
+        <div className="px-6">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Email</label>
-            <div className="relative">
-              <Select onValueChange={onChangeUserId}>
-                <SelectTrigger className="w-full border-gray-300 focus:border-blue-300 focus:outline-none rounded-md h-12">
-                  <SelectValue placeholder="Nhập email của thành viên" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(users ?? []).map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.username}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex space-x-3">
+              <div className="flex-1">
+                <Label
+                  htmlFor="email"
+                  className="text-sm mb-1.5 font-medium block"
+                >
+                  Email
+                </Label>
+                <Select onValueChange={onChangeUserId}>
+                  <SelectTrigger className="w-full border-gray-300 focus:border-blue-300 focus:outline-none rounded-md">
+                    <SelectValue placeholder="Nhập email của thành viên" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(users ?? []).map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.username}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-1/3">
+                <Label
+                  htmlFor="permission"
+                  className="text-sm font-medium mb-1.5 block"
+                >
+                  Quyền
+                </Label>
+                <Select value={permission} onValueChange={setPermission}>
+                  <SelectTrigger
+                    id="permission"
+                    className="w-full border-gray-300 focus:border-blue-300 focus:outline-none rounded-md"
+                  >
+                    <SelectValue placeholder="Chọn quyền" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(PERMISSIONS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
@@ -85,6 +124,7 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
                 addUserToDept({
                   user_id: userId,
                   department_id: department.id as string,
+                  role: permission,
                 });
                 setIsOpen(false);
               } catch (error) {

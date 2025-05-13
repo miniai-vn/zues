@@ -13,6 +13,8 @@ export type Department = {
   updatedAt?: string;
   isPublic?: boolean;
   users?: User[];
+  role?: string;
+  username?: string;
 };
 
 const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
@@ -83,7 +85,11 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
 
   const { mutate: addUserToDept, isPending: isPendingAddUserToDept } =
     useMutation({
-      mutationFn: async (data: { user_id: string; department_id: string }) => {
+      mutationFn: async (data: {
+        user_id: string;
+        department_id: string;
+        role: string;
+      }) => {
         const res = await axiosInstance.post(
           "/api/departments/create-user",
           data,
