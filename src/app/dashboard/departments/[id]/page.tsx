@@ -107,7 +107,6 @@ const DepartmentDetailComponent = () => {
       accessorKey: "name",
       header: "Tên tệp",
       cell: (row) => {
-        console.log(row.row.original);
         return (
           <div className="break-all flex items-center gap-2 line-clamp-2">
             <span>

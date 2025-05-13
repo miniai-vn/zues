@@ -8,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function SideChat() {
   const { conversations, isLoading } = useChat({});
   const { id: currentChatId } = useParams();
-  console.log(currentChatId)
   if (isLoading) {
     return (
       <div className="px-2">

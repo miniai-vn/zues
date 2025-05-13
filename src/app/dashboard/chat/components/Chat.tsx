@@ -17,7 +17,6 @@ import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ChatHeader from "./Header";
-import { set } from "zod";
 
 export enum SocketEvent {
   JoinRoom = "join_room",
@@ -43,11 +42,11 @@ export default function ChatComponent({ id }: { id?: string }) {
   } = useChat(id ? { id } : {});
 
   const [displayMessages, setDisplayMessages] = useState<Message[]>([]);
+  const [streamingContent, setStreamingContent] = useState<string>("");
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [streamingContent, setStreamingContent] = useState<string>("");
-  const [isStreaming, setIsStreaming] = useState(false);
 
   useEffect(() => {
     if (fetchedMessages) {
@@ -70,8 +69,8 @@ export default function ChatComponent({ id }: { id?: string }) {
     setStreamingContent("");
     setIsStreaming(false);
   };
+
   const handleStreamingStart = () => {
-    console.log("Streaming started");
     setStreamingContent("");
     setIsStreaming(true);
   };
@@ -82,7 +81,7 @@ export default function ChatComponent({ id }: { id?: string }) {
         room: `conversation:${id}`,
       });
       socket.on(SocketEvent.RoomJoined, (data) => {
-        console.log(`Joined room: `, data);
+        // Optionally handle room joined
       });
 
       socket.on(SocketEvent.StreamingStart, handleStreamingStart);
@@ -99,17 +98,22 @@ export default function ChatComponent({ id }: { id?: string }) {
     }
   }, [socket, id]);
 
-  const handleScrollY = () => {
+  // Scroll to top of messages after sending
+  const scrollToTopMessage = () => {
     if (messagesRef.current) {
-      messagesRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
-  useEffect(() => {
-    handleScrollY();
-  }, [fetchedMessages]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (isStreaming) return;
+    if(selectedDepartmentId === undefined) {
+      alert("Vui lòng chọn phòng trước khi gửi tin nhắn");
+      return;
+    }
     e.preventDefault();
 
     if (!id) {
@@ -118,7 +122,6 @@ export default function ChatComponent({ id }: { id?: string }) {
         name: selectedDepartmentId?.toString() || "",
         content: input || "",
         type: "direct",
-        // departmentId: departmentId,
       });
       if (conversation) {
         router.push(`/dashboard/chat/${conversation.id}`);
@@ -133,8 +136,9 @@ export default function ChatComponent({ id }: { id?: string }) {
       },
     ]);
     handleSubmit(e, parseInt(id), [selectedDepartmentId] as string[]);
-    handleScrollY();
+    scrollToTopMessage();
   };
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -142,18 +146,20 @@ export default function ChatComponent({ id }: { id?: string }) {
       onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
+
   return (
     <div className="flex flex-col w-full h-full">
-      <ChatHeader />
+        <ChatHeader />
+
       <div
-        className={`flex flex-1 w-full h-full  ${
+        className={`flex w-full h-full  ${
           id ? "" : "justify-center"
-        } max-w-3xl flex-col items-center my-auto mx-auto`}
+        } flex-col items-center mx-auto`}
       >
         <div
           className={`${
             id ? "flex-1" : ""
-          } w-full overflow-y-auto bg-background shadow-sm rounded-lg`}
+          } w-full max-w-3xl overflow-y-auto bg-background shadow-sm rounded-lg`}
         >
           <ChatMessageList>
             {!id && (
@@ -161,40 +167,39 @@ export default function ChatComponent({ id }: { id?: string }) {
                 <h2 className="text-3xl">Tôi có thể giúp gì cho bạn?</h2>
               </div>
             )}
+           
             {displayMessages.length > 0 &&
-              displayMessages.map((message, index) => {
-                return (
-                  <ChatBubble
-                    key={index}
-                    variant={
-                      message?.senderType == "user" ? "sent" : "received"
-                    }
-                  >
-                    <ChatBubbleMessage>
-                      {message?.content
-                        .split("```")
-                        .map((part: string, idx: number) => {
-                          if (idx % 2 === 0) {
-                            return (
-                              <Markdown key={idx} remarkPlugins={[remarkGfm]}>
-                                {part}
-                              </Markdown>
-                            );
-                          } else {
-                            return (
-                              <pre
-                                className="whitespace-pre-wrap pt-2"
-                                key={idx}
-                              >
-                                <CodeDisplayBlock code={part} lang="" />
-                              </pre>
-                            );
-                          }
-                        })}
-                    </ChatBubbleMessage>
-                  </ChatBubble>
-                );
-              })}
+              displayMessages.map((message, index) => (
+                <ChatBubble
+                  key={index}
+                  variant={
+                    message?.senderType === "user" ? "sent" : "received"
+                  }
+                >
+                  <ChatBubbleMessage>
+                    {message?.content
+                      .split("```")
+                      .map((part: string, idx: number) => {
+                        if (idx % 2 === 0) {
+                          return (
+                            <Markdown key={idx} remarkPlugins={[remarkGfm]}>
+                              {part}
+                            </Markdown>
+                          );
+                        } else {
+                          return (
+                            <pre
+                              className="whitespace-pre-wrap pt-2"
+                              key={idx}
+                            >
+                              <CodeDisplayBlock code={part} lang="" />
+                            </pre>
+                          );
+                        }
+                      })}
+                  </ChatBubbleMessage>
+                </ChatBubble>
+              ))}
 
             {streamingContent && (
               <ChatBubble variant="received">
@@ -214,15 +219,14 @@ export default function ChatComponent({ id }: { id?: string }) {
                 <ChatBubbleMessage isLoading />
               </ChatBubble>
             )}
-            <div ref={messagesRef}></div>
           </ChatMessageList>
         </div>
 
-        <div className="w-full px-4 pb-4">
+        <div className="max-w-3xl w-full px-4 pb-2">
           <form
             ref={formRef}
             onSubmit={onSubmit}
-            className="relative rounded-l-2xl rounded-2xl border bg-background focus-within:ring-1 focus-within:ring-ring"
+            className="rounded-l-2xl rounded-2xl border bg-background focus-within:ring-1 focus-within:ring-ring"
           >
             <ChatInput
               value={input}
