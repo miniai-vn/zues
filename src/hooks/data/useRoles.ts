@@ -25,6 +25,7 @@ export const RoleVietnameseNames: Record<string, string> = {
   content_creator: "Người tạo nội dung",
   user: "Người dùng",
   guest: "Khách",
+  leader: 'Trưởng phòng',
 };
 
 export const PermissionVietnameseNames: Record<string, string> = {

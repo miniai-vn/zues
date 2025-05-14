@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { User } from "@/hooks/data/useAuth";
-import useDepartments, { Department } from "@/hooks/data/useDepartments";
+import useDepartments, { Department, PERMISSIONS } from "@/hooks/data/useDepartments";
 import { ColumnDef } from "@tanstack/react-table";
 import { Search, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -26,6 +26,7 @@ export default function AccessControl({
         id: user.id,
         name: user.username,
         phone: user.phone,
+        role: user.role,
       })) as User[];
       setMembers(membersData);
     }
@@ -44,6 +45,15 @@ export default function AccessControl({
       {
         accessorKey: "role",
         header: "VAI TRÒ",
+        cell: ({ row }) => {
+          console.log(row.original.role);
+          return (
+            <span>
+              {PERMISSIONS[row.original.role as keyof typeof PERMISSIONS] ||
+                row.original.role}
+            </span>
+          );
+        },
       },
       {
         id: "actions",
@@ -51,6 +61,7 @@ export default function AccessControl({
         cell: ({ row }) => {
           return (
             <div className="flex justify-center">
+              <AddMemberDialog  department={department} user={row.original} />
               <AlertDialogComponent
                 children={
                   <Button variant="ghost" size="icon" className="h-8 w-8 p-0">

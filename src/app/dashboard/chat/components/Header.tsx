@@ -2,6 +2,7 @@ import { Selector } from "@/components/dashboard/selector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useDepartments from "@/hooks/data/useDepartments";
 import React from "react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface ChatHeaderProps {
   modelName?: string;
@@ -25,22 +26,26 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <div className="sticky top-0 z-10 flex items-center justify-between w-full px-4 py-2 border-b bg-background">
       {/* Model selector with dropdown */}
-      <Selector
-        items={(departments ?? []).map((dept) => {
-          return {
-            label: dept.name as string,
-            value: dept.id as string,
-          };
-        })}
-        className="w-[140px] border-0 hover:bg-gray-100 transition-colors"
-        value={selectedDepartmentId}
-        placeholder="Chọn nhóm tài liệu"
-        onChange={(value: string | number | (string | number)[]) => {
-          if (typeof value === "string" || typeof value === "number") {
-            return changeDepartment(value.toString());
-          }
-        }}
-      />
+      <Select
+        value={selectedDepartmentId ? String(selectedDepartmentId) : ""}
+        onValueChange={(value) => 
+        {
+          console.log("Selected department ID:", value);
+          changeDepartment(value)
+        }
+        }
+      >
+        <SelectTrigger className="w-[140px] border-0 hover:bg-gray-100 transition-colors">
+          <SelectValue placeholder="Chọn nhóm tài liệu" />
+        </SelectTrigger>
+        <SelectContent>
+          {(departments ?? []).map((dept) => (
+            <SelectItem key={dept.id} value={String(dept.id)}>
+              {dept.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       <div className="flex items-center gap-3">
         <Avatar className="h-8 w-8">

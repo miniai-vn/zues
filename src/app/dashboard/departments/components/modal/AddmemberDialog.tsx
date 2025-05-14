@@ -16,41 +16,62 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAuth } from "@/hooks/data/useAuth";
-import useDepartments, { Department } from "@/hooks/data/useDepartments";
-import { Plus } from "lucide-react";
-import React, { useState } from "react";
-
-const PERMISSIONS = {
-  user: "Nhân viên",
-  admin: "Quản trị viên",
-};
+import { useAuth, User } from "@/hooks/data/useAuth";
+import useDepartments, {
+  Department,
+  PERMISSIONS,
+} from "@/hooks/data/useDepartments";
+import { Pencil, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface AddMemberDialogProps {
   department: Department;
+  user?: User;
 }
 
-export default function AddMemberDialog({ department }: AddMemberDialogProps) {
+export default function AddMemberDialog({
+  department,
+  user,
+}: AddMemberDialogProps) {
   const { users } = useAuth({});
   const [permission, setPermission] = useState("");
-  const { addUserToDept } = useDepartments({});
-  const [userId, setUserId] = React.useState<string>("");
+  const { addUserToDept, updateUserDept } = useDepartments({});
+  const [userId, setUserId] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Khi user prop thay đổi hoặc dialog mở, cập nhật userId và quyền
+  useEffect(() => {
+    if (user && isOpen) {
+      setUserId(user.id);
+      setPermission(user.role?.toString() || "");
+    } else if (!isOpen) {
+      setUserId("");
+      setPermission("");
+    }
+  }, [user, isOpen]);
+
   const onChangeUserId = (value: string) => {
     setUserId(value);
   };
-  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <Dialog
-      onOpenChange={(open) => {
-        setIsOpen(open);
-      }}
-      open={isOpen}
-    >
+    <Dialog onOpenChange={(open) => setIsOpen(open)} open={isOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Thêm
-        </Button>
+        {user ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8"
+            aria-label="Edit resource"
+          >
+            <Pencil className="h-4 w-4 text-gray-500" />
+          </Button>
+        ) : (
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Thêm
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-3">
@@ -75,7 +96,7 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
                 >
                   Email
                 </Label>
-                <Select onValueChange={onChangeUserId}>
+                <Select value={userId} onValueChange={onChangeUserId}>
                   <SelectTrigger className="w-full border-gray-300 focus:border-blue-300 focus:outline-none rounded-md">
                     <SelectValue placeholder="Nhập email của thành viên" />
                   </SelectTrigger>
@@ -88,7 +109,6 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="w-1/3">
                 <Label
                   htmlFor="permission"
@@ -121,6 +141,13 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
             className="w-full border-none h-12"
             onClick={() => {
               try {
+                if(user) {
+                 return updateUserDept({
+                    user_id: userId,
+                    department_id: department.id as string,
+                    role: permission,
+                  });
+                }
                 addUserToDept({
                   user_id: userId,
                   department_id: department.id as string,
@@ -129,8 +156,13 @@ export default function AddMemberDialog({ department }: AddMemberDialogProps) {
                 setIsOpen(false);
               } catch (error) {
                 throw error;
+              } finally {
+                setUserId("");
+                setPermission("");
+                setIsOpen(false);
               }
             }}
+            disabled={!userId || !permission}
           >
             Thêm
           </Button>

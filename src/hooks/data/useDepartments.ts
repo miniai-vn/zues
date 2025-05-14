@@ -4,6 +4,12 @@ import { useToast } from "../use-toast";
 import { User } from "./useAuth";
 import { useEffect, useState } from "react";
 
+export const PERMISSIONS = {
+  user: "Nhân viên",
+  admin: "Quản trị viên",
+  owner: 'Chủ sở hữu',
+};
+
 export type Department = {
   id?: string;
   name: string;
@@ -41,6 +47,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
 
   useEffect(() => {
     if (departments?.length && !selectedDepartmentId) {
+      debugger
       const firstDeptId = departments[0]?.id;
       if (firstDeptId) {
         localStorage.setItem("selectedDepartmentId", firstDeptId);
@@ -50,6 +57,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   }, [departments]);
 
   const changeDepartment = (departmentId: string) => {
+    
     localStorage.setItem("selectedDepartmentId", departmentId);
     setSelectedDepartmentId(departmentId);
   };
@@ -137,6 +145,37 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
       },
     });
 
+  const { mutate: updateUserDept, isPending: isPendingUpdateUserDept } =
+    useMutation({
+      mutationFn: async (data: {
+        user_id: string;
+        department_id: string;
+        role: string;
+      }) => {
+        const res = await axiosInstance.put(
+          "/api/departments/update-user",
+          data,
+          {
+            params: {},
+          }
+        );
+        return res.data;
+      },
+      onSuccess: () => {
+        refetchDepartments();
+        toast({
+          title: "Cập nhật người dùng trong nhóm tài liệu",
+          description: "Cập nhật người dùng trong nhóm tài liệu thành công",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Cập nhật người dùng trong nhóm tài liệu",
+          description: error.message,
+        });
+      },
+    });
+
   const { mutate: deleteDepartment, isPending: isPendingDeleteDepartment } =
     useMutation({
       mutationFn: async (id: string) => {
@@ -189,6 +228,8 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     updateDepartment,
     deleteDepartment,
     createDepartment,
+    updateUserDept,
+    isPendingUpdateUserDept,
     removeUserFromDept,
     isCreatedDepartment,
     addUserToDept,

@@ -30,6 +30,7 @@ export type User = {
   password: string;
   name: string;
   roles: Role[];
+  role?: String;
   email: string;
   phone: string;
   avatar: string;
