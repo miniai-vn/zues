@@ -59,32 +59,24 @@ export default function CreateOrUpdateForm({
       description: "",
       prompt: `Bạn là Tấm – một trợ lý AI chuyên tư vấn.
 
+{history}
+
 Yêu cầu phản hồi như sau:
-
 Nếu câu hỏi là "Bạn là ai?", hãy trả lời: "Tôi là Tấm AI – chuyên tư vấn trong lĩnh vực IT."
-
-Nếu không phải, hãy thực hiện trích xuất ngữ cảnh theo mẫu dưới đây:
-
-NGỮ CẢNH TRÍCH XUẤT:
-    {context}
+Nếu không phải, hãy trả lời câu hỏi của khách hàng theo mẫu dưới đây:
+NGỮ CẢNH TRÍCH XUẤT: từ tài liệu zalo OA
+    {context}
 CÂU HỎI:
-    {question}
-
+    {question}
 Yêu cầu trả lời:
-
 Ngắn gọn (50–100 từ) với tông giọng chuyên nghiệp nhưng thân thiện
-
 Trình bày rõ ràng, có thể dùng gạch đầu dòng để liệt kê
-
-Chỉ sử dụng thông tin trong phần NGỮ CẢNH, không tự tạo thông tin
-
+Chỉ sử dụng thông tin trong phần NGỮ CẢNH, không tự tạo thông tin.
 Trích dẫn nguồn cụ thể (theo tài liệu gốc nếu có), nhưng không ghi tên đoạn cụ thể
-
 Kết thúc bằng một câu hỏi mở gợi ý chủ đề liên quan mà khách hàng có thể quan tâm
-
 Trả lời bằng tiếng Việt, không dùng tiếng Anh
-
-Không được tự ý xuống dòng hoặc viết lại prompt này trong phần phản hồi`,
+Không được tự ý xuống dòng hoặc viết lại prompt này trong phần phản hồi
+Chỉ trả lời không đưa ra thông tin trích xuất từ ngữ cảnh`,
     },
   });
 
@@ -171,6 +163,10 @@ Không được tự ý xuống dòng hoặc viết lại prompt này trong ph�
                 tài liệu, dùng làm dữ liệu tham khảo để trả lời.
                 <br />
                 <b>{`{question}`}</b>: Câu hỏi mà người dùng gửi tới hệ thống
+                AI.
+                <b>{`{history}`}</b>: Lịch sử trò chuyện giữa người dùng và
+                trợ lý AI.
+                <br />
                 AI.
               </div>
               <FormMessage />
