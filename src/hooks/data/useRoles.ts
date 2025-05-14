@@ -188,7 +188,29 @@ const useRoles = () => {
     },
   });
 
+  const { mutate: updateMutipleRole } = useMutation({
+    mutationFn: async (data: Role[]) => {
+      const res = await axiosInstance.post(`/api/roles/multiple`, {
+        data,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      refetchRoles();
+      toast({
+        title: "Update Role",
+        description: "Update Role successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update Role",
+        description: error.message,
+      });
+    },
+  });
   return {
+    updateMutipleRole,
     updateRole,
     deleteRole,
     createRole,

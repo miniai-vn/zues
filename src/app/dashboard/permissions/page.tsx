@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 
 
 const PermissionsRoles = () => {
-  const { roles, permissions, updateRole } = useRoles();
+  const { roles, permissions, updateMutipleRole } = useRoles();
   const [displayRoles, setDisplayRoles] = useState<Role[]>([]);
   useEffect(() => {
     if (roles) {
@@ -35,14 +35,7 @@ const PermissionsRoles = () => {
   };
 
   const handleSaveChanges = () => {
-    const promise = displayRoles?.map((role) => {
-      return updateRole({
-        id: role.id,
-        name: role.name,
-        permissions: role.permissions,
-      });
-    });
-    Promise.all(promise);
+      updateMutipleRole(displayRoles);
   };
 
   return (
