@@ -37,21 +37,23 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "file.download": "Tải xuống tệp",
   "file.share": "Chia sẻ tệp",
   "file.access_sensitive": "Truy cập tệp nhạy cảm",
+  "file.sync": "Đồng bộ tệp",
+  "file.chunk": "Chia nhỏ tệp",
 
   // Chat
   "chat.read": "Xem lịch sử trò chuyện",
   "chat.create": "Gửi tin nhắn",
   "chat.update": "Chỉnh sửa tin nhắn",
   "chat.delete": "Xoá tin nhắn",
-  "chat.train": "Huấn luyện chatbot",
-  "chat.manage_settings": "Quản lý cài đặt chatbot",
+  // "chat.train": "Huấn luyện chatbot",
+  // "chat.manage_settings": "Quản lý cài đặt chatbot",
 
   // User
   "user.create": "Tạo người dùng",
   "user.read": "Xem người dùng",
   "user.update": "Cập nhật người dùng",
   "user.delete": "Xoá người dùng",
-  "user.ban": "Cấm hoặc mở cấm người dùng",
+  // "user.ban": "Cấm hoặc mở cấm người dùng",
   "user.assign_role": "Gán vai trò cho người dùng",
 
   // Role & Permission
@@ -74,6 +76,19 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "department.delete": "Xoá phòng ban",
   "department.assign_user": "Gán người dùng vào phòng ban",
   "department.manage_roles": "Quản lý vai trò cấp phòng ban",
+
+  // conversation
+  "conversation.create": "Tạo cuộc trò chuyện",
+  "conversation.read": "Xem cuộc trò chuyện",
+  "conversation.update": "Cập nhật cuộc trò chuyện",
+  "conversation.delete": "Xoá cuộc trò chuyện",
+  "conversation.assign_user": "Gán người dùng vào cuộc trò chuyện",
+
+  //Chunk 
+  "chunk.create": "Tạo đoạn đoạn văn",
+  "chunk.read": "Xem đoạn văn",
+  "chunk.update": "Cập nhật đoạn văn",
+  "chunk.delete": "Xoá đoạn văn",
 };
 
 const useRoles = () => {

@@ -22,11 +22,11 @@ import { User, UserData, UserUpdateData } from "@/hooks/data/useAuth";
 import useDepartments from "@/hooks/data/useDepartments";
 import useRoles, { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Key, Lock, LockOpen } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {  } from "@/app/dashboard/permissions/page";
+import {} from "@/app/dashboard/permissions/page";
 
 const FormSchema = z.object({
   username: z.string().nonempty("Vui lòng nhập tài khoản."),
@@ -60,6 +60,7 @@ export function AddOrUpdateUserModal({
 }: AddUserProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [resetPassword, setResetPassword] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -140,14 +141,34 @@ export function AddOrUpdateUserModal({
                         onChange={(e) => field.onChange(e.target.value)}
                         className="w-full pr-10"
                         placeholder="Nhập mật khẩu"
+                        disabled={!resetPassword}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
-                      >
-                        {showPassword ? <Eye /> : <EyeOff />}
-                      </button>
+                      {user ? (
+                        <div className="group">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setResetPassword(!resetPassword);
+                              field.onChange("");
+                            }}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                          >
+                            {resetPassword ? <LockOpen /> : <Key />}
+                          </button>
+                          {/* Tooltip hiển thị khi hover */}
+                          <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap">
+                            Đổi mật khẩu
+                          </span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                        >
+                          {showPassword ? <Eye /> : <EyeOff />}
+                        </button>
+                      )}
                     </div>
                     {fieldState.error && (
                       <FormMessage>{fieldState.error.message}</FormMessage>
@@ -228,9 +249,7 @@ export function AddOrUpdateUserModal({
                   name="departments"
                   render={({ field, fieldState }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>
-                        Phòng ban
-                      </FormLabel>
+                      <FormLabel>Phòng ban</FormLabel>
                       <Selector
                         className="w-full"
                         multiple={true}

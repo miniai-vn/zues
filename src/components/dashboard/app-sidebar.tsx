@@ -70,12 +70,12 @@ const data = {
           role: [Role.Admin],
           url: "/dashboard/permissions",
         },
-        {
-          title: "Cài đặt",
-          icon: Settings,
-          role: [Role.Admin],
-          url: "/dashboard/users",
-        },
+        // {
+        //   title: "Cài đặt",
+        //   icon: Settings,
+        //   role: [Role.Admin],
+        //   url: "/dashboard/users",
+        // },
       ],
     },
   ],

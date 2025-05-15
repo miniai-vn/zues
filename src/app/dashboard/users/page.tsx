@@ -49,6 +49,14 @@ const UserComponents = () => {
 
   const columns: ColumnDef<User>[] = [
     {
+    id: "index",
+    header: "#",
+    cell: ({ row }) => (
+      <div className="text-center">{row.index + 1}</div>
+    ),
+    size: 40,
+  },
+    {
       accessorKey: "name",
       header: "Tên nhân viên",
       cell: ({ row }) => (
@@ -59,7 +67,7 @@ const UserComponents = () => {
     },
     {
       accessorKey: "username",
-      header: "Chức vụ",
+      header: "Tên tài khoản",
       cell: ({ row }) => (
         <div className="w-full">
           <p className="break-all line-clamp-2">{row.original.username}</p>
@@ -148,12 +156,9 @@ const UserComponents = () => {
               />
             }
             onDelete={() => {
-              // Xử lý khi nhấn xóa
-              // Ví dụ: gọi hàm xóa user
               deleteUser(row.original.id);
             }}
           >
-            {/* Bạn có thể truyền thêm children nếu muốn */}
           </ActionPopover>
         );
       },
@@ -178,7 +183,7 @@ const UserComponents = () => {
         />
         <div className="flex justify-between items-center mb-4">
           <Input
-            placeholder="Tìm kiếm tài tên tài liệu"
+            placeholder="Tìm kiếm nhân viên theo tên"
             className="mr-4 w-full flex-1"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
