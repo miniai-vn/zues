@@ -1,7 +1,9 @@
+"use client";
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "../use-toast";
 export type Message = {
   id?: number;
   content: string;
@@ -20,7 +22,7 @@ type Conversation = {
 const useChat = ({ id }: { id?: string }) => {
   const [input, setInput] = useState("");
   const router = useRouter();
-
+  const { toast } = useToast();
   const {
     data: fetchedMessages,
     isFetching: isLoading,
@@ -115,19 +117,61 @@ const useChat = ({ id }: { id?: string }) => {
       return res.data;
     },
     onSuccess: (data: Conversation) => {
-      router.push(`/dashboard/chat/${data.id}`);
-      sendMessage({
-        content: data.content,
-        conversation_id: Number(data.id as string),
-        department_id: [data.name] as string[],
-      });
       fetchConversations();
     },
     onError: (error) => {},
   });
 
+  const { mutate: deleteConversation } = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await axiosInstance.delete(`/api/conversations/${id}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Xóa phòng thành công",
+        description: "Phòng đã được xóa thành công",
+        duration: 2000,
+      });
+      fetchConversations();
+    },
+    onError: (error) => {
+      toast({
+        title: "Xóa phòng thất bại",
+        description: "Phòng không thể xóa",
+        duration: 2000,
+      });
+    },
+  });
+
+  const { mutate: renameConversation } = useMutation({
+    mutationFn: async ({ id, name }: { id: string; name: string }) => {
+      const res = await axiosInstance.patch(`/api/conversations/rename/${id}`, {
+        name,
+      });
+      return res.data;
+    },
+    onSuccess: (data: Conversation) => {
+      toast({
+        title: "Đổi tên phòng thành công",
+        description: "Phòng đã được đổi tên thành công",
+        duration: 2000,
+      });
+      fetchConversations();
+    },
+    onError: (error) => {
+      toast({
+        title: "Đổi tên phòng thất bại",
+        description: "Phòng không thể đổi tên",
+        duration: 2000,
+      });
+    },
+  });
+
   return {
     createConversation,
+    renameConversation,
+    deleteConversation,
     conversations,
     conversation,
     input,
@@ -138,6 +182,7 @@ const useChat = ({ id }: { id?: string }) => {
     fetchMessagesError,
     fetchedMessages,
     sendMessageError,
+    sendMessage,
   };
 };
 

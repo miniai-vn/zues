@@ -23,7 +23,7 @@ export const RoleVietnameseNames: Record<string, string> = {
   developer: "Nhà phát triển",
   support_agent: "Nhân viên hỗ trợ",
   content_creator: "Người tạo nội dung",
-  user: "Người dùng",
+  user: "Nhân viên",
   guest: "Khách",
   leader: 'Trưởng phòng',
 };
@@ -38,7 +38,7 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "file.share": "Chia sẻ tệp",
   "file.access_sensitive": "Truy cập tệp nhạy cảm",
   "file.sync": "Đồng bộ tệp",
-  "file.chunk": "Chia nhỏ tệp",
+  "file.chunk": "Phân đoạn tệp",
 
   // Chat
   "chat.read": "Xem lịch sử trò chuyện",

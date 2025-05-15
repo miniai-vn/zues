@@ -39,6 +39,7 @@ export default function ChatComponent({ id }: { id?: string }) {
     handleSubmit,
     isLoading,
     createConversation,
+    sendMessage,
   } = useChat(id ? { id } : {});
 
   const [displayMessages, setDisplayMessages] = useState<Message[]>([]);
@@ -55,6 +56,9 @@ export default function ChatComponent({ id }: { id?: string }) {
   }, [fetchedMessages]);
 
   const handleStreamingChunk = (data: any) => {
+    if (!isStreaming) {
+      setIsStreaming(true);
+    }
     setStreamingContent((prev) => prev + (data?.chunk || ""));
   };
 
@@ -110,7 +114,7 @@ export default function ChatComponent({ id }: { id?: string }) {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (isStreaming) return;
-    if(selectedDepartmentId === undefined) {
+    if (selectedDepartmentId === undefined) {
       alert("Vui lòng chọn phòng trước khi gửi tin nhắn");
       return;
     }
@@ -119,12 +123,17 @@ export default function ChatComponent({ id }: { id?: string }) {
     if (!id) {
       const conversation = await createConversation({
         createdAt: new Date().toISOString(),
-        name: selectedDepartmentId?.toString() || "",
+        name: input,
         content: input || "",
         type: "direct",
       });
       if (conversation) {
         router.push(`/dashboard/chat/${conversation.id}`);
+        sendMessage({
+          content: conversation.content,
+          conversation_id: Number(conversation.id as string),
+          department_id: [selectedDepartmentId] as string[],
+        });
       }
       return;
     }
@@ -149,7 +158,7 @@ export default function ChatComponent({ id }: { id?: string }) {
 
   return (
     <div className="flex flex-col w-full h-full">
-        <ChatHeader />
+      <ChatHeader />
 
       <div
         className={`flex w-full h-full  ${
@@ -167,14 +176,12 @@ export default function ChatComponent({ id }: { id?: string }) {
                 <h2 className="text-3xl">Tôi có thể giúp gì cho bạn?</h2>
               </div>
             )}
-           
+
             {displayMessages.length > 0 &&
               displayMessages.map((message, index) => (
                 <ChatBubble
                   key={index}
-                  variant={
-                    message?.senderType === "user" ? "sent" : "received"
-                  }
+                  variant={message?.senderType === "user" ? "sent" : "received"}
                 >
                   <ChatBubbleMessage>
                     {message?.content
@@ -188,10 +195,7 @@ export default function ChatComponent({ id }: { id?: string }) {
                           );
                         } else {
                           return (
-                            <pre
-                              className="whitespace-pre-wrap pt-2"
-                              key={idx}
-                            >
+                            <pre className="whitespace-pre-wrap pt-2" key={idx}>
                               <CodeDisplayBlock code={part} lang="" />
                             </pre>
                           );
