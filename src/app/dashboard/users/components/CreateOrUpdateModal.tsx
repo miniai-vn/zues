@@ -44,7 +44,7 @@ const FormSchema = z.object({
   departments: z
     .array(z.number())
     .min(1, { message: "Vui lòng chọn ít nhất một phòng ban." })
-    .default([]),
+    .default([]), 
 });
 
 interface AddUserProps {
@@ -116,9 +116,6 @@ export function AddOrUpdateUserModal({
                         className="w-full pr-20"
                         placeholder="Nhập tài khoản"
                       />
-                      <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
-                        @gmail.com
-                      </span>
                     </div>
                     {fieldState.error && (
                       <FormMessage>{fieldState.error.message}</FormMessage>
@@ -141,7 +138,7 @@ export function AddOrUpdateUserModal({
                         onChange={(e) => field.onChange(e.target.value)}
                         className="w-full pr-10"
                         placeholder="Nhập mật khẩu"
-                        disabled={!resetPassword}
+                        disabled={user? !resetPassword : false}
                       />
                       {user ? (
                         <div className="group">

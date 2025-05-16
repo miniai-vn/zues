@@ -46,7 +46,6 @@ export default function AccessControl({
         accessorKey: "role",
         header: "VAI TRÒ",
         cell: ({ row }) => {
-          console.log(row.original.role);
           return (
             <span>
               {PERMISSIONS[row.original.role as keyof typeof PERMISSIONS] ||

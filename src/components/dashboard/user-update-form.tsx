@@ -48,7 +48,6 @@ export function UserForm({ onSubmit, initialData }: UserFormProps) {
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
-      console.log("Selected file:", event.target.files[0]);
     }
   };
 

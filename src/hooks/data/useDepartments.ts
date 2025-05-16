@@ -46,12 +46,23 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   });
 
   useEffect(() => {
+
     if (departments?.length && !selectedDepartmentId) {
-      debugger
       const firstDeptId = departments[0]?.id;
       if (firstDeptId) {
         localStorage.setItem("selectedDepartmentId", firstDeptId);
         setSelectedDepartmentId(firstDeptId);
+      }
+    }else {
+      const storedDeptId = localStorage.getItem("selectedDepartmentId");
+      if (storedDeptId) {
+        const deptExists = departments?.some(
+          (dept) => dept.id === storedDeptId
+        );
+        if (!deptExists) {
+          localStorage.removeItem("selectedDepartmentId");
+          setSelectedDepartmentId(null);
+        }
       }
     }
   }, [departments]);

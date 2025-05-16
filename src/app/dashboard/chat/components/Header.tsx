@@ -30,7 +30,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         value={selectedDepartmentId ? String(selectedDepartmentId) : ""}
         onValueChange={(value) => 
         {
-          console.log("Selected department ID:", value);
           changeDepartment(value)
         }
         }

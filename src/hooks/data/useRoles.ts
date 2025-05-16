@@ -27,6 +27,17 @@ export const RoleVietnameseNames: Record<string, string> = {
   guest: "Khách",
   leader: 'Trưởng phòng',
 };
+export const PermissionGroupVietnameseNames: Record<string, string> = {
+  file: "Tệp",
+  chat: "Trò chuyện",
+  user: "Người dùng",
+  role: "Vai trò",
+  permission: "Quyền",
+  setting: "Cài đặt",
+  department: "Phòng ban",
+  conversation: "Cuộc trò chuyện",
+  chunk: "Đoạn văn",
+};
 
 export const PermissionVietnameseNames: Record<string, string> = {
   // File
@@ -36,8 +47,7 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "file.delete": "Xoá tệp",
   "file.download": "Tải xuống tệp",
   "file.share": "Chia sẻ tệp",
-  "file.access_sensitive": "Truy cập tệp nhạy cảm",
-  "file.sync": "Đồng bộ tệp",
+  "file.sync": "Đạo tạo AI",
   "file.chunk": "Phân đoạn tệp",
 
   // Chat
@@ -89,6 +99,12 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "chunk.read": "Xem đoạn văn",
   "chunk.update": "Cập nhật đoạn văn",
   "chunk.delete": "Xoá đoạn văn",
+
+  // Report
+  "report.create": "Tạo báo cáo",
+  "report.read": "Xem báo cáo",
+  "report.update": "Cập nhật báo cáo",
+  "report.delete": "Xoá báo cáo",
 };
 
 const useRoles = () => {

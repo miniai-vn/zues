@@ -67,6 +67,8 @@ const useAuth = ({
       return (response.data as User[]) ?? [];
     },
     enabled: !!user,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { mutateAsync: signIn, isSuccess } = useMutation({

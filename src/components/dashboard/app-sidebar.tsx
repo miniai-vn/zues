@@ -21,6 +21,7 @@ import Image from "next/image";
 import * as React from "react";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
+import { DashboardIcon } from "@radix-ui/react-icons";
 const data = {
   user: {
     name: "shadcn",
@@ -52,6 +53,12 @@ const data = {
       isActive: true,
       role: [Role.Staff, Role.Admin],
       items: [
+        {
+          title: "Báo cáo",
+          icon: DashboardIcon,
+          role: [Role.Admin],
+          url: "/dashboard/report",
+        },
         {
           title: "Quản lý nhóm tài liệu",
           icon: CompassIcon,

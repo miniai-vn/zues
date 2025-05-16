@@ -10,13 +10,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useRoles, { Permission, PermissionVietnameseNames, Role, RoleVietnameseNames } from "@/hooks/data/useRoles";
-import { useEffect, useState } from "react";
+import useRoles, {
+  Permission,
+  PermissionVietnameseNames,
+  Role,
+  PermissionGroupVietnameseNames,
+  RoleVietnameseNames,
+} from "@/hooks/data/useRoles";
+import React, { useEffect, useState } from "react";
 
 
 const PermissionsRoles = () => {
   const { roles, permissions, updateMutipleRole } = useRoles();
   const [displayRoles, setDisplayRoles] = useState<Role[]>([]);
+  const [displayPermissions, setDisplayPermissions] = useState<
+    Array<[string, Permission[]]>
+  >([]);
   useEffect(() => {
     if (roles) {
       setDisplayRoles(roles);
@@ -35,9 +44,22 @@ const PermissionsRoles = () => {
   };
 
   const handleSaveChanges = () => {
-      updateMutipleRole(displayRoles);
+    updateMutipleRole(displayRoles);
   };
 
+  useEffect(() => {
+    if (permissions) {
+      const displayPermissions = new Map<string, Permission[]>();
+      permissions.forEach((permission) => {
+        const group = permission.code.split(".")[0];
+        if (!displayPermissions.has(group)) {
+          displayPermissions.set(group, []);
+        }
+        displayPermissions.get(group)?.push(permission);
+      });
+      setDisplayPermissions(Array.from(displayPermissions));
+    }
+  }, [permissions]);
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0 scroll-y-auto">
       <PageHeader
@@ -76,27 +98,40 @@ const PermissionsRoles = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {permissions?.map((permission) => (
-                <TableRow key={permission.id}>
-                  <TableCell className="font-medium">
-                    {PermissionVietnameseNames[permission.code] ||
-                      permission.name}
-                  </TableCell>
-                  {displayRoles?.map((role) => (
+              {displayPermissions.map(([group, permissions]) => (
+                <React.Fragment key={group}>
+                  {/* Dòng hiển thị tên group, merge toàn bộ cột */}
+                  <TableRow>
                     <TableCell
-                      key={`${role.name}-${permission}`}
-                      className="text-center"
+                      colSpan={displayRoles.length + 2}
+                      className="bg-gray-50 font-semibold text-blue-700 uppercase"
                     >
-                      <Checkbox
-                        checked={role.permissions[permission.code]}
-                        onCheckedChange={() =>
-                          handlePermissionChange(role, permission)
-                        }
-                      />
+                      {PermissionGroupVietnameseNames[group] || group}
                     </TableCell>
+                  </TableRow>
+                  {/* Các quyền trong group */}
+                  {permissions.map((permission) => (
+                    <TableRow key={permission.id}>
+                      <TableCell className="font-medium">
+                        {PermissionVietnameseNames[permission.code] || permission.code}
+                      </TableCell>
+                      {displayRoles?.map((role) => (
+                        <TableCell
+                          key={`${role.name}-${permission.code}`}
+                          className="text-center"
+                        >
+                          <Checkbox
+                            checked={role.permissions[permission.code]}
+                            onCheckedChange={() =>
+                              handlePermissionChange(role, permission)
+                            }
+                          />
+                        </TableCell>
+                      ))}
+                      <TableCell></TableCell>
+                    </TableRow>
                   ))}
-                  <TableCell></TableCell>
-                </TableRow>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
