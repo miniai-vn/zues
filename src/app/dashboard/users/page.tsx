@@ -18,7 +18,7 @@ const UserComponents = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
-  useDebouncedValue(search, 500);
+  useDebouncedValue(search, 2000);
 
   const handlePaginationChange = (newPage: number) => {
     setPage(newPage);

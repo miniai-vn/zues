@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { } from "@/app/dashboard/permissions/page";
 import {
   Form,
   FormField,
@@ -22,11 +23,10 @@ import { User, UserData, UserUpdateData } from "@/hooks/data/useAuth";
 import useDepartments from "@/hooks/data/useDepartments";
 import useRoles, { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Key, Lock, LockOpen } from "lucide-react";
+import { Eye, EyeOff, Key, LockOpen } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {} from "@/app/dashboard/permissions/page";
 
 const FormSchema = z.object({
   username: z.string().nonempty("Vui lòng nhập tài khoản."),
