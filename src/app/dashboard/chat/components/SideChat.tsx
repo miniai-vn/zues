@@ -28,7 +28,7 @@ export function SideChat() {
   const { id: currentChatId } = useParams();
   const [open, setOpen] = useState(false);
   const [newName, setNewName] = useState<string>("");
-  if (isLoading || conversations?.length === 0) {
+  if (isLoading) {
     return (
       <div className="px-2">
         {Array(8)
