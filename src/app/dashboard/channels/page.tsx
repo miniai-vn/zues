@@ -74,17 +74,17 @@ const ChannelPage = () => {
         </Badge>
       ),
     },
-    {
-      accessorKey: "description",
-      header: "Mô tả",
-      cell: ({ row }) => (
-        <div className="w-full">
-          <p className="break-all line-clamp-2">
-            {row.original.description ?? "Trống"}
-          </p>
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: "description",
+    //   header: "Mô tả",
+    //   cell: ({ row }) => (
+    //     <div className="w-full">
+    //       <p className="break-all line-clamp-2">
+    //         {row.original.description ?? "Trống"}
+    //       </p>
+    //     </div>
+    //   ),
+    // },
     {
       accessorKey: "department.name",
       header: "Phòng ban",
@@ -98,24 +98,30 @@ const ChannelPage = () => {
     },
     {
       accessorKey: "status",
-      header: "Trạng thái",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={row.original.status == ChannelStatus.ACTIVE}
-            onCheckedChange={(checked) => {
-              updateChannelStatus({
-                id: row.original.id,
-                status: checked ? ChannelStatus.ACTIVE : ChannelStatus.INACTIVE,
-              });
-            }}
-            className="data-[state=checked]:bg-blue-600"
-          />
-          <span>
-            {row.original.status ? "Đang hoạt động" : "Ngừng hoạt động"}
-          </span>
-        </div>
-      ),
+      header: "Trạng thái hoạt động",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        let statusText = "Ngừng hoạt động";
+        let statusClass = "bg-gray-100 text-gray-800";
+
+        if (status === ChannelStatus.ACTIVE) {
+          statusText = "Đang hoạt động";
+          statusClass = "bg-green-100 text-green-800";
+        } else if (status === ChannelStatus.INACTIVE) {
+          statusText = "Ngừng hoạt động";
+          statusClass = "bg-red-100 text-red-800";
+        }
+
+        return (
+          <div className="flex items-center gap-2">
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${statusClass}`}
+            >
+              {statusText}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdAt",
@@ -123,7 +129,7 @@ const ChannelPage = () => {
       cell: ({ row }) => {
         const date = new Date(row.original.createdAt);
         return (
-          <div className="text-center">
+          <div >
             {date.toLocaleDateString("vi-VN", {
               year: "numeric",
               month: "2-digit",
@@ -138,31 +144,45 @@ const ChannelPage = () => {
       header: "Thao tác",
       cell: ({ row }) => {
         return (
-          <ActionPopover
-            className="w-40"
-            children={
-              <CreateOrUpdateChannelDialog
-                children={
-                  <Button
-                    variant="ghost"
-                    className="flex items-center justify-start gap-2 w-full"
-                  >
-                    <Pencil size={16} />
-                    <span>Chỉnh sửa</span>
-                  </Button>
-                }
-                channel={row.original}
-                onChange={(data) => {
-                  if (typeof data.id === "number") {
-                    updateChannel({ ...data, id: data.id });
+          <div className="flex items-center ">
+            <Switch
+              checked={row.original.status == ChannelStatus.ACTIVE}
+              onCheckedChange={(checked) => {
+                updateChannelStatus({
+                  id: row.original.id,
+                  status: checked
+                    ? ChannelStatus.ACTIVE
+                    : ChannelStatus.INACTIVE,
+                });
+              }}
+              className="data-[state=checked]:bg-blue-600"
+            />
+            <ActionPopover
+              className="w-40"
+              children={
+                <CreateOrUpdateChannelDialog
+                  children={
+                    <Button
+                      variant="ghost"
+                      className="flex items-center justify-start gap-2 w-full"
+                    >
+                      <Pencil size={16} />
+                      <span>Chỉnh sửa</span>
+                    </Button>
                   }
-                }}
-              />
-            }
-            onDelete={() => {
-              deleteChannel(row.original.id);
-            }}
-          />
+                  channel={row.original}
+                  onChange={(data) => {
+                    if (typeof data.id === "number") {
+                      updateChannel({ ...data, id: data.id });
+                    }
+                  }}
+                />
+              }
+              onDelete={() => {
+                deleteChannel(row.original.id);
+              }}
+            />
+          </div>
         );
       },
     },

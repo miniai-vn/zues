@@ -38,6 +38,7 @@ const FormSchema = z.object({
   type: z.enum(["zalo", "facebook"], {
     required_error: "Vui lòng chọn loại kênh.",
   }),
+  appId: z.string().nonempty("Vui lòng nhập App ID."),
   oaId: z.string().nonempty("Vui lòng nhập OA ID."),
   departmentId: z.coerce.number().min(1, "Vui lòng chọn phòng ban."),
 });
@@ -66,6 +67,8 @@ export function CreateOrUpdateChannelDialog({
     defaultValues: {
       name: channel?.name || "",
       type: (channel?.type as "zalo" | "facebook") || "zalo",
+      appId:
+        channel?.type === "zalo" ? (channel.extraData as { app_id?: string })?.app_id || "" : "",
       oaId:
         channel?.type === "zalo"
           ? (channel.extraData as { oa_id?: string })?.oa_id || ""
@@ -87,6 +90,7 @@ export function CreateOrUpdateChannelDialog({
       department_id: data.departmentId,
       extra_data: {
         oa_id: data.oaId,
+        app_id: data.appId,
       },
       ...(channel ? { id: channel.id } : {}),
     };
@@ -182,6 +186,29 @@ export function CreateOrUpdateChannelDialog({
                   />
                   <p className="mt-1 text-xs text-gray-500">
                     ID của Official Account Zalo của bạn
+                  </p>
+                  {fieldState.error && (
+                    <FormMessage>{fieldState.error.message}</FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="appId"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>
+                    APP ID <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Input
+                    type="text"
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    placeholder="Nhập OA ID"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Lấy từ trang "Thông tin ứng dụng" của Zalo Developers
                   </p>
                   {fieldState.error && (
                     <FormMessage>{fieldState.error.message}</FormMessage>
