@@ -1,39 +1,85 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
-
+export enum ChannelStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
 export interface Channel {
   id: number;
   name: string;
   type: string;
-  url: string;
-  audience_size: number;
-  description: string;
-  apiKey: string;
-  apiSecret: string;
-  accessToken: string;
-  refreshToken: string;
-  authCredentials: Record<string, any>;
-  extraData: Record<string, any>;
-  apiStatus: string;
+  url?: string;
+  audience_size?: number;
+  description?: string;
+  apiKey?: string;
+  apiSecret?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  authCredentials?: Record<string, any>;
+  extraData?: ZaloOAConfig | FacebookMessageConfig;
+  apiStatus?: string;
   departmentId: number;
   createdAt: string;
   updatedAt: string;
+  status: ChannelStatus;
+  department: {
+    id: number;
+    name: string;
+  };
 }
 
-const useChannels = () => {
+interface ZaloOAConfig {
+  oaId: string;
+}
+interface FacebookMessageConfig {
+  pageId: string;
+  appId: string;
+  appSecret: string;
+  accessToken: string;
+}
+
+const useChannels = ({
+  page = 1,
+  limit = 10,
+  search = "",
+  departmentId,
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  departmentId?: number;
+} = {}) => {
   const { toast } = useToast();
 
   const {
-    data: channels,
+    data: channelData,
     isLoading: isFetchingChannels,
     refetch: refetchChannels,
   } = useQuery({
-    queryKey: ["channels"],
+    queryKey: ["channels", page, limit, search, departmentId],
     queryFn: async () => {
-      const res = await axiosInstance.get("/api/channels/get-all");
-      return (res.data as Channel[]) || [];
+      const params = new URLSearchParams();
+      if (page) params.append("page", page.toString());
+      if (limit) params.append("limit", limit.toString());
+      if (search) params.append("search", search);
+      if (departmentId) params.append("departmentId", departmentId.toString());
+
+      const queryString = params.toString();
+      const endpoint = `/api/channels/get-by-shop-id${
+        queryString ? `?${queryString}` : ""
+      }`;
+
+      const res = await axiosInstance.get(endpoint);
+
+      return {
+        items: res.data.items || res.data || [],
+        totalCount: res.data.totalCount || res.data?.length || 0,
+        page,
+        limit,
+      };
     },
+    refetchOnWindowFocus: false,
   });
 
   // New hook: get channels by department id
@@ -119,8 +165,36 @@ const useChannels = () => {
       },
     });
 
+  const { mutate: updateChannelStatus } = useMutation({
+    mutationFn: async (data: { id: number; status: ChannelStatus }) => {
+      const res = await axiosInstance.patch(
+        `/api/channels/${data.id}/update-status`,
+        data
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      refetchChannels();
+      toast({
+        title: "Cập nhật trạng thái kênh",
+        description: "Cập nhật trạng thái kênh thành công",
+      });
+    },
+
+    onError: (error: any) => {
+      toast({
+        title: "Cập nhật trạng thái kênh",
+        description: error.message,
+      });
+    },
+  });
+
   return {
-    channels,
+    channels: channelData?.items || [],
+    totalCount: channelData?.totalCount || 0,
+    page: channelData?.page || page,
+    updateChannelStatus,
+    limit: channelData?.limit || limit,
     isFetchingChannels,
     refetchChannels,
     createChannel,

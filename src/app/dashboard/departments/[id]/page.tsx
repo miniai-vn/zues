@@ -14,6 +14,8 @@ import { File, FileText, Image, Search } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
+import DepartmentHeader from "./DepartmentHeader";
+import useDepartments from "@/hooks/data/useDepartments";
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
@@ -62,6 +64,9 @@ const DepartmentDetailComponent = () => {
     page,
     limit: pageSize,
     search,
+  });
+  const { departmentDetail } = useDepartments({
+    id: departmentId,
   });
 
   useEffect(() => {
@@ -262,6 +267,7 @@ const DepartmentDetailComponent = () => {
           },
         ]}
       />
+        {departmentDetail && <DepartmentHeader dept={departmentDetail} />}
       <div className="flex justify-between items-center mb-4">
         <Input
           placeholder="Tìm kiếm tài tên tài liệu"

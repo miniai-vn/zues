@@ -15,7 +15,6 @@ export function DepartmentDetailPage() {
   const {
     departments,
     createDepartment,
-    isFetchingDepartments,
     refetchDepartments,
   } = useDepartments({ search });
   useDebouncedValue(search, 500);

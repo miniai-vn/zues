@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export const PERMISSIONS = {
   user: "Nhân viên",
   admin: "Quản trị viên",
-  owner: 'Chủ sở hữu',
+  owner: "Chủ sở hữu",
 };
 
 export type Department = {
@@ -45,15 +45,24 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     },
   });
 
-  useEffect(() => {
+  const { data: departmentDetail } = useQuery({
+    queryKey: ["departmentDetail", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const res = await axiosInstance.get(`/api/departments/${id}`);
+      return res.data as Department;
+    },
+    enabled: !!id,
+  });
 
+  useEffect(() => {
     if (departments?.length && !selectedDepartmentId) {
       const firstDeptId = departments[0]?.id;
       if (firstDeptId) {
         localStorage.setItem("selectedDepartmentId", firstDeptId);
         setSelectedDepartmentId(firstDeptId);
       }
-    }else {
+    } else {
       const storedDeptId = localStorage.getItem("selectedDepartmentId");
       if (storedDeptId) {
         const deptExists = departments?.some(
@@ -68,7 +77,6 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   }, [departments]);
 
   const changeDepartment = (departmentId: string) => {
-    
     localStorage.setItem("selectedDepartmentId", departmentId);
     setSelectedDepartmentId(departmentId);
   };
@@ -249,7 +257,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     refetchDepartments,
     selectedDepartmentId,
     changeDepartment,
-    // Export all isPending states
+    departmentDetail,
     isPendingCreateDept,
     isPendingAddUserToDept,
     isPendingRemoveUserFromDept,
