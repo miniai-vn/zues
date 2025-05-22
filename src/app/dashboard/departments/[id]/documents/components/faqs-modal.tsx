@@ -27,10 +27,11 @@ const FormSchema = z.object({
 
 interface FaqsModalProps {
   faq?: { id?: string; question: string; answer: string };
+  children?: React.ReactNode;
   onChange: (data: { id?: string; question: string; answer: string }) => void;
 }
 
-export function FaqsModal({ faq, onChange }: FaqsModalProps) {
+export function FaqsModal({ faq, onChange, children }: FaqsModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -57,11 +58,11 @@ export function FaqsModal({ faq, onChange }: FaqsModalProps) {
       open={isOpen}
     >
       <DialogTrigger asChild>
-        <Button>{faq ? "Edit FAQ" : "+ Create"}</Button>
+        {children || <Button>{faq ? "Edit FAQ" : "+ Tạo"}</Button>}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{faq ? "Edit FAQ" : "Create FAQ"}</DialogTitle>
+          <DialogTitle>{faq ? "Chỉnh sửa FAQ" : "Tạo FAQ"}</DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>

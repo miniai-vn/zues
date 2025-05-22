@@ -35,7 +35,7 @@ const uploadFormSchema = z.object({
       (file) => {
         if (!file) return false;
         const extension = file.split(".").pop()?.toLowerCase();
-        return ["pdf", "txt", "docx", "doc"].includes(extension || "");
+        return ["pdf", "txt", "docx", "doc","xlsx"].includes(extension || "");
       },
       {
         message: "Chỉ hỗ trợ tệp PDF, TXT, DOC, DOCX, XLS, XLSX và CSV",
@@ -47,12 +47,14 @@ const uploadFormSchema = z.object({
 type UploadFormValues = z.infer<typeof uploadFormSchema>;
 
 interface CreateOrUpdateResourceProps {
+  type?: string;
   resource?: any; // Use specific resource type if available
-  onHandleUploadFile: (file: File, description: string) => void;
+  onHandleUploadFile: (file: File, description: string, type: string) => void;
 }
 
 export function CreateOrUpdateResource({
   resource,
+  type,
   onHandleUploadFile,
 }: CreateOrUpdateResourceProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,7 +76,7 @@ export function CreateOrUpdateResource({
 
   const onSubmit = (values: UploadFormValues) => {
     if (selectedFile) {
-      onHandleUploadFile(selectedFile, values.description);
+      onHandleUploadFile(selectedFile, values.description, type || "document");
       form.reset();
       setSelectedFile(null);
       setIsOpen(false);
@@ -109,7 +111,11 @@ export function CreateOrUpdateResource({
             <Pencil className="h-4 w-4 text-gray-500" />
           </Button>
         ) : (
-          <Button>+ Tạo tài liệu mới</Button>
+          type === "faqs" ? (
+            <Button>+ Tải faq</Button>
+          ) : (
+            <Button>+ Tải tài liệu mới</Button>
+          )
         )}
       </DialogTrigger>
       <DialogContent className="w-[800px] max-w-[90vw]">
@@ -133,7 +139,7 @@ export function CreateOrUpdateResource({
                       handleFileChange(e);
                     }}
                     className="w-full h-14 center"
-                    accept=".pdf,.doc,.docx,.txt,"
+                    accept=".pdf,.doc,.docx,.txt,.xlsx"
                   />
                   <FormDescription>
                     Chấp nhận các định dạng: .pdf, .doc, .docx, .txt

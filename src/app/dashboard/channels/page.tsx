@@ -74,17 +74,7 @@ const ChannelPage = () => {
         </Badge>
       ),
     },
-    // {
-    //   accessorKey: "description",
-    //   header: "Mô tả",
-    //   cell: ({ row }) => (
-    //     <div className="w-full">
-    //       <p className="break-all line-clamp-2">
-    //         {row.original.description ?? "Trống"}
-    //       </p>
-    //     </div>
-    //   ),
-    // },
+
     {
       accessorKey: "department.name",
       header: "Phòng ban",
@@ -196,7 +186,7 @@ const ChannelPage = () => {
           breadcrumbs={[
             {
               label: "Quản lý",
-              href: "/dashboard/channels",
+              href: "/dashboard",
             },
             {
               label: "Quản lý kênh",

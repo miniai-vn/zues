@@ -52,7 +52,7 @@ export function PageHeader({
 
   return (
     <div
-      className={`sticky top-0 z-10 flex items-center justify-between gap-2 py-2 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b ${className}`}
+      className={`sticky top-0 z-10 py-4 flex items-center justify-between gap-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b ${className}`}
     >
       <div className="flex items-center gap-2">
         {showBackButton ? (
@@ -60,10 +60,10 @@ export function PageHeader({
             variant="ghost"
             size="icon"
             onClick={handleBackClick}
-            className="-ml-1"
+            className=" h-5 w-5"
             aria-label="Quay lại"
           >
-             <ChevronLeft className="h-5 w-5" />
+             <ChevronLeft  />
           </Button>
         ) : (
           <SidebarTrigger className="h-5 w-5" aria-label="Mở menu" />

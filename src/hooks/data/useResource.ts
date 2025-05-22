@@ -92,10 +92,12 @@ const useResource = ({
         file,
         departmentId,
         description,
+        type,
       }: {
         file: File;
         departmentId: string;
         description: string;
+        type: string;
       }) => {
         const data = await handleUploadFile(file);
         const response = await axiosInstance.post(
@@ -105,7 +107,7 @@ const useResource = ({
             extra: data,
             path: data.path,
             name: data.name,
-            type: "document",
+            type: type,
             description: description,
           },
           {

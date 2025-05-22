@@ -34,7 +34,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         }
         }
       >
-        <SelectTrigger className="w-[140px] border-0 hover:bg-gray-100 transition-colors">
+        <SelectTrigger className="w-[200px] border-0 hover:bg-gray-100 transition-colors">
           <SelectValue placeholder="Chọn nhóm tài liệu" />
         </SelectTrigger>
         <SelectContent>

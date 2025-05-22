@@ -5,17 +5,20 @@ import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { convertBytesToMB } from "@/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { File, FileText, Image, Search } from "lucide-react";
+import { File, FileText, Image, Pencil, Search } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
 import DepartmentHeader from "./DepartmentHeader";
 import useDepartments from "@/hooks/data/useDepartments";
+import useFAQs, { FAQ } from "@/hooks/data/useFAQs";
+import { FaqsModal } from "./documents/components/faqs-modal";
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
@@ -69,6 +72,20 @@ const DepartmentDetailComponent = () => {
     id: departmentId,
   });
 
+  // FAQ state
+  const [faqSearch, setFaqSearch] = useState("");
+  useDebouncedValue(faqSearch, 500);
+  const [faqPage, setFaqPage] = useState(1);
+  const [faqPageSize, setFaqPageSize] = useState(10);
+
+  const { faqs, isPendingFetchingFaqs, refetchFaqs, deleteFAQ, updateFAQ } =
+    useFAQs({
+      departmentId,
+      page: faqPage,
+      limit: faqPageSize,
+      search: faqSearch,
+    });
+
   useEffect(() => {
     if (materialItems) {
       setPage(materialItems.page || 1);
@@ -76,12 +93,17 @@ const DepartmentDetailComponent = () => {
     }
   }, [materialItems]);
 
-  const onHandleUploadFile = async (file: File, description: string) => {
+  const onHandleUploadFile = async (
+    file: File,
+    description: string,
+    type: string
+  ) => {
     try {
       await createResource({
         file,
         departmentId,
         description,
+        type: type,
       });
     } catch (error) {
       throw error;
@@ -251,8 +273,83 @@ const DepartmentDetailComponent = () => {
     },
   ];
 
+  // FAQ columns
+  const faqColumns: ColumnDef<FAQ>[] = [
+    {
+      id: "index",
+      header: () => <div className="text-center">STT</div>,
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">{row.index + 1}</div>
+      ),
+      size: 60,
+    },
+    {
+      accessorKey: "question",
+      header: "Câu hỏi",
+      cell: (row) => (
+        <div className="break-all line-clamp-1">
+          {row.row.original.question}
+        </div>
+      ),
+      size: 300,
+    },
+    {
+      accessorKey: "answer",
+      header: "Trả lời",
+      cell: (row) => (
+        <div className="break-all line-clamp-1">{row.row.original.answer}</div>
+      ),
+      size: 400,
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Ngày tạo",
+      cell: (row) => (
+        <div className="whitespace-nowrap">
+          {dayjs(row.row.original.createdAt).format("DD/MM/YYYY HH:mm")}
+        </div>
+      ),
+      size: 150,
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-center">Hành động</div>,
+      cell: (row) => {
+        const documentId = row.row.original.id as unknown as string;
+
+        return (
+          <ActionPopover
+            onDelete={() => deleteFAQ(documentId)}
+            children={
+              <FaqsModal
+                children={
+                  <Button
+                    variant="ghost"
+                    className="flex items-center justify-start gap-2 w-full"
+                  >
+                    <Pencil size={16} />
+                    <span>Chỉnh sửa</span>
+                  </Button>
+                }
+                faq={row.row.original}
+                onChange={(data) => {
+                  if (typeof data.id === "number") {
+                    updateFAQ({ ...data, id: data.id });
+                  }
+                }}
+              />
+            }
+            deleteDescription="Bạn có chắc chắn muốn xóa tài liệu này không?"
+            deleteTitle="Xóa tài liệu"
+          />
+        );
+      },
+      size: 140,
+    },
+  ];
+
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <div className="flex flex-1 flex-col px-4 space-y-2">
       <PageHeader
         backButtonHref="/dashboard/departments"
         showBackButton={true}
@@ -267,44 +364,109 @@ const DepartmentDetailComponent = () => {
           },
         ]}
       />
-        {departmentDetail && <DepartmentHeader dept={departmentDetail} />}
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder="Tìm kiếm tài tên tài liệu"
-          className="mr-4 w-full flex-1"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex items-center gap-3">
+      {/* {departmentDetail && <DepartmentHeader dept={departmentDetail} />} */}
+
+      <Tabs defaultValue="documents" className="w-full">
+        <div className="flex items-center justify-between">
+          <div>
+            <TabsList>
+              <TabsTrigger value="documents">Tài liệu</TabsTrigger>
+              <TabsTrigger value="faqs">FAQs</TabsTrigger>
+            </TabsList>
+          </div>
           <Button
-            onClick={() => refetchMaterialItems()}
-            className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push(`/dashboard/channels`);
+            }}
           >
-            <Search />
-            Tìm kiếm
+            Liên kết đến nền tảng
           </Button>
-          <CreateOrUpdateResource
-            onHandleUploadFile={onHandleUploadFile}
-            resource={undefined}
-          />
         </div>
-      </div>
-      <DataTable
-        columns={columns}
-        data={materialItems?.items || []}
-        pagination={{
-          page: page,
-          limit: pageSize,
-          total: materialItems?.totalCount || 0,
-        }}
-        onPaginationChange={handlePaginationChange}
-        onPageSizeChange={handlePageSizeChange}
-        isLoading={
-          isPendingFetchingItem ||
-          isPendingCreateResource ||
-          isPendingDeleteResource
-        }
-      />
+        <TabsContent value="documents">
+          <div className="flex justify-between items-center mb-4">
+            <Input
+              placeholder="Tìm kiếm tài tên tài liệu"
+              className="mr-4 w-full flex-1"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => refetchMaterialItems()}
+                className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
+              >
+                <Search />
+                Tìm kiếm
+              </Button>
+
+              <CreateOrUpdateResource
+                type="document"
+                onHandleUploadFile={onHandleUploadFile}
+                resource={undefined}
+              />
+            </div>
+          </div>
+          <DataTable
+            columns={columns}
+            data={materialItems?.items || []}
+            pagination={{
+              page: page,
+              limit: pageSize,
+              total: materialItems?.totalCount || 0,
+            }}
+            onPaginationChange={handlePaginationChange}
+            onPageSizeChange={handlePageSizeChange}
+            isLoading={
+              isPendingFetchingItem ||
+              isPendingCreateResource ||
+              isPendingDeleteResource
+            }
+          />
+        </TabsContent>
+
+        <TabsContent value="faqs">
+          <div className="flex justify-between items-center mb-4">
+            <Input
+              placeholder="Tìm kiếm câu hỏi"
+              className="mr-4 w-full flex-1"
+              value={faqSearch}
+              onChange={(e) => setFaqSearch(e.target.value)}
+            />
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => refetchFaqs()}
+                className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
+              >
+                <Search />
+                Tìm kiếm
+              </Button>
+              <Button>Đào tạo toàn bộ</Button>
+              {/* Add CreateOrUpdateResource for FAQs if needed */}
+              <FaqsModal
+                onChange={(data) => {
+                  if (typeof data.id === "number") {
+                    updateFAQ({ ...data, id: data.id });
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DataTable
+            columns={faqColumns}
+            data={faqs?.items || []}
+            pagination={{
+              page: faqPage,
+              limit: faqPageSize,
+              total: faqs?.totalCount || 0,
+            }}
+            onPaginationChange={setFaqPage}
+            onPageSizeChange={setFaqPageSize}
+            isLoading={isPendingFetchingFaqs}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
