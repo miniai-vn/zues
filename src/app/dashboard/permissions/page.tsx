@@ -76,8 +76,8 @@ const PermissionsRoles = () => {
         ]}
       />
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <div className="mb-6">
+      <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="mb-4">
           <h1 className="text-2xl font-bold mb-2">Vai trò và quyền</h1>
           <p className="text-gray-500">
             Quản lý vai trò người dùng và quyền hạn tương ứng.
@@ -128,7 +128,6 @@ const PermissionsRoles = () => {
                           />
                         </TableCell>
                       ))}
-                      <TableCell></TableCell>
                     </TableRow>
                   ))}
                 </React.Fragment>
@@ -137,7 +136,7 @@ const PermissionsRoles = () => {
           </Table>
         </div>
 
-        <div className="mt-6 flex justify-between">
+        <div className="mt-6 flex justify-end">
           <Button onClick={handleSaveChanges} variant="default">
             Lưu thay đổi
           </Button>

@@ -5,10 +5,14 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Role } from "@/configs/protect-route";
 import {
+  ArrowUpCircleIcon,
   AudioWaveform,
   BotIcon,
   Command,
@@ -22,6 +26,7 @@ import * as React from "react";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
 import { DashboardIcon } from "@radix-ui/react-icons";
+import { TeamSwitcher } from "./team-switcher";
 const data = {
   user: {
     name: "shadcn",
@@ -92,8 +97,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className="flex items-center justify-center gap-2">
-          <img src="/logo.png" alt="logo" className="h-12 w-full px-4" />
+        <div className="flex items-center gap-2 px-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white">
+            <span className="text-lg font-bold">M</span>
+          </div>
+          <div className="font-medium text-blue-600">MI9 Portal</div>
         </div>
       </SidebarHeader>
       <SidebarContent>

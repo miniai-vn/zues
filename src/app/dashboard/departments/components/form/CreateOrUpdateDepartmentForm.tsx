@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Input } from "@/components/ui/input";
 
 const FormSchema = z.object({
   name: z
@@ -116,9 +117,10 @@ Chỉ trả lời không đưa ra thông tin trích xuất từ ngữ cảnh`,
               <FormLabel>
                 Tên nhóm tài liệu <span className="text-red-500">*</span>
               </FormLabel>
-              <Textarea
+              <Input
+                type="text"
                 value={field.value ?? ""}
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={field.onChange}
                 className="w-full"
               />
               <FormMessage />

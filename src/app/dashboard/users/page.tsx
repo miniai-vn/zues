@@ -135,7 +135,7 @@ const UserComponents = () => {
       cell: ({ row }) => {
         return (
           <ActionPopover
-            className="w-40"
+            className="w-40 p-2"
             children={
               <AddOrUpdateUserModal
                 children={
@@ -181,7 +181,7 @@ const UserComponents = () => {
             },
           ]}
         />
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center">
           <Input
             placeholder="Tìm kiếm nhân viên theo tên"
             className="mr-4 w-full flex-1"

@@ -35,25 +35,8 @@ interface ResourceHeaderProps {
 }
 const ResourceHeader = ({ resource }: ResourceHeaderProps) => {
   return (
-    <div className="flex items-center h-12 px-2 border-b bg-white w-full">
-      {/* Left section: Back button and file icon/name */}
+    <div className="flex items-center px-2 border-b  w-full">
       <div className="flex items-center">
-        {/* <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-500 hover:bg-gray-100 rounded-full"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Go back</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider> */}
 
         <div className="flex items-center">
           {getFileIcon(resource?.extra?.extension)}

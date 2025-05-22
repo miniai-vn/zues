@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Department } from "@/hooks/data/useDepartments";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-import CreateOrUpdateForm from "../form/CreateOrUpdateForm";
+import CreateOrUpdateForm from "../form/CreateOrUpdateDepartmentForm";
 import AccessControl from "./Authorization";
 
 interface CreateDeptModalProps {

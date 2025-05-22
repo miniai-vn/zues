@@ -105,6 +105,24 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "report.read": "Xem báo cáo",
   "report.update": "Cập nhật báo cáo",
   "report.delete": "Xoá báo cáo",
+
+  // FAQS
+  "faq.create": "Tạo câu hỏi thường gặp",
+  "faq.read": "Xem câu hỏi thường gặp",
+  "faq.update": "Cập nhật câu hỏi thường gặp",
+  "faq.delete": "Xoá câu hỏi thường gặp",
+
+  // domain
+  "domain.create": "Tạo miền",
+  "domain.read": "Xem miền",
+  "domain.update": "Cập nhật miền",
+  "domain.delete": "Xoá miền",
+
+  // channel
+  "channel.create": "Tạo kênh",
+  "channel.read": "Xem kênh",
+  "channel.update": "Cập nhật kênh",
+  "channel.delete": "Xoá kênh",
 };
 
 const useRoles = () => {

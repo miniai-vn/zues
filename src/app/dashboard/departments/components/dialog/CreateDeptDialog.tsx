@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Department } from "@/hooks/data/useDepartments";
 import { useState } from "react";
-import CreateOrUpdateForm from "../form/CreateOrUpdateForm";
+import CreateOrUpdateForm from "../form/CreateOrUpdateDepartmentForm";
 
 interface CreateDeptModalProps {
   department?: Department;
