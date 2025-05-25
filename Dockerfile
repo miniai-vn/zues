@@ -1,22 +1,37 @@
-# Use official Node.js LTS image as the build environment
-FROM node:20-alpine AS builder
+# Base stage for dependencies
+FROM node:20-alpine as base
 
-# Set working directory
 WORKDIR /app
+COPY package.json yarn.lock ./
+RUN apk add --no-cache git \
+    && yarn install --frozen-lockfile \
+    && yarn cache clean
 
-# Copy package files and install dependencies
-COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+# Build stage
+FROM node:20-alpine as build
 
-# Copy the rest of the source code
+WORKDIR /app
+COPY --from=base /app/node_modules ./node_modules
 COPY . .
 
-RUN npm install
-# Build the Next.js app
-RUN npm run build
+RUN apk add --no-cache git curl \
+    && yarn build
+    # Optional optimizations below (uncomment if needed)
+    # && rm -rf node_modules \
+    # && yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline \
+    # && curl -sfL https://gobinaries.com/tj/node-prune | sh \
+    # && ./bin/node-prune
 
+# Production stage
+FROM node:20-alpine as production
+
+WORKDIR /app
+
+COPY --from=build /app/package.json /app/yarn.lock ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
 
 EXPOSE 3000
 
-# # Start the Next.js app
-CMD ["npm", "start"]
-
+CMD ["yarn", "start"]
