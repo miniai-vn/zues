@@ -119,7 +119,7 @@ const ChannelPage = () => {
       cell: ({ row }) => {
         const date = new Date(row.original.createdAt);
         return (
-          <div >
+          <div>
             {date.toLocaleDateString("vi-VN", {
               year: "numeric",
               month: "2-digit",
@@ -179,59 +179,57 @@ const ChannelPage = () => {
   ];
 
   return (
-    <ProtectedRoute requiredRole={[Role.Admin]}>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <PageHeader
-          backButtonHref="/dashboard"
-          breadcrumbs={[
-            {
-              label: "Quản lý",
-              href: "/dashboard",
-            },
-            {
-              label: "Quản lý kênh",
-              isCurrentPage: true,
-            },
-          ]}
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <PageHeader
+        backButtonHref="/dashboard"
+        breadcrumbs={[
+          {
+            label: "Quản lý",
+            href: "/dashboard",
+          },
+          {
+            label: "Quản lý kênh",
+            isCurrentPage: true,
+          },
+        ]}
+      />
+      <div className="flex justify-between items-center mb-4">
+        <Input
+          placeholder="Tìm kiếm kênh theo tên"
+          className="mr-4 w-full flex-1"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <div className="flex justify-between items-center mb-4">
-          <Input
-            placeholder="Tìm kiếm kênh theo tên"
-            className="mr-4 w-full flex-1"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
 
-          <div className="flex items-center gap-3">
-            <CreateOrUpdateChannelDialog onChange={createChannel} />
-            <Button
-              onClick={() => refetchChannels()}
-              className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
-            >
-              <Search />
-              Tìm kiếm
-            </Button>
-          </div>
+        <div className="flex items-center gap-3">
+          <CreateOrUpdateChannelDialog onChange={createChannel} />
+          <Button
+            onClick={() => refetchChannels()}
+            className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
+          >
+            <Search />
+            Tìm kiếm
+          </Button>
         </div>
-        <DataTable
-          columns={columns}
-          data={channels || []}
-          pagination={{
-            page: page,
-            limit: pageSize,
-            total: totalCount || 0,
-          }}
-          onPaginationChange={handlePaginationChange}
-          onPageSizeChange={handlePageSizeChange}
-          isLoading={
-            isFetchingChannels ||
-            isPendingUpdateChannel ||
-            isPendingDeleteChannel ||
-            isPendingCreateChannel
-          }
-        />
       </div>
-    </ProtectedRoute>
+      <DataTable
+        columns={columns}
+        data={channels || []}
+        pagination={{
+          page: page,
+          limit: pageSize,
+          total: totalCount || 0,
+        }}
+        onPaginationChange={handlePaginationChange}
+        onPageSizeChange={handlePageSizeChange}
+        isLoading={
+          isFetchingChannels ||
+          isPendingUpdateChannel ||
+          isPendingDeleteChannel ||
+          isPendingCreateChannel
+        }
+      />
+    </div>
   );
 };
 

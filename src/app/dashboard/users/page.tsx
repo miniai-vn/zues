@@ -12,7 +12,7 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AddOrUpdateUserModal } from "./components/CreateOrUpdateModal";
+import { AddOrUpdateUserModal } from "./components/CreateOrUpdateUserModal";
 
 const UserComponents = () => {
   const [page, setPage] = useState(1);

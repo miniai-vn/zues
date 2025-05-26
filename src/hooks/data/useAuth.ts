@@ -1,11 +1,10 @@
 import axiosInstance from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { create } from "zustand";
-import { useToast } from "../use-toast";
 import { UserUpdateFormValues } from "../../components/dashboard/user-update-form";
-import { Role } from "./useRoles";
+import { useToast } from "../use-toast";
 import { Department } from "./useDepartments";
+import { Role } from "./useRoles";
 
 export type UserData = {
   id?: string;

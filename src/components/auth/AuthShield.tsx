@@ -10,7 +10,7 @@ interface AuthShieldProps {
 
 export default function AuthShield({
   children,
-  publicRoutes = ["/login", "/register", "/forgot-password"],
+  publicRoutes = ["/login", "/register", "/forgot-password","/"],
 }: AuthShieldProps) {
   const router = useRouter();
   const pathname = usePathname();

@@ -43,7 +43,6 @@ const FormSchema = z.object({
     .default([]),
   departments: z
     .array(z.number())
-    .min(1, { message: "Vui lòng chọn ít nhất một phòng ban." })
     .default([]), 
 });
 

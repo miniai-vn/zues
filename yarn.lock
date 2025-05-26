@@ -3627,6 +3627,18 @@ loose-envify@^1.4.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+lottie-react@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/lottie-react/-/lottie-react-2.4.1.tgz#4bd3f2a8a5e48edbd43c05ca5080fdd50f049d31"
+  integrity sha512-LQrH7jlkigIIv++wIyrOYFLHSKQpEY4zehPicL9bQsrt1rnoKRYCYgpCUe5maqylNtacy58/sQDZTkwMcTRxZw==
+  dependencies:
+    lottie-web "^5.10.2"
+
+lottie-web@^5.10.2:
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/lottie-web/-/lottie-web-5.13.0.tgz#441d3df217cc8ba302338c3f168e1a3af0f221d3"
+  integrity sha512-+gfBXl6sxXMPe8tKQm7qzLnUy5DUPJPKIyRHwtpCpyUEYjHYRJC/5gjUvdkuO2c3JllrPtHXH5UJJK8LRYl5yQ==
+
 lowlight@^1.17.0:
   version "1.20.0"
   resolved "https://registry.npmjs.org/lowlight/-/lowlight-1.20.0.tgz"
@@ -4256,6 +4268,7 @@ mute-stream@^2.0.0:
     "@radix-ui/react-separator" "^1.1.1"
     "@radix-ui/react-slot" "^1.2.0"
     "@radix-ui/react-switch" "^1.1.2"
+    "@radix-ui/react-tabs" "^1.1.11"
     "@radix-ui/react-toast" "^1.2.6"
     "@radix-ui/react-tooltip" "^1.1.6"
     "@tanstack/react-query" "^5.74.4"
@@ -4267,7 +4280,7 @@ mute-stream@^2.0.0:
     dayjs "^1.11.13"
     framer-motion "^12.4.7"
     lucide-react "^0.469.0"
-    my-app "file:../../../AppData/Local/Yarn/Cache/v6/npm-my-app-0.1.0-84da0fd1-c71c-45aa-82dc-035e11942fd0-1746588054002/node_modules/my-app"
+    my-app "file:../../../AppData/Local/Yarn/Cache/v6/npm-my-app-0.1.0-122a84c9-c12e-43af-a9cd-f7b5c4a81f1f-1748232708454/node_modules/my-app"
     next "15.1.2"
     next-themes "^0.4.4"
     react "^19.0.0"
