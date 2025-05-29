@@ -1,5 +1,5 @@
 "use client";
-import axiosInstance from "@/configs";
+import { axiosInstance, chatApiInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 
@@ -37,7 +37,7 @@ const useFAQs = ({
     queryFn: async () => {
       const params: any = { page, limit, search };
       if (departmentId) params.department_id = departmentId;
-      const response = await axiosInstance.get("/api/faqs/all", { params });
+      const response = await chatApiInstance.get("/api/faqs/all", { params });
       // Expecting { items: FAQ[], totalCount: number }
       return {
         items: response.data.items || response.data.faqs || [],
@@ -57,7 +57,7 @@ const useFAQs = ({
       department_id: string;
       shop_id?: string;
     }) => {
-      const response = await axiosInstance.post("/api/faqs/", data);
+      const response = await chatApiInstance.post("/api/faqs/", data);
       return response.data;
     },
     onSuccess: () => {
@@ -75,7 +75,7 @@ const useFAQs = ({
       question: string;
       answer: string;
     }) => {
-      const response = await axiosInstance.put(`/api/faqs/${data.id}`, data);
+      const response = await chatApiInstance.put(`/api/faqs/${data.id}`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -89,7 +89,7 @@ const useFAQs = ({
 
   const { mutate: deleteFAQ, isPending: isPendingDeleteFAQ } = useMutation({
     mutationFn: async (id: string) => {
-      const response = await axiosInstance.delete(`/api/faqs/${id}`);
+      const response = await chatApiInstance.delete(`/api/faqs/${id}`);
       return response.data;
     },
     onSuccess: () => {

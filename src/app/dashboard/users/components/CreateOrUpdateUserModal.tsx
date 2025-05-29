@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { } from "@/app/dashboard/permissions/page";
+import {} from "@/app/dashboard/permissions/page";
 import {
   Form,
   FormField,
@@ -28,23 +28,24 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const FormSchema = z.object({
-  username: z.string().nonempty("Vui lòng nhập tài khoản."),
-  password: z
-    .string()
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự.")
-    .nonempty("Vui lòng nhập mật khẩu.")
-    .default(""),
-  name: z.string().nonempty("Vui lòng nhập họ và tên.").default(""),
-  phone: z.string().regex(/^\d+$/, "Số điện thoại phải là số").optional(),
-  roles: z
-    .array(z.number())
-    .min(1, { message: "Vui lòng chọn ít nhất một phòng ban." })
-    .default([]),
-  departments: z
-    .array(z.number())
-    .default([]), 
-});
+// Hàm tạo schema động dựa trên props user
+const getFormSchema = (user?: User) =>
+  z.object({
+    username: z.string().nonempty("Vui lòng nhập tài khoản."),
+    password: user
+      ? z.string().optional()
+      : z
+          .string()
+          .min(8, "Mật khẩu phải có ít nhất 8 ký tự.")
+          .nonempty("Vui lòng nhập mật khẩu."),
+    name: z.string().nonempty("Vui lòng nhập họ và tên.").default(""),
+    phone: z.string().regex(/^\d+$/, "Số điện thoại phải là số").optional(),
+    roles: z
+      .array(z.number())
+      .min(1, { message: "Vui lòng chọn ít nhất một phòng ban." })
+      .default([]),
+    departments: z.array(z.number()).default([]),
+  });
 
 interface AddUserProps {
   user?: User;
@@ -60,22 +61,35 @@ export function AddOrUpdateUserModal({
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+
+  // Sử dụng schema động
+  const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
+    resolver: zodResolver(getFormSchema(user)),
     defaultValues: {
       username: user?.username || "",
-      password: user?.password,
+      // password: "",
       name: user?.name || "",
       phone: user?.phone || "",
-      roles: user?.roles?.map((role) => role.id),
-      departments: user?.departments?.map((dept) => Number(dept.id)),
+      roles: user?.roles?.map((role) => role.id) || [],
+      departments: user?.departments?.map((dept) => Number(dept.id)) || [],
     },
   });
   const { departments } = useDepartments({});
-  const { roles } = useRoles();
+  const { roleWithPermissions } = useRoles();
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    onChange?.({ ...data, id: user?.id });
+  const onSubmit = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
+    debugger;
+    onChange?.({
+      ...data,
+      id: user?.id,
+      ...(data?.password &&
+      data.password.length > 0 &&
+      data.password !== "defualt"
+        ? {
+            password: data.password,
+          }
+        : {}),
+    });
     setIsOpen(false);
     form.reset();
   };
@@ -137,7 +151,7 @@ export function AddOrUpdateUserModal({
                         onChange={(e) => field.onChange(e.target.value)}
                         className="w-full pr-10"
                         placeholder="Nhập mật khẩu"
-                        disabled={user? !resetPassword : false}
+                        disabled={user ? !resetPassword : false}
                       />
                       {user ? (
                         <div className="group">
@@ -223,7 +237,7 @@ export function AddOrUpdateUserModal({
                       </FormLabel>
                       <Selector
                         className="w-full"
-                        items={(roles || []).map((role) => ({
+                        items={(roleWithPermissions || []).map((role) => ({
                           value: role.id,
                           label: RoleVietnameseNames[role.name] || role.name,
                         }))}

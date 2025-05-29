@@ -1,4 +1,4 @@
-import axiosInstance from "@/configs";
+import { axiosInstance, chatApiInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 import { useEffect, useState } from "react";
@@ -37,7 +37,7 @@ const useDomain = ({
   } = useQuery({
     queryKey: ["domain", companyId, search],
     queryFn: async () => {
-      const res = await axiosInstance.get("/api/domains", {
+      const res = await chatApiInstance.get("/api/domains", {
         params: { companyId, search },
       });
       return res.data as Domain;
@@ -51,7 +51,7 @@ const useDomain = ({
     isSuccess: isCreatedDomain,
   } = useMutation({
     mutationFn: async (data: { domain: string }) => {
-      const res = await axiosInstance.post("/api/domains", data);
+      const res = await chatApiInstance.post("/api/domains", data);
       return res.data;
     },
     onSuccess: () => {
@@ -72,7 +72,7 @@ const useDomain = ({
   const { mutate: updateDomain, isPending: isPendingUpdateDomain } =
     useMutation({
       mutationFn: async (data: Domain) => {
-        const res = await axiosInstance.put(`/api/domains/${data.id}`, data);
+        const res = await chatApiInstance.put(`/api/domains/${data.id}`, data);
         return res.data;
       },
       onSuccess: () => {
@@ -93,7 +93,7 @@ const useDomain = ({
   const { mutate: deleteDomain, isPending: isPendingDeleteDomain } =
     useMutation({
       mutationFn: async (id: string) => {
-        await axiosInstance.delete(`/api/domains/${id}`);
+        await chatApiInstance.delete(`/api/domains/${id}`);
       },
       onSuccess: () => {
         refetchDomains();

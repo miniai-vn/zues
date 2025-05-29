@@ -1,4 +1,4 @@
-import axiosInstance from "@/configs";
+import { axiosInstance, chatApiInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
 import { UserUpdateFormValues } from "../../components/dashboard/user-update-form";
@@ -60,7 +60,7 @@ const useAuth = ({
   const { data: users, isFetching } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/api/auth/users", {
+      const response = await chatApiInstance.get("/api/auth/users", {
         params: { search },
       });
       return (response.data as User[]) ?? [];
@@ -78,7 +78,7 @@ const useAuth = ({
       username: string;
       password: string;
     }) => {
-      const response = await axiosInstance.post("/api/auth/login", {
+      const response = await chatApiInstance.post("/api/auth/login", {
         username,
         password,
       });
@@ -93,14 +93,14 @@ const useAuth = ({
 
   const { mutate: register } = useMutation({
     mutationFn: async (data: { username: string; password: string }) => {
-      const response = await axiosInstance.post("/api/auth/register", data);
+      const response = await chatApiInstance.post("/api/auth/register", data);
       return response;
     },
   });
 
   const { mutate: createUser, isPending: isPendingCreateUser } = useMutation({
     mutationFn: async (data: UserData) => {
-      const response = await axiosInstance.post("/api/auth/users", data);
+      const response = await chatApiInstance.post("/api/auth/users", data);
       return response;
     },
     onSuccess: () => {
@@ -121,7 +121,7 @@ const useAuth = ({
 
   const { mutate: readUser } = useMutation({
     mutationFn: async (id: string) => {
-      const response = await axiosInstance.get(`/api/auth/users/${id}`);
+      const response = await chatApiInstance.get(`/api/auth/users/${id}`);
       return response;
     },
   });
@@ -129,7 +129,7 @@ const useAuth = ({
   const { mutate: updateUser, isPending: isPendingUpdateUser } = useMutation({
     mutationFn: async (data: UserUpdateData) => {
       const { id, ..._ } = data;
-      const response = await axiosInstance.post(
+      const response = await chatApiInstance.post(
         `/api/auth/users/${data?.id}`,
         data
       );
@@ -153,7 +153,7 @@ const useAuth = ({
 
   const { mutate: deleteUser, isPending: isPendingDeleteUser } = useMutation({
     mutationFn: async (id: string) => {
-      const response = await axiosInstance.delete(`/api/auth/users/${id}`);
+      const response = await chatApiInstance.delete(`/api/auth/users/${id}`);
       return response;
     },
     onSuccess: () => {
@@ -186,7 +186,7 @@ const useAuth = ({
   } = useQuery({
     queryKey: ["user", { page, limit, search }],
     queryFn: async () => {
-      const response = await axiosInstance.get("/api/auth/users", {
+      const response = await chatApiInstance.get("/api/auth/users", {
         params: { page, limit, search },
       });
       return {

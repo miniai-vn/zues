@@ -1,4 +1,4 @@
-import axiosInstance from "@/configs";
+import { axiosInstance, chatApiInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export type Resource = {
@@ -53,7 +53,7 @@ const useResource = ({
         queryString ? `?${queryString}` : ""
       }`;
 
-      const res = await axiosInstance.get(endpoint);
+      const res = await chatApiInstance.get(endpoint);
 
       return {
         items: res.data.items || res.data || [], // Adapt based on your API response structure
@@ -73,7 +73,7 @@ const useResource = ({
   const handleUploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await axiosInstance.post(
+    const response = await chatApiInstance.post(
       "/api/resources/upload-file",
       formData,
       {
@@ -100,7 +100,7 @@ const useResource = ({
         type: string;
       }) => {
         const data = await handleUploadFile(file);
-        const response = await axiosInstance.post(
+        const response = await chatApiInstance.post(
           `/api/resources/`,
           {
             department_id: departmentId,
@@ -136,7 +136,7 @@ const useResource = ({
   const { mutate: deleteResource, isPending: isPendingDeleteResource } =
     useMutation({
       mutationFn: async (id: string) => {
-        const response = await axiosInstance.delete(`/api/resources/${id}`, {});
+        const response = await chatApiInstance.delete(`/api/resources/${id}`, {});
         return response.data;
       },
       onSuccess: () => {
@@ -157,7 +157,7 @@ const useResource = ({
   const { mutate: createChunks, isPending: isPendingCreateChunks } =
     useMutation({
       mutationFn: async (id: string) => {
-        const response = await axiosInstance.patch(
+        const response = await chatApiInstance.patch(
           `/api/resources/create-chunks/${id}`
         );
         return response.data;
@@ -180,7 +180,7 @@ const useResource = ({
   const { mutate: syncResource, isPending: isPendingSyncResource } =
     useMutation({
       mutationFn: async (id: string) => {
-        const response = await axiosInstance.patch(`/api/resources/sync/${id}`);
+        const response = await chatApiInstance.patch(`/api/resources/sync/${id}`);
         return response.data;
       },
       onSuccess: () => {
@@ -201,7 +201,7 @@ const useResource = ({
   const { data: resourceDetail } = useQuery({
     queryKey: ["resource", id],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/api/resources/${id}`);
+      const response = await chatApiInstance.get(`/api/resources/${id}`);
       return response.data as Resource;
     },
     refetchOnWindowFocus: false,

@@ -1,4 +1,4 @@
-import axiosInstance from "@/configs";
+import { axiosInstance, chatApiInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export enum ChannelStatus {
@@ -70,7 +70,7 @@ const useChannels = ({
         queryString ? `?${queryString}` : ""
       }`;
 
-      const res = await axiosInstance.get(endpoint);
+      const res = await chatApiInstance.get(endpoint);
 
       return {
         items: res.data.items || res.data || [],
@@ -88,7 +88,7 @@ const useChannels = ({
       queryKey: ["channels", "by-department", departmentId],
       enabled: !!departmentId,
       queryFn: async () => {
-        const res = await axiosInstance.get(
+        const res = await chatApiInstance.get(
           `/api/channels/get-by-department-id`,
           {
             params: { departmentId },
@@ -105,7 +105,7 @@ const useChannels = ({
     isSuccess: isCreatedChannel,
   } = useMutation({
     mutationFn: async (data: Partial<Channel>) => {
-      const res = await axiosInstance.post("/api/channels/", data);
+      const res = await chatApiInstance.post("/api/channels/", data);
       return res.data;
     },
     onSuccess: () => {
@@ -126,7 +126,7 @@ const useChannels = ({
   const { mutate: updateChannel, isPending: isPendingUpdateChannel } =
     useMutation({
       mutationFn: async (data: Partial<Channel> & { id: number }) => {
-        const res = await axiosInstance.put(`/api/channels/${data.id}`, data);
+        const res = await chatApiInstance.put(`/api/channels/${data.id}`, data);
         return res.data;
       },
       onSuccess: () => {
@@ -147,7 +147,7 @@ const useChannels = ({
   const { mutate: deleteChannel, isPending: isPendingDeleteChannel } =
     useMutation({
       mutationFn: async (id: number) => {
-        await axiosInstance.delete(`/api/channels/${id}`);
+        await chatApiInstance.delete(`/api/channels/${id}`);
       },
       onSuccess: () => {
         refetchChannels();
@@ -167,7 +167,7 @@ const useChannels = ({
 
   const { mutate: updateChannelStatus } = useMutation({
     mutationFn: async (data: { id: number; status: ChannelStatus }) => {
-      const res = await axiosInstance.patch(
+      const res = await chatApiInstance.patch(
         `/api/channels/${data.id}/update-status`,
         data
       );

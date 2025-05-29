@@ -52,6 +52,7 @@ interface DataTableProps<TData, TValue> {
   onPageSizeChange?: (limit: number) => void;
   onSortingChange?: (sorting: SortingState) => void;
   onRowSelectionChange?: (selectedRows: TData[]) => void;
+  onRowClick?: (row: TData) => void; // Thêm dòng này
   isLoading?: boolean;
   noResultsMessage?: React.ReactNode;
 }
@@ -64,6 +65,7 @@ export function DataTable<TData, TValue>({
   onPageSizeChange,
   onSortingChange,
   onRowSelectionChange,
+  onRowClick, // Thêm dòng này
   isLoading = false,
   noResultsMessage = "No results.",
 }: DataTableProps<TData, TValue>) {
@@ -165,6 +167,9 @@ export function DataTable<TData, TValue>({
     }
   };
 
+  // Thêm biến để xác định cột không cho phép onRowClick
+  const ACTION_COLUMN_IDS = ["actions", "delete", "update"];
+
   return (
     <div className="rounded-md border">
       <div className="relative min-h-[24rem]">
@@ -211,9 +216,26 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={(e) => {
+                    // Nếu click vào cell thuộc cột trong ACTION_COLUMN_IDS thì không gọi onRowClick
+                    const cell = (e.target as HTMLElement).closest("td");
+                    if (
+                      cell &&
+                      ACTION_COLUMN_IDS.some(
+                        (colId) => cell.getAttribute("data-column-id") === colId
+                      )
+                    ) {
+                      return;
+                    }
+                    onRowClick?.(row.original);
+                  }}
+                  className={onRowClick ? "cursor-pointer" : ""}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      data-column-id={cell.column.id}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

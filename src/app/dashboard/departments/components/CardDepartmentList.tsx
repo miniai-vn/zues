@@ -30,7 +30,7 @@ const CardDepartmentSkeleton = () => (
 const CardDepartmentList = ({ departments }: CardDepartmentListProps) => {
   const { isFetchingDepartments, isPendingCreateDept, isPendingDeleteDepartment } =
     useDepartments({});
-  if (isFetchingDepartments || isPendingCreateDept || isPendingDeleteDepartment) {
+  if (isFetchingDepartments) {
     return (
       <div className="flex flex-wrap gap-4">
         {Array(6)
