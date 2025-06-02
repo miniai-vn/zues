@@ -2,17 +2,22 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import useDomain from "@/hooks/data/useDomain";
+import useShopSettings from "@/hooks/data/useShopSettings";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
 export default function LinkDataSourceComponent() {
   const [appId, setAppId] = useState("");
-  const { domain, createDomain, deleteDomain, isPendingCreateDomain } =
-    useDomain({});
+  const {
+    shop,
+    updateZaloId,
+    isLoadingShop: isPendingUpdateZaloId,
+    syncDataShop,
+    isSyncingDataShop,
+  } = useShopSettings();
 
   const handleClick = () => {
-    if (domain) {
+    if (shop?.zaloId) {
       handleDelete();
     } else {
       handleCreate();
@@ -21,21 +26,24 @@ export default function LinkDataSourceComponent() {
 
   const handleCreate = () => {
     if (!appId.trim()) return;
-    createDomain({ domain: appId });
+    updateZaloId(appId);
     setAppId("");
   };
 
   const handleDelete = () => {
-    if (domain && domain.id) {
-      deleteDomain(domain.id);
-    }
+    // Xóa zaloId bằng cách gửi chuỗi rỗng
+    updateZaloId("");
+    setAppId("");
   };
 
   useEffect(() => {
-    if (domain) {
-      return setAppId(domain.domain);
-    } else setAppId("");
-  }, [domain]);
+    if (shop?.zaloId) {
+      setAppId(shop.zaloId);
+    } else {
+      setAppId("");
+    }
+  }, [shop?.zaloId]);
+
   return (
     <div className="w-full">
       <Card className="border rounded-lg shadow-sm">
@@ -49,22 +57,42 @@ export default function LinkDataSourceComponent() {
               placeholder="Nhập zalo app Id"
               value={appId}
               onChange={(e) => setAppId(e.target.value)}
-              disabled={isPendingCreateDomain}
+              disabled={isPendingUpdateZaloId}
             />
             <Button
               className="rounded-r-md rounded-l-none bg-blue-500 hover:bg-blue-600 font-semibold px-6"
               onClick={handleClick}
-              disabled={isPendingCreateDomain || !!domain}
+              disabled={isPendingUpdateZaloId}
             >
-              {isPendingCreateDomain ? (
+              {isPendingUpdateZaloId ? (
                 <ReloadIcon className="animate-spin" />
-              ) : domain ? (
+              ) : shop?.zaloId ? (
                 "Hủy liên kết"
               ) : (
                 "Xác nhận"
               )}
             </Button>
           </div>
+          {shop?.zaloId && (
+            <div className="mt-2 flex items-center gap-4">
+              <p className="text-sm text-gray-500">
+                Đã liên kết với Zalo App ID: <strong>{shop.zaloId}</strong>
+              </p>
+              <Button
+                className="ml-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  syncDataShop();
+                }}
+                disabled={isSyncingDataShop}
+              >
+                {isSyncingDataShop ? (
+                  <ReloadIcon className="animate-spin" />
+                ) : (
+                  "Đồng bộ sản phẩm"
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
     </div>

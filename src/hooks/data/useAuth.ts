@@ -87,6 +87,7 @@ const useAuth = ({
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("shop", JSON.stringify(data.shop));
       setUser(data.user);
     },
   });

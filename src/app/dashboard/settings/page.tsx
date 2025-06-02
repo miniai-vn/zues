@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProtectedRoute, { Role } from "@/configs/protect-route";
 import DomainComponent from "./components/domain";
 import WhiteLabelComponent from "./components/whitelabel";
-import LinkDataSourceComponent from "./components/link";
+import LinkDataSourceComponent from "./components/linkMiniApp";
 export default function SettingPage() {
   return (
     <ProtectedRoute requiredRole={[Role.Admin]}>

@@ -32,15 +32,22 @@ import {
 } from "@/components/ui/select";
 import useDepartments from "@/hooks/data/useDepartments";
 
-// New FormSchema
+// Định nghĩa enum cho loại kênh
+export enum ChannelType {
+  Zalo = "Zalo",
+  Facebook = "Facebook",
+}
+
+// Sử dụng enum trong schema
 const FormSchema = z.object({
   name: z.string().nonempty("Vui lòng nhập tên kênh."),
-  type: z.enum(["zalo", "facebook"], {
+  type: z.nativeEnum(ChannelType, {
     required_error: "Vui lòng chọn loại kênh.",
   }),
   appId: z.string().nonempty("Vui lòng nhập App ID."),
   oaId: z.string().nonempty("Vui lòng nhập OA ID."),
   departmentId: z.coerce.number().min(1, "Vui lòng chọn phòng ban."),
+  isUseProductFromMiniapp: z.boolean().optional(),
 });
 
 interface AddOrUpdateChannelProps {
@@ -55,8 +62,8 @@ export function CreateOrUpdateChannelDialog({
   onChange,
 }: AddOrUpdateChannelProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [tab, setTab] = useState<"zalo" | "facebook">(
-    channel?.type === "facebook" ? "facebook" : "zalo"
+  const [tab, setTab] = useState<ChannelType>(
+    channel?.type === ChannelType.Facebook ? ChannelType.Facebook : ChannelType.Zalo
   );
 
   // Get departments
@@ -66,32 +73,45 @@ export function CreateOrUpdateChannelDialog({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: channel?.name || "",
-      type: (channel?.type as "zalo" | "facebook") || "zalo",
+      type: (channel?.type as ChannelType) || ChannelType.Zalo,
       appId:
-        channel?.type === "zalo" ? (channel.extraData as { app_id?: string })?.app_id || "" : "",
+        channel?.type === ChannelType.Zalo
+          ? (channel.extraData as { app_id?: string })?.app_id || ""
+          : "",
       oaId:
-        channel?.type === "zalo"
+        channel?.type === ChannelType.Zalo
           ? (channel.extraData as { oa_id?: string })?.oa_id || ""
           : "",
-      departmentId: channel?.departmentId || undefined,
+      departmentId: channel?.department.id,
+      isUseProductFromMiniapp: channel?.isUseProductFromMiniapp ?? false,
     },
   });
 
   // Sync tab and form type
   const handleTabChange = (value: string) => {
-    setTab(value as "zalo" | "facebook");
-    form.setValue("type", value as "zalo" | "facebook");
+    setTab(value as ChannelType);
+    form.setValue("type", value as ChannelType);
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    let extraData: any = undefined;
+    if (tab === ChannelType.Zalo) {
+      extraData = {
+        oa_id: data.oaId,
+        app_id: data.appId,
+      };
+    } else if (tab === ChannelType.Facebook) {
+      extraData = {
+        app_id: data.appId,
+      };
+    }
+
     const dataSubmit = {
       name: data.name,
       type: tab,
-      department_id: data.departmentId,
-      extra_data: {
-        oa_id: data.oaId,
-        app_id: data.appId,
-      },
+      departmentId: data.departmentId,
+      isUseProductFromMiniapp: data.isUseProductFromMiniapp,
+      extraData,
       ...(channel ? { id: channel.id } : {}),
     };
     onChange?.(dataSubmit);
@@ -111,14 +131,14 @@ export function CreateOrUpdateChannelDialog({
         <Tabs value={tab} onValueChange={handleTabChange} className="mb-">
           <TabsList className="w-full flex">
             <TabsTrigger
-              value="zalo"
+              value={ChannelType.Zalo}
               className="flex-1 flex items-center gap-2 justify-center"
             >
               <Zap className="w-4 h-4 text-blue-500" />
               Zalo OA
             </TabsTrigger>
             <TabsTrigger
-              value="facebook"
+              value={ChannelType.Facebook}
               className="flex-1 flex items-center gap-2 justify-center"
             >
               <Facebook className="w-4 h-4 text-blue-600" />
@@ -216,29 +236,26 @@ export function CreateOrUpdateChannelDialog({
                 </FormItem>
               )}
             />
-            {/* <FormField
+            <FormField
               control={form.control}
-              name="oaId"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>
-                    App Id <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Input
-                    type="text"
-                    value={field.value ?? ""}
-                    onChange={field.onChange}
-                    placeholder="Nhập OA ID"
+              name="isUseProductFromMiniapp"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={field.value ?? false}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    id="isUseProductFromMiniapp"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
-                    Lấy từ trang "Thông tin ứng dụng" của Zalo Developers
-                  </p>
-                  {fieldState.error && (
-                    <FormMessage>{fieldState.error.message}</FormMessage>
-                  )}
+                  <FormLabel
+                    htmlFor="isUseProductFromMiniapp"
+                    className="mb-0 cursor-pointer"
+                  >
+                    Sử dụng sản phẩm từ Mini App
+                  </FormLabel>
                 </FormItem>
               )}
-            /> */}
+            />
             <FormField
               control={form.control}
               name="departmentId"
