@@ -63,7 +63,9 @@ export function CreateOrUpdateChannelDialog({
 }: AddOrUpdateChannelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [tab, setTab] = useState<ChannelType>(
-    channel?.type === ChannelType.Facebook ? ChannelType.Facebook : ChannelType.Zalo
+    channel?.type === ChannelType.Facebook
+      ? ChannelType.Facebook
+      : ChannelType.Zalo
   );
 
   // Get departments
