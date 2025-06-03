@@ -29,7 +29,7 @@ const UserDetailComponents = () => {
       />
       <div>
         <span>Cài đặt quyền</span>
-        {roles?.map((role) => (
+        {roles?.items?.map((role) => (
           <div key={role.id} className="flex items-center gap-2">
             <input
               type="checkbox"

@@ -193,7 +193,7 @@ const useRoles = ({
         params,
       });
       return {
-        items: res.data.items || [],
+        items: (res.data.items || []) as Role[],
         totalCount: res.data.totalCount || 0,
         page,
         limit,

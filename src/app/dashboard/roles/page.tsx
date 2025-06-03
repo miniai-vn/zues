@@ -182,7 +182,13 @@ const RolesPage = () => {
         </div>
         <DataTable
           columns={columns}
-          data={roles?.items || []}
+          data={(roles?.items || []).map((role: any) => ({
+            id: role.id,
+            name: role.name,
+            description: role.description,
+            created_at: role.created_at ?? "",
+            updated_at: role.updated_at ?? "",
+          }))}
           pagination={{
             page: page,
             limit: pageSize,
