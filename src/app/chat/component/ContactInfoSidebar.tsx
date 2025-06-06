@@ -23,15 +23,10 @@ const ContactInfoSidebar = ({
     (p) => p.id !== currentUserId
   );
 
-  const {
-    saveContact,
-    saveNotes,
-    sendEmail,
-    addStaff,
-    isSaving,
-  } = useContactInfo({
-    userId: contactUser?.id,
-  });
+  const { saveContact, saveNotes, sendEmail, addStaff, isSaving } =
+    useContactInfo({
+      userId: contactUser?.id,
+    });
 
   if (!isOpen || !conversation) return null;
   return (
@@ -40,14 +35,14 @@ const ContactInfoSidebar = ({
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         <ContactProfile contactUser={contactUser} />
-          <ContactActions onAddStaff={addStaff} />
-        
+        <ContactActions onAddStaff={addStaff} />
+
         <ContactTabs
           onSaveContact={saveContact}
           onSaveNotes={saveNotes}
           onSendEmail={sendEmail}
         />
-        
+
         {isSaving && (
           <div className="text-center text-sm text-muted-foreground">
             Đang lưu...
