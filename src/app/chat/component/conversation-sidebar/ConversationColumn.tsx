@@ -1,7 +1,8 @@
-import { ConversationListHeader } from "./ConversationListHeader";
+import { Conversation } from "@/hooks/data/cs/useCS";
 import { ConversationList } from "./ConversationList";
 import { ConversationListFooter } from "./ConversationListFooter";
-import { Conversation } from "@/hooks/data/useCS";
+import { ConversationListHeader } from "./ConversationListHeader";
+
 
 interface ConversationColumnProps {
   conversations: Conversation[];
@@ -13,8 +14,15 @@ interface ConversationColumnProps {
   onStatusChange: (status: "all" | "unread" | "read") => void;
   selectedPlatform: string;
   onPlatformChange: (platformId: string) => void;
-  onNewConversation?: () => void;
-  onSettings?: () => void;
+  onNewConversation: () => void;
+  onSettings: () => void;
+  // New filter props
+  employeeFilter: string;
+  onEmployeeFilterChange: (filter: string) => void;
+  timeFilter: string;
+  onTimeFilterChange: (filter: string) => void;
+  phoneFilter: string;
+  onPhoneFilterChange: (filter: string) => void;
 }
 
 export const ConversationColumn = ({
@@ -29,11 +37,15 @@ export const ConversationColumn = ({
   onPlatformChange,
   onNewConversation,
   onSettings,
+  employeeFilter = "all",
+  onEmployeeFilterChange = () => {},
+  timeFilter = "all",
+  onTimeFilterChange = () => {},
+  phoneFilter = "all",
+  onPhoneFilterChange = () => {},
 }: ConversationColumnProps) => {
-  const hasActiveFilters = 
-    searchQuery !== "" || 
-    filterStatus !== "all" || 
-    selectedPlatform !== "all";
+  const hasActiveFilters =
+    searchQuery !== "" || filterStatus !== "all" || selectedPlatform !== "all";
 
   const totalUnread = conversations.reduce(
     (sum, conv) => sum + (conv.unreadMessagesCount || 0),
@@ -41,8 +53,14 @@ export const ConversationColumn = ({
   );
 
   return (
-    <div className="flex flex-col items-center justify-center max-w-[20vw] flex-shrink-0">
+    <div className="flex flex-col items-center justify-center  max-w-[20vw] flex-shrink-0">
       <ConversationListHeader
+        employeeFilter={employeeFilter}
+        onEmployeeFilterChange={onEmployeeFilterChange}
+        timeFilter={timeFilter}
+        onTimeFilterChange={onTimeFilterChange}
+        phoneFilter={phoneFilter}
+        onPhoneFilterChange={onPhoneFilterChange}
         searchQuery={searchQuery}
         onSearchChange={onSearchChange}
         filterStatus={filterStatus}

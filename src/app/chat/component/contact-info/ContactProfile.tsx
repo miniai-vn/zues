@@ -1,9 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Conversation } from "@/data/mockChatData";
+import { Customer } from "@/hooks/data/useCustomers";
 
 interface ContactProfileProps {
-  contactUser: Conversation['participants'][0] | undefined;
+  contactUser?: Customer;
 }
 
 export const ContactProfile = ({ contactUser }: ContactProfileProps) => {
@@ -18,11 +18,7 @@ export const ContactProfile = ({ contactUser }: ContactProfileProps) => {
         </AvatarFallback>
       </Avatar>
       <h2 className="font-semibold text-lg">{contactUser.name}</h2>
-      <p className="text-sm text-muted-foreground">
-        {contactUser.status === "online"
-          ? "Đang hoạt động"
-          : "Không hoạt động"}
-      </p>
+
       <Badge variant="outline" className="mt-2">
         VIP Customer
       </Badge>

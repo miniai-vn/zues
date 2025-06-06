@@ -2,6 +2,7 @@ import { useChatArea } from "@/hooks/data/useChatArea";
 import { MessageCircle } from "lucide-react";
 import { ChatHeader, EmptyState, MessageInput, MessageList } from "./chat-area";
 import ContactInfoSidebar from "./ContactInfoSidebar";
+import { ConversationType } from "@/hooks/data/cs/useCS";
 
 interface ChatAreaProps {
   conversationId?: number;
@@ -55,11 +56,21 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
           onEmojiPicker={handleEmojiPicker}
         />
       </div>
-      {/* <ContactInfoSidebar
-        conversation={conversation}
-        isOpen={showContactInfo}
-        onClose={() => toggleContactInfo()}
-      /> */}
+      {conversation?.type !== ConversationType.GROUP && (
+        <div className="border-l bg-background">
+          <ContactInfoSidebar
+            conversation={conversation}
+            customerId={
+              conversation?.members?.find(
+                (m: { participantType: string }) =>
+                  m.participantType === "customer"
+              )?.customerId
+            }
+            isOpen={showContactInfo}
+            onClose={() => toggleContactInfo()}
+          />
+        </div>
+      )}
     </div>
   );
 };

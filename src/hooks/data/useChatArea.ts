@@ -1,4 +1,4 @@
-import { Message, useCS } from "@/hooks/data/useCS";
+import { Message, useCS } from "@/hooks/data/cs/useCS";
 import { mockUsers } from "@/data/mockChatData";
 import { useEffect, useState } from "react";
 

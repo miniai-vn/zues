@@ -1,4 +1,4 @@
-import { useCS } from "@/hooks/data/useCS";
+import { useCS } from "@/hooks/data/cs/useCS";
 import { useState } from "react";
 import {
   PlatformList,
@@ -27,12 +27,16 @@ const ConversationSidebar = ({
     filters.channelType || "all"
   );
 
+  // New filter states
+  const [employeeFilter, setEmployeeFilter] = useState("all");
+  const [timeFilter, setTimeFilter] = useState("all");
+  const [phoneFilter, setPhoneFilter] = useState("all");
+
   const handlePlatformChange = (platformId: string) => {
     setSelectedPlatform(platformId);
     updateFilters({
       channelType: platformId === "all" ? undefined : platformId,
     });
-    console.log("Platform changed to:", filters);
   };
 
   const handleStatusChange = (status: "all" | "unread" | "read") => {
@@ -45,19 +49,48 @@ const ConversationSidebar = ({
     updateFilters({ search: e.target.value || undefined });
   };
 
-  const totalUnreadCount = PLATFORMS.filter(
-    (platform) => platform.id !== "all"
-  ).reduce((sum, platform) => sum + platform.unreadCount, 0);
+  const handleEmployeeFilterChange = (filter: string) => {
+    setEmployeeFilter(filter);
+    // You can also update global filters if needed
+    // updateFilters({ employeeTag: filter === "all" ? undefined : filter });
+  };
+
+  const handleTimeFilterChange = (filter: string) => {
+    setTimeFilter(filter);
+    // You can also update global filters if needed
+    // updateFilters({ timeRange: filter === "all" ? undefined : filter });
+  };
+
+  const handlePhoneFilterChange = (filter: string) => {
+    setPhoneFilter(filter);
+    // You can also update global filters if needed
+    // updateFilters({ phoneStatus: filter === "all" ? undefined : filter });
+  };
+
+  const handleNewConversation = () => {
+    // Implement new conversation logic
+    console.log("New conversation clicked");
+  };
+
+  const handleSettings = () => {
+    // Implement settings logic
+    console.log("Settings clicked");
+  };
 
   if (isLoadingConversations) {
-    return <></>;
+    return (
+      <div className="flex h-full border-r">
+        <div className="w-16 border-r bg-gray-50/50 animate-pulse"></div>
+        <div className="max-w-[30vw] flex-shrink-0 animate-pulse bg-gray-50/30"></div>
+      </div>
+    );
   }
+
   return (
     <div className="flex h-full border-r">
       <PlatformList
         selectedPlatform={selectedPlatform}
         onPlatformChange={handlePlatformChange}
-        totalUnreadCount={totalUnreadCount}
       />
       <ConversationColumn
         conversations={conversations}
@@ -69,6 +102,14 @@ const ConversationSidebar = ({
         onStatusChange={handleStatusChange}
         selectedPlatform={selectedPlatform}
         onPlatformChange={handlePlatformChange}
+        onNewConversation={handleNewConversation}
+        onSettings={handleSettings}
+        employeeFilter={employeeFilter}
+        onEmployeeFilterChange={handleEmployeeFilterChange}
+        timeFilter={timeFilter}
+        onTimeFilterChange={handleTimeFilterChange}
+        phoneFilter={phoneFilter}
+        onPhoneFilterChange={handlePhoneFilterChange}
       />
     </div>
   );

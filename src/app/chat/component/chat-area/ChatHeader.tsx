@@ -22,15 +22,11 @@ export const ChatHeader = ({
   isGroup = false,
   participantCount = 0,
 }: ChatHeaderProps) => {
-  const defaultAvatar =
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
-
   return (
     <div className="border-b p-4 flex items-center justify-between bg-background">
-      {/* Left side - Conversation info */}
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversationAvatar ?? defaultAvatar} />
+          <AvatarImage src={conversationAvatar} />
           <AvatarFallback>
             {conversationName?.charAt(0)?.toUpperCase() || "?"}
           </AvatarFallback>

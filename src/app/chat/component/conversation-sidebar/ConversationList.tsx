@@ -1,6 +1,7 @@
-import { Conversation } from "@/hooks/data/useCS";
+import { Conversation } from "@/hooks/data/cs/useCS";
 import { MessageCircle } from "lucide-react";
 import { ConversationItem } from "./ConversationItem";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -18,8 +19,6 @@ export const ConversationList = ({
   hasActiveFilters,
   conversations,
 }: ConversationListProps) => {
-    // const { conversations } = useCS();
-  //   console.log("ConversationList conversations", conversations);
   const getEmptyStateMessage = () => {
     if (hasActiveFilters) {
       return {
@@ -36,7 +35,7 @@ export const ConversationList = ({
   const emptyState = getEmptyStateMessage();
 
   return (
-    <div className="flex-1 overflow-y-auto w-full">
+    <ScrollArea className="flex-1 w-full">
       <div className="space-y-1 p-2">
         {conversations.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
@@ -55,6 +54,6 @@ export const ConversationList = ({
           ))
         )}
       </div>
-    </div>
+    </ScrollArea>
   );
 };

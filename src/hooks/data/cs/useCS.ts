@@ -3,8 +3,13 @@ import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { useToast } from "../use-toast";
+import { useToast } from "../../use-toast";
 import { ApiResponse } from "@/utils";
+
+export enum ConversationType {
+  DIRECT = "direct",
+  GROUP = "group",
+}
 
 export type Message = {
   id?: number;
@@ -29,7 +34,7 @@ export type Participant = {
 export type Conversation = {
   id: number;
   name: string;
-  type: string;
+  type: ConversationType;
   channelId?: number;
   avatar: string;
   channelType?: string;
@@ -78,13 +83,9 @@ export type PaginatedConversations = {
 };
 
 const useCS = ({ id }: { id?: number } = {}) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const { toast } = useToast();
   const [filters, setFilters] = useState<ConversationQueryParams>({});
-
-  console.log("useCS filters", filters);
-  console.log("useCS searchQuery", searchQuery);
 
   const updateFilters = useCallback(
     (newFilters: Partial<ConversationQueryParams>) => {
@@ -124,7 +125,7 @@ const useCS = ({ id }: { id?: number } = {}) => {
     isFetching: isLoadingConversations,
     error: queryError,
   } = useQuery({
-    queryKey: ["conversation-query", filters.channelType, searchQuery],
+    queryKey: ["conversation-query", filters],
     queryFn: async () => {
       try {
         const response = await axiosInstance.get("/api/conversations/query", {
@@ -275,30 +276,6 @@ const useCS = ({ id }: { id?: number } = {}) => {
     },
   });
 
-  // Helper functions
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleCreateConversation = (data: CreateConversationDto) => {
-    createConversation(data);
-  };
-
-  const handleUpdateConversation = (
-    id: number,
-    data: UpdateConversationDto
-  ) => {
-    updateConversation({ id, data });
-  };
-
-  const handleDeleteConversation = (id: number) => {
-    deleteConversation(id);
-  };
-
-  const handleAddParticipants = (id: number, participantIds: string[]) => {
-    addParticipants({ id, data: { participantIds } });
-  };
-
   return {
     fullInfoConversationWithMessages: messagesData,
     conversations,
@@ -316,19 +293,11 @@ const useCS = ({ id }: { id?: number } = {}) => {
     addParticipantsError,
     queryError,
     refetchMessages,
-    handleSearchChange,
-    handleCreateConversation,
-    handleUpdateConversation,
-    handleDeleteConversation,
-    handleAddParticipants,
     createConversation,
     updateConversation,
     deleteConversation,
     addParticipants,
-    searchQuery,
-    setSearchQuery,
 
-    // filters,
     filters,
     updateFilters,
     resetFilters,

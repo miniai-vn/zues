@@ -189,10 +189,23 @@ const useChannels = ({
     },
   });
 
+  const { data: channelsWithUnreadMessage } = useQuery({
+    queryKey: ["channels", "unead", departmentId],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/api/channels/unread-count`);
+      return res.data as {
+        type: string;
+        totalUnreadMessages: number;
+      }[];
+    },
+    refetchOnWindowFocus: false,
+  });
+
   return {
     channels: channelData?.items || [],
     totalCount: channelData?.totalCount || 0,
     page: channelData?.page || page,
+    channelsWithUnreadMessage,
     updateChannelStatus,
     limit: channelData?.limit || limit,
     isFetchingChannels,

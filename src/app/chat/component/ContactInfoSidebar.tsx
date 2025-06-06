@@ -6,9 +6,12 @@ import {
   ContactActions,
   ContactTabs,
 } from "./contact-info";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import useCustomers from "@/hooks/data/useCustomers";
 
 interface ContactInfoSidebarProps {
   conversation: Conversation | null;
+  customerId?: string;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -16,25 +19,24 @@ interface ContactInfoSidebarProps {
 const ContactInfoSidebar = ({
   conversation,
   isOpen,
+  customerId,
   onClose,
 }: ContactInfoSidebarProps) => {
-  const currentUserId = "1";
-  const contactUser = conversation?.participants.find(
-    (p) => p.id !== currentUserId
-  );
-
+  const { customer } = useCustomers({
+    id: customerId,
+  });
   const { saveContact, saveNotes, sendEmail, addStaff, isSaving } =
     useContactInfo({
-      userId: contactUser?.id,
+      userId: customer?.id,
     });
 
   if (!isOpen || !conversation) return null;
   return (
-    <div className="w-80 h-[100vh] overflow-y-auto border-l bg-background flex flex-col">
+    <div className="w-80 h-[100vh]  border-l bg-background flex flex-col">
       <ContactHeader onClose={onClose} />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        <ContactProfile contactUser={contactUser} />
+      <ScrollArea className="flex-1  p-4 space-y-6">
+        <ContactProfile contactUser={customer} />
         <ContactActions onAddStaff={addStaff} />
 
         <ContactTabs
@@ -48,7 +50,7 @@ const ContactInfoSidebar = ({
             Đang lưu...
           </div>
         )}
-      </div>
+      </ScrollArea>
     </div>
   );
 };

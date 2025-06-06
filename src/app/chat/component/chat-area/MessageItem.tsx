@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Message } from "@/hooks/data/useCS";
+import { Message } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
 
 interface MessageItemProps {
@@ -17,6 +17,7 @@ export const MessageItem = ({
   senderName,
   senderAvatar,
 }: MessageItemProps) => {
+  console.log(senderName);
   const formatMessageTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString([], {
       hour: "2-digit",
@@ -24,7 +25,8 @@ export const MessageItem = ({
     });
   };
 
-  const defaultAvatar = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
+  const defaultAvatar =
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
 
   return (
     <div
@@ -51,24 +53,22 @@ export const MessageItem = ({
         )}
       >
         {/* Sender name for received messages */}
-        {!isOwnMessage && showSenderName && senderName && (
+        {!isOwnMessage && (
           <p className="text-xs text-muted-foreground font-medium">
             {senderName}
           </p>
         )}
-        
+
         {/* Message bubble */}
         <div
           className={cn(
             "rounded-lg px-3 py-2 text-sm break-words",
-            isOwnMessage
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted"
+            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted"
           )}
         >
           {message.content}
         </div>
-        
+
         {/* Timestamp */}
         <p className="text-xs text-muted-foreground">
           {formatMessageTime(message.createdAt)}
