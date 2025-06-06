@@ -3,7 +3,6 @@ export { ContactProfile } from './ContactProfile';
 export { ContactActions } from './ContactActions';
 export { ContactInfo } from './ContactInfo';
 export { ContactNotes } from './ContactNotes';
-export { ContactOrders } from './ContactOrders';
 export { ContactFiles } from './ContactFiles';
 export { ContactTabs } from './ContactTabs';
 // export { useContactInfo } from './useContactInfo';

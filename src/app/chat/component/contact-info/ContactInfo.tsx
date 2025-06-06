@@ -1,23 +1,39 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone } from "lucide-react";
+import { MapPin, Phone, Mail, Save } from "lucide-react";
 import { useState } from "react";
 
 interface ContactInfoProps {
+  id?: string;
   initialPhone?: string;
   initialEmail?: string;
   initialAddress?: string;
-  onSave?: (data: { phone: string; email: string; address: string }) => void;
-  onSendEmail?: () => void;
+  onSave?: ({
+    id,
+    data,
+  }: {
+    id?: string;
+    data: {
+      phone: string;
+      email: string;
+      address: string;
+    };
+  }) => void;
 }
 
 export const ContactInfo = ({
+  id,
   initialPhone = "",
   initialEmail = "",
   initialAddress = "",
   onSave,
-  onSendEmail,
 }: ContactInfoProps) => {
   const [phoneNumber, setPhoneNumber] = useState(initialPhone);
   const [email, setEmail] = useState(initialEmail);
@@ -26,17 +42,9 @@ export const ContactInfo = ({
   const handleSaveContact = () => {
     const contactData = { phone: phoneNumber, email, address };
     if (onSave) {
-      onSave(contactData);
+      onSave({ id, data: contactData });
     } else {
       console.log("Saving contact information:", contactData);
-    }
-  };
-
-  const handleSendEmail = () => {
-    if (onSendEmail) {
-      onSendEmail();
-    } else {
-      console.log("Opening email client...");
     }
   };
 
@@ -46,50 +54,54 @@ export const ContactInfo = ({
         <CardHeader>
           <CardTitle className="text-sm flex items-center gap-2">
             <Phone className="h-4 w-4" />
-            Liên hệ
+            Thông tin liên hệ
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <Input
-            placeholder="Nhập số điện thoại"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-          <Input
-            placeholder="Nhập email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button
-            size="sm"
-            variant="outline"
-            className="w-full"
-            onClick={handleSendEmail}
-          >
-            Gửi email
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+              <Phone className="h-3 w-3" />
+              <span>Số điện thoại</span>
+            </div>
+            <Input
+              placeholder="Nhập số điện thoại"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+              <Mail className="h-3 w-3" />
+              <span>Email</span>
+            </div>
+            <Input
+              placeholder="Nhập email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+              <MapPin className="h-3 w-3" />
+              <span>Địa chỉ</span>
+            </div>
+            <Input
+              placeholder="Nhập địa chỉ"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex flex-col space-y-2">
+          <Button onClick={handleSaveContact} className="w-full" size="sm">
+            <Save className="h-4 w-4 mr-2" />
+            Lưu thông tin
           </Button>
-        </CardContent>
+        </CardFooter>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
-            Địa chỉ
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input
-            placeholder="Nhập địa chỉ"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </CardContent>
-      </Card>
-
-      <Button onClick={handleSaveContact} className="w-full">
-        Lưu thông tin
-      </Button>
     </div>
   );
 };

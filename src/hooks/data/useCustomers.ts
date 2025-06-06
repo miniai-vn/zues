@@ -10,6 +10,10 @@ export interface Customer {
   shopId?: string;
   avatar?: string;
   channelId?: number;
+  address?: string;
+  phone?: string;
+  email?: string;
+  notes?: string;
   shop?: {
     id: string;
     name: string;
@@ -123,7 +127,11 @@ const useCustomers = ({ query = {}, id }: UseCustomersProps = {}) => {
       data,
     }: {
       id: string;
-      data: UpdateCustomerDto;
+      data: {
+        phone?: string;
+        email?: string;
+        address?: string;
+      };
     }) => {
       const res = await axiosInstance.put(`/api/customers/${id}`, data);
       return res.data;
