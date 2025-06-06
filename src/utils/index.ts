@@ -10,3 +10,8 @@ export const convertBytesToMB = (bytes: number, decimalPlaces = 2) => {
   // Trả về chuỗi có định dạng
   return `${mb} MB`;
 };
+
+export type ApiResponse<T> = {
+  message: string;
+  data: T;
+};

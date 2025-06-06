@@ -1,0 +1,338 @@
+"use client";
+import { axiosInstance } from "@/configs";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { useToast } from "../use-toast";
+import { ApiResponse } from "@/utils";
+
+export type Message = {
+  id?: number;
+  content: string;
+  createdAt: string;
+  senderId: string;
+  senderType: string;
+  sender?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+};
+
+export type Participant = {
+  id: string;
+  name: string;
+  avatar?: string;
+  role?: string;
+};
+
+export type Conversation = {
+  id: number;
+  name: string;
+  type: string;
+  channelId?: number;
+  avatar: string;
+  channelType?: string;
+  isGroup?: boolean;
+  unreadCount?: number;
+  lastestMessage?: string;
+  unreadMessagesCount: number;
+  participants?: Participant[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export interface ConversationQueryParams {
+  type?: string;
+  name?: string;
+  channelId?: number;
+  userId?: string;
+  search?: string;
+  channelType?: string;
+  shopId?: string;
+}
+
+export type CreateConversationDto = {
+  name: string;
+  type: string;
+  channelId?: number;
+  channelType?: string;
+  participantIds?: string[];
+};
+
+export type UpdateConversationDto = {
+  name?: string;
+  type?: string;
+};
+
+export type AddParticipantsDto = {
+  participantIds: string[];
+};
+
+export type PaginatedConversations = {
+  conversations: Conversation[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+const useCS = ({ id }: { id?: number } = {}) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const { toast } = useToast();
+  const [filters, setFilters] = useState<ConversationQueryParams>({});
+
+  console.log("useCS filters", filters);
+  console.log("useCS searchQuery", searchQuery);
+
+  const updateFilters = useCallback(
+    (newFilters: Partial<ConversationQueryParams>) => {
+      setFilters((prev) => ({ ...prev, ...newFilters }));
+    },
+    []
+  );
+
+  const resetFilters = useCallback(() => {
+    setFilters({});
+  }, []);
+
+  // Get messages for a specific conversation
+  const {
+    data: messagesData,
+    isFetching: isLoadingMessages,
+    refetch: refetchMessages,
+    error: fetchMessagesError,
+  } = useQuery({
+    queryKey: ["conversation-messages", id],
+    queryFn: async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/conversations/${id}/messages`
+        );
+        return response.data;
+      } catch (error) {
+        throw new Error("Failed to fetch messages");
+      }
+    },
+    enabled: !!id,
+  });
+
+  // Create new conversation
+  const {
+    data: conversations,
+    isFetching: isLoadingConversations,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["conversation-query", filters.channelType, searchQuery],
+    queryFn: async () => {
+      try {
+        const response = await axiosInstance.get("/api/conversations/query", {
+          params: {
+            ...filters,
+          },
+        });
+        return response.data || [];
+      } catch (error) {
+        throw new Error("Failed to fetch conversations");
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const {
+    mutate: createConversation,
+    isPending: isCreatingConversation,
+    error: createConversationError,
+  } = useMutation({
+    mutationFn: async (data: CreateConversationDto) => {
+      const response = await axiosInstance.post<ApiResponse<Conversation>>(
+        "/api/conversations",
+        data
+      );
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Tạo cuộc trò chuyện thành công",
+        description: `Cuộc trò chuyện "${data.name}" đã được tạo`,
+        duration: 3000,
+      });
+    },
+    onError: (error) => {
+      console.error("Error creating conversation:", error);
+      toast({
+        title: "Tạo cuộc trò chuyện thất bại",
+        description: "Không thể tạo cuộc trò chuyện mới",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  // Update conversation
+  const {
+    mutate: updateConversation,
+    isPending: isUpdatingConversation,
+    error: updateConversationError,
+  } = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: UpdateConversationDto;
+    }) => {
+      const response = await axiosInstance.put<ApiResponse<Conversation>>(
+        `/api/conversations/${id}`,
+        data
+      );
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Cập nhật thành công",
+        description: `Cuộc trò chuyện "${data.name}" đã được cập nhật`,
+        duration: 3000,
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating conversation:", error);
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Không thể cập nhật cuộc trò chuyện",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  // Delete conversation
+  const {
+    mutate: deleteConversation,
+    isPending: isDeletingConversation,
+    error: deleteConversationError,
+  } = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await axiosInstance.delete<ApiResponse<{ id: number }>>(
+        `/api/conversations/${id}`
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Xóa cuộc trò chuyện thành công",
+        description: "Cuộc trò chuyện đã được xóa",
+        duration: 3000,
+      });
+      router.push("/chat");
+    },
+    onError: (error) => {
+      console.error("Error deleting conversation:", error);
+      toast({
+        title: "Xóa cuộc trò chuyện thất bại",
+        description: "Không thể xóa cuộc trò chuyện",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  // Add participants to conversation
+  const {
+    mutate: addParticipants,
+    isPending: isAddingParticipants,
+    error: addParticipantsError,
+  } = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: AddParticipantsDto;
+    }) => {
+      const response = await axiosInstance.post<ApiResponse<Conversation>>(
+        `/api/conversations/${id}/participants`,
+        data
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Thêm thành viên thành công",
+        description: "Đã thêm thành viên vào cuộc trò chuyện",
+        duration: 3000,
+      });
+    },
+    onError: (error) => {
+      console.error("Error adding participants:", error);
+      toast({
+        title: "Thêm thành viên thất bại",
+        description: "Không thể thêm thành viên vào cuộc trò chuyện",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  // Helper functions
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleCreateConversation = (data: CreateConversationDto) => {
+    createConversation(data);
+  };
+
+  const handleUpdateConversation = (
+    id: number,
+    data: UpdateConversationDto
+  ) => {
+    updateConversation({ id, data });
+  };
+
+  const handleDeleteConversation = (id: number) => {
+    deleteConversation(id);
+  };
+
+  const handleAddParticipants = (id: number, participantIds: string[]) => {
+    addParticipants({ id, data: { participantIds } });
+  };
+
+  return {
+    fullInfoConversationWithMessages: messagesData,
+    conversations,
+    isLoadingMessages,
+    isCreatingConversation,
+    isUpdatingConversation,
+    isDeletingConversation,
+    isLoadingConversations,
+
+    isAddingParticipants,
+    fetchMessagesError,
+    createConversationError,
+    updateConversationError,
+    deleteConversationError,
+    addParticipantsError,
+    queryError,
+    refetchMessages,
+    handleSearchChange,
+    handleCreateConversation,
+    handleUpdateConversation,
+    handleDeleteConversation,
+    handleAddParticipants,
+    createConversation,
+    updateConversation,
+    deleteConversation,
+    addParticipants,
+    searchQuery,
+    setSearchQuery,
+
+    // filters,
+    filters,
+    updateFilters,
+    resetFilters,
+  };
+};
+
+export { useCS };
