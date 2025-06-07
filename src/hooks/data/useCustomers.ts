@@ -13,7 +13,7 @@ export interface Customer {
   address?: string;
   phone?: string;
   email?: string;
-  notes?: string;
+  note?: string;
   shop?: {
     id: string;
     name: string;
@@ -131,6 +131,7 @@ const useCustomers = ({ query = {}, id }: UseCustomersProps = {}) => {
         phone?: string;
         email?: string;
         address?: string;
+        note?: string;
       };
     }) => {
       const res = await axiosInstance.put(`/api/customers/${id}`, data);

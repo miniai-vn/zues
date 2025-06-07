@@ -1,10 +1,8 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Conversation } from "@/data/mockChatData";
 import useCustomers from "@/hooks/data/useCustomers";
-import {
-  ContactProfile,
-  ContactTabs
-} from "./contact-info";
+import { ContactProfile, ContactTabs } from "./contact-info";
+import { LoadingSpinner } from "@/components/Loading";
 
 interface ContactInfoSidebarProps {
   conversation: Conversation | null;
@@ -17,7 +15,6 @@ const ContactInfoSidebar = ({
   conversation,
   isOpen,
   customerId,
-  onClose,
 }: ContactInfoSidebarProps) => {
   const { customer, updateCustomer } = useCustomers({
     id: customerId,
@@ -28,10 +25,7 @@ const ContactInfoSidebar = ({
     <div className="w-80 h-[100vh]  border-l bg-background flex flex-col">
       <ScrollArea className="flex-1  p-4 space-y-6">
         <ContactProfile contactUser={customer} />
-        <ContactTabs
-          customer={customer}
-          onSaveContact={updateCustomer}
-        />
+        <ContactTabs customer={customer} onSaveContact={updateCustomer} />
       </ScrollArea>
     </div>
   );

@@ -1,8 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Customer } from "@/hooks/data/useCustomers";
 import { ContactInfo } from "./ContactInfo";
 import { ContactNotes } from "./ContactNotes";
-import { ContactFiles } from "./ContactFiles";
-import { Customer } from "@/hooks/data/useCustomers";
 
 interface ContactTabsProps {
   customer?: Customer;
@@ -12,18 +11,12 @@ interface ContactTabsProps {
       phone?: string;
       email?: string;
       address?: string;
+      note?: string;
     };
   }) => void;
-  onSaveNotes?: (notes: string) => void;
-  onSendEmail?: () => void;
 }
 
-export const ContactTabs = ({
-  customer,
-  onSaveContact,
-  onSaveNotes,
-  onSendEmail,
-}: ContactTabsProps) => {
+export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
   // Handler that connects ContactInfo's onSave to updateCustomer
   const handleSaveContact = ({
     id,
@@ -48,19 +41,11 @@ export const ContactTabs = ({
     }
   };
 
-  // Handler for saving notes
-  const handleSaveNotes = (notes: string) => {
-    if (onSaveNotes && customer?.id) {
-      onSaveNotes(notes);
-    }
-  };
-
   return (
     <Tabs defaultValue="info" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="info">Thông tin</TabsTrigger>
         <TabsTrigger value="notes">Ghi chú</TabsTrigger>
-        <TabsTrigger value="files">Tệp tin</TabsTrigger>
       </TabsList>
 
       <TabsContent value="info" className="space-y-4">
@@ -74,13 +59,19 @@ export const ContactTabs = ({
 
       <TabsContent value="notes" className="space-y-4">
         <ContactNotes
-          initialNotes={customer?.notes || ""}
-          onSave={handleSaveNotes}
+          initialNotes={customer?.note || ""}
+          id={customer?.id}
+          onSave={({ id, data }) => {
+            if (onSaveContact && customer?.id) {
+              onSaveContact({
+                id: customer.id,
+                data: {
+                  note: data.note,
+                },
+              });
+            }
+          }}
         />
-      </TabsContent>
-
-      <TabsContent value="files" className="space-y-4">
-        <ContactFiles />
       </TabsContent>
     </Tabs>
   );

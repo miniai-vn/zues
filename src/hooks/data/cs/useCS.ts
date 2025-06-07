@@ -82,7 +82,10 @@ export type PaginatedConversations = {
   totalPages: number;
 };
 
-const useCS = ({ id }: { id?: number } = {}) => {
+const useCS = ({
+  id,
+  conversationId,
+}: { id?: number; conversationId?: number } = {}) => {
   const router = useRouter();
   const { toast } = useToast();
   const [filters, setFilters] = useState<ConversationQueryParams>({});
@@ -109,20 +112,21 @@ const useCS = ({ id }: { id?: number } = {}) => {
     queryFn: async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/conversations/${id}/messages`
+          `/api/conversations/${conversationId}/messages`
         );
         return response.data;
       } catch (error) {
         throw new Error("Failed to fetch messages");
       }
     },
-    enabled: !!id,
+    enabled: !!conversationId,
   });
 
   // Create new conversation
   const {
     data: conversations,
     isFetching: isLoadingConversations,
+    refetch: refetchConversations,
     error: queryError,
   } = useQuery({
     queryKey: ["conversation-query", filters],
@@ -276,7 +280,44 @@ const useCS = ({ id }: { id?: number } = {}) => {
     },
   });
 
+  const { mutateAsync: markReadConversation } = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await axiosInstance.put<ApiResponse<Conversation>>(
+        `/api/conversations/${id}/mark-read`
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      refetchMessages();
+      // refetchChannelsWithUnreadMessages();
+    },
+    onError: (error) => {
+      console.error("Error marking conversation as read:", error);
+      toast({
+        title: "Đánh dấu đã đọc thất bại",
+        description: "Không thể đánh dấu cuộc trò chuyện là đã đọc",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+  const {
+    data: channelsWithUnreadMessage,
+    refetch: refetchChannelsWithUnreadMessages,
+  } = useQuery({
+    queryKey: ["channels", "unead"],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/api/channels/unread-count`);
+      return res.data as {
+        type: string;
+        totalUnreadMessages: number;
+      }[];
+    },
+    refetchOnWindowFocus: false,
+  });
+
   return {
+    channelsWithUnreadMessage,
     fullInfoConversationWithMessages: messagesData,
     conversations,
     isLoadingMessages,
@@ -284,7 +325,7 @@ const useCS = ({ id }: { id?: number } = {}) => {
     isUpdatingConversation,
     isDeletingConversation,
     isLoadingConversations,
-
+    markReadConversation,
     isAddingParticipants,
     fetchMessagesError,
     createConversationError,
@@ -297,7 +338,7 @@ const useCS = ({ id }: { id?: number } = {}) => {
     updateConversation,
     deleteConversation,
     addParticipants,
-
+    refetchConversations,
     filters,
     updateFilters,
     resetFilters,

@@ -17,7 +17,7 @@ export const ConversationItem = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors border-l-2",
+        "flex items-center w-full gap-3 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors border-l-2",
         isSelected ? "bg-accent border-l-primary" : "border-l-transparent"
       )}
       onClick={onClick}

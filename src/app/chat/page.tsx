@@ -1,10 +1,7 @@
 "use client";
 
-import ChatLayout from "./component/ChatLayout";
+import ConversationCsPage from "./component";
 
-const Index = () => {
-  
-  return <ChatLayout />;
-};
-
-export default Index;
+export default function ChatPage() {
+  return <ConversationCsPage />;
+}

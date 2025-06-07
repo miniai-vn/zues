@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import useChannels from "@/hooks/data/useChannels";
+import { useCS } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
 
 // Platform data structure - This could be moved to a shared types/data file
@@ -86,15 +86,19 @@ export const PLATFORMS = [
 
 interface PlatformListProps {
   selectedPlatform: string;
+  channelsWithUnreadMessage?: {
+    type: string;
+    totalUnreadMessages: number;
+  }[];
   onPlatformChange: (platformId: string) => void;
 }
 
 export const PlatformList = ({
   selectedPlatform,
   onPlatformChange,
+  channelsWithUnreadMessage,
 }: PlatformListProps) => {
-  const { channelsWithUnreadMessage } = useChannels();
-
+  // const { channelsWithUnreadMessage } = useCS();
   // Function to get unread count for a specific platform
   const getUnreadCount = (platformId: string) => {
     if (platformId === "all") {

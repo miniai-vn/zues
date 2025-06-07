@@ -55,7 +55,6 @@ export default function CreateOrUpdateForm() {
 
   const onSubmit = async (data: createDepartment | updateDepartment) => {
     try {
-      debugger;
     } catch (error) {
       throw new Error("Error submitting form");
     } finally {

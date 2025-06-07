@@ -1,22 +1,27 @@
 import { useCS } from "@/hooks/data/cs/useCS";
 import { useState } from "react";
-import {
-  PlatformList,
-  ConversationColumn,
-  PLATFORMS,
-} from "./conversation-sidebar";
+import ChatArea from "./ChatArea";
+import { ConversationColumn, PlatformList } from "./conversation-sidebar";
 
 interface ConversationSidebarProps {
   selectedConversationId?: number;
-  onSelectConversationId: (conversationId: number) => void;
+  onSelectConversationId?: (conversationId: number) => void;
 }
 
-const ConversationSidebar = ({
-  selectedConversationId,
-  onSelectConversationId,
-}: ConversationSidebarProps) => {
-  const { filters, updateFilters, conversations, isLoadingConversations } =
-    useCS();
+const ConversationCsPage = ({}: ConversationSidebarProps) => {
+  const [selectedConversationId, setSelectedConversation] = useState<number>();
+
+  const {
+    filters,
+    updateFilters,
+    conversations,
+    isLoadingConversations,
+    markReadConversation,
+    channelsWithUnreadMessage,
+    fullInfoConversationWithMessages: messages,
+  } = useCS({
+    conversationId: selectedConversationId,
+  });
 
   // Use filters from global state if available
   const [searchQuery, setSearchQuery] = useState(filters.search || "");
@@ -79,40 +84,46 @@ const ConversationSidebar = ({
 
   if (isLoadingConversations) {
     return (
-      <div className="flex h-full border-r">
-        <div className="w-16 border-r bg-gray-50/50 animate-pulse"></div>
-        <div className="max-w-[30vw] flex-shrink-0 animate-pulse bg-gray-50/30"></div>
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-full border-r">
-      <PlatformList
-        selectedPlatform={selectedPlatform}
-        onPlatformChange={handlePlatformChange}
-      />
-      <ConversationColumn
-        conversations={conversations}
-        selectedConversationId={selectedConversationId}
-        onSelectConversation={onSelectConversationId}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        filterStatus={filterStatus}
-        onStatusChange={handleStatusChange}
-        selectedPlatform={selectedPlatform}
-        onPlatformChange={handlePlatformChange}
-        onNewConversation={handleNewConversation}
-        onSettings={handleSettings}
-        employeeFilter={employeeFilter}
-        onEmployeeFilterChange={handleEmployeeFilterChange}
-        timeFilter={timeFilter}
-        onTimeFilterChange={handleTimeFilterChange}
-        phoneFilter={phoneFilter}
-        onPhoneFilterChange={handlePhoneFilterChange}
-      />
+    <div className="min-h-screen flex w-full bg-background">
+      <div className="flex h-full border-r">
+        <PlatformList
+          channelsWithUnreadMessage={channelsWithUnreadMessage}
+          selectedPlatform={selectedPlatform}
+          onPlatformChange={handlePlatformChange}
+        />
+        <ConversationColumn
+          conversations={conversations}
+          selectedConversationId={selectedConversationId}
+          onSelectConversation={(conversationId: number) => {
+            setSelectedConversation(conversationId);
+            markReadConversation(conversationId);
+          }}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          filterStatus={filterStatus}
+          onStatusChange={handleStatusChange}
+          selectedPlatform={selectedPlatform}
+          onPlatformChange={handlePlatformChange}
+          onNewConversation={handleNewConversation}
+          onSettings={handleSettings}
+          employeeFilter={employeeFilter}
+          onEmployeeFilterChange={handleEmployeeFilterChange}
+          timeFilter={timeFilter}
+          onTimeFilterChange={handleTimeFilterChange}
+          phoneFilter={phoneFilter}
+          onPhoneFilterChange={handlePhoneFilterChange}
+        />
+      </div>
+      <ChatArea messages={messages?.messages} />
     </div>
   );
 };
 
-export default ConversationSidebar;
+export default ConversationCsPage;

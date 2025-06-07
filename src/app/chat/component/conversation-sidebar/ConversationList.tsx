@@ -1,7 +1,6 @@
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { MessageCircle } from "lucide-react";
 import { ConversationItem } from "./ConversationItem";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -35,7 +34,7 @@ export const ConversationList = ({
   const emptyState = getEmptyStateMessage();
 
   return (
-    <ScrollArea className="flex-1 w-full">
+    <div className="flex-1 w-full overflow-y-auto">
       <div className="space-y-1 p-2">
         {conversations.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
@@ -54,6 +53,6 @@ export const ConversationList = ({
           ))
         )}
       </div>
-    </ScrollArea>
+    </div>
   );
 };

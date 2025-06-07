@@ -1,29 +1,25 @@
-import { useChatArea } from "@/hooks/data/useChatArea";
+import { useChatArea } from "@/hooks/data/cs/useChatArea";
 import { MessageCircle } from "lucide-react";
-import { ChatHeader, EmptyState, MessageInput, MessageList } from "./chat-area";
-import ContactInfoSidebar from "./ContactInfoSidebar";
-import { ConversationType } from "@/hooks/data/cs/useCS";
+import { ChatHeader, EmptyState, Message, MessageInput, MessageList } from "./chat-area";
 
 interface ChatAreaProps {
-  conversationId?: number;
+  messages?: Message[];
+  currentUserId?: string;
 }
 
-const ChatArea = ({ conversationId }: ChatAreaProps) => {
+const ChatArea = ({ messages = [], currentUserId = "1" }: ChatAreaProps) => {
   const {
-    conversation,
-    messages,
-    currentUserId,
+    messages: chatMessages,
+    currentUserId: userId,
     showContactInfo,
     sendMessage,
     getUserById,
     toggleContactInfo,
-    handleAttachFile,
-    handleEmojiPicker,
     handleMoreOptions,
-  } = useChatArea({ conversationId });
+  } = useChatArea({ messages, currentUserId });
 
-  // Show empty state if no conversation is selected
-  if (!conversationId) {
+  // Show empty state if no messages (or you can adjust this logic as needed)
+  if (!messages || messages.length === 0) {
     return (
       <EmptyState
         title="Select a conversation"
@@ -37,40 +33,23 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     <div className="flex-1 flex">
       <div className="flex-1 flex flex-col">
         <ChatHeader
-          conversationName={conversation?.name}
-          conversationAvatar={conversation?.avatar}
+          // You may need to pass conversationName/conversationAvatar from props or context
+          conversationName=""
+          conversationAvatar=""
           showContactInfo={showContactInfo}
           onToggleContactInfo={toggleContactInfo}
           onMoreOptions={handleMoreOptions}
         />
 
         <MessageList
-          messages={messages}
-          currentUserId={currentUserId}
+          messages={chatMessages}
+          currentUserId={userId}
           getUserById={getUserById}
         />
 
-        <MessageInput
-          onSendMessage={sendMessage}
-          onAttachFile={handleAttachFile}
-          onEmojiPicker={handleEmojiPicker}
-        />
+        <MessageInput onSendMessage={sendMessage} />
       </div>
-      {conversation?.type !== ConversationType.GROUP && (
-        <div className="border-l bg-background">
-          <ContactInfoSidebar
-            conversation={conversation}
-            customerId={
-              conversation?.members?.find(
-                (m: { participantType: string }) =>
-                  m.participantType === "customer"
-              )?.customerId
-            }
-            isOpen={showContactInfo}
-            onClose={() => toggleContactInfo()}
-          />
-        </div>
-      )}
+      {/* Remove ContactInfoSidebar if you don't have conversation context */}
     </div>
   );
 };

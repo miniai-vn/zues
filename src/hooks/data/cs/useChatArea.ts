@@ -3,26 +3,23 @@ import { mockUsers } from "@/data/mockChatData";
 import { useEffect, useState } from "react";
 
 interface UseChatAreaProps {
-  conversationId?: number;
+  messages?: Message[];
   currentUserId?: string;
 }
 
 export const useChatArea = ({
-  conversationId,
+  messages: propMessages = [],
   currentUserId = "1",
 }: UseChatAreaProps) => {
-  const { fullInfoConversationWithMessages } = useCS({ id: conversationId });
   const [messages, setMessages] = useState<Message[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
 
-  // Update messages when conversation data changes
+  // Update messages when propMessages changes
   useEffect(() => {
-    if (fullInfoConversationWithMessages) {
-      setMessages(fullInfoConversationWithMessages.messages);
-    } else {
-      setMessages([]);
+    if (propMessages && propMessages.length > 0) {
+      setMessages(propMessages);
     }
-  }, [fullInfoConversationWithMessages]);
+  }, [propMessages]);
 
   // Send a new message
   const sendMessage = (content: string) => {
@@ -69,11 +66,10 @@ export const useChatArea = ({
 
   return {
     // Data
-    conversation: fullInfoConversationWithMessages,
     messages,
     currentUserId,
     showContactInfo,
-    
+
     // Actions
     sendMessage,
     getUserById,
@@ -81,7 +77,7 @@ export const useChatArea = ({
     handleAttachFile,
     handleEmojiPicker,
     handleMoreOptions,
-    
+
     // State setters (for advanced usage)
     setShowContactInfo,
   };

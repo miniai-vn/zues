@@ -1,8 +1,8 @@
+import { useCS } from "@/hooks/data/cs/useCS";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { ConversationList } from "./ConversationList";
 import { ConversationListFooter } from "./ConversationListFooter";
 import { ConversationListHeader } from "./ConversationListHeader";
-
 
 interface ConversationColumnProps {
   conversations: Conversation[];
@@ -44,6 +44,7 @@ export const ConversationColumn = ({
   phoneFilter = "all",
   onPhoneFilterChange = () => {},
 }: ConversationColumnProps) => {
+
   const hasActiveFilters =
     searchQuery !== "" || filterStatus !== "all" || selectedPlatform !== "all";
 
@@ -74,7 +75,10 @@ export const ConversationColumn = ({
       <ConversationList
         conversations={conversations}
         selectedConversationId={selectedConversationId}
-        onSelectConversation={onSelectConversation}
+        onSelectConversation={(conversationId) => {
+          // markReadConversation(conversationId);
+          onSelectConversation(conversationId);
+        }}
         hasActiveFilters={hasActiveFilters}
         searchQuery={searchQuery}
         filterStatus={filterStatus}
