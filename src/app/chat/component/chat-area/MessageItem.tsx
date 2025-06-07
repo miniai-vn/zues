@@ -17,7 +17,6 @@ export const MessageItem = ({
   senderName,
   senderAvatar,
 }: MessageItemProps) => {
-  console.log(senderName);
   const formatMessageTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString([], {
       hour: "2-digit",

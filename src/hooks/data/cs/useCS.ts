@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useToast } from "../../use-toast";
 import { ApiResponse } from "@/utils";
+import { Tag } from "./useTags";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -43,6 +44,7 @@ export type Conversation = {
   lastestMessage?: string;
   unreadMessagesCount: number;
   participants?: Participant[];
+  tags?: Tag[];
   createdAt?: string;
   updatedAt?: string;
 };
@@ -132,7 +134,7 @@ const useCS = ({
     queryKey: ["conversation-query", filters],
     queryFn: async () => {
       try {
-        const response = await axiosInstance.get("/api/conversations/query", {
+        const response = await axiosInstance.get("/api/conversations", {
           params: {
             ...filters,
           },
@@ -289,7 +291,8 @@ const useCS = ({
     },
     onSuccess: () => {
       refetchMessages();
-      // refetchChannelsWithUnreadMessages();
+      refetchChannelsWithUnreadMessages();
+      refetchConversations();
     },
     onError: (error) => {
       console.error("Error marking conversation as read:", error);

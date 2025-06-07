@@ -14,7 +14,6 @@ export const useChatArea = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
 
-  // Update messages when propMessages changes
   useEffect(() => {
     if (propMessages && propMessages.length > 0) {
       setMessages(propMessages);
@@ -78,7 +77,6 @@ export const useChatArea = ({
     handleEmojiPicker,
     handleMoreOptions,
 
-    // State setters (for advanced usage)
     setShowContactInfo,
   };
 };

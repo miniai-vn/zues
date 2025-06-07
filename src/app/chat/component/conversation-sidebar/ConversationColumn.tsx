@@ -1,5 +1,7 @@
-import { useCS } from "@/hooks/data/cs/useCS";
 import { Conversation } from "@/hooks/data/cs/useCS";
+import { Tag } from "@/hooks/data/cs/useTags";
+import React, { useState } from "react";
+import TagManagementDialog from "../tag-manager/DialogTag";
 import { ConversationList } from "./ConversationList";
 import { ConversationListFooter } from "./ConversationListFooter";
 import { ConversationListHeader } from "./ConversationListHeader";
@@ -16,7 +18,6 @@ interface ConversationColumnProps {
   onPlatformChange: (platformId: string) => void;
   onNewConversation: () => void;
   onSettings: () => void;
-  // New filter props
   employeeFilter: string;
   onEmployeeFilterChange: (filter: string) => void;
   timeFilter: string;
@@ -44,6 +45,31 @@ export const ConversationColumn = ({
   phoneFilter = "all",
   onPhoneFilterChange = () => {},
 }: ConversationColumnProps) => {
+  // Tag dialog state
+  const [tagDialogOpen, setTagDialogOpen] = useState(false);
+  const [selectedConversationForDialog, setSelectedConversationForDialog] =
+    useState<Conversation | null>(null);
+
+  // Handler to open tag dialog for a conversation
+  const handleOpenTagDialog = (conversation: Conversation) => {
+    setSelectedConversationForDialog(conversation);
+    setTagDialogOpen(true);
+  };
+  // Handler to update tags (implement your logic here)
+  const handleUpdateTags = (conversationId: number, tags: Tag[]) => {
+    // TODO: Update tags for the conversation (API call or state update)
+    // Example: updateConversationTags(conversationId, tags);
+    console.log("Updating tags for conversation:", conversationId, tags);
+    setTagDialogOpen(false);
+  };
+
+  // Get tags for the selected conversation (implement your logic here)
+  const getConversationTags = (conversationId?: number): Tag[] => {
+    const conversation = conversations.find(
+      (conv) => conv.id === conversationId
+    );
+    return conversation?.tags || [];
+  };
 
   const hasActiveFilters =
     searchQuery !== "" || filterStatus !== "all" || selectedPlatform !== "all";
@@ -75,20 +101,24 @@ export const ConversationColumn = ({
       <ConversationList
         conversations={conversations}
         selectedConversationId={selectedConversationId}
-        onSelectConversation={(conversationId) => {
-          // markReadConversation(conversationId);
-          onSelectConversation(conversationId);
-        }}
+        onSelectConversation={onSelectConversation}
         hasActiveFilters={hasActiveFilters}
         searchQuery={searchQuery}
         filterStatus={filterStatus}
         selectedPlatform={selectedPlatform}
+        onTagDialog={handleOpenTagDialog}
       />
 
       <ConversationListFooter
         totalConversations={conversations.length}
         displayedConversations={conversations.length}
         totalUnread={totalUnread}
+      />      <TagManagementDialog
+        open={tagDialogOpen}
+        onOpenChange={setTagDialogOpen}
+        conversationId={selectedConversationForDialog?.id}
+        currentTags={getConversationTags(selectedConversationForDialog?.id)}
+        onUpdateTags={handleUpdateTags}
       />
     </div>
   );

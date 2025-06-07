@@ -36,8 +36,6 @@ export const ContactNotes = ({
           note: note,
         },
       });
-    } else {
-      console.log("Saving notes:", note);
     }
   };
 

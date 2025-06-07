@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Info, MoreVertical } from "lucide-react";
+import { Info, MoreVertical, Tag, Users } from "lucide-react";
 
 interface ChatHeaderProps {
   conversationName?: string;
@@ -11,6 +11,8 @@ interface ChatHeaderProps {
   onMoreOptions?: () => void;
   isGroup?: boolean;
   participantCount?: number;
+  setShowTagManagement: (open: boolean) => void;
+  setShowParticipantManagement?: (open: boolean) => void; // Make this optional for flexibility
 }
 
 export const ChatHeader = ({
@@ -21,6 +23,8 @@ export const ChatHeader = ({
   onMoreOptions,
   isGroup = false,
   participantCount = 0,
+  setShowTagManagement,
+  setShowParticipantManagement, // <-- Destructure here
 }: ChatHeaderProps) => {
   return (
     <div className="border-b p-4 flex items-center justify-between bg-background">
@@ -48,6 +52,22 @@ export const ChatHeader = ({
 
       {/* Right side - Action buttons */}
       <div className="flex items-center gap-2">
+        {setShowParticipantManagement && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setShowParticipantManagement(true)}
+          >
+            <Users className="h-4 w-4" />
+          </Button>
+        )}
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setShowTagManagement(true)}
+        >
+          <Tag className="h-4 w-4" />
+        </Button>
         <Button
           size="sm"
           variant="ghost"

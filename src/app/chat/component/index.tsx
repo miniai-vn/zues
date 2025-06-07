@@ -18,11 +18,11 @@ const ConversationCsPage = ({}: ConversationSidebarProps) => {
     isLoadingConversations,
     markReadConversation,
     channelsWithUnreadMessage,
-    fullInfoConversationWithMessages: messages,
+    fullInfoConversationWithMessages: conversation,
   } = useCS({
     conversationId: selectedConversationId,
   });
-
+  console.log("conversation", conversation);
   // Use filters from global state if available
   const [searchQuery, setSearchQuery] = useState(filters.search || "");
   const [filterStatus, setFilterStatus] = useState<"all" | "unread" | "read">(
@@ -121,7 +121,13 @@ const ConversationCsPage = ({}: ConversationSidebarProps) => {
           onPhoneFilterChange={handlePhoneFilterChange}
         />
       </div>
-      <ChatArea messages={messages?.messages} />
+      <ChatArea
+        conversationName={conversation?.name}
+        conversationAvatar={conversation?.avatar}
+        customerId={conversation?.senderId}
+        messages={conversation?.messages}
+        tags={conversation?.tags}
+      />
     </div>
   );
 };

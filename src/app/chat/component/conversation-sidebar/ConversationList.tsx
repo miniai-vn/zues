@@ -10,6 +10,8 @@ interface ConversationListProps {
   searchQuery: string;
   filterStatus: "all" | "unread" | "read";
   selectedPlatform: string;
+  onTagDialog?: (conversation: Conversation) => void;
+  onParticipantDialog?: (conversation: Conversation) => void;
 }
 
 export const ConversationList = ({
@@ -17,6 +19,8 @@ export const ConversationList = ({
   onSelectConversation,
   hasActiveFilters,
   conversations,
+  onTagDialog,
+  onParticipantDialog,
 }: ConversationListProps) => {
   const getEmptyStateMessage = () => {
     if (hasActiveFilters) {
@@ -43,12 +47,14 @@ export const ConversationList = ({
             <p className="text-xs">{emptyState.subtitle}</p>
           </div>
         ) : (
-          conversations.map((conversation: any) => (
+          conversations.map((conversation) => (
             <ConversationItem
               key={conversation.id}
               conversation={conversation}
               isSelected={selectedConversationId === conversation.id}
               onClick={() => onSelectConversation(conversation.id)}
+              onTagDialog={onTagDialog ? () => onTagDialog(conversation) : undefined}
+              onParticipantDialog={onParticipantDialog ? () => onParticipantDialog(conversation) : undefined}
             />
           ))
         )}
