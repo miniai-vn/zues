@@ -1,5 +1,4 @@
 import { useChatArea } from "@/hooks/data/cs/useChatArea";
-import useTags, { Tag } from "@/hooks/data/cs/useTags";
 import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 import {
@@ -12,26 +11,22 @@ import {
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "./participients-manager";
 import TagManagementSheet from "./tag-manager";
+import { Conversation } from "@/hooks/data/cs/useCS";
+import { Tag } from "@/hooks/data/cs/useTags";
 
 interface ChatAreaProps {
-  messages?: Message[];
-  tags?: Tag[];
-  currentUserId?: string;
-  customerId?: string;
-  conversationName?: string;
-  conversationAvatar?: string;
-  conversationId?: number;
+  conversation: Conversation;
 }
 
-const ChatArea = ({
-  messages = [],
-  customerId,
-  currentUserId = "1",
-  conversationName = "",
-  conversationAvatar = "",
-  conversationId = 1,
-  tags = [], // Using the tags prop directly
-}: ChatAreaProps) => {
+const ChatArea = ({ conversation }: ChatAreaProps) => {
+  // Extract data from conversation object
+  const conversationId = conversation?.id;
+  const conversationName = conversation?.name || "";
+  const conversationAvatar = conversation?.avatar || "";
+  const customerId = conversation?.senderId;
+  const tags = conversation?.tags || [];
+  const currentUserId = "1"; // You might want to get this from auth context
+
   const {
     messages: chatMessages,
     currentUserId: userId,
@@ -40,21 +35,24 @@ const ChatArea = ({
     getUserById,
     toggleContactInfo,
     handleMoreOptions,
-  } = useChatArea({ messages, currentUserId });
+  } = useChatArea({
+    messages: conversation?.messages as Message[],
+    currentUserId,
+  });
 
   const [showParticipantManagement, setShowParticipantManagement] =
     useState(false);
   const [showTagManagement, setShowTagManagement] = useState(false);
 
   const handleUpdateTags = (conversationId: number, updatedTags: Tag[]) => {
-    // TODO: Implement API call to update conversation tags
+    // TODO: Update the conversation tags
+    // You might want to call a mutation to update the conversation
+    // or trigger a parent component callback
     console.log("Updating tags for conversation:", conversationId, updatedTags);
-    // You might want to call a parent component callback here to update the tags
-    // or trigger a refetch of the conversation data
   };
 
   // Show empty state if no messages (or you can adjust this logic as needed)
-  if (!messages || messages.length === 0) {
+  if (!conversation?.messages || conversation?.messages.length === 0) {
     return (
       <EmptyState
         title="Select a conversation"
@@ -93,6 +91,7 @@ const ChatArea = ({
       />
 
       <ParticipantManagementSheet
+        conversationId={conversationId}
         open={showParticipantManagement}
         onOpenChange={setShowParticipantManagement}
       />
@@ -101,7 +100,7 @@ const ChatArea = ({
         open={showTagManagement}
         onOpenChange={setShowTagManagement}
         conversationId={conversationId}
-        currentTags={tags} // Using the tags prop directly
+        currentTags={tags}
         onUpdateTags={handleUpdateTags}
       />
     </div>

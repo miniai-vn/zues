@@ -70,6 +70,18 @@ const useAuth = ({
     refetchOnReconnect: false,
   });
 
+  const { data: usersWithCs, isFetching: isFetchingUsersWithCs } = useQuery({
+    queryKey: ["user", "withCs"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/users", {
+        params: { search },
+      });
+      return (response.data.data as User[]) ?? [];
+    },
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
   const { mutateAsync: signIn, isSuccess } = useMutation({
     mutationFn: async ({
       username,
@@ -202,6 +214,8 @@ const useAuth = ({
 
   return {
     users,
+    usersWithCs,
+    isFetchingUsersWithCs,
     isFetching,
     user,
     isPendingCreateUser,
@@ -221,4 +235,29 @@ const useAuth = ({
   };
 };
 
-export { useAuth };
+// Add this new hook specifically for CS users with filters
+export const useUsersWithCs = ({
+  search = "",
+  type = undefined,
+  enabled = true,
+}: {
+  search?: string;
+  type?: string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: ["user", "withCs", { search, type }],
+    queryFn: async () => {
+      const params: Record<string, string> = {};
+
+      if (search) params.search = search;
+      if (type) params.type = type;
+
+      const response = await axiosInstance.get("/api/users", { params });
+      return (response.data.data as User[]) ?? [];
+    },
+    enabled,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+};

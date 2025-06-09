@@ -6,6 +6,8 @@ import { useCallback, useState } from "react";
 import { useToast } from "../../use-toast";
 import { ApiResponse } from "@/utils";
 import { Tag } from "./useTags";
+import { Customer } from "../useCustomers";
+import { User } from "../useAuth";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -24,12 +26,26 @@ export type Message = {
     avatar?: string;
   };
 };
-
+export type MemberSettings = {
+  notifications_enabled: boolean;
+  role: string;
+  isMuted: boolean;
+};
 export type Participant = {
-  id: string;
-  name: string;
-  avatar?: string;
-  role?: string;
+  id: number;
+  conversationId: number;
+  memberType: "customer" | "user";
+  customerId?: string;
+  userId?: string;
+  leftAt?: string;
+  memberSettings: MemberSettings;
+  createdAt: string;
+  systemId: string;
+  updatedAt: string;
+  name?: string; // For customer, this is the customer's name
+  avatar?: string; // For customer, this is the customer's avatar
+  user?: User;
+  role?: string; // Keep this for backward compatibility
 };
 
 export type Conversation = {
@@ -44,6 +60,9 @@ export type Conversation = {
   lastestMessage?: string;
   unreadMessagesCount: number;
   participants?: Participant[];
+  members?: Participant[];
+  senderId?: string;
+  messages?: Message[];
   tags?: Tag[];
   createdAt?: string;
   updatedAt?: string;
@@ -121,6 +140,7 @@ const useCS = ({
         throw new Error("Failed to fetch messages");
       }
     },
+    retry: false,
     enabled: !!conversationId,
   });
 
@@ -144,7 +164,9 @@ const useCS = ({
         throw new Error("Failed to fetch conversations");
       }
     },
+    enabled: !id,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 
   const {
@@ -317,6 +339,7 @@ const useCS = ({
       }[];
     },
     refetchOnWindowFocus: false,
+    retry: false,
   });
 
   return {

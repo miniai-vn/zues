@@ -18,6 +18,7 @@ export interface Tag {
 }
 
 export interface TagQueryParamsDto {
+  type?: TagType;
   shopId?: string;
   name?: string;
   page?: number;
@@ -54,7 +55,7 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
       const response = await axiosInstance.get("/api/tags", {
         params: queryParams,
       });
-      return response.data;
+      return response.data as Tag[];
     },
     enabled: !tagId, // Only fetch list if not fetching a single tag by ID
   });
@@ -84,16 +85,13 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
     error: createTagError,
   } = useMutation({
     mutationFn: async (data: Tag) => {
-      const response = await axiosInstance.post<ApiResponse<Tag>>(
-        "/api/tags",
-        data
-      );
-      return response.data.data;
+      const response = await axiosInstance.post("/api/tags", data);
+      return response.data;
     },
     onSuccess: (data) => {
       toast({
         title: "Tag Created",
-        description: `Tag "${data.name}" has been successfully created.`,
+        description: `Tag  has been successfully created.`,
       });
       queryClient.invalidateQueries({ queryKey: queryKeyAllTags });
     },
@@ -233,7 +231,7 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
         `/api/conversations/${conversationId}/add-tags`,
         { tagIds }
       );
-      return response.data.data;
+      return response.data;
     },
     onSuccess: (data) => {
       toast({

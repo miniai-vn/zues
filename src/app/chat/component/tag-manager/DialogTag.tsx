@@ -31,7 +31,6 @@ const TagManagementDialog = ({
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("bg-gray-200");
 
-  // Use the useTags hook to fetch tags and get mutation functions
   const {
     tags: availableTags = [],
     isLoadingTags,
@@ -40,14 +39,12 @@ const TagManagementDialog = ({
     refetchTags,
   } = useTags();
 
-  // Update selected tags when currentTags change
   useEffect(() => {
     if (open) {
       setSelectedTags(currentTags);
     }
   }, [currentTags, open]);
 
-  // Color options for new tags
   const colorOptions = [
     "bg-red-200",
     "bg-yellow-200",
@@ -74,12 +71,10 @@ const TagManagementDialog = ({
   const handleAddNewTag = () => {
     if (!newTagName.trim()) return;
 
-    // Check if tag already exists in available tags
     const existingTag = availableTags.find(
       (tag) => tag.name.toLowerCase() === newTagName.toLowerCase()
     );
     if (existingTag) {
-      // If tag exists, just add it to selected tags if not already selected
       const isAlreadySelected = selectedTags.some(
         (tag) => tag.id === existingTag.id
       );
@@ -90,24 +85,22 @@ const TagManagementDialog = ({
       return;
     }
 
-    // Create new tag using the hook
-    createTag(
-      {
-        name: newTagName.trim(),
-        color: newTagColor,
-        type: TagType.CONVERSATION, // Assuming type is always "conversation"
-      },
-      {
-        onSuccess: (newTag) => {
-          // Add the newly created tag to selected tags
-          setSelectedTags((prev) => [...prev, newTag]);
-          setNewTagName("");
-          setNewTagColor("bg-gray-200");
-          // Refetch tags to update the available tags list
-          refetchTags();
-        },
-      }
-    );
+    // createTag(
+    //   {
+    //     name: newTagName.trim(),
+    //     color: newTagColor,
+    //     type: TagType.CONVERSATION,
+    //   },
+    //   {
+    //     onSuccess: (newTag: Tag) => {
+    //       setSelectedTags((prev) => [...prev, newTag]);
+    //       setNewTagName("");
+    //       setNewTagColor("bg-gray-200");
+
+    //       refetchTags();
+    //     },
+    //   }
+    // );
   };
 
   const handleSave = () => {
@@ -117,13 +110,11 @@ const TagManagementDialog = ({
       return;
     }
 
-    // Call the onUpdateTags callback with the selected tags
     onUpdateTags(conversationId, selectedTags);
     onOpenChange(false);
   };
 
   const handleCancel = () => {
-    // Reset selected tags to the initial currentTags
     setSelectedTags(currentTags);
     setNewTagName("");
     setNewTagColor("bg-gray-200");
