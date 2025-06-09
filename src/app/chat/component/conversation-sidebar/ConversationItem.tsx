@@ -7,15 +7,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Tag } from "lucide-react";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
+import { MoreHorizontal, Tag } from "lucide-react";
 
 interface ConversationItemProps {
   conversation: Conversation;
   isSelected: boolean;
   onClick: () => void;
-  onTagDialog?: () => void;
+  onTagDialog: (conversation: Conversation) => void;
 }
 
 export const ConversationItem = ({
@@ -42,12 +42,8 @@ export const ConversationItem = ({
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <h3 className="font-medium text-sm truncate">{conversation.name}</h3>
-          <span className="text-xs text-muted-foreground">
-            {/* Add timestamp formatting when available */}
-            {/* {formatTime(conversation.lastestMessage.timestamp)} */}
-          </span>
         </div>
 
         <div className="flex items-center justify-between mb-1">
@@ -74,7 +70,10 @@ export const ConversationItem = ({
                 key={tag.id}
                 className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
               >
-                <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: tag.color || "#6b7280" }}
+                />
                 <span className="truncate max-w-16 text-slate-700 dark:text-slate-300">
                   {tag.name}
                 </span>
@@ -88,7 +87,6 @@ export const ConversationItem = ({
           </div>
         )}
       </div>
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -102,7 +100,7 @@ export const ConversationItem = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={onTagDialog}>
+          <DropdownMenuItem onClick={() => onTagDialog(conversation)}>
             <Tag className="h-4 w-4 mr-2" />
             Manage Tags
           </DropdownMenuItem>

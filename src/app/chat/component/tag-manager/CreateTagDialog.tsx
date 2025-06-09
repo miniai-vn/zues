@@ -26,7 +26,7 @@ const CreateTagDialog = ({
   const [tagName, setTagName] = useState("");
   const [selectedColor, setSelectedColor] = useState("#000000");
 
-  const { createTag, isCreatingTag, createTagError } = useTags();
+  const { createTag, isCreatingTag } = useTags();
 
   const colorOptions = [
     "#000000",
@@ -115,12 +115,6 @@ const CreateTagDialog = ({
               ))}
             </div>
           </div>
-
-          {createTagError && (
-            <p className="text-sm text-red-500">
-              Lỗi tạo thẻ: {createTagError.message}
-            </p>
-          )}
 
           <div className="flex justify-end gap-2 pt-4">
             <Button

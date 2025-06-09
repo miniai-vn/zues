@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { useCS } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
 
-// Platform data structure - This could be moved to a shared types/data file
 export const PLATFORMS = [
   {
     id: "all",
@@ -159,7 +158,6 @@ export const PlatformList = ({
                     platform.bgColor
                   )}
                 >
-                  {/* Option 1: Using shadcn/ui Avatar component */}
                   <Avatar className="h-8 w-8">
                     <AvatarImage
                       src={platform.icon}

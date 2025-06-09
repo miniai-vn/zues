@@ -1,10 +1,8 @@
 import { Conversation, useCS } from "@/hooks/data/cs/useCS";
-import { Tag } from "@/hooks/data/cs/useTags";
 import { useState } from "react";
 import TagManagementDialog from "../tag-manager/DialogTag";
 import { ConversationList } from "./ConversationList";
-import { ConversationListFooter } from "./ConversationListFooter";
-import { ConversationListHeader } from "./ConversationListHeader";
+import { ConversationFilter } from "./ConversationFilter";
 import { PlatformList } from "./PlatformList";
 
 interface ConversationColumnProps {
@@ -17,12 +15,12 @@ export const ConversationColumn = ({
   onSelectConversation,
 }: ConversationColumnProps) => {
   const { filters, updateFilters, conversations } = useCS({});
-  console.log("conversations", conversations);
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [selectedConversationForDialog, setSelectedConversationForDialog] =
     useState<Conversation | null>(null);
 
   const handleOpenTagDialog = (conversation: Conversation) => {
+    debugger;
     setSelectedConversationForDialog(conversation);
     setTagDialogOpen(true);
   };
@@ -35,8 +33,8 @@ export const ConversationColumn = ({
           updateFilters({ channelType })
         }
       />
-      <div className="flex flex-col items-center justify-center min-w-[20vw] flex-shrink-0">
-        <ConversationListHeader
+      <div className="flex flex-col items-center justify-center max-w-[24vw] flex-shrink-0">
+        <ConversationFilter
           filters={filters}
           onFiltersChange={updateFilters}
         />
@@ -48,11 +46,12 @@ export const ConversationColumn = ({
           onTagDialog={handleOpenTagDialog}
         />
 
-        {/* <TagManagementDialog
+        <TagManagementDialog
+          currentTags={selectedConversationForDialog?.tags || []}
           open={tagDialogOpen}
           onOpenChange={setTagDialogOpen}
-          conversationId={selectedConversationId}
-        /> */}
+          conversationId={selectedConversationForDialog?.id}
+        />
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ const ConversationCsPage = () => {
       <div className="flex h-full border-r">
         <ConversationColumn
           selectedConversationId={selectedConversationId}
-          onSelectConversation={(conversationId: number) => {
+          onSelectConversation={(conversationId?: number) => {
             setSelectedConversation(conversationId);
             // markReadConversation(conversationId);
           }}

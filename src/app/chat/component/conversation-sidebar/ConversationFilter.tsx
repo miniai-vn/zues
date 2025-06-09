@@ -23,19 +23,19 @@ import { cn } from "@/lib/utils";
 import { Clock, Phone, Plus, Search, Settings, Tag, User } from "lucide-react";
 import { useState } from "react";
 
-interface ConversationListHeaderProps {
+interface ConversationFilterProps {
   filters: ConversationQueryParams;
   onFiltersChange: (filters: Partial<ConversationQueryParams>) => void;
   onNewConversation?: () => void;
   onSettings?: () => void;
 }
 
-export const ConversationListHeader = ({
+export const ConversationFilter = ({
   filters,
   onFiltersChange,
   onNewConversation,
   onSettings,
-}: ConversationListHeaderProps) => {
+}: ConversationFilterProps) => {
   const [activeTab, setActiveTab] = useState(filters.type || "all");
 
   const { tags } = useTags({
@@ -86,9 +86,9 @@ export const ConversationListHeader = ({
     onFiltersChange({ phoneFilter });
   };
 
-  const handleTagChange = (tagId: number | string) => {
+  const handleTagChange = (tagId?: number) => {
     onFiltersChange({
-      tagId: tagId === "all" ? undefined : Number(tagId),
+      tagId: Number(tagId),
     });
   };
 
@@ -197,15 +197,6 @@ export const ConversationListHeader = ({
               align="start"
               className="w-48 max-h-80 overflow-y-auto"
             >
-              <DropdownMenuItem
-                onClick={() => handleTagChange("all")}
-                className={cn(
-                  "flex items-center gap-2",
-                  !filters.tagId && "bg-accent"
-                )}
-              >
-                Tất cả
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               {tags?.map((tag) => (
                 <DropdownMenuItem
@@ -363,4 +354,4 @@ export const ConversationListHeader = ({
   );
 };
 
-export default ConversationListHeader;
+export default ConversationFilter;

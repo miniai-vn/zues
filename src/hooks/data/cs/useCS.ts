@@ -202,7 +202,6 @@ const useCS = ({
         const response = await axiosInstance.get("/api/conversations", {
           params: apiFilters(),
         });
-        console.log("Conversations response:", response);
         return (response?.data || []) as Conversation[];
       } catch (error) {
         throw new Error("Failed to fetch conversations");
@@ -411,6 +410,22 @@ const useCS = ({
     },
   });
 
+  const { mutate: addTags } = useMutation({
+    mutationFn: async ({
+      conversationId,
+      tagIds,
+    }: {
+      conversationId: number;
+      tagIds: number[];
+    }) => {
+      const response = await axiosInstance.post<ApiResponse<Conversation>>(
+        `/api/conversations/${conversationId}/add-tags`,
+        { tagIds }
+      );
+      return response.data.data;
+    },
+  });
+
   return {
     // Data
     channelsWithUnreadMessage,
@@ -441,7 +456,7 @@ const useCS = ({
     deleteConversation,
     addParticipants,
     refetchConversations,
-
+    addTags,
     // Filters
     filters,
     updateFilters,

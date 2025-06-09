@@ -1,12 +1,11 @@
+import { Conversation } from "@/hooks/data/cs/useCS";
 import { MessageCircle } from "lucide-react";
 import { ConversationItem } from "./ConversationItem";
-import { Conversation, useCS } from "@/hooks/data/cs/useCS";
-import { useEffect, useState } from "react";
 
 interface ConversationListProps {
   selectedConversationId?: number;
   onSelectConversationId: (conversationId?: number) => void;
-  onTagDialog?: (conversation: Conversation) => void;
+  onTagDialog: (conversation: Conversation) => void;
   conversations?: Conversation[];
 }
 
@@ -47,9 +46,7 @@ export const ConversationList = ({
               conversation={conversation}
               isSelected={selectedConversationId === conversation.id}
               onClick={() => onSelectConversationId(conversation.id)}
-              onTagDialog={
-                onTagDialog ? () => onTagDialog(conversation) : undefined
-              }
+              onTagDialog={onTagDialog}
             />
           ))
         )}
