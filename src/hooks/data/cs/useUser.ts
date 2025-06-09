@@ -28,7 +28,6 @@ export const useUsersWithCs = ({
       const response = await axiosInstance.get("/api/users", { params });
       return (response.data.data as User[]) ?? [];
     },
-    enabled,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });

@@ -85,21 +85,15 @@ export const PLATFORMS = [
 ];
 
 interface PlatformListProps {
-  selectedPlatform: string;
-  channelsWithUnreadMessage?: {
-    type: string;
-    totalUnreadMessages: number;
-  }[];
-  onPlatformChange: (platformId: string) => void;
+  selectedChannel?: string;
+  onSelectChannel: (platformId: string) => void;
 }
 
 export const PlatformList = ({
-  selectedPlatform,
-  onPlatformChange,
-  channelsWithUnreadMessage,
+  selectedChannel,
+  onSelectChannel,
 }: PlatformListProps) => {
-  // const { channelsWithUnreadMessage } = useCS();
-  // Function to get unread count for a specific platform
+  const { channelsWithUnreadMessage } = useCS({});
   const getUnreadCount = (platformId: string) => {
     if (platformId === "all") {
       return (
@@ -122,10 +116,8 @@ export const PlatformList = ({
       return [];
     }
 
-    // Always include "all" platform
     const allPlatform = PLATFORMS.find((p) => p.id === "all");
 
-    // Include platforms that exist in channelsWithUnreadMessage
     const availablePlatforms = PLATFORMS.filter(
       (platform) =>
         platform.id !== "all" &&
@@ -146,7 +138,7 @@ export const PlatformList = ({
       <div className="p-2 border-b">
         <div className="space-y-2">
           {visiblePlatforms.map((platform) => {
-            const isSelected = selectedPlatform === platform.id;
+            const isSelected = selectedChannel === platform.id;
             const unreadCount = getUnreadCount(platform.id);
 
             return (
@@ -158,7 +150,7 @@ export const PlatformList = ({
                     ? `${platform.bgColor} ${platform.borderColor} shadow-sm`
                     : "hover:bg-white border-transparent hover:border-gray-200"
                 )}
-                onClick={() => onPlatformChange(platform.id)}
+                onClick={() => onSelectChannel(platform.id)}
                 title={`${platform.name} - ${platform.description}`}
               >
                 <div

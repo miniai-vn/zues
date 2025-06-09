@@ -1,4 +1,6 @@
 import { useChatArea } from "@/hooks/data/cs/useChatArea";
+import { useCS } from "@/hooks/data/cs/useCS";
+import { Tag } from "@/hooks/data/cs/useTags";
 import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 import {
@@ -11,16 +13,16 @@ import {
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "./participients-manager";
 import TagManagementSheet from "./tag-manager";
-import { Conversation } from "@/hooks/data/cs/useCS";
-import { Tag } from "@/hooks/data/cs/useTags";
 
 interface ChatAreaProps {
-  conversation: Conversation;
+  conversationId?: number;
 }
 
-const ChatArea = ({ conversation }: ChatAreaProps) => {
+const ChatArea = ({ conversationId }: ChatAreaProps) => {
   // Extract data from conversation object
-  const conversationId = conversation?.id;
+  const { fullInfoConversationWithMessages: conversation } = useCS({
+    conversationId,
+  });
   const conversationName = conversation?.name || "";
   const conversationAvatar = conversation?.avatar || "";
   const customerId = conversation?.senderId;
@@ -80,7 +82,6 @@ const ChatArea = ({ conversation }: ChatAreaProps) => {
           currentUserId={userId}
           getUserById={getUserById}
         />
-
         <MessageInput onSendMessage={sendMessage} />
       </div>
 
@@ -91,7 +92,7 @@ const ChatArea = ({ conversation }: ChatAreaProps) => {
       />
 
       <ParticipantManagementSheet
-        conversationId={conversationId}
+        conversationId={conversationId as number}
         open={showParticipantManagement}
         onOpenChange={setShowParticipantManagement}
       />
@@ -99,7 +100,7 @@ const ChatArea = ({ conversation }: ChatAreaProps) => {
       <TagManagementSheet
         open={showTagManagement}
         onOpenChange={setShowTagManagement}
-        conversationId={conversationId}
+        conversationId={conversationId as number}
         currentTags={tags}
         onUpdateTags={handleUpdateTags}
       />

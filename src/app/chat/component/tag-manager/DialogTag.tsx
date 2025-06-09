@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tag, TagType } from "@/hooks/data/cs/useTags";
 import useTags from "@/hooks/data/cs/useTags";
+import { useCS } from "@/hooks/data/cs/useCS";
 
 interface TagManagementDialogProps {
   open: boolean;
@@ -30,7 +31,10 @@ const TagManagementDialog = ({
   const [selectedTags, setSelectedTags] = useState<Tag[]>(currentTags);
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("bg-gray-200");
-
+  const { fullInfoConversationWithMessages } = useCS({
+    conversationId: conversationId,
+  });
+  currentTags = fullInfoConversationWithMessages?.tags;
   const {
     tags: availableTags = [],
     isLoadingTags,
@@ -39,11 +43,15 @@ const TagManagementDialog = ({
     refetchTags,
   } = useTags();
 
-  useEffect(() => {
-    if (open) {
-      setSelectedTags(currentTags);
-    }
-  }, [currentTags, open]);
+  // useEffect(() => {
+  //   if (
+  //     open &&
+  //     currentTags.length > 0 &&
+  //     JSON.stringify(currentTags) !== JSON.stringify(selectedTags)
+  //   ) {
+  //     setSelectedTags(currentTags);
+  //   }
+  // }, [currentTags, open]);
 
   const colorOptions = [
     "bg-red-200",
@@ -152,7 +160,7 @@ const TagManagementDialog = ({
                       <div className={`w-3 h-3 rounded-full ${tag.color}`} />
                       <span className="text-sm">{tag.name}</span>
                     </div>
-                    {selectedTags.some(
+                    {selectedTags?.some(
                       (selectedTag) => selectedTag.id === tag.id
                     ) && (
                       <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center">

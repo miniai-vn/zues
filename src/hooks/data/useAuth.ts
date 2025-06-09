@@ -78,6 +78,7 @@ const useAuth = ({
       });
       return (response.data.data as User[]) ?? [];
     },
+    enabled: !!user,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -235,29 +236,4 @@ const useAuth = ({
   };
 };
 
-// Add this new hook specifically for CS users with filters
-export const useUsersWithCs = ({
-  search = "",
-  type = undefined,
-  enabled = true,
-}: {
-  search?: string;
-  type?: string;
-  enabled?: boolean;
-}) => {
-  return useQuery({
-    queryKey: ["user", "withCs", { search, type }],
-    queryFn: async () => {
-      const params: Record<string, string> = {};
-
-      if (search) params.search = search;
-      if (type) params.type = type;
-
-      const response = await axiosInstance.get("/api/users", { params });
-      return (response.data.data as User[]) ?? [];
-    },
-    enabled,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-};
+export { useAuth };

@@ -8,11 +8,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import useParticipants from "@/hooks/data/cs/useParticipants";
 import { Crown, Plus, Shield, User, X } from "lucide-react";
 import { useState } from "react";
 import AddParticipantDialog from "./AddparticipantDialog";
-import { Conversation, useCS } from "@/hooks/data/cs/useCS";
-import useParticipants from "@/hooks/data/cs/useParticipants";
 
 interface ParticipantManagementSheetProps {
   open: boolean;

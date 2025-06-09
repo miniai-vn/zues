@@ -8,6 +8,7 @@ import { ApiResponse } from "@/utils";
 import { Tag } from "./useTags";
 import { Customer } from "../useCustomers";
 import { User } from "../useAuth";
+import { DateRange } from "react-day-picker";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -51,7 +52,6 @@ export type Participant = {
 export type Conversation = {
   id: number;
   name: string;
-  type: ConversationType;
   channelId?: number;
   avatar: string;
   channelType?: string;
@@ -69,13 +69,17 @@ export type Conversation = {
 };
 
 export interface ConversationQueryParams {
-  type?: string;
+  type?: "all" | "unread" | "read";
   name?: string;
   channelId?: number;
   userId?: string;
   search?: string;
   channelType?: string;
   shopId?: string;
+  participantIds?: string[];
+  tagId?: number;
+  phoneFilter?: string;
+  dateRange?: DateRange;
 }
 
 export type CreateConversationDto = {
@@ -106,10 +110,26 @@ export type PaginatedConversations = {
 const useCS = ({
   id,
   conversationId,
-}: { id?: number; conversationId?: number } = {}) => {
+  initialFilters = {},
+}: {
+  id?: number;
+  conversationId?: number;
+  initialFilters?: Partial<ConversationQueryParams>;
+} = {}) => {
   const router = useRouter();
   const { toast } = useToast();
-  const [filters, setFilters] = useState<ConversationQueryParams>({});
+
+  // Initialize filters with defaults
+  const [filters, setFilters] = useState<ConversationQueryParams>({
+    type: "all",
+    search: "",
+    channelType: "",
+    participantIds: [],
+    tagId: undefined,
+    phoneFilter: "all",
+    dateRange: undefined,
+    ...initialFilters,
+  });
 
   const updateFilters = useCallback(
     (newFilters: Partial<ConversationQueryParams>) => {
@@ -119,8 +139,79 @@ const useCS = ({
   );
 
   const resetFilters = useCallback(() => {
-    setFilters({});
+    setFilters({
+      type: "all",
+      search: "",
+      channelType: "",
+      participantIds: [],
+      tagId: undefined,
+      phoneFilter: "all",
+      dateRange: undefined,
+    });
   }, []);
+
+  // Transform filters for API call
+  const apiFilters = useCallback(() => {
+    const params: any = {};
+
+    // if (filters.type && filters.type !== "all") {
+    //   params.type = filters.type;
+    // }
+
+    if (filters.search) {
+      params.search = filters.search;
+    }
+
+    if (filters.channelType) {
+      params.channelType = filters.channelType;
+    }
+
+    if (filters.participantIds && filters.participantIds.length > 0) {
+      params.participantIds = filters.participantIds.join(",");
+    }
+
+    if (filters.tagId) {
+      params.tagId = filters.tagId;
+    }
+
+    if (filters.phoneFilter && filters.phoneFilter !== "all") {
+      params.phoneFilter = filters.phoneFilter === "has-phone";
+    }
+
+    if (filters.dateRange?.from) {
+      params.timeFrom = filters.dateRange.from.toISOString();
+    }
+
+    if (filters.dateRange?.to) {
+      params.timeTo = filters.dateRange.to.toISOString();
+    }
+
+    return params;
+  }, [filters]);
+
+  // Get conversations with filters
+  const {
+    data: conversations,
+    isFetching: isLoadingConversations,
+    refetch: refetchConversations,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["conversation-query", filters],
+    queryFn: async () => {
+      try {
+        const response = await axiosInstance.get("/api/conversations", {
+          params: apiFilters(),
+        });
+        console.log("Conversations response:", response);
+        return (response?.data || []) as Conversation[];
+      } catch (error) {
+        throw new Error("Failed to fetch conversations");
+      }
+    },
+    enabled: !id,
+    refetchOnMount: true,
+    // retry: false,
+  });
 
   // Get messages for a specific conversation
   const {
@@ -129,7 +220,7 @@ const useCS = ({
     refetch: refetchMessages,
     error: fetchMessagesError,
   } = useQuery({
-    queryKey: ["conversation-messages", id],
+    queryKey: ["conversation-messages", conversationId],
     queryFn: async () => {
       try {
         const response = await axiosInstance.get(
@@ -144,31 +235,24 @@ const useCS = ({
     enabled: !!conversationId,
   });
 
-  // Create new conversation
+  // Get channels with unread messages
   const {
-    data: conversations,
-    isFetching: isLoadingConversations,
-    refetch: refetchConversations,
-    error: queryError,
+    data: channelsWithUnreadMessage,
+    refetch: refetchChannelsWithUnreadMessages,
   } = useQuery({
-    queryKey: ["conversation-query", filters],
+    queryKey: ["channels", "unread"],
     queryFn: async () => {
-      try {
-        const response = await axiosInstance.get("/api/conversations", {
-          params: {
-            ...filters,
-          },
-        });
-        return response.data || [];
-      } catch (error) {
-        throw new Error("Failed to fetch conversations");
-      }
+      const res = await axiosInstance.get(`/api/channels/unread-count`);
+      return res.data as {
+        type: string;
+        totalUnreadMessages: number;
+      }[];
     },
-    enabled: !id,
     refetchOnWindowFocus: false,
     retry: false,
   });
 
+  // Create new conversation
   const {
     mutate: createConversation,
     isPending: isCreatingConversation,
@@ -326,45 +410,39 @@ const useCS = ({
       });
     },
   });
-  const {
-    data: channelsWithUnreadMessage,
-    refetch: refetchChannelsWithUnreadMessages,
-  } = useQuery({
-    queryKey: ["channels", "unead"],
-    queryFn: async () => {
-      const res = await axiosInstance.get(`/api/channels/unread-count`);
-      return res.data as {
-        type: string;
-        totalUnreadMessages: number;
-      }[];
-    },
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
 
   return {
+    // Data
     channelsWithUnreadMessage,
     fullInfoConversationWithMessages: messagesData,
     conversations,
+
+    // Loading states
     isLoadingMessages,
     isCreatingConversation,
     isUpdatingConversation,
     isDeletingConversation,
     isLoadingConversations,
-    markReadConversation,
     isAddingParticipants,
+
+    // Errors
     fetchMessagesError,
     createConversationError,
     updateConversationError,
     deleteConversationError,
     addParticipantsError,
     queryError,
+
+    // Actions
+    markReadConversation,
     refetchMessages,
     createConversation,
     updateConversation,
     deleteConversation,
     addParticipants,
     refetchConversations,
+
+    // Filters
     filters,
     updateFilters,
     resetFilters,

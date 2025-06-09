@@ -57,7 +57,6 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
       });
       return response.data as Tag[];
     },
-    enabled: !tagId, // Only fetch list if not fetching a single tag by ID
   });
 
   // Get single tag by ID
@@ -160,62 +159,6 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
     },
   });
 
-  // Bulk delete tags
-  const {
-    mutate: bulkDeleteTags,
-    isPending: isBulkDeletingTags,
-    error: bulkDeleteTagsError,
-  } = useMutation<{ deleted: number }, Error, TagBulkDeleteDto>({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.delete<
-        ApiResponse<{ deleted: number }>
-      >("/api/tags", { data }); // For DELETE with body
-      return response.data.data;
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Tags Deleted",
-        description: `${data.deleted} tag(s) have been successfully deleted.`,
-      });
-      queryClient.invalidateQueries({ queryKey: queryKeyAllTags });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error Bulk Deleting Tags",
-        description: error.message || "Could not delete the tags.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Initialize basic tags for a shop
-  const {
-    mutate: initBasicTags,
-    isPending: isInitializingTags,
-    error: initTagsError,
-  } = useMutation<Tag[], Error, string>({
-    mutationFn: async (shopId) => {
-      const response = await axiosInstance.post<ApiResponse<Tag[]>>(
-        `/api/tags/init-basic/${shopId}`
-      );
-      return response.data.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Basic Tags Initialized",
-        description: "Basic tags have been set up for the shop.",
-      });
-      queryClient.invalidateQueries({ queryKey: queryKeyAllTags });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error Initializing Tags",
-        description: error.message || "Could not initialize basic tags.",
-        variant: "destructive",
-      });
-    },
-  });
-
   const {
     mutate: addTagsToConversation,
     isPending: isAddingTagsToConversation,
@@ -260,23 +203,14 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
     isCreatingTag,
     isUpdatingTag,
     isDeletingTag,
-    isBulkDeletingTags,
-    isInitializingTags,
-    // Errors
     fetchTagsError,
     fetchTagError,
     createTagError,
     updateTagError,
     deleteTagError,
-    bulkDeleteTagsError,
-    initTagsError,
-    // Mutations
     createTag,
     updateTag,
     deleteTag,
-    bulkDeleteTags,
-    initBasicTags,
-    // Refetch functions
     refetchTags,
     refetchTag,
   };

@@ -1,29 +1,23 @@
-import { Conversation } from "@/hooks/data/cs/useCS";
 import { MessageCircle } from "lucide-react";
 import { ConversationItem } from "./ConversationItem";
+import { Conversation, useCS } from "@/hooks/data/cs/useCS";
+import { useEffect, useState } from "react";
 
 interface ConversationListProps {
-  conversations: Conversation[];
   selectedConversationId?: number;
-  onSelectConversation: (conversationId: number) => void;
-  hasActiveFilters: boolean;
-  searchQuery: string;
-  filterStatus: "all" | "unread" | "read";
-  selectedPlatform: string;
+  onSelectConversationId: (conversationId?: number) => void;
   onTagDialog?: (conversation: Conversation) => void;
-  onParticipantDialog?: (conversation: Conversation) => void;
+  conversations?: Conversation[];
 }
 
 export const ConversationList = ({
   selectedConversationId,
-  onSelectConversation,
-  hasActiveFilters,
-  conversations,
+  onSelectConversationId,
   onTagDialog,
-  onParticipantDialog,
+  conversations = [],
 }: ConversationListProps) => {
   const getEmptyStateMessage = () => {
-    if (hasActiveFilters) {
+    if (conversations && conversations.length === 0) {
       return {
         title: "No matching conversations",
         subtitle: "Try adjusting your filters",
@@ -40,21 +34,22 @@ export const ConversationList = ({
   return (
     <div className="flex-1 w-full overflow-y-auto">
       <div className="space-y-1 p-2">
-        {conversations.length === 0 ? (
-          <div className="p-6 text-center text-muted-foreground">
+        {conversations?.length === 0 ? (
+          <div className="p-6 text-center text-muted-foreground w-full">
             <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
             <p className="text-sm font-medium mb-1">{emptyState.title}</p>
             <p className="text-xs">{emptyState.subtitle}</p>
           </div>
         ) : (
-          conversations.map((conversation) => (
+          conversations?.map((conversation) => (
             <ConversationItem
               key={conversation.id}
               conversation={conversation}
               isSelected={selectedConversationId === conversation.id}
-              onClick={() => onSelectConversation(conversation.id)}
-              onTagDialog={onTagDialog ? () => onTagDialog(conversation) : undefined}
-              onParticipantDialog={onParticipantDialog ? () => onParticipantDialog(conversation) : undefined}
+              onClick={() => onSelectConversationId(conversation.id)}
+              onTagDialog={
+                onTagDialog ? () => onTagDialog(conversation) : undefined
+              }
             />
           ))
         )}

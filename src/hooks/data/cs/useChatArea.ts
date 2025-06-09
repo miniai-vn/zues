@@ -1,5 +1,5 @@
-import { Message, useCS } from "@/hooks/data/cs/useCS";
 import { mockUsers } from "@/data/mockChatData";
+import { Message } from "@/hooks/data/cs/useCS";
 import { useEffect, useState } from "react";
 
 interface UseChatAreaProps {
