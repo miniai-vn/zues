@@ -12,7 +12,6 @@ const ConversationCsPage = () => {
           selectedConversationId={selectedConversationId}
           onSelectConversation={(conversationId?: number) => {
             setSelectedConversation(conversationId);
-            // markReadConversation(conversationId);
           }}
         />
       </div>

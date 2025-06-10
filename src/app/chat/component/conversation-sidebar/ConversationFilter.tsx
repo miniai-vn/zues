@@ -56,28 +56,28 @@ export const ConversationFilter = ({
   };
 
   const handleEmployeeToggle = (userId: string) => {
-    const currentFilter = filters.participantIds || [];
+    const currentFilter = filters.participantUserIds || [];
     const isSelected = currentFilter.includes(userId);
 
     if (isSelected) {
       onFiltersChange({
-        participantIds: currentFilter.filter((id) => id !== userId),
+        participantUserIds: currentFilter.filter((id) => id !== userId),
       });
     } else {
       onFiltersChange({
-        participantIds: [...currentFilter, userId],
+        participantUserIds: [...currentFilter, userId],
       });
     }
   };
 
   const handleSelectAllEmployees = () => {
-    const currentFilter = filters.participantIds || [];
+    const currentFilter = filters.participantUserIds || [];
 
     if (currentFilter.length === users?.length) {
-      onFiltersChange({ participantIds: [] });
+      onFiltersChange({ participantUserIds: [] });
     } else {
       onFiltersChange({
-        participantIds: users?.map((user) => user.id.toString()) || [],
+        participantUserIds: users?.map((user) => user.id.toString()) || [],
       });
     }
   };
@@ -184,11 +184,9 @@ export const ConversationFilter = ({
                 )}
               >
                 <Tag className="h-3 w-3" />
-                {filters.tagId && (
+                {!!filters.tagId && (
                   <span className="ml-1">
-                    (
-                    {tags?.find((tag) => tag.id === filters.tagId)?.name || "1"}
-                    )
+                    ({tags?.find((tag) => tag.id === filters.tagId)?.name})
                   </span>
                 )}
               </Button>
@@ -197,6 +195,16 @@ export const ConversationFilter = ({
               align="start"
               className="w-48 max-h-80 overflow-y-auto"
             >
+              {/* Add "All" option to clear tag filter */}
+              <DropdownMenuItem
+                onClick={() => handleTagChange(undefined)}
+                className={cn(
+                  "flex items-center gap-2",
+                  !filters.tagId && "bg-accent"
+                )}
+              >
+                Tất cả
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               {tags?.map((tag) => (
                 <DropdownMenuItem
@@ -253,14 +261,14 @@ export const ConversationFilter = ({
                 size="sm"
                 className={cn(
                   "h-7 text-xs gap-1",
-                  (filters.participantIds?.length || 0) > 0 &&
+                  (filters.participantUserIds?.length || 0) > 0 &&
                     "bg-primary/10 border-primary text-primary"
                 )}
               >
                 <User className="h-3 w-3" />
-                {(filters.participantIds?.length || 0) > 0 && (
+                {(filters.participantUserIds?.length || 0) > 0 && (
                   <span className="ml-1">
-                    ({filters.participantIds?.length})
+                    ({filters.participantUserIds?.length})
                   </span>
                 )}
               </Button>
@@ -274,8 +282,8 @@ export const ConversationFilter = ({
                   <Checkbox
                     id="select-all"
                     checked={
-                      (filters.participantIds?.length || 0) === users?.length &&
-                      (users?.length || 0) > 0
+                      (filters.participantUserIds?.length || 0) ===
+                        users?.length && (users?.length || 0) > 0
                     }
                     onCheckedChange={handleSelectAllEmployees}
                   />
@@ -292,7 +300,7 @@ export const ConversationFilter = ({
                     <div key={user.id} className="flex items-center space-x-2">
                       <Checkbox
                         id={`user-${user.id}`}
-                        checked={(filters.participantIds || []).includes(
+                        checked={(filters.participantUserIds || []).includes(
                           user.id.toString()
                         )}
                         onCheckedChange={() =>

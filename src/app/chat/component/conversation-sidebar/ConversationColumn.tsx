@@ -14,7 +14,9 @@ export const ConversationColumn = ({
   selectedConversationId,
   onSelectConversation,
 }: ConversationColumnProps) => {
-  const { filters, updateFilters, conversations } = useCS({});
+  const { filters, updateFilters, conversations, markReadConversation } = useCS(
+    {}
+  );
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [selectedConversationForDialog, setSelectedConversationForDialog] =
     useState<Conversation | null>(null);
@@ -34,15 +36,18 @@ export const ConversationColumn = ({
         }
       />
       <div className="flex flex-col items-center justify-center max-w-[24vw] flex-shrink-0">
-        <ConversationFilter
-          filters={filters}
-          onFiltersChange={updateFilters}
-        />
+        <ConversationFilter filters={filters} onFiltersChange={updateFilters} />
 
         <ConversationList
           conversations={conversations}
           selectedConversationId={selectedConversationId}
-          onSelectConversationId={onSelectConversation}
+          onSelectConversationId={(conversationId?: number) => {
+            onSelectConversation(conversationId);
+            if (conversationId) {
+              markReadConversation(conversationId);
+              
+            }
+          }}
           onTagDialog={handleOpenTagDialog}
         />
 

@@ -76,7 +76,7 @@ export interface ConversationQueryParams {
   search?: string;
   channelType?: string;
   shopId?: string;
-  participantIds?: string[];
+  participantUserIds?: string[];
   tagId?: number;
   phoneFilter?: string;
   dateRange?: DateRange;
@@ -87,7 +87,7 @@ export type CreateConversationDto = {
   type: string;
   channelId?: number;
   channelType?: string;
-  participantIds?: string[];
+  participantUserIds?: string[];
 };
 
 export type UpdateConversationDto = {
@@ -96,7 +96,7 @@ export type UpdateConversationDto = {
 };
 
 export type AddParticipantsDto = {
-  participantIds: string[];
+  participantUserIds: string[];
 };
 
 export type PaginatedConversations = {
@@ -124,7 +124,7 @@ const useCS = ({
     type: "all",
     search: "",
     channelType: "",
-    participantIds: [],
+    participantUserIds: [],
     tagId: undefined,
     phoneFilter: "all",
     dateRange: undefined,
@@ -143,7 +143,7 @@ const useCS = ({
       type: "all",
       search: "",
       channelType: "",
-      participantIds: [],
+      participantUserIds: [],
       tagId: undefined,
       phoneFilter: "all",
       dateRange: undefined,
@@ -166,8 +166,8 @@ const useCS = ({
       params.channelType = filters.channelType;
     }
 
-    if (filters.participantIds && filters.participantIds.length > 0) {
-      params.participantIds = filters.participantIds.join(",");
+    if (filters.participantUserIds && filters.participantUserIds.length > 0) {
+      params.participantUserIds = filters.participantUserIds
     }
 
     if (filters.tagId) {
