@@ -4,6 +4,7 @@ import TagManagementDialog from "../tag-manager/DialogTag";
 import { ConversationList } from "./ConversationList";
 import { ConversationFilter } from "./ConversationFilter";
 import { PlatformList } from "./PlatformList";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
 
 interface ConversationColumnProps {
   selectedConversationId?: number;
@@ -14,15 +15,13 @@ export const ConversationColumn = ({
   selectedConversationId,
   onSelectConversation,
 }: ConversationColumnProps) => {
-  const { filters, updateFilters, conversations, markReadConversation } = useCS(
-    {}
-  );
+  const { filters, updateFilters, markReadConversation } = useCS({});
+  const { conversations } = useCsStore();
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [selectedConversationForDialog, setSelectedConversationForDialog] =
     useState<Conversation | null>(null);
 
   const handleOpenTagDialog = (conversation: Conversation) => {
-    debugger;
     setSelectedConversationForDialog(conversation);
     setTagDialogOpen(true);
   };
@@ -45,7 +44,6 @@ export const ConversationColumn = ({
             onSelectConversation(conversationId);
             if (conversationId) {
               markReadConversation(conversationId);
-              
             }
           }}
           onTagDialog={handleOpenTagDialog}

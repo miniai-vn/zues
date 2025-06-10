@@ -95,6 +95,7 @@ const useAuth = ({
         username,
         password,
       });
+
       return response.data;
     },
     onSuccess: (data) => {

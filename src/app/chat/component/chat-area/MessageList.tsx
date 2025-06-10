@@ -5,20 +5,15 @@ import { MessageItem } from "./MessageItem";
 interface MessageListProps {
   messages: Message[];
   currentUserId: string;
-  getUserById: (
-    userId: string
-  ) => { id: string; name: string; avatar?: string } | undefined;
   autoScroll?: boolean;
 }
 
 export const MessageList = ({
   messages,
   currentUserId,
-  getUserById,
   autoScroll = true,
 }: MessageListProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (autoScroll) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

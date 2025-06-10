@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useCS } from "@/hooks/data/cs/useCS";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
 
 export const PLATFORMS = [
@@ -92,7 +92,7 @@ export const PlatformList = ({
   selectedChannel,
   onSelectChannel,
 }: PlatformListProps) => {
-  const { channelsWithUnreadMessage } = useCS({});
+  const { channelsUnreadCount: channelsWithUnreadMessage } = useCsStore();
   const getUnreadCount = (platformId: string) => {
     if (platformId === "all") {
       return (

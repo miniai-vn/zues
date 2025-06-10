@@ -1,42 +1,23 @@
-"use client";
-import { useEffect, useState, useCallback } from "react";
-import io, { Socket } from "socket.io-client";
-import { useCsStore } from "./data/cs/useCsStore";
-import { Message } from "./data/cs/useCS";
+import { Message } from "@/hooks/data/cs/useCS";
+import { useCallback, useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { useCsStore } from "./useCsStore";
 
-interface UserJoinedEvent {
-  message: string;
-  userId: string;
+interface UseChatAreaProps {
+  currentUserId?: string;
   conversationId: number;
 }
 
-interface TypingEvent {
-  userId: string;
-  conversationId: number;
-  isTyping: boolean;
-}
-
-export function useSocket() {
-  const [socket, setSocket] = useState<Socket | null>(null);
+export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   const [socketChat, setSocketChat] = useState<Socket | null>(null);
   const [isChatConnected, setIsChatConnected] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [showContactInfo, setShowContactInfo] = useState(false);
+  const { messages: test } = useCsStore();
+  const user = localStorage.getItem("user");
+  const currentUser = user ? JSON.parse(user) : undefined;
   useEffect(() => {
-    const socketIo = io(process.env.NEXT_PUBLIC_SOCKET_URL as string);
     const socketChatIo = io(process.env.NEXT_PUBLIC_API_URL as string);
-    // Regular socket connection
-    socketIo.on("connect", () => {
-      console.log("Connected to socket server");
-      setIsConnected(true);
-    });
-
-    socketIo.on("disconnect", () => {
-      setIsConnected(false);
-    });
-
-    setSocket(socketIo);
-
-    // Chat socket connection with event listeners
     socketChatIo.on("connect", () => {
       console.log("Connected to chat socket server");
       setSocketChat(socketChatIo);
@@ -73,25 +54,11 @@ export function useSocket() {
       console.log("Joined conversation:", data);
     });
 
-    // Listen for when other users join the conversation
-    socketChatIo.on("userJoinedConversation", (data: UserJoinedEvent) => {
-      console.log("User joined conversation:", data);
-    });
-
     // Listen for incoming messages
     socketChatIo.on("receiveMessage", (data: Message) => {
       console.log("Received message:", data);
-      // const chatMessages = [
-      //   ...(messages[data.conversationId as number] || []),
-      //   data,
-      // ];
-      // console.log(
-      //   "Updated chat messages:",
-      //   messages[data.conversationId as number] || []
-      // );
-      // setMessages(data.conversationId as number, chatMessages);
-      // const chatMessages = [...(messages[data?.conversationId] || [])];
-      // setMessages(data.conversationId, [...chatMessages, data.message]);
+
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     // Listen for message read events
@@ -115,7 +82,6 @@ export function useSocket() {
     });
 
     return () => {
-      socketIo.disconnect();
       socketChatIo.disconnect();
     };
   }, []);
@@ -150,59 +116,51 @@ export function useSocket() {
     [socketChat]
   );
 
-  // Send typing indicator
-  const sendTypingIndicator = useCallback(
-    (conversationId: number, userId: string, isTyping: boolean) => {
-      if (socketChat) {
-        socketChat.emit("typing", {
-          conversationId,
-          userId,
-          isTyping,
-        });
-      }
-    },
-    [socketChat]
-  );
+  useEffect(() => {
+    joinConversation(conversationId, currentUser.id);
+  }, [socketChat, isChatConnected, conversationId]);
 
-  // Mark messages as read
-  const markAsRead = useCallback(
-    (conversationId: number, userId: string, messageId?: number) => {
-      if (socketChat) {
-        socketChat.emit("markAsRead", {
-          conversationId,
-          userId,
-          messageId,
-        });
-      }
-    },
-    [socketChat]
-  );
-
-  // Validate client connection
-  const validateClient = useCallback(() => {
-    if (socketChat) {
-      socketChat.emit("validateClient");
+  useEffect(() => {
+    if (test) {
+      setMessages(test[conversationId] || []);
     }
-  }, [socketChat]);
+  }, [test, conversationId]);
 
-  // Get server stats
-  const getServerStats = useCallback(() => {
-    if (socketChat) {
-      socketChat.emit("getServerStats");
-    }
-  }, [socketChat]);
+  const toggleContactInfo = () => {
+    setShowContactInfo((prev) => !prev);
+  };
+
+  // Handle attachment upload
+  const handleAttachFile = () => {
+    // TODO: Implement file upload functionality
+    console.log("Attach file clicked");
+  };
+
+  // Handle emoji picker
+  const handleEmojiPicker = () => {
+    // TODO: Implement emoji picker functionality
+    console.log("Emoji picker clicked");
+  };
+
+  // Handle more options
+  const handleMoreOptions = () => {
+    // TODO: Implement more options menu
+    console.log("More options clicked");
+  };
 
   return {
-    socket,
-    socketChat,
-    isConnected,
-    isChatConnected,
-    // Methods
-    joinConversation,
+    // Data
+    messages,
+    currentUserId: currentUser?.id || "",
+    showContactInfo,
+
+    // Actions
     sendMessage,
-    sendTypingIndicator,
-    markAsRead,
-    validateClient,
-    getServerStats,
+    toggleContactInfo,
+    handleAttachFile,
+    handleEmojiPicker,
+    handleMoreOptions,
+
+    setShowContactInfo,
   };
-}
+};

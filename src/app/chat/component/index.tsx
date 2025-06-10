@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ConversationColumn } from "./conversation-sidebar";
 import ChatArea from "./ChatArea";
+import { ConversationColumn } from "./conversation-sidebar";
 
 const ConversationCsPage = () => {
   const [selectedConversationId, setSelectedConversation] = useState<number>();

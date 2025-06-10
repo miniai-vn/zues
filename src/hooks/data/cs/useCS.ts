@@ -1,14 +1,14 @@
 "use client";
 import { axiosInstance } from "@/configs";
+import { ApiResponse } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import { useToast } from "../../use-toast";
-import { ApiResponse } from "@/utils";
-import { Tag } from "./useTags";
-import { Customer } from "../useCustomers";
-import { User } from "../useAuth";
+import { useCallback, useEffect } from "react";
 import { DateRange } from "react-day-picker";
+import { useToast } from "../../use-toast";
+import { User } from "../useAuth";
+import { useCsStore } from "./useCsStore";
+import { Tag } from "./useTags";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -18,6 +18,7 @@ export enum ConversationType {
 export type Message = {
   id?: number;
   content: string;
+  conversationId?: number;
   createdAt: string;
   senderId: string;
   senderType: string;
@@ -119,115 +120,142 @@ const useCS = ({
   const router = useRouter();
   const { toast } = useToast();
 
-  // Initialize filters with defaults
-  const [filters, setFilters] = useState<ConversationQueryParams>({
-    type: "all",
-    search: "",
-    channelType: "",
-    participantUserIds: [],
-    tagId: undefined,
-    phoneFilter: "all",
-    dateRange: undefined,
-    ...initialFilters,
-  });
+  // Store actions and state
+  const {
+    conversations,
+    setConversations,
+    setLoadingConversations,
+    isLoadingConversations,
+    conversationFilters,
+    setConversationFilters,
+    resetConversationFilters,
+    messages,
+    setMessages,
+    setLoadingMessages,
+    isLoadingMessages,
+    channelsUnreadCount,
+    setChannelsUnreadCount,
+    addMessage,
+    markConversationAsRead,
+    setSelectedConversationId,
+    selectedConversationId,
+    getMessagesByConversationId,
+  } = useCsStore();
+
+  // Initialize filters on mount
+  useEffect(() => {
+    if (Object.keys(initialFilters).length > 0) {
+      setConversationFilters(initialFilters);
+    }
+  }, [initialFilters, setConversationFilters]);
 
   const updateFilters = useCallback(
     (newFilters: Partial<ConversationQueryParams>) => {
-      setFilters((prev) => ({ ...prev, ...newFilters }));
+      setConversationFilters(newFilters);
     },
-    []
+    [setConversationFilters]
   );
 
   const resetFilters = useCallback(() => {
-    setFilters({
-      type: "all",
-      search: "",
-      channelType: "",
-      participantUserIds: [],
-      tagId: undefined,
-      phoneFilter: "all",
-      dateRange: undefined,
-    });
-  }, []);
+    resetConversationFilters();
+  }, [resetConversationFilters]);
 
   // Transform filters for API call
   const apiFilters = useCallback(() => {
     const params: any = {};
 
-    // if (filters.type && filters.type !== "all") {
-    //   params.type = filters.type;
-    // }
-
-    if (filters.search) {
-      params.search = filters.search;
+    if (conversationFilters.search) {
+      params.search = conversationFilters.search;
     }
 
-    if (filters.channelType) {
-      params.channelType = filters.channelType;
+    if (
+      conversationFilters.channelType &&
+      conversationFilters.channelType !== "all"
+    ) {
+      params.channelType = conversationFilters.channelType;
     }
 
-    if (filters.participantUserIds && filters.participantUserIds.length > 0) {
-      params.participantUserIds = filters.participantUserIds
+    if (
+      conversationFilters.participantUserIds &&
+      conversationFilters.participantUserIds.length > 0
+    ) {
+      params.participantUserIds = conversationFilters.participantUserIds;
     }
 
-    if (filters.tagId) {
-      params.tagId = filters.tagId;
+    if (conversationFilters.tagId) {
+      params.tagId = conversationFilters.tagId;
     }
 
-    if (filters.phoneFilter && filters.phoneFilter !== "all") {
-      params.phoneFilter = filters.phoneFilter === "has-phone";
+    if (
+      conversationFilters.phoneFilter &&
+      conversationFilters.phoneFilter !== "all"
+    ) {
+      params.phoneFilter = conversationFilters.phoneFilter === "has-phone";
     }
 
-    if (filters.dateRange?.from) {
-      params.timeFrom = filters.dateRange.from.toISOString();
+    if (conversationFilters.dateRange?.from) {
+      params.timeFrom = conversationFilters.dateRange.from.toISOString();
     }
 
-    if (filters.dateRange?.to) {
-      params.timeTo = filters.dateRange.to.toISOString();
+    if (conversationFilters.dateRange?.to) {
+      params.timeTo = conversationFilters.dateRange.to.toISOString();
     }
 
     return params;
-  }, [filters]);
+  }, [conversationFilters]);
 
   // Get conversations with filters
   const {
-    data: conversations,
-    isFetching: isLoadingConversations,
+    data: conversationsData,
+    isFetching: isFetchingConversations,
     refetch: refetchConversations,
     error: queryError,
   } = useQuery({
-    queryKey: ["conversation-query", filters],
+    queryKey: ["conversation-query", conversationFilters],
     queryFn: async () => {
+      setLoadingConversations(true);
       try {
         const response = await axiosInstance.get("/api/conversations", {
           params: apiFilters(),
         });
-        return (response?.data || []) as Conversation[];
+        const data = (response?.data || []) as Conversation[];
+        setConversations(data);
+        return data;
       } catch (error) {
         throw new Error("Failed to fetch conversations");
+      } finally {
+        setLoadingConversations(false);
       }
     },
     enabled: !id,
     refetchOnMount: true,
-    // retry: false,
   });
 
   // Get messages for a specific conversation
   const {
     data: messagesData,
-    isFetching: isLoadingMessages,
+    isFetching: isFetchingMessages,
     refetch: refetchMessages,
     error: fetchMessagesError,
   } = useQuery({
     queryKey: ["conversation-messages", conversationId],
     queryFn: async () => {
+      if (!conversationId) return null;
+
+      setLoadingMessages(true);
       try {
         const response = await axiosInstance.get(
           `/api/conversations/${conversationId}/messages`
         );
-        return response.data;
+        const data = response.data;
+        if (data?.messages) {
+          setMessages(conversationId, data.messages);
+        }
+        return data;
       } catch (error) {
         throw new Error("Failed to fetch messages");
+      } finally {
+        setLoadingMessages(false);
       }
     },
     retry: false,
@@ -242,10 +270,12 @@ const useCS = ({
     queryKey: ["channels", "unread"],
     queryFn: async () => {
       const res = await axiosInstance.get(`/api/channels/unread-count`);
-      return res.data as {
+      const data = res.data as {
         type: string;
         totalUnreadMessages: number;
       }[];
+      setChannelsUnreadCount(data);
+      return data;
     },
     refetchOnWindowFocus: false,
     retry: false,
@@ -394,7 +424,8 @@ const useCS = ({
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, conversationId) => {
+      markConversationAsRead(conversationId);
       refetchMessages();
       refetchChannelsWithUnreadMessages();
       refetchConversations();
@@ -410,57 +441,42 @@ const useCS = ({
     },
   });
 
-  const { mutate: addTags } = useMutation({
-    mutationFn: async ({
-      conversationId,
-      tagIds,
-    }: {
-      conversationId: number;
-      tagIds: number[];
-    }) => {
-      const response = await axiosInstance.post<ApiResponse<Conversation>>(
-        `/api/conversations/${conversationId}/add-tags`,
-        { tagIds }
-      );
-      return response.data.data;
-    },
-  });
+  // Helper to get messages for current conversation
+  const currentMessages = conversationId
+    ? getMessagesByConversationId(conversationId)
+    : [];
 
   return {
-    // Data
-    channelsWithUnreadMessage,
-    fullInfoConversationWithMessages: messagesData,
+    // Data from store
     conversations,
+    channelsWithUnreadMessage: channelsUnreadCount,
+    fullInfoConversationWithMessages: messagesData,
+    currentMessages,
 
     // Loading states
-    isLoadingMessages,
-    isCreatingConversation,
-    isUpdatingConversation,
-    isDeletingConversation,
-    isLoadingConversations,
-    isAddingParticipants,
+    isLoadingMessages: isLoadingMessages || isFetchingMessages,
+    isLoadingConversations: isLoadingConversations || isFetchingConversations,
+    // ...other loading states...
 
     // Errors
     fetchMessagesError,
-    createConversationError,
-    updateConversationError,
-    deleteConversationError,
-    addParticipantsError,
-    queryError,
+    // ...other errors...
 
     // Actions
     markReadConversation,
     refetchMessages,
-    createConversation,
-    updateConversation,
-    deleteConversation,
-    addParticipants,
     refetchConversations,
-    addTags,
+    // ...other mutations...
+
     // Filters
-    filters,
+    filters: conversationFilters,
     updateFilters,
     resetFilters,
+
+    // Store actions
+    addMessageToStore: addMessage,
+    setSelectedConversation: setSelectedConversationId,
+    selectedConversationId,
   };
 };
 

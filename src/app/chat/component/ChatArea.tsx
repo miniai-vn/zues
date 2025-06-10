@@ -1,4 +1,4 @@
-import { useChatArea } from "@/hooks/data/cs/useChatArea";
+import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import { useCS } from "@/hooks/data/cs/useCS";
 import { Tag } from "@/hooks/data/cs/useTags";
 import { MessageCircle } from "lucide-react";
@@ -6,9 +6,8 @@ import { useState } from "react";
 import {
   ChatHeader,
   EmptyState,
-  Message,
   MessageInput,
-  MessageList,
+  MessageList
 } from "./chat-area";
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "./participients-manager";
@@ -27,19 +26,18 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
   const conversationAvatar = conversation?.avatar || "";
   const customerId = conversation?.senderId;
   const tags = conversation?.tags || [];
-  const currentUserId = "1"; // You might want to get this from auth context
-
+  const user = localStorage.getItem("user"); // You might want to get this from auth context
+  const currentUserId = user ? JSON.parse(user).id : undefined;
   const {
     messages: chatMessages,
     currentUserId: userId,
     showContactInfo,
     sendMessage,
-    getUserById,
     toggleContactInfo,
     handleMoreOptions,
-  } = useChatArea({
-    messages: conversation?.messages as Message[],
+  } = useChatAreaSocket({
     currentUserId,
+    conversationId: conversationId as number,
   });
 
   const [showParticipantManagement, setShowParticipantManagement] =
@@ -77,12 +75,8 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
           setShowTagManagement={setShowTagManagement}
         />
 
-        <MessageList
-          messages={chatMessages}
-          currentUserId={userId}
-          getUserById={getUserById}
-        />
-        <MessageInput onSendMessage={sendMessage} />
+        <MessageList messages={chatMessages} currentUserId={userId} />
+        <MessageInput onSendMessage={() => {}} />
       </div>
 
       <ContactInfoSidebar

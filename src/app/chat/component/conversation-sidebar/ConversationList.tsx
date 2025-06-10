@@ -15,6 +15,7 @@ export const ConversationList = ({
   onTagDialog,
   conversations = [],
 }: ConversationListProps) => {
+  // const { conversations } = useCsStore();
   const getEmptyStateMessage = () => {
     if (conversations && conversations.length === 0) {
       return {
