@@ -192,12 +192,44 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
     },
   });
 
+  const {
+    mutate: addTagsToCustomer,
+    isPending: isAddingTagsToCustomer,
+    error: addTagsToCustomerError,
+  } = useMutation({
+    mutationFn: async ({
+      customerId,
+      tagIds,
+    }: {
+      customerId: string;
+      tagIds: number[];
+    }) => {
+      const response = await axiosInstance.post(
+        `/api/customers/${customerId}/add-tags`,
+        { tagIds }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Tags Added",
+        description: `Tags have been successfully added to the customer.`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Adding Tags",
+        description: error.message || "Could not add tags to the customer.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     // Data
     isAddingTagsToConversation,
     tags,
     tag,
-    addTagsToConversation,
     isLoadingTags,
     isLoadingTag,
     isCreatingTag,
@@ -208,6 +240,12 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
     createTagError,
     updateTagError,
     deleteTagError,
+    addTagsToCustomerError,
+    isAddingTagsToCustomer,
+
+    // Action
+    addTagsToCustomer,
+    addTagsToConversation,
     createTag,
     updateTag,
     deleteTag,

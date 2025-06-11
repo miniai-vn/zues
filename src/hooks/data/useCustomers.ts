@@ -1,6 +1,7 @@
 import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
+import { Tag } from "./cs/useTags";
 
 export interface Customer {
   id: string;
@@ -14,6 +15,7 @@ export interface Customer {
   phone?: string;
   email?: string;
   note?: string;
+  tags?: Tag[];
   shop?: {
     id: string;
     name: string;

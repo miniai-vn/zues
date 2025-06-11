@@ -63,13 +63,13 @@ interface CsStore {
 }
 
 const defaultFilters: ConversationQueryParams = {
-  type: "all",
   search: "",
   channelType: "",
   participantUserIds: [],
   tagId: undefined,
   phoneFilter: "all",
   dateRange: undefined,
+  readStatus: "all",
 };
 
 export const useCsStore = create<CsStore>()(

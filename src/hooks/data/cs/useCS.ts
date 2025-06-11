@@ -70,7 +70,6 @@ export type Conversation = {
 };
 
 export interface ConversationQueryParams {
-  type?: "all" | "unread" | "read";
   name?: string;
   channelId?: number;
   userId?: string;
@@ -81,6 +80,7 @@ export interface ConversationQueryParams {
   tagId?: number;
   phoneFilter?: string;
   dateRange?: DateRange;
+  readStatus?: "all" | "read" | "unread";
 }
 
 export type CreateConversationDto = {
@@ -168,6 +168,10 @@ const useCS = ({
       params.search = conversationFilters.search;
     }
 
+    if (conversationFilters.readStatus) {
+      params.readStatus = conversationFilters.readStatus;
+    }
+
     if (
       conversationFilters.channelType &&
       conversationFilters.channelType !== "all"
@@ -193,13 +197,13 @@ const useCS = ({
       params.phoneFilter = conversationFilters.phoneFilter === "has-phone";
     }
 
-    if (conversationFilters.dateRange?.from) {
-      params.timeFrom = conversationFilters.dateRange.from.toISOString();
-    }
+    // if (conversationFilters.dateRange?.from) {
+    //   params.timeFrom = conversationFilters.dateRange.from.toISOString();
+    // }
 
-    if (conversationFilters.dateRange?.to) {
-      params.timeTo = conversationFilters.dateRange.to.toISOString();
-    }
+    // if (conversationFilters.dateRange?.to) {
+    //   params.timeTo = conversationFilters.dateRange.to.toISOString();
+    // }
 
     return params;
   }, [conversationFilters]);
@@ -215,6 +219,7 @@ const useCS = ({
     queryFn: async () => {
       setLoadingConversations(true);
       try {
+        console.log(apiFilters());
         const response = await axiosInstance.get("/api/conversations", {
           params: apiFilters(),
         });
@@ -228,7 +233,6 @@ const useCS = ({
       }
     },
     enabled: !id,
-    refetchOnMount: true,
   });
 
   // Get messages for a specific conversation

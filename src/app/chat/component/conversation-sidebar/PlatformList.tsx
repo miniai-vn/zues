@@ -171,17 +171,6 @@ export const PlatformList = ({
                     </AvatarFallback>
                   </Avatar>
 
-                  {/* Option 2: Using Next.js Image component (Alternative)
-                  <div className="relative h-8 w-8">
-                    <Image
-                      src={platform.icon}
-                      alt={platform.name}
-                      fill
-                      className="object-contain p-1"
-                      sizes="32px"
-                    />
-                  </div>
-                  */}
                 </div>
 
                 {unreadCount > 0 && (

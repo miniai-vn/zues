@@ -51,7 +51,7 @@ const TagManagementDialog = ({
     },
   });
 
-  const { addTags } = useCS({});
+  const { addTagsToConversation } = useTags();
 
   // Use conversation tags if available, otherwise use prop tags
   const conversationTags =
@@ -133,7 +133,7 @@ const TagManagementDialog = ({
     if (conversationId === undefined) {
       return;
     }
-    addTags({
+    addTagsToConversation({
       conversationId,
       tagIds: selectedTags.map((tag) => Number(tag.id)),
     });

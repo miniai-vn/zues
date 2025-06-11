@@ -36,7 +36,7 @@ export const ConversationFilter = ({
   onNewConversation,
   onSettings,
 }: ConversationFilterProps) => {
-  const [activeTab, setActiveTab] = useState(filters.type || "all");
+  const [activeTab, setActiveTab] = useState(filters.readStatus || "all");
 
   const { tags } = useTags({
     queryParams: {
@@ -48,7 +48,7 @@ export const ConversationFilter = ({
 
   const handleTabChange = (tab: "all" | "unread" | "read") => {
     setActiveTab(tab);
-    onFiltersChange({ type: tab });
+    onFiltersChange({ readStatus: tab });
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,7 +226,7 @@ export const ConversationFilter = ({
           </DropdownMenu>
 
           {/* Date Range Filter */}
-          <Popover>
+          {/* <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -251,7 +251,7 @@ export const ConversationFilter = ({
                 numberOfMonths={2}
               />
             </PopoverContent>
-          </Popover>
+          </Popover> */}
 
           {/* Employee Filter */}
           <DropdownMenu>

@@ -1,51 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { Plus, X, Tag as TagIcon, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import useTags, { Tag } from "@/hooks/data/cs/useTags";
 import { cn } from "@/lib/utils";
-import useTags, { Tag, TagType } from "@/hooks/data/cs/useTags";
+import { Check, Plus, Tag as TagIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import CreateTagDialog from "./CreateTagDialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import useCustomers from "@/hooks/data/useCustomers";
 
 interface TagManagementSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  conversationId: number;
-  currentTags: Tag[];
-  onUpdateTags: (conversationId: number, tags: Tag[]) => void;
+  customerId: string;
+  onUpdateTags: (customerId: string, tags: Tag[]) => void;
   shopId?: string;
 }
 
 const TagManagementSheet = ({
   open,
   onOpenChange,
-  conversationId,
-  currentTags = [],
+  customerId,
   onUpdateTags,
 }: TagManagementSheetProps) => {
-  const {
-    tags,
-    isLoadingTags,
-    addTagsToConversation,
-    isAddingTagsToConversation,
-  } = useTags();
+  const { tags, isLoadingTags, addTagsToCustomer, isAddingTagsToConversation } =
+    useTags();
+  const { customer } = useCustomers({
+    id: customerId,
+  });
 
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [showCreateTagDialog, setShowCreateTagDialog] = useState(false);
 
   useEffect(() => {
-    if (currentTags && currentTags.length > 0) {
+    if (customer?.tags && customer?.tags.length > 0) {
       const uniqueTagIds = Array.from(
         new Set(
-          currentTags
+          customer?.tags
             .map((tag) => tag?.id)
             .filter((id): id is number => id !== undefined)
         )
@@ -54,7 +50,7 @@ const TagManagementSheet = ({
     } else {
       setSelectedTags([]);
     }
-  }, [currentTags]);
+  }, [customer]);
 
   const handleTagToggle = (tagId: number) => {
     setSelectedTags((prev) => {
@@ -86,15 +82,15 @@ const TagManagementSheet = ({
   };
 
   const handleSave = async () => {
-    if (!addTagsToConversation) {
+    if (!addTagsToCustomer) {
       console.error("addTagsToConversation method not available");
       return;
     }
     try {
       const uniqueSelectedTags = getUniqueSelectedTags();
 
-      await addTagsToConversation({
-        conversationId,
+      await addTagsToCustomer({
+        customerId,
         tagIds: uniqueSelectedTags,
       });
 
@@ -102,7 +98,7 @@ const TagManagementSheet = ({
         const selectedTagObjects = tags.filter((tag) =>
           uniqueSelectedTags.includes(tag.id as number)
         );
-        onUpdateTags(conversationId, selectedTagObjects);
+        onUpdateTags(customerId, selectedTagObjects);
       }
 
       onOpenChange(false);

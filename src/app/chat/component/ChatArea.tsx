@@ -78,8 +78,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
       <TagManagementSheet
         open={showTagManagement}
         onOpenChange={setShowTagManagement}
-        conversationId={conversationId as number}
-        currentTags={tags}
+        customerId={customerId}
         onUpdateTags={() => {}}
       />
     </div>
