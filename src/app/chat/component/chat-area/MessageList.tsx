@@ -34,11 +34,10 @@ export const MessageList = ({
   }
 
   return (
-    <div className="flex-1 p-4 space-y-4">
+    <div className="flex-1 p-4 space-y-4 h-40 overflow-y-auto">
       {messages.map((message, index) => {
         const isOwnMessage = message.senderId === currentUserId;
 
-        // Check if we should show sender name (for group chats or when sender changes)
         const previousMessage = index > 0 ? messages[index - 1] : null;
         const showSenderName =
           !isOwnMessage &&

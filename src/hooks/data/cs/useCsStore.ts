@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Conversation, Message, ConversationQueryParams } from "./useCS";
+import { Socket } from "socket.io-client";
 
 interface ChannelUnreadCount {
   type: string;
@@ -15,7 +16,8 @@ interface CsStore {
   selectedConversation: Conversation | null;
   isLoadingConversations: boolean;
   conversationFilters: ConversationQueryParams;
-
+  socketChatIo: Socket | null;
+  setSocketChatIo: (socket: Socket | null) => void;
   // Messages state
   messages: Record<number, Message[]>; // conversationId -> messages
   isLoadingMessages: boolean;
@@ -86,6 +88,8 @@ export const useCsStore = create<CsStore>()(
 
         channelsUnreadCount: [],
         totalUnreadCount: 0,
+        socketChatIo: null,
+        setSocketChatIo: (socket) => set({ socketChatIo: socket }),
 
         // Conversation actions
         setConversations: (conversations) =>

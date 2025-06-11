@@ -425,7 +425,7 @@ const useCS = ({
       return response.data;
     },
     onSuccess: (_, conversationId) => {
-      markConversationAsRead(conversationId);
+      // markConversationAsRead(conversationId);
       refetchMessages();
       refetchChannelsWithUnreadMessages();
       refetchConversations();

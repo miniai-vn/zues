@@ -55,8 +55,8 @@ export const ConversationItem = ({
               variant="destructive"
               className="h-5 w-5 flex items-center justify-center p-0 text-xs ml-2 min-w-5"
             >
-              {conversation.unreadMessagesCount > 99
-                ? "99+"
+              {conversation.unreadMessagesCount > 5
+                ? "5+"
                 : conversation.unreadMessagesCount}
             </Badge>
           )}
