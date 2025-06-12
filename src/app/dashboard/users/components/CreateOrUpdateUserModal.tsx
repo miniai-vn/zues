@@ -78,7 +78,6 @@ export function AddOrUpdateUserModal({
   const { roleWithPermissions } = useRoles();
 
   const onSubmit = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
-    debugger;
     onChange?.({
       ...data,
       id: user?.id,

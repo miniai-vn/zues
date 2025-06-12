@@ -41,7 +41,7 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
         const { status } = error.response;
         if (status === 403) {
           alert("Bạn không có quyền truy cập vào tài nguyên này!");
-          window.history.back();
+          // window.history.back();
           return;
         }
         if (status === 401) {

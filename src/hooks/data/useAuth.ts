@@ -70,6 +70,19 @@ const useAuth = ({
     refetchOnReconnect: false,
   });
 
+  const { data: usersWithCs, isFetching: isFetchingUsersWithCs } = useQuery({
+    queryKey: ["user", "withCs"],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/users", {
+        params: { search },
+      });
+      return (response.data.data as User[]) ?? [];
+    },
+    enabled: !!user,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
   const { mutateAsync: signIn, isSuccess } = useMutation({
     mutationFn: async ({
       username,
@@ -82,6 +95,7 @@ const useAuth = ({
         username,
         password,
       });
+
       return response.data;
     },
     onSuccess: (data) => {
@@ -202,6 +216,8 @@ const useAuth = ({
 
   return {
     users,
+    usersWithCs,
+    isFetchingUsersWithCs,
     isFetching,
     user,
     isPendingCreateUser,
