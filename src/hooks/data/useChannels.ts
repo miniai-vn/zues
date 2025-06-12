@@ -10,6 +10,7 @@ export interface Channel {
   name: string;
   type: string;
   url?: string;
+  avatar?: string; // Add this field for avatar
   audience_size?: number;
   description?: string;
   apiKey?: string;
@@ -53,158 +54,75 @@ const useChannels = ({
   const { toast } = useToast();
 
   const {
-    data: channelData,
-    isLoading: isFetchingChannels,
+    data: channels,
+    isLoading: isLoadingChannels,
+    error: fetchChannelsError,
     refetch: refetchChannels,
   } = useQuery({
-    queryKey: ["channels", page, limit, search, departmentId],
+    queryKey: ["channels", { page, limit }],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (page) params.append("page", page.toString());
-      if (limit) params.append("limit", limit.toString());
-      if (search) params.append("search", search);
-      if (departmentId) params.append("departmentId", departmentId.toString());
-
-      const queryString = params.toString();
-      const endpoint = `/api/channels/get-by-shop-id${
-        queryString ? `?${queryString}` : ""
-      }`;
-
-      const res = await axiosInstance.get(endpoint);
-
-      return {
-        items: res.data.items || res.data || [],
-        totalCount: res.data.totalCount || res.data?.length || 0,
-        page,
-        limit,
-      };
+      const response = await axiosInstance.get("/api/channels", {
+        params: { page, limit },
+      });
+      return response.data.items as Channel[];
     },
-    refetchOnWindowFocus: false,
   });
 
-  // New hook: get channels by department id
-  const useChannelsByDepartmentId = (departmentId?: number) => {
-    return useQuery({
-      queryKey: ["channels", "by-department", departmentId],
-      enabled: !!departmentId,
-      queryFn: async () => {
-        const res = await axiosInstance.get(
-          `/api/channels/get-by-department-id`,
-          {
-            params: { departmentId },
-          }
-        );
-        return (res.data as Channel[]) || [];
-      },
-    });
-  };
-
   const {
-    mutate: createChannel,
-    isPending: isPendingCreateChannel,
-    isSuccess: isCreatedChannel,
+    mutate: deleteChannel,
+    isPending: isDeletingChannel,
+    error: deleteChannelError,
   } = useMutation({
-    mutationFn: async (data: Partial<Channel>) => {
-      const res = await axiosInstance.post("/api/channels/", data);
-      return res.data;
+    mutationFn: async (channelId: number) => {
+      const response = await axiosInstance.delete(`/api/channels/${channelId}`);
+      return response.data;
     },
     onSuccess: () => {
-      refetchChannels();
       toast({
-        title: "Tạo kênh",
-        description: "Tạo kênh thành công",
+        title: "Channel deleted",
+        description: "The channel has been successfully deleted.",
       });
+      refetchChannels();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
-        title: "Tạo kênh",
+        title: "Error deleting channel",
         description: error.message,
       });
     },
   });
 
-  const { mutate: updateChannel, isPending: isPendingUpdateChannel } =
-    useMutation({
-      mutationFn: async (data: Partial<Channel> & { id: number }) => {
-        const res = await axiosInstance.put(`/api/channels/${data.id}`, data);
-        return res.data;
-      },
-      onSuccess: () => {
-        refetchChannels();
-        toast({
-          title: "Cập nhật kênh",
-          description: "Cập nhật kênh thành công",
-        });
-      },
-      onError: (error: any) => {
-        toast({
-          title: "Cập nhật kênh",
-          description: error.message,
-        });
-      },
-    });
-
-  const { mutate: deleteChannel, isPending: isPendingDeleteChannel } =
-    useMutation({
-      mutationFn: async (id: number) => {
-        await axiosInstance.delete(`/api/channels/${id}`);
-      },
-      onSuccess: () => {
-        refetchChannels();
-        toast({
-          title: "Xóa kênh",
-          description: "Xóa kênh thành công",
-        });
-      },
-      onError: (error: any) => {
-        refetchChannels();
-        toast({
-          title: "Xóa kênh",
-          description: error.message,
-        });
-      },
-    });
-
-  const { mutate: updateChannelStatus } = useMutation({
-    mutationFn: async (data: { id: number; status: ChannelStatus }) => {
-      const res = await axiosInstance.patch(
-        `/api/channels/${data.id}/update-status`,
-        data
-      );
-      return res.data;
+  const { mutate: updateShopId } = useMutation({
+    mutationFn: async (data: { appId: string }) => {
+      const response = await axiosInstance.patch(`/api/channels/update-shop`, {
+        appId: data.appId,
+      });
+      return response.data;
     },
     onSuccess: () => {
-      refetchChannels();
       toast({
-        title: "Cập nhật trạng thái kênh",
-        description: "Cập nhật trạng thái kênh thành công",
+        title: "Shop ID updated",
+        description: "The shopID has been successfully updated.",
       });
+      refetchChannels();
     },
-
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
-        title: "Cập nhật trạng thái kênh",
+        title: "Error updating shop ID",
         description: error.message,
       });
     },
   });
 
   return {
-    channels: channelData?.items || [],
-    totalCount: channelData?.totalCount || 0,
-    page: channelData?.page || page,
-    updateChannelStatus,
-    limit: channelData?.limit || limit,
-    isFetchingChannels,
+    updateShopId,
+    channels,
+    isLoadingChannels,
+    fetchChannelsError,
     refetchChannels,
-    createChannel,
-    updateChannel,
     deleteChannel,
-    isPendingCreateChannel,
-    isPendingUpdateChannel,
-    isPendingDeleteChannel,
-    isCreatedChannel,
-    useChannelsByDepartmentId,
+    isDeletingChannel,
+    deleteChannelError,
   };
 };
 
