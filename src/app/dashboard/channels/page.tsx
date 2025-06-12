@@ -3,19 +3,11 @@
 import { PageHeader } from "@/components/dashboard/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Plus, Trash2, Eye, EyeOff, Link, Loader2 } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
-import Image from "next/image";
 import useChannels, { Channel, ChannelStatus } from "@/hooks/data/useChannels";
+import { Eye, EyeOff, Link, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import ChannelTable from "./component/Table";
 
 // Types
 interface ChannelItem {
@@ -44,7 +36,7 @@ const PLATFORMS: Platform[] = [
     description:
       "Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo.",
     bgColor: "bg-blue-500",
-    icon: "/channel-imgs/zalo-logo.png",
+    icon: "/channel-imgs/zalo-logo.webp",
   },
   {
     type: "facebook",
@@ -60,21 +52,21 @@ const PLATFORMS: Platform[] = [
     bgColor: "bg-black",
     icon: "/channel-imgs/tiktok-logo.png",
   },
-  {
-    type: "lazada",
-    title: "Lazada",
-    description:
-      "Kết nối hệ thống bán hàng Lazada. Quản lý nhiều shop cùng lúc.",
-    bgColor: "bg-orange-500",
-    icon: "/channel-imgs/lazada-icon.png",
-  },
+  // {
+  //   type: "lazada",
+  //   title: "Lazada",
+  //   description:
+  //     "Kết nối hệ thống bán hàng Lazada. Quản lý nhiều shop cùng lúc.",
+  //   bgColor: "bg-orange-500",
+  //   icon: "/channel-imgs/lazada-icon.png",
+  // },
   {
     type: "shopee",
     title: "Shopee",
     description:
       "Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả.",
     bgColor: "bg-orange-600",
-    icon: "/channel-imgs/shopee-icon.png",
+    icon: "/channel-imgs/Shopee-logo.png",
   },
 ];
 
@@ -87,22 +79,6 @@ const mapChannelStatus = (status: ChannelStatus): ChannelItem["status"] => {
       return "Tạm dừng";
     default:
       return "Đang xử lý";
-  }
-};
-
-const getStatusVariant = (
-  status: ChannelItem["status"]
-): "default" | "secondary" | "destructive" | "outline" => {
-  switch (status) {
-    case "Hoạt động":
-      return "default";
-    case "Đang xử lý":
-    case "Đang kết nối":
-      return "secondary";
-    case "Tạm dừng":
-      return "destructive";
-    default:
-      return "outline";
   }
 };
 
@@ -120,7 +96,7 @@ const transformChannelToChannelItem = (channel: Channel): ChannelItem => ({
   status: mapChannelStatus(channel.status),
   createdDate: formatDate(channel.createdAt),
   updatedDate: formatDate(channel.updatedAt),
-  avatar: channel.url, // Assuming url contains avatar/image URL
+  avatar: channel.avatar, // Assuming url contains avatar/image URL
   type: channel.type,
 });
 
@@ -207,139 +183,6 @@ const PlatformCard = ({
   </div>
 );
 
-interface ChannelTableProps {
-  platformTitle: string;
-  channels: ChannelItem[];
-  onDeleteChannel: (channelId: number) => void;
-  onAddChannel: () => void;
-  isLoading?: boolean;
-}
-
-const ChannelTable = ({
-  platformTitle,
-  channels,
-  onDeleteChannel,
-  onAddChannel,
-  isLoading = false,
-}: ChannelTableProps) => (
-  <Card className="border border-gray-200 bg-white p-6">
-    <div className="mb-6">
-      <h4 className="text-lg font-semibold text-gray-900 mb-2">
-        Danh sách kênh {platformTitle}
-      </h4>
-      <p className="text-sm text-gray-600">
-        Quản lý tất cả kênh {platformTitle} đã kết nối
-      </p>
-    </div>
-
-    {isLoading ? (
-      <div className="text-center py-8">
-        <Loader2 className="mx-auto h-8 w-8 animate-spin" />
-        <p className="text-gray-500 mt-2">Đang tải dữ liệu...</p>
-      </div>
-    ) : channels.length === 0 ? (
-      <div className="text-center py-8">
-        <p className="text-gray-500 mb-4">Chưa có kênh nào được kết nối</p>
-        <Button
-          onClick={onAddChannel}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          <Plus size={16} className="mr-2" />
-          Thêm kênh đầu tiên
-        </Button>
-      </div>
-    ) : (
-      <>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Avatar</TableHead>
-                <TableHead>Tên kênh</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead>Ngày tạo</TableHead>
-                <TableHead>Ngày cập nhật</TableHead>
-                <TableHead>Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {channels.map((channel) => (
-                <TableRow key={channel.id}>
-                  <TableCell>
-                    <div className="flex items-center justify-center">
-                      {channel.avatar ? (
-                        <Image
-                          src={channel.avatar}
-                          alt={`${channel.name} avatar`}
-                          width={40}
-                          height={40}
-                          className="rounded-full object-cover border border-gray-200"
-                          onError={(e) => {
-                            // Fallback to default avatar if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/channel-imgs/default-avatar.png";
-                          }}
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-500 text-sm font-medium">
-                            {channel.name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <span className="font-medium">{channel.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(channel.status)}>
-                      {channel.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {channel.createdDate}
-                  </TableCell>
-                  <TableCell className="text-gray-600">
-                    {channel.updatedDate}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onDeleteChannel(channel.id)}
-                      className="text-red-600 hover:text-red-700 hover:border-red-300"
-                    >
-                      <Trash2 size={14} />
-                      <span className="ml-1">Xóa</span>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
-          <p className="text-sm text-gray-600">
-            Tổng cộng: {channels.length} kênh
-          </p>
-          <Button
-            onClick={onAddChannel}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
-            size="sm"
-          >
-            <Plus size={16} />
-            <span>Thêm kênh</span>
-          </Button>
-        </div>
-      </>
-    )}
-  </Card>
-);
-
 // Main Component
 export default function ChannelsManagementPage() {
   const {
@@ -403,8 +246,6 @@ export default function ChannelsManagementPage() {
       window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
       return;
     }
-    // TODO: Handle other platform connections
-    console.log(`Add channel for ${platformType}`);
   };
 
   const handleDeleteChannel = async (channelId: number) => {
