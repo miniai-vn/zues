@@ -4,7 +4,7 @@ FROM node:20-alpine as base
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN apk add --no-cache git \
-    && yarn install --frozen-lockfile \
+    && yarn install \
     && yarn cache clean
 
 # Build stage

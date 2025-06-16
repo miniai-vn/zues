@@ -1,8 +1,8 @@
+'use client'
 import { Message, useCS } from "@/hooks/data/cs/useCS";
 import { useCallback, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useCsStore } from "./useCsStore";
-import { set } from "date-fns";
 
 interface UseChatAreaProps {
   conversationId?: number;
@@ -20,7 +20,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     setSocketChatIo,
   } = useCsStore();
   const { refetchConversations } = useCS();
-  const user = localStorage.getItem("user");
+  const user = typeof window !== 'undefined' ? localStorage.getItem("user") : null;
   const currentUser = user ? JSON.parse(user) : undefined;
 
   useEffect(() => {
