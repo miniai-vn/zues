@@ -62,30 +62,37 @@ export const ConversationItem = ({
           )}
         </div>
 
-        {/* Tags Display */}
-        {conversation.tags && conversation.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {conversation.tags.slice(0, 3).map((tag) => (
-              <div
-                key={tag.id}
-                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
-              >
+        {/* Channel and Tags in one line */}
+        <div className="flex items-center gap-1">
+          {conversation.channel && (
+            <span className="truncate flex items-center px-2 rounded-full text-xs max-w-20 text-slate-700 border border-slate-200 dark:text-slate-300">
+              {conversation.channel.name}
+            </span>
+          )}
+          {conversation.tags && conversation.tags.length > 0 && (
+            <>
+              {conversation.tags.slice(0, 3).map((tag) => (
                 <div
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: tag.color || "#6b7280" }}
-                />
-                <span className="truncate max-w-16 text-slate-700 dark:text-slate-300">
-                  {tag.name}
-                </span>
-              </div>
-            ))}
-            {conversation.tags.length > 3 && (
-              <div className="flex items-center px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                +{conversation.tags.length - 3}
-              </div>
-            )}
-          </div>
-        )}
+                  key={tag.id}
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+                >
+                  <div
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: tag.color || "#6b7280" }}
+                  />
+                  <span className="truncate max-w-16 text-slate-700 dark:text-slate-300">
+                    {tag.name}
+                  </span>
+                </div>
+              ))}
+              {conversation.tags.length > 3 && (
+                <div className="flex items-center px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                  +{conversation.tags.length - 3}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

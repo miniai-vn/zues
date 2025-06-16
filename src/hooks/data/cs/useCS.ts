@@ -9,6 +9,7 @@ import { useToast } from "../../use-toast";
 import { User } from "../useAuth";
 import { useCsStore } from "./useCsStore";
 import { Tag } from "./useTags";
+import { Channel } from "../useChannels";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -65,6 +66,7 @@ export type Conversation = {
   senderId?: string;
   messages?: Message[];
   tags?: Tag[];
+  channel: Channel;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -197,14 +199,9 @@ const useCS = ({
       params.phoneFilter = conversationFilters.phoneFilter === "has-phone";
     }
 
-    // if (conversationFilters.dateRange?.from) {
-    //   params.timeFrom = conversationFilters.dateRange.from.toISOString();
-    // }
-
-    // if (conversationFilters.dateRange?.to) {
-    //   params.timeTo = conversationFilters.dateRange.to.toISOString();
-    // }
-
+    if (conversationFilters.channelId) {
+      params.channelId = conversationFilters.channelId;
+    }
     return params;
   }, [conversationFilters]);
 
@@ -232,6 +229,7 @@ const useCS = ({
         setLoadingConversations(false);
       }
     },
+    refetchOnWindowFocus: false,
     enabled: !id,
   });
 
