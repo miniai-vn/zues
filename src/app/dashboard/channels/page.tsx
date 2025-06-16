@@ -246,6 +246,11 @@ export default function ChannelsManagementPage() {
       window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
       return;
     }
+    if(platformType === 'facebook'){
+      // Redirect to Facebook Auth URL
+      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank")
+      return
+    }
   };
 
   const handleDeleteChannel = async (channelId: number) => {
