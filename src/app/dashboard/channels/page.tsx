@@ -1,56 +1,56 @@
-"use client";
+'use client'
 
-import { PageHeader } from "@/components/dashboard/common/page-header";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import useChannels, { Channel, ChannelStatus } from "@/hooks/data/useChannels";
-import { Eye, EyeOff, Link, Loader2 } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import ChannelTable from "./component/Table";
+import { PageHeader } from '@/components/dashboard/common/page-header'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import useChannels, { Channel, ChannelStatus } from '@/hooks/data/useChannels'
+import { Eye, EyeOff, Link, Loader2 } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useMemo, useState } from 'react'
+import ChannelTable from './component/Table'
 
 // Types
 interface ChannelItem {
-  id: number;
-  name: string;
-  status: "Hoạt động" | "Tạm dừng" | "Đang xử lý" | "Đang kết nối";
-  createdDate: string;
-  updatedDate: string;
-  avatar?: string;
-  type: string;
+  id: number
+  name: string
+  status: 'Hoạt động' | 'Tạm dừng' | 'Đang xử lý' | 'Đang kết nối'
+  createdDate: string
+  updatedDate: string
+  avatar?: string
+  type: string
 }
 
 interface Platform {
-  type: string;
-  title: string;
-  description: string;
-  bgColor: string;
-  icon?: string;
+  type: string
+  title: string
+  description: string
+  bgColor: string
+  icon?: string
 }
 
 // Constants
 const PLATFORMS: Platform[] = [
   {
-    type: "zalo",
-    title: "Zalo OA",
+    type: 'zalo',
+    title: 'Zalo OA',
     description:
-      "Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo.",
-    bgColor: "bg-blue-500",
-    icon: "/channel-imgs/zalo-logo.webp",
+      'Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo.',
+    bgColor: 'bg-blue-500',
+    icon: '/channel-imgs/zalo-logo.webp',
   },
   {
-    type: "facebook",
-    title: "Facebook Shop",
-    description: "Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook.",
-    bgColor: "bg-blue-700",
-    icon: "/channel-imgs/facebook-logo.png",
+    type: 'facebook',
+    title: 'Facebook Shop',
+    description: 'Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook.',
+    bgColor: 'bg-blue-700',
+    icon: '/channel-imgs/facebook-logo.png',
   },
   {
-    type: "tiktok",
-    title: "TikTok Shop",
-    description: "Kết nối TikTok Shop để bán hàng qua livestream và video.",
-    bgColor: "bg-black",
-    icon: "/channel-imgs/tiktok-logo.png",
+    type: 'tiktok',
+    title: 'TikTok Shop',
+    description: 'Kết nối TikTok Shop để bán hàng qua livestream và video.',
+    bgColor: 'bg-black',
+    icon: '/channel-imgs/tiktok-logo.png',
   },
   // {
   //   type: "lazada",
@@ -61,34 +61,34 @@ const PLATFORMS: Platform[] = [
   //   icon: "/channel-imgs/lazada-icon.png",
   // },
   {
-    type: "shopee",
-    title: "Shopee",
+    type: 'shopee',
+    title: 'Shopee',
     description:
-      "Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả.",
-    bgColor: "bg-orange-600",
-    icon: "/channel-imgs/Shopee-logo.png",
+      'Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả.',
+    bgColor: 'bg-orange-600',
+    icon: '/channel-imgs/Shopee-logo.png',
   },
-];
+]
 
 // Utility functions
-const mapChannelStatus = (status: ChannelStatus): ChannelItem["status"] => {
+const mapChannelStatus = (status: ChannelStatus): ChannelItem['status'] => {
   switch (status) {
     case ChannelStatus.ACTIVE:
-      return "Hoạt động";
+      return 'Hoạt động'
     case ChannelStatus.INACTIVE:
-      return "Tạm dừng";
+      return 'Tạm dừng'
     default:
-      return "Đang xử lý";
+      return 'Đang xử lý'
   }
-};
+}
 
 const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-};
+  return new Date(dateString).toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
 
 const transformChannelToChannelItem = (channel: Channel): ChannelItem => ({
   id: channel.id,
@@ -98,17 +98,17 @@ const transformChannelToChannelItem = (channel: Channel): ChannelItem => ({
   updatedDate: formatDate(channel.updatedAt),
   avatar: channel.avatar, // Assuming url contains avatar/image URL
   type: channel.type,
-});
+})
 
 // Components
 interface PlatformCardProps {
-  platform: Platform;
-  channels: ChannelItem[];
-  isExpanded: boolean;
-  onToggle: () => void;
-  onAddChannel: () => void;
-  onDeleteChannel: (channelId: number) => void;
-  isLoading?: boolean;
+  platform: Platform
+  channels: ChannelItem[]
+  isExpanded: boolean
+  onToggle: () => void
+  onAddChannel: () => void
+  onDeleteChannel: (channelId: number) => void
+  isLoading?: boolean
 }
 
 const PlatformCard = ({
@@ -125,7 +125,7 @@ const PlatformCard = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Image
-            src={platform.icon ?? "/channel-imgs/default-icon.png"}
+            src={platform.icon ?? '/channel-imgs/default-icon.png'}
             alt={`${platform.title} icon`}
             width={40}
             height={40}
@@ -153,7 +153,7 @@ const PlatformCard = ({
             ) : (
               <>
                 {isExpanded ? <EyeOff size={16} /> : <Eye size={16} />}
-                {isExpanded ? "Ẩn" : "Xem"}
+                {isExpanded ? 'Ẩn' : 'Xem'}
               </>
             )}
             ({channels.length})
@@ -181,7 +181,7 @@ const PlatformCard = ({
       />
     )}
   </div>
-);
+)
 
 // Main Component
 export default function ChannelsManagementPage() {
@@ -193,79 +193,89 @@ export default function ChannelsManagementPage() {
     updateShopId,
   } = useChannels({
     limit: 100, // Get all channels
-  });
+  })
 
   const [expandedPlatforms, setExpandedPlatforms] = useState<
     Record<string, boolean>
-  >({});
+  >({})
 
   // Group channels by platform type
   const channelsByPlatform = useMemo(() => {
-    const grouped: Record<string, ChannelItem[]> = {};
+    const grouped: Record<string, ChannelItem[]> = {}
 
     PLATFORMS.forEach((platform) => {
-      grouped[platform.type] = [];
-    });
+      grouped[platform.type] = []
+    })
 
     channels?.forEach((channel) => {
-      const channelItem = transformChannelToChannelItem(channel);
+      const channelItem = transformChannelToChannelItem(channel)
       if (grouped[channel.type]) {
-        grouped[channel.type].push(channelItem);
+        grouped[channel.type].push(channelItem)
       } else {
         // Handle unknown platform types
-        grouped[channel.type] = [channelItem];
+        grouped[channel.type] = [channelItem]
       }
-    });
+    })
 
-    return grouped;
-  }, [channels]);
-
-  useEffect(() => {
-    console.log("Current URL:", window.location.href);
-  }, [channels]);
+    return grouped
+  }, [channels])
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("appId")) {
-      updateShopId({
-        appId: params.get("appId") || "",
-      });
+    console.log('Current URL:', window.location.href)
+  }, [channels])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const appIdParam = params.get('appId')
+
+    if (appIdParam) {
+      // Nếu appId có dấu phẩy (tức nhiều id)
+      if (appIdParam.includes(',')) {
+        const appIds = appIdParam.split(',')
+        // Thêm xử lý với từng appId trong mảng
+        appIds.forEach((id) => {
+          updateShopId({ appId: id })
+        })
+      } else {
+        // Giữ nguyên logic hiện tại cho 1 appId
+        updateShopId({ appId: appIdParam })
+      }
     }
-  }, []);
+  }, [])
 
   const togglePlatform = (platformType: string) => {
     setExpandedPlatforms((prev) => ({
       ...prev,
       [platformType]: !prev[platformType],
-    }));
-  };
+    }))
+  }
 
   const handleAddChannel = (platformType: string) => {
-    if (platformType === "zalo") {
+    if (platformType === 'zalo') {
       // Redirect to Zalo OA authentication URL
-      window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
-      return;
-    }
-    if(platformType === 'facebook'){
-      // Redirect to Facebook Auth URL
-      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank")
+      window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, '_blank')
       return
     }
-  };
+    if (platformType === 'facebook') {
+      // Redirect to Facebook Auth URL
+      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, '_blank')
+      return
+    }
+  }
 
   const handleDeleteChannel = async (channelId: number) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa kênh này?")) {
-      deleteChannel(channelId);
+    if (window.confirm('Bạn có chắc chắn muốn xóa kênh này?')) {
+      deleteChannel(channelId)
     }
-  };
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <PageHeader
         backButtonHref="/dashboard"
         breadcrumbs={[
-          { label: "Quản lý", href: "/dashboard" },
-          { label: "Kênh bán hàng", isCurrentPage: true },
+          { label: 'Quản lý', href: '/dashboard' },
+          { label: 'Kênh bán hàng', isCurrentPage: true },
         ]}
       />
 
@@ -303,5 +313,5 @@ export default function ChannelsManagementPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
