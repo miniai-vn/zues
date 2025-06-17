@@ -227,18 +227,16 @@ export default function ChannelsManagementPage() {
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const appIdParam = params.get('appId')
+    const appType = params.get('type')
 
     if (appIdParam) {
-      // Nếu appId có dấu phẩy (tức nhiều id)
-      if (appIdParam.includes(',')) {
-        const appIds = appIdParam.split(',')
-        // Thêm xử lý với từng appId trong mảng
-        appIds.forEach((id) => {
-          updateShopId({ appId: id })
-        })
-      } else {
-        // Giữ nguyên logic hiện tại cho 1 appId
+      if (appType === 'zalo') {
         updateShopId({ appId: appIdParam })
+      } else {
+        const appIds = appIdParam.includes(',')
+          ? appIdParam.split(',')
+          : [appIdParam]
+        appIds.forEach((id) => updateShopId({ appId: id }))
       }
     }
   }, [])
