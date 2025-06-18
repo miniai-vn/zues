@@ -5,54 +5,36 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Role } from "@/configs/protect-route";
 import {
-  ArrowUpCircleIcon,
   AudioWaveform,
+  BarChart3,
   BotIcon,
   Command,
-  CompassIcon,
+  FolderOpen,
   GalleryVerticalEnd,
+  Link,
+  Merge,
+  Radio,
   Settings,
-  SquareTerminal,
+  Shield,
+  User,
 } from "lucide-react";
-import Image from "next/image";
-import * as React from "react";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
-import { DashboardIcon } from "@radix-ui/react-icons";
-import { TeamSwitcher } from "./team-switcher";
+import { title } from "process";
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
+
   navMain: [
     {
-      title: "Quản lý",
+      title: "Tự động",
       url: "/dashboard/chat",
       icon: BotIcon,
       isActive: true,
@@ -60,46 +42,57 @@ const data = {
       items: [
         {
           title: "Báo cáo",
-          icon: DashboardIcon,
+          icon: BarChart3,
           role: [Role.Admin, Role.Leader],
           url: "/dashboard/report",
         },
         {
           title: "Nhóm tài liệu",
-          icon: CompassIcon,
+          icon: FolderOpen,
           role: [Role.Admin, Role.Leader],
           url: "/dashboard/departments",
         },
+      ],
+    },
+    {
+      title: "Nhân viên",
+      url: "/dashboard",
+      icon: User,
+      isActive: false,
+      role: [Role.Admin, Role.Staff, Role.Leader],
+      items: [
         {
-          title: "Bhân viên",
-          icon: SquareTerminal,
+          title: "Nhân viên",
+          icon: User,
           role: [Role.Admin, Role.Leader],
           url: "/dashboard/users",
         },
         {
           title: "Phân quyền",
-          icon: SquareTerminal,
+          icon: Shield,
           role: [Role.Admin],
           url: "/dashboard/roles",
         },
-        {
-          title: "Kênh truyền thông",
-          icon: SquareTerminal,
-          role: [Role.Admin, Role.Leader],
-          url: "/dashboard/channels",
-        },
-        {
-          title: "Cài đặt",
-          icon: Settings,
-          role: [Role.Admin],
-          url: "/dashboard/settings",
-        },
       ],
+    },
+
+    {
+      title: "Tích hợp",
+      url: "/dashboard/channels",
+      icon: Link,
+      isActive: false,
+      role: [Role.Admin, Role.Staff, Role.Leader],
     },
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  setActiveSection,
+  ...props
+}: {
+  setActiveSection: (section: string) => void;
+  [key: string]: any;
+}) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -111,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain setActiveSection={setActiveSection} items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

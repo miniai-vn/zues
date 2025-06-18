@@ -34,7 +34,7 @@ export const ConversationColumn = ({
           updateFilters({ channelType })
         }
       />
-      <div className="flex flex-col items-center justify-center max-w-[24vw] flex-shrink-0">
+      <div className="flex flex-col items-center justify-center min-w-[24vw] max-w-[28vw] flex-shrink-0">
         <ConversationFilter filters={filters} onFiltersChange={updateFilters} />
 
         <ConversationList
