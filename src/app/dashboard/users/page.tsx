@@ -9,12 +9,14 @@ import ProtectedRoute, { Role } from "@/configs/protect-route";
 import { useAuth, User } from "@/hooks/data/useAuth";
 import { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useTranslations } from "@/hooks/useTranslations";
 import { ColumnDef } from "@tanstack/react-table";
 import { Phone, Search, Shield, User as UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddOrUpdateUserModal } from "./components/CreateOrUpdateUserModal";
 
 const UserManager = () => {
+  const { t } = useTranslations();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
@@ -46,7 +48,6 @@ const UserManager = () => {
       setPageSize(users.limit || 10);
     }
   }, [users]);
-
   const columns: ColumnDef<User>[] = [
     {
       id: "index",
@@ -56,19 +57,19 @@ const UserManager = () => {
     },
     {
       accessorKey: "name",
-      header: "Tên nhân viên",
+      header: t("dashboard.users.name"),
       cell: ({ row }) => (
         <div className="flex  gap-2">
           <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
             <UserIcon className="h-4 w-4 text-muted-foreground" />
           </div>
-          <span>{row.original.name ?? "Trống"}</span>
+          <span>{row.original.name ?? t("dashboard.users.empty")}</span>
         </div>
       ),
     },
     {
       accessorKey: "username",
-      header: "Tên tài khoản",
+      header: t("dashboard.users.username"),
       cell: ({ row }) => (
         <div className="w-full">
           <p className="break-all line-clamp-2">{row.original.username}</p>
@@ -77,19 +78,19 @@ const UserManager = () => {
     },
     {
       accessorKey: "phone",
-      header: "Số điện thoại",
+      header: t("dashboard.users.phone"),
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4 text-muted-foreground" />
           <span className="text-muted-foreground">
-            {row.original.phone ?? "Not have"}
+            {row.original.phone ?? t("dashboard.users.notHave")}
           </span>
         </div>
       ),
     },
     {
       accessorKey: "roles",
-      header: "Quyền",
+      header: t("dashboard.users.roles"),
       cell: ({ row }) => {
         const roles = row.original.roles;
         if (!roles || roles.length === 0) {
@@ -106,10 +107,9 @@ const UserManager = () => {
           </div>
         );
       },
-    },
-    {
+    },    {
       accessorKey: "departments",
-      header: "Phòng ban",
+      header: t("dashboard.users.departments"),
       cell: ({ row }) => {
         const departments = row.original.departments;
         if (!departments || departments.length === 0) {
@@ -132,14 +132,14 @@ const UserManager = () => {
     },
     {
       id: "actions",
-      header: "Thao tác",
+      header: t("dashboard.users.actions"),
       cell: ({ row }) => {
         return (
           <ActionDropdown
             className="w-40 p-2"
             children={
               <AddOrUpdateUserModal
-                children={<span>Chỉnh sửa</span>}
+                children={<span>{t("dashboard.users.edit")}</span>}
                 onChange={(data) => {
                   if ("id" in data) {
                     updateUser(data as any);
@@ -159,17 +159,16 @@ const UserManager = () => {
 
   return (
     <ProtectedRoute requiredRole={[Role.Admin]}>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <PageHeader
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">        <PageHeader
           backButtonHref="/dashboard"
           title=""
           breadcrumbs={[
             {
-              label: "Quản lý",
+              label: t("dashboard.users.breadcrumbs.management"),
               href: "/dashboard/users",
             },
             {
-              label: "Quản lý người dùng",
+              label: t("dashboard.users.breadcrumbs.userManagement"),
               isCurrentPage: true,
             },
           ]}
@@ -177,7 +176,7 @@ const UserManager = () => {
 
         <div className="flex justify-between items-center">
           <Input
-            placeholder="Tìm kiếm nhân viên theo tên"
+            placeholder={t("dashboard.users.searchPlaceholder")}
             className="mr-4 w-full flex-1"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -189,7 +188,7 @@ const UserManager = () => {
               className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
             >
               <Search />
-              Tìm kiếm
+              {t("dashboard.users.search")}
             </Button>
             <AddOrUpdateUserModal
               onChange={(data) => {

@@ -167,28 +167,92 @@
       "management": "Quản lý",
       "noChannels": "Chưa có kênh nào được kết nối",
       "addFirst": "Thêm kênh đầu tiên"
-    },
-    "users": {
+    },    "users": {
       "title": "Quản lý người dùng",
       "add": "Thêm người dùng",
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
-      "name": "Họ tên",
+      "name": "Tên nhân viên",
+      "username": "Tên tài khoản",
       "email": "Email",
+      "phone": "Số điện thoại",
       "role": "Vai trò",
+      "roles": "Quyền",
+      "department": "Phòng ban",
+      "departments": "Phòng ban",
       "status": "Trạng thái",
-      "lastLogin": "Đăng nhập lần cuối"
-    },
-    "roles": {
+      "lastLogin": "Đăng nhập lần cuối",
+      "actions": "Thao tác",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm nhân viên theo tên",
+      "notHave": "Không có",      "empty": "Trống",
+      "management": "Quản lý",
+      "userManagement": "Quản lý người dùng",
+      "userDetail": "Chi tiết người dùng",
+      "breadcrumbs": {
+        "management": "Quản lý",
+        "userManagement": "Quản lý người dùng"
+      },
+      "modal": {
+        "createTitle": "Thêm người dùng mới",
+        "editTitle": "Chỉnh sửa người dùng",        "password": "Mật khẩu",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "showPassword": "Hiển thị mật khẩu",
+        "hidePassword": "Ẩn mật khẩu",
+        "changePassword": "Đổi mật khẩu",
+        "selectRoles": "Chọn vai trò",
+        "selectDepartments": "Chọn phòng ban",
+        "validation": {
+          "usernameRequired": "Vui lòng nhập tài khoản.",
+          "passwordRequired": "Vui lòng nhập mật khẩu.",
+          "passwordMin": "Mật khẩu phải có ít nhất 8 ký tự.",
+          "nameRequired": "Vui lòng nhập họ và tên.",
+          "phoneInvalid": "Số điện thoại phải là số",
+          "rolesRequired": "Vui lòng chọn ít nhất một vai trò."
+        }
+      }
+    },    "roles": {
       "title": "Quản lý vai trò",
       "add": "Thêm vai trò",
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
       "name": "Tên vai trò",
       "description": "Mô tả",
-      "permissions": "Quyền hạn"
-    },
-    "permissions": {
+      "permissions": "Quyền hạn",
+      "actions": "Thao tác",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm vai trò",
+      "createdDate": "Ngày tạo",
+      "updatedDate": "Ngày cập nhật",
+      "empty": "Trống",
+      "deleteRole": "Xóa vai trò",
+      "management": "Quản lý",
+      "roleManagement": "Quản lý vai trò",
+      "breadcrumbs": {
+        "management": "Quản lý",
+        "roleManagement": "Quản lý vai trò"
+      },      "modal": {
+        "createTitle": "Tạo vai trò",
+        "editTitle": "Cập nhật vai trò",
+        "createButton": "Tạo vai trò",
+        "updateButton": "Cập nhật",
+        "namePlaceholder": "Nhập tên vai trò",
+        "descriptionPlaceholder": "Nhập mô tả vai trò",
+        "validation": {
+          "nameRequired": "Vui lòng nhập tên vai trò.",
+          "descriptionRequired": "Vui lòng nhập mô tả."
+        }
+      },
+      "detail": {
+        "title": "Vai trò và quyền",
+        "subtitle": "Quản lý vai trò người dùng và quyền hạn tương ứng.",
+        "permissionsColumn": "Quyền hạn",
+        "saveChanges": "Lưu thay đổi",
+        "breadcrumbs": {
+          "permissions": "Phân quyền"
+        }
+      }
+    },    "permissions": {
       "title": "Quản lý quyền hạn",
       "groups": {
         "file": "Tệp",
@@ -198,6 +262,25 @@
         "channel": "Kênh",
         "department": "Phòng ban",
         "system": "Hệ thống"
+      }
+    },    "departments": {
+      "title": "Quản lý nhóm tài liệu",
+      "management": "Quản lý",
+      "documentGroupManagement": "Quản lý nhóm tài liệu",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm theo tên nhóm tài liệu",
+      "emptyState": {
+        "title": "Bạn chưa có nhóm tài liệu nào.",
+        "alt": "Không có nhóm tài liệu"
+      },
+      "breadcrumbs": {
+        "management": "Quản lý",
+        "documentGroupManagement": "Quản lý nhóm tài liệu"
+      },
+      "modal": {
+        "createTitle": "Tạo phòng ban mới",
+        "editTitle": "Cài đặt phòng ban",
+        "createButton": "Tạo phòng ban mới"
       }
     }
   },

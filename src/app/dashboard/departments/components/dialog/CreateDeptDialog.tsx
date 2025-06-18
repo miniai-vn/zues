@@ -10,6 +10,7 @@ import {
 import { Department } from "@/hooks/data/useDepartments";
 import { useState } from "react";
 import CreateOrUpdateForm from "../form/CreateOrUpdateDepartmentForm";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface CreateDeptModalProps {
   department?: Department;
@@ -26,6 +27,7 @@ export default function CreateDeptDialog({
   department,
   onChange,
 }: CreateDeptModalProps) {
+  const { t } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -34,14 +36,15 @@ export default function CreateDeptDialog({
         setIsOpen(open);
       }}
       open={isOpen}
-    >
-      <DialogTrigger asChild>
-        <Button>+ Tạo phòng ban mới</Button>
+    >      <DialogTrigger asChild>
+        <Button>+ {t("dashboard.departments.modal.createButton")}</Button>
       </DialogTrigger>
-      <DialogContent className="w-[800px] max-w-[90vw]">
-        <DialogHeader>
+      <DialogContent className="w-[800px] max-w-[90vw]">        <DialogHeader>
           <DialogTitle>
-            {department ? "Cài đặt phòng ban" : "Tạo phòng ban mới"}
+            {department 
+              ? t("dashboard.departments.modal.editTitle") 
+              : t("dashboard.departments.modal.createTitle")
+            }
           </DialogTitle>
         </DialogHeader>
         <div>

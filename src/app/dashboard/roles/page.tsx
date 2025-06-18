@@ -5,14 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProtectedRoute, { Role } from "@/configs/protect-route";
-import { useEffect, useState } from "react";
+import { useTranslations } from "@/hooks/useTranslations";
 import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 // Giả sử bạn có hook useRoles để lấy danh sách roles
-import useRoles from "@/hooks/data/useRoles";
 import ActionPopover from "@/components/dashboard/popever";
+import useRoles from "@/hooks/data/useRoles";
 import CreateOrUpdateRoleDialog from "./components/CreateOrUpdateDialog";
 
 interface RoleType {
@@ -24,6 +25,7 @@ interface RoleType {
 }
 
 const RolesPage = () => {
+  const { t } = useTranslations();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -48,10 +50,9 @@ const RolesPage = () => {
       header: "#",
       cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
       size: 40,
-    },
-    {
+    },    {
       accessorKey: "name",
-      header: "Tên vai trò",
+      header: t("dashboard.roles.name"),
       cell: ({ row }) => (
         <div className="w-full">
           <Badge variant="default" className="whitespace-nowrap">
@@ -62,18 +63,18 @@ const RolesPage = () => {
     },
     {
       accessorKey: "description",
-      header: "Mô tả",
+      header: t("dashboard.roles.description"),
       cell: ({ row }) => (
         <div className="w-full">
           <p className="break-all line-clamp-2">
-            {row.original.description || "Trống"}
+            {row.original.description || t("dashboard.roles.empty")}
           </p>
         </div>
       ),
     },
     {
       accessorKey: "created_at",
-      header: "Ngày tạo",
+      header: t("dashboard.roles.createdDate"),
       cell: ({ row }) => (
         <div>
           {new Date(row.original.created_at).toLocaleDateString("vi-VN", {
@@ -86,7 +87,7 @@ const RolesPage = () => {
     },
     {
       accessorKey: "updated_at",
-      header: "Ngày cập nhật",
+      header: t("dashboard.roles.updatedDate"),
       cell: ({ row }) => (
         <div>
           {new Date(row.original.updated_at).toLocaleDateString("vi-VN", {
@@ -96,10 +97,9 @@ const RolesPage = () => {
           })}
         </div>
       ),
-    },
-    {
+    },    {
       id: "actions",
-      header: "Thao tác",
+      header: t("dashboard.roles.actions"),
       cell: ({ row }) => {
         return (
           <ActionPopover
@@ -112,7 +112,7 @@ const RolesPage = () => {
                     className="flex items-center justify-start gap-2 w-full"
                   >
                     <Pencil size={16} />
-                    <span>Chỉnh sửa</span>
+                    <span>{t("dashboard.roles.edit")}</span>
                   </Button>
                 }
                 onChange={(data) => {
@@ -126,7 +126,7 @@ const RolesPage = () => {
             onDelete={() => {
               //   deleteUser(row.original.id);
               deleteRole(String(row.original.id));
-              console.log("Xóa vai trò", row.original.id);
+              console.log(t("dashboard.roles.deleteRole"), row.original.id);
             }}
           ></ActionPopover>
         );
@@ -147,28 +147,25 @@ const RolesPage = () => {
 
   return (
     <ProtectedRoute requiredRole={[Role.Admin]}>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <PageHeader
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">        <PageHeader
           backButtonHref="/dashboard"
           breadcrumbs={[
-            { label: "Quản lý", href: "/dashboard" },
-            { label: "Quản lý vai trò", isCurrentPage: true },
+            { label: t("dashboard.roles.breadcrumbs.management"), href: "/dashboard" },
+            { label: t("dashboard.roles.breadcrumbs.roleManagement"), isCurrentPage: true },
           ]}
         />
-        <div className="flex justify-between items-center">
-          <Input
-            placeholder="Tìm kiếm vai trò"
+        <div className="flex justify-between items-center">          <Input
+            placeholder={t("dashboard.roles.searchPlaceholder")}
             className="mr-4 w-full flex-1"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="flex items-center gap-3">
-            <Button
+          <div className="flex items-center gap-3">            <Button
               onClick={() => refetchRolesWithPermissions()}
               className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
             >
               <Search />
-              Tìm kiếm
+              {t("dashboard.roles.search")}
             </Button>
             <CreateOrUpdateRoleDialog
               onChange={(data) => {

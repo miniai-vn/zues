@@ -173,11 +173,47 @@
       "add": "Add User",
       "edit": "Edit",
       "delete": "Delete",
-      "name": "Name",
+      "name": "Employee Name",
+      "username": "Username",
       "email": "Email",
+      "phone": "Phone Number",
       "role": "Role",
+      "roles": "Roles",
+      "department": "Department",
+      "departments": "Departments",
       "status": "Status",
-      "lastLogin": "Last Login"
+      "lastLogin": "Last Login",
+      "actions": "Actions",
+      "search": "Search",
+      "searchPlaceholder": "Search employees by name",
+      "notHave": "Not have",
+      "empty": "Empty",
+      "management": "Management",
+      "userManagement": "User Management",
+      "userDetail": "User Detail",
+      "breadcrumbs": {
+        "management": "Management",
+        "userManagement": "User Management"
+      },
+      "modal": {
+        "createTitle": "Add New User",
+        "editTitle": "Edit User",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "showPassword": "Show Password",
+        "hidePassword": "Hide Password",
+        "changePassword": "Change Password",
+        "selectRoles": "Select Roles",
+        "selectDepartments": "Select Departments",
+        "validation": {
+          "usernameRequired": "Please enter username.",
+          "passwordRequired": "Please enter password.",
+          "passwordMin": "Password must be at least 8 characters.",
+          "nameRequired": "Please enter full name.",
+          "phoneInvalid": "Phone number must be numeric",
+          "rolesRequired": "Please select at least one role."
+        }
+      }
     },
     "roles": {
       "title": "Role Management",
@@ -186,7 +222,41 @@
       "delete": "Delete",
       "name": "Role Name",
       "description": "Description",
-      "permissions": "Permissions"
+      "permissions": "Permissions",
+      "actions": "Actions",
+      "search": "Search",
+      "searchPlaceholder": "Search roles",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "empty": "Empty",
+      "deleteRole": "Delete Role",
+      "management": "Management",
+      "roleManagement": "Role Management",
+      "breadcrumbs": {
+        "management": "Management",
+        "roleManagement": "Role Management"
+      },
+      "modal": {
+        "createTitle": "Create Role",
+        "editTitle": "Update Role",
+        "createButton": "Create Role",
+        "updateButton": "Update",
+        "namePlaceholder": "Enter role name",
+        "descriptionPlaceholder": "Enter role description",
+        "validation": {
+          "nameRequired": "Please enter role name.",
+          "descriptionRequired": "Please enter description."
+        }
+      },
+      "detail": {
+        "title": "Roles and Permissions",
+        "subtitle": "Manage user roles and corresponding permissions.",
+        "permissionsColumn": "Permissions",
+        "saveChanges": "Save Changes",
+        "breadcrumbs": {
+          "permissions": "Permissions"
+        }
+      }
     },
     "permissions": {
       "title": "Permission Management",
@@ -198,6 +268,26 @@
         "channel": "Channel",
         "department": "Department",
         "system": "System"
+      }
+    },
+    "departments": {
+      "title": "Document Group Management",
+      "management": "Management",
+      "documentGroupManagement": "Document Group Management",
+      "search": "Search",
+      "searchPlaceholder": "Search by document group name",
+      "emptyState": {
+        "title": "You don't have any document groups yet.",
+        "alt": "No document groups"
+      },
+      "breadcrumbs": {
+        "management": "Management",
+        "documentGroupManagement": "Document Group Management"
+      },
+      "modal": {
+        "createTitle": "Create New Department",
+        "editTitle": "Department Settings",
+        "createButton": "Create New Department"
       }
     }
   },
