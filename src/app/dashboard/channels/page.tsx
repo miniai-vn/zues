@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { PLATFORMS } from "@/app/chat/component/conversation-sidebar";
 import { PageHeader } from "@/components/dashboard/common/page-header";
@@ -13,34 +13,34 @@ import { Platform } from "@/app/chat/component/conversation-sidebar/PlatformList
 
 // Types
 interface ChannelItem {
-  id: number;
-  name: string;
-  status: "Hoạt động" | "Tạm dừng" | "Đang xử lý" | "Đang kết nối";
-  createdDate: string;
-  updatedDate: string;
-  avatar?: string;
-  type: string;
+  id: number
+  name: string
+  status: 'Hoạt động' | 'Tạm dừng' | 'Đang xử lý' | 'Đang kết nối'
+  createdDate: string
+  updatedDate: string
+  avatar?: string
+  type: string
 }
 
 // Utility functions
-const mapChannelStatus = (status: ChannelStatus): ChannelItem["status"] => {
+const mapChannelStatus = (status: ChannelStatus): ChannelItem['status'] => {
   switch (status) {
     case ChannelStatus.ACTIVE:
-      return "Hoạt động";
+      return 'Hoạt động'
     case ChannelStatus.INACTIVE:
-      return "Tạm dừng";
+      return 'Tạm dừng'
     default:
-      return "Đang xử lý";
+      return 'Đang xử lý'
   }
-};
+}
 
 const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-};
+  return new Date(dateString).toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
 
 const transformChannelToChannelItem = (channel: Channel): ChannelItem => ({
   id: channel.id,
@@ -50,17 +50,17 @@ const transformChannelToChannelItem = (channel: Channel): ChannelItem => ({
   updatedDate: formatDate(channel.updatedAt),
   avatar: channel.avatar, // Assuming url contains avatar/image URL
   type: channel.type,
-});
+})
 
 // Components
 interface PlatformCardProps {
-  platform: Platform;
-  channels: ChannelItem[];
-  isExpanded: boolean;
-  onToggle: () => void;
-  onAddChannel: () => void;
-  onDeleteChannel: (channelId: number) => void;
-  isLoading?: boolean;
+  platform: Platform
+  channels: ChannelItem[]
+  isExpanded: boolean
+  onToggle: () => void
+  onAddChannel: () => void
+  onDeleteChannel: (channelId: number) => void
+  isLoading?: boolean
 }
 
 const PlatformCard = ({
@@ -77,7 +77,7 @@ const PlatformCard = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Image
-            src={platform.icon ?? "/channel-imgs/default-icon.png"}
+            src={platform.icon ?? '/channel-imgs/default-icon.png'}
             alt={`${platform.title} icon`}
             width={40}
             height={40}
@@ -105,7 +105,7 @@ const PlatformCard = ({
             ) : (
               <>
                 {isExpanded ? <EyeOff size={16} /> : <Eye size={16} />}
-                {isExpanded ? "Ẩn" : "Xem"}
+                {isExpanded ? 'Ẩn' : 'Xem'}
               </>
             )}
             ({channels.length})
@@ -133,7 +133,7 @@ const PlatformCard = ({
       />
     )}
   </div>
-);
+)
 
 // Main Component
 export default function ChannelsManagementPage() {
@@ -145,55 +145,63 @@ export default function ChannelsManagementPage() {
     updateShopId,
   } = useChannels({
     limit: 100, // Get all channels
-  });
+  })
 
   const [expandedPlatforms, setExpandedPlatforms] = useState<
     Record<string, boolean>
-  >({});
+  >({})
 
   // Group channels by platform type
   const channelsByPlatform = useMemo(() => {
-    const grouped: Record<string, ChannelItem[]> = {};
+    const grouped: Record<string, ChannelItem[]> = {}
 
     PLATFORMS.filter((platform) => !platform.isPublic).forEach((platform) => {
       grouped[platform.type] = [];
     });
 
     channels?.forEach((channel) => {
-      const channelItem = transformChannelToChannelItem(channel);
+      const channelItem = transformChannelToChannelItem(channel)
       if (grouped[channel.type]) {
-        grouped[channel.type].push(channelItem);
+        grouped[channel.type].push(channelItem)
       } else {
         // Handle unknown platform types
-        grouped[channel.type] = [channelItem];
+        grouped[channel.type] = [channelItem]
       }
-    });
+    })
 
-    return grouped;
-  }, [channels]);
-
-  useEffect(() => {
-    console.log("Current URL:", window.location.href);
-  }, [channels]);
+    return grouped
+  }, [channels])
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("appId")) {
-      updateShopId({
-        appId: params.get("appId") || "",
-      });
+    console.log('Current URL:', window.location.href)
+  }, [channels])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const appIdParam = params.get('appId')
+    const appType = params.get('type')
+
+    if (appIdParam) {
+      if (appType === 'zalo') {
+        updateShopId({ appId: appIdParam })
+      } else {
+        const appIds = appIdParam.includes(',')
+          ? appIdParam.split(',')
+          : [appIdParam]
+        appIds.forEach((id) => updateShopId({ appId: id }))
+      }
     }
-  }, []);
+  }, [])
 
   const togglePlatform = (platformType: string) => {
     setExpandedPlatforms((prev) => ({
       ...prev,
       [platformType]: !prev[platformType],
-    }));
-  };
+    }))
+  }
 
   const handleAddChannel = (platformType: string) => {
-    if (platformType === "zalo") {
+    if (platformType === 'zalo') {
       // Redirect to Zalo OA authentication URL
       window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
       return;
@@ -203,21 +211,21 @@ export default function ChannelsManagementPage() {
       window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
       return;
     }
-  };
+  }
 
   const handleDeleteChannel = async (channelId: number) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa kênh này?")) {
-      deleteChannel(channelId);
+    if (window.confirm('Bạn có chắc chắn muốn xóa kênh này?')) {
+      deleteChannel(channelId)
     }
-  };
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <PageHeader
         backButtonHref="/dashboard"
         breadcrumbs={[
-          { label: "Quản lý", href: "/dashboard" },
-          { label: "Kênh bán hàng", isCurrentPage: true },
+          { label: 'Quản lý', href: '/dashboard' },
+          { label: 'Kênh bán hàng', isCurrentPage: true },
         ]}
       />
 
@@ -247,5 +255,5 @@ export default function ChannelsManagementPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
