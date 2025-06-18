@@ -12,14 +12,12 @@ interface ChatAreaProps {
 }
 
 const ChatArea = ({ conversationId }: ChatAreaProps) => {
-  // Extract data from conversation object
   const { fullInfoConversationWithMessages: conversation } = useCS({
     conversationId,
   });
   const conversationName = conversation?.name || "";
   const conversationAvatar = conversation?.avatar || "";
   const customerId = conversation?.senderId;
-  const tags = conversation?.tags || [];
   const {
     messages: chatMessages,
     currentUserId: userId,
@@ -60,7 +58,11 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
         />
 
         <MessageList messages={chatMessages} currentUserId={userId} />
-        <MessageInput onSendMessage={() => {}} />
+        <MessageInput
+          onSendMessage={(content) => {
+            sendMessage(conversationId as number, content);
+          }}
+        />
       </div>
 
       <ContactInfoSidebar

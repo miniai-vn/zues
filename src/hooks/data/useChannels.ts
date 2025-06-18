@@ -69,6 +69,20 @@ const useChannels = ({
   });
 
   const {
+    data: filteredChannels,
+    isLoading: isLoadingFilteredChannels,
+    error: fetchFilteredChannelsError,
+  } = useQuery({
+    queryKey: ["channels", { search, departmentId }],
+    queryFn: async () => {
+      const response = await axiosInstance.get("/api/channels/query", {
+        params: { search, departmentId },
+      });
+      return response.data as Channel[];
+    },
+  });
+
+  const {
     mutate: deleteChannel,
     isPending: isDeletingChannel,
     error: deleteChannelError,
@@ -115,6 +129,9 @@ const useChannels = ({
   });
 
   return {
+    filteredChannels,
+    isLoadingFilteredChannels,
+    fetchFilteredChannelsError,
     updateShopId,
     channels,
     isLoadingChannels,

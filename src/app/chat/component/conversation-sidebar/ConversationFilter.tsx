@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -11,16 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { ConversationQueryParams } from "@/hooks/data/cs/useCS";
 import useTags, { TagType } from "@/hooks/data/cs/useTags";
 import { useUsersWithCs } from "@/hooks/data/cs/useUser";
+import useChannels from "@/hooks/data/useChannels";
 import { cn } from "@/lib/utils";
-import { Clock, Phone, Plus, Search, Settings, Tag, User } from "lucide-react";
+import { Phone, Plus, Search, Settings, Tag, User } from "lucide-react";
 import { useState } from "react";
 
 interface ConversationFilterProps {
@@ -37,7 +32,7 @@ export const ConversationFilter = ({
   onSettings,
 }: ConversationFilterProps) => {
   const [activeTab, setActiveTab] = useState(filters.readStatus || "all");
-
+  const { filteredChannels } = useChannels();
   const { tags } = useTags({
     queryParams: {
       type: TagType.CONVERSATION,
@@ -89,6 +84,12 @@ export const ConversationFilter = ({
   const handleTagChange = (tagId?: number) => {
     onFiltersChange({
       tagId: Number(tagId),
+    });
+  };
+
+  const handleChannelChange = (channelId?: number) => {
+    onFiltersChange({
+      channelId: channelId,
     });
   };
 
@@ -169,6 +170,72 @@ export const ConversationFilter = ({
               >
                 Không có số
               </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Channel Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-7 text-xs gap-1",
+                  filters.channelId &&
+                    "bg-primary/10 border-primary text-primary"
+                )}
+              >
+                <svg
+                  className="h-3 w-3"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {!!filters.channelId && (
+                  <span className="ml-1">
+                    (
+                    {
+                      filteredChannels?.find(
+                        (channel) => channel.id === filters.channelId
+                      )?.name
+                    }
+                    )
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="w-48 max-h-80 overflow-y-auto"
+            >
+              {/* Add "All" option to clear channel filter */}
+              <DropdownMenuItem
+                onClick={() => handleChannelChange(undefined)}
+                className={cn(
+                  "flex items-center gap-2",
+                  !filters.channelId && "bg-accent"
+                )}
+              >
+                Tất cả kênh
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {filteredChannels?.map((channel) => (
+                <DropdownMenuItem
+                  key={channel.id}
+                  onClick={() => handleChannelChange(channel.id)}
+                  className={cn(
+                    "flex items-center gap-2",
+                    filters.channelId === channel.id && "bg-accent"
+                  )}
+                >
+                  <span className="truncate">{channel.name}</span>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
 

@@ -1,13 +1,15 @@
 'use client'
 
-import { PageHeader } from '@/components/dashboard/common/page-header'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import useChannels, { Channel, ChannelStatus } from '@/hooks/data/useChannels'
-import { Eye, EyeOff, Link, Loader2 } from 'lucide-react'
-import Image from 'next/image'
-import { useEffect, useMemo, useState } from 'react'
-import ChannelTable from './component/Table'
+import { PLATFORMS } from "@/app/chat/component/conversation-sidebar";
+import { PageHeader } from "@/components/dashboard/common/page-header";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import useChannels, { Channel, ChannelStatus } from "@/hooks/data/useChannels";
+import { Eye, EyeOff, Link, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import ChannelTable from "./component/Table";
+import { Platform } from "@/app/chat/component/conversation-sidebar/PlatformList";
 
 // Types
 interface ChannelItem {
@@ -19,56 +21,6 @@ interface ChannelItem {
   avatar?: string
   type: string
 }
-
-interface Platform {
-  type: string
-  title: string
-  description: string
-  bgColor: string
-  icon?: string
-}
-
-// Constants
-const PLATFORMS: Platform[] = [
-  {
-    type: 'zalo',
-    title: 'Zalo OA',
-    description:
-      'Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo.',
-    bgColor: 'bg-blue-500',
-    icon: '/channel-imgs/zalo-logo.webp',
-  },
-  {
-    type: 'facebook',
-    title: 'Facebook Shop',
-    description: 'Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook.',
-    bgColor: 'bg-blue-700',
-    icon: '/channel-imgs/facebook-logo.png',
-  },
-  {
-    type: 'tiktok',
-    title: 'TikTok Shop',
-    description: 'Kết nối TikTok Shop để bán hàng qua livestream và video.',
-    bgColor: 'bg-black',
-    icon: '/channel-imgs/tiktok-logo.png',
-  },
-  // {
-  //   type: "lazada",
-  //   title: "Lazada",
-  //   description:
-  //     "Kết nối hệ thống bán hàng Lazada. Quản lý nhiều shop cùng lúc.",
-  //   bgColor: "bg-orange-500",
-  //   icon: "/channel-imgs/lazada-icon.png",
-  // },
-  {
-    type: 'shopee',
-    title: 'Shopee',
-    description:
-      'Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả.',
-    bgColor: 'bg-orange-600',
-    icon: '/channel-imgs/Shopee-logo.png',
-  },
-]
 
 // Utility functions
 const mapChannelStatus = (status: ChannelStatus): ChannelItem['status'] => {
@@ -160,7 +112,7 @@ const PlatformCard = ({
           </Button>
           <Button
             onClick={onAddChannel}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
+            className="flex items-center space-x-2"
             size="sm"
             disabled={isLoading}
           >
@@ -203,9 +155,9 @@ export default function ChannelsManagementPage() {
   const channelsByPlatform = useMemo(() => {
     const grouped: Record<string, ChannelItem[]> = {}
 
-    PLATFORMS.forEach((platform) => {
-      grouped[platform.type] = []
-    })
+    PLATFORMS.filter((platform) => !platform.isPublic).forEach((platform) => {
+      grouped[platform.type] = [];
+    });
 
     channels?.forEach((channel) => {
       const channelItem = transformChannelToChannelItem(channel)
@@ -251,13 +203,13 @@ export default function ChannelsManagementPage() {
   const handleAddChannel = (platformType: string) => {
     if (platformType === 'zalo') {
       // Redirect to Zalo OA authentication URL
-      window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, '_blank')
-      return
+      window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
+      return;
     }
-    if (platformType === 'facebook') {
+    if (platformType === "facebook") {
       // Redirect to Facebook Auth URL
-      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, '_blank')
-      return
+      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
+      return;
     }
   }
 
@@ -278,16 +230,6 @@ export default function ChannelsManagementPage() {
       />
 
       <div className="w-full max-w-6xl mx-auto space-y-6">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Quản lý kênh bán hàng
-          </h2>
-          <p className="text-gray-600">
-            Kết nối và quản lý nhiều tài khoản trên các nền tảng bán hàng khác
-            nhau
-          </p>
-        </div>
-
         {isLoadingChannels ? (
           <div className="text-center py-12">
             <Loader2 className="mx-auto h-8 w-8 animate-spin" />
@@ -295,18 +237,20 @@ export default function ChannelsManagementPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {PLATFORMS.map((platform) => (
-              <PlatformCard
-                key={platform.type}
-                platform={platform}
-                channels={channelsByPlatform[platform.type] || []}
-                isExpanded={expandedPlatforms[platform.type] || false}
-                onToggle={() => togglePlatform(platform.type)}
-                onAddChannel={() => handleAddChannel(platform.type)}
-                onDeleteChannel={handleDeleteChannel}
-                isLoading={isDeletingChannel}
-              />
-            ))}
+            {PLATFORMS.filter((platform) => platform.isPublic).map(
+              (platform) => (
+                <PlatformCard
+                  key={platform.type}
+                  platform={platform}
+                  channels={channelsByPlatform[platform.type] || []}
+                  isExpanded={expandedPlatforms[platform.type] || false}
+                  onToggle={() => togglePlatform(platform.type)}
+                  onAddChannel={() => handleAddChannel(platform.type)}
+                  onDeleteChannel={handleDeleteChannel}
+                  isLoading={isDeletingChannel}
+                />
+              )
+            )}
           </div>
         )}
       </div>
