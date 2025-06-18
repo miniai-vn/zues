@@ -1,0 +1,165 @@
+{
+  "nav": {
+    "tryNow": "Try Now",
+    "login": "Login",
+    "register": "Register",
+    "home": "Home",
+    "features": "Features",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "About Mi9",
+    "title": "Where Artificial Intelligence Meets Comprehensive Security",
+    "description": "Mi9 is a pioneering technology company in developing dedicated AI solutions for businesses and comprehensive information security. We help businesses improve performance, optimize processes and ensure data safety — all in a reliable platform that does not share information with third parties."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Advanced Intelligence, Human-like Intuition",
+    "description": "Built with modern technology to understand, learn and adapt to your specific needs.",
+    "cards": {
+      "autoLearning": {
+        "title": "Automatic Learning",
+        "description": "Atlas learns from your interactions, continuously improving responses and actions to serve you better."
+      },
+      "naturalInteraction": {
+        "title": "Natural Interaction",
+        "description": "Communicate using natural language and gestures. Atlas understands context and responds appropriately."
+      },
+      "preciseMovement": {
+        "title": "Precise Movement",
+        "description": "Advanced motor joints provide flexible, natural movement with superior balance and coordination capabilities."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login to your account",
+      "description": "Enter your email to login to the system",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Login",
+      "loading": "Logging in...",
+      "error": "Login failed!",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up now"
+    },
+    "register": {
+      "title": "Create new account",
+      "description": "Enter information to create account",
+      "fullName": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Register",
+      "loading": "Creating account...",
+      "success": "Account created successfully!",
+      "error": "Account creation failed!",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in now"
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "chat": "Chat",
+      "channels": "Channels",
+      "users": "Users",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "departments": "Departments",
+      "settings": "Settings",
+      "reports": "Reports"
+    },
+    "chat": {
+      "title": "AI Chat",
+      "placeholder": "Enter your message...",
+      "send": "Send",
+      "newChat": "New Chat",
+      "history": "History"
+    },
+    "channels": {
+      "title": "Channel Management",
+      "add": "Add Channel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "users": {
+      "title": "User Management",
+      "add": "Add User",
+      "edit": "Edit",
+      "delete": "Delete",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "lastLogin": "Last Login"
+    },
+    "roles": {
+      "title": "Role Management",
+      "add": "Add Role",
+      "edit": "Edit",
+      "delete": "Delete",
+      "name": "Role Name",
+      "description": "Description",
+      "permissions": "Permissions"
+    },
+    "permissions": {
+      "title": "Permission Management",
+      "groups": {
+        "file": "File",
+        "chat": "Chat",
+        "user": "User",
+        "role": "Role",
+        "channel": "Channel",
+        "department": "Department",
+        "system": "System"
+      }
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email",
+    "password": "Password must be at least 8 characters",
+    "confirmPassword": "Passwords do not match",
+    "min": "Minimum {{min}} characters",
+    "max": "Maximum {{max}} characters"
+  },
+  "roleNames": {
+    "admin": "Administrator",
+    "moderator": "Moderator",
+    "developer": "Developer",
+    "support_agent": "Support Agent",
+    "content_creator": "Content Creator",
+    "user": "Employee",
+    "guest": "Guest",
+    "leader": "Team Leader"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "nav": {
+    "tryNow": "Dùng thử",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "home": "Trang chủ",
+    "features": "Tính năng",
+    "about": "Về chúng tôi",
+    "contact": "Liên hệ"
+  },
+  "hero": {
+    "badge": "Về Mi9",
+    "title": "Nơi trí tuệ nhân tạo gặp bảo mật toàn diện",
+    "description": "Mi9 là công ty công nghệ tiên phong trong việc phát triển giải pháp AI riêng biệt cho doanh nghiệp và bảo mật thông tin toàn diện. Chúng tôi giúp doanh nghiệp nâng cao hiệu suất, tối ưu quy trình và đảm bảo an toàn dữ liệu — tất cả trong một nền tảng đáng tin cậy, không chia sẻ thông tin với bên thứ ba."
+  },
+  "features": {
+    "badge": "Tính năng",
+    "title": "Trí tuệ tiên tiến, Trực giác như con người",
+    "description": "Được xây dựng với công nghệ hiện đại để thấu hiểu, học hỏi và thích nghi với nhu cầu riêng của bạn.",
+    "cards": {
+      "autoLearning": {
+        "title": "Tự động học hỏi",
+        "description": "Atlas học hỏi từ các tương tác của bạn, liên tục cải thiện phản hồi và hành động để phục vụ bạn tốt hơn."
+      },
+      "naturalInteraction": {
+        "title": "Tương tác tự nhiên",
+        "description": "Giao tiếp bằng ngôn ngữ tự nhiên và cử chỉ. Atlas hiểu ngữ cảnh và phản hồi phù hợp."
+      },
+      "preciseMovement": {
+        "title": "Chuyển động chính xác",
+        "description": "Các khớp động cơ tiên tiến mang lại chuyển động linh hoạt, tự nhiên với khả năng cân bằng và phối hợp vượt trội."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Đăng nhập vào tài khoản",
+      "description": "Nhập email của bạn để đăng nhập vào hệ thống",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "submit": "Đăng nhập",
+      "loading": "Đang đăng nhập...",
+      "error": "Đăng nhập thất bại!",
+      "forgotPassword": "Quên mật khẩu?",
+      "noAccount": "Chưa có tài khoản?",
+      "signUp": "Đăng ký ngay"
+    },
+    "register": {
+      "title": "Tạo tài khoản mới",
+      "description": "Nhập thông tin để tạo tài khoản",
+      "fullName": "Họ và tên",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "submit": "Đăng ký",
+      "loading": "Đang tạo tài khoản...",
+      "success": "Tạo tài khoản thành công!",
+      "error": "Tạo tài khoản thất bại!",
+      "hasAccount": "Đã có tài khoản?",
+      "signIn": "Đăng nhập ngay"
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "chat": "Trò chuyện",
+      "channels": "Kênh",
+      "users": "Người dùng",
+      "roles": "Vai trò",
+      "permissions": "Quyền hạn",
+      "departments": "Phòng ban",
+      "settings": "Cài đặt",
+      "reports": "Báo cáo"
+    },
+    "chat": {
+      "title": "Trò chuyện AI",
+      "placeholder": "Nhập tin nhắn của bạn...",
+      "send": "Gửi",
+      "newChat": "Cuộc trò chuyện mới",
+      "history": "Lịch sử"
+    },
+    "channels": {
+      "title": "Quản lý kênh",
+      "add": "Thêm kênh",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "status": "Trạng thái",
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "users": {
+      "title": "Quản lý người dùng",
+      "add": "Thêm người dùng",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "name": "Họ tên",
+      "email": "Email",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "lastLogin": "Đăng nhập lần cuối"
+    },
+    "roles": {
+      "title": "Quản lý vai trò",
+      "add": "Thêm vai trò",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "name": "Tên vai trò",
+      "description": "Mô tả",
+      "permissions": "Quyền hạn"
+    },
+    "permissions": {
+      "title": "Quản lý quyền hạn",
+      "groups": {
+        "file": "Tệp",
+        "chat": "Trò chuyện",
+        "user": "Người dùng",
+        "role": "Vai trò",
+        "channel": "Kênh",
+        "department": "Phòng ban",
+        "system": "Hệ thống"
+      }
+    }
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "sort": "Sắp xếp",
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra",
+    "success": "Thành công",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "yes": "Có",
+    "no": "Không",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước đó",
+    "submit": "Gửi",
+    "reset": "Đặt lại"
+  },
+  "validation": {
+    "required": "Trường này là bắt buộc",
+    "email": "Email không hợp lệ",
+    "password": "Mật khẩu phải có ít nhất 8 ký tự",
+    "confirmPassword": "Mật khẩu không khớp",
+    "min": "Tối thiểu {{min}} ký tự",
+    "max": "Tối đa {{max}} ký tự"
+  },
+  "roleNames": {
+    "admin": "Quản trị viên",
+    "moderator": "Người kiểm duyệt",
+    "developer": "Nhà phát triển",
+    "support_agent": "Nhân viên hỗ trợ",
+    "content_creator": "Người tạo nội dung",
+    "user": "Nhân viên",
+    "guest": "Khách",
+    "leader": "Trưởng phòng"
+  }
+}

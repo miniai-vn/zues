@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -55,6 +56,7 @@ const FeatureCard = ({ icon, title, description, index }: FeatureCardProps) => {
 };
 
 const Features = () => {
+  const { t } = useTranslations();
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,35 +91,29 @@ const Features = () => {
   return (
     <section className="py-12 sm:py-16 md:py-20 pb-0 relative bg-[hsl(var(--background))]" id="features" ref={sectionRef}>
       <div className="section-container">
-        <div className="text-center mb-10 sm:mb-16">
-          <div className="pulse-chip mx-auto mb-3 sm:mb-4 opacity-1 fade-in-element">
-            <span>Tính năng</span>
-          </div>
-          <h2 className="section-title mb-3 sm:mb-4 opacity-1 fade-in-element">
-            Trí tuệ tiên tiến, <br className="hidden sm:block" />Trực giác như con người
-          </h2>
-          <p className="section-subtitle mx-auto opacity-1 fade-in-element">
-            Được xây dựng với công nghệ hiện đại để thấu hiểu, học hỏi và thích nghi với nhu cầu riêng của bạn.
+        <div className="text-center mb-10 sm:mb-16">          <div className="pulse-chip mx-auto mb-3 sm:mb-4 opacity-1 fade-in-element">
+            <span>{t('features.badge')}</span>
+          </div>          <h2 className="section-title mb-3 sm:mb-4 opacity-1 fade-in-element">
+            {t('features.title')}
+          </h2>          <p className="section-subtitle mx-auto opacity-1 fade-in-element">
+            {t('features.description')}
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          <FeatureCard
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">          <FeatureCard
             icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 1 1-4-4"></path><path d="M12 8a4 4 0 1 0 4 4"></path><circle cx="12" cy="12" r="1"></circle></svg>}
-            title="Tự động học hỏi"
-            description="Atlas học hỏi từ các tương tác của bạn, liên tục cải thiện phản hồi và hành động để phục vụ bạn tốt hơn."
+            title={t('features.cards.autoLearning.title')}
+            description={t('features.cards.autoLearning.description')}
             index={0}
-          />
-          <FeatureCard
+          />          <FeatureCard
             icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 13v-1h6v1"></path><path d="M11 18.5l-.5-1 1-.5.5 1.5-1 .5-.5-1 1-.5"></path><path d="M9.5 12 9 11H4"></path></svg>}
-            title="Tương tác tự nhiên"
-            description="Giao tiếp bằng ngôn ngữ tự nhiên và cử chỉ. Atlas hiểu ngữ cảnh và phản hồi phù hợp."
+            title={t('features.cards.naturalInteraction.title')}
+            description={t('features.cards.naturalInteraction.description')}
             index={1}
-          />
-          <FeatureCard
+          />          <FeatureCard
             icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6"><rect width="18" height="11" x="3" y="11" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" x2="8" y1="16" y2="16"></line><line x1="16" x2="16" y1="16" y2="16"></line></svg>}
-            title="Chuyển động chính xác"
-            description="Các khớp động cơ tiên tiến mang lại chuyển động linh hoạt, tự nhiên với khả năng cân bằng và phối hợp vượt trội."
+            title={t('features.cards.preciseMovement.title')}
+            description={t('features.cards.preciseMovement.description')}
             index={2}
           />
           <FeatureCard
