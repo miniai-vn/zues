@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Customer } from "@/hooks/data/useCustomers";
+import { useTranslations } from "@/hooks/useTranslations";
 import { ContactInfo } from "./ContactInfo";
 import { ContactNotes } from "./ContactNotes";
 
@@ -17,6 +18,8 @@ interface ContactTabsProps {
 }
 
 export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
+  const { t } = useTranslations();
+  
   // Handler that connects ContactInfo's onSave to updateCustomer
   const handleSaveContact = ({
     id,
@@ -41,11 +44,10 @@ export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
     }
   };
 
-  return (
-    <Tabs defaultValue="info" className="w-full">
+  return (    <Tabs defaultValue="info" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="info">Thông tin</TabsTrigger>
-        <TabsTrigger value="notes">Ghi chú</TabsTrigger>
+        <TabsTrigger value="info">{t("dashboard.chat.information")}</TabsTrigger>
+        <TabsTrigger value="notes">{t("dashboard.chat.notes")}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="info" className="space-y-4">

@@ -1,3 +1,5 @@
+import { useTranslations } from "@/hooks/useTranslations";
+
 interface EmptyStateProps {
   title?: string;
   description?: string;
@@ -5,10 +7,14 @@ interface EmptyStateProps {
 }
 
 export const EmptyState = ({
-  title = "Select a conversation",
-  description = "Choose a conversation to start messaging",
+  title,
+  description,
   icon,
 }: EmptyStateProps) => {
+  const { t } = useTranslations();
+  
+  const displayTitle = title || t("dashboard.chat.selectConversation");
+  const displayDescription = description || t("dashboard.chat.chooseConversation");
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/10">
       <div className="text-center space-y-3">
@@ -16,13 +22,12 @@ export const EmptyState = ({
           <div className="flex justify-center text-muted-foreground/50">
             {icon}
           </div>
-        )}
-        <div>
+        )}        <div>
           <h3 className="text-lg font-medium text-muted-foreground">
-            {title}
+            {displayTitle}
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            {description}
+            {displayDescription}
           </p>
         </div>
       </div>
