@@ -1,6 +1,6 @@
 "use client";
 
-import { PLATFORMS } from "@/app/chat/component/conversation-sidebar";
+import { getPlatforms } from "@/app/chat/component/conversation-sidebar";
 import { PageHeader } from "@/components/dashboard/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,9 +8,9 @@ import useChannels, { Channel, ChannelStatus } from "@/hooks/data/useChannels";
 import { Eye, EyeOff, Link, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "@/hooks/useTranslations";
 import ChannelTable from "./component/Table";
 import { Platform } from "@/app/chat/component/conversation-sidebar/PlatformList";
-import { useTranslations } from "@/hooks/useTranslations";
 
 // Types
 interface ChannelItem {
@@ -151,6 +151,7 @@ const PlatformCard = ({
 // Main Component
 export default function ChannelsManagementPage() {
   const { t } = useTranslations();
+  const platforms = getPlatforms(t);
   const {
     channels,
     isLoadingChannels,
@@ -168,7 +169,7 @@ export default function ChannelsManagementPage() {
   const channelsByPlatform = useMemo(() => {
     const grouped: Record<string, ChannelItem[]> = {};
 
-    PLATFORMS.filter((platform) => !platform.isPublic).forEach((platform) => {
+    platforms.filter((platform: Platform) => !platform.isPublic).forEach((platform: Platform) => {
       grouped[platform.type] = [];
     });
 
@@ -246,9 +247,8 @@ export default function ChannelsManagementPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {PLATFORMS.filter((platform) => platform.isPublic).map(
-              (platform) => (
+          <div className="space-y-6">            {platforms.filter((platform: Platform) => platform.isPublic).map(
+              (platform: Platform) => (
                 <PlatformCard
                   key={platform.type}
                   platform={platform}

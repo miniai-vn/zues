@@ -289,6 +289,42 @@
         "editTitle": "Department Settings",
         "createButton": "Create New Department"
       }
+    }  },
+  "platforms": {
+    "all": {
+      "name": "All Platforms",
+      "title": "All Platforms", 
+      "description": "All messages"
+    },
+    "zalo": {
+      "name": "Zalo OA",
+      "title": "Zalo OA",
+      "description": "Connect Zalo OA to interact with customers and sell through Zalo."
+    },
+    "facebook": {
+      "name": "Facebook",
+      "title": "Facebook Shop",
+      "description": "Integrate Facebook Shop to sell directly on Facebook."
+    },
+    "shopee": {
+      "name": "Shopee",
+      "title": "Shopee",
+      "description": "Integrate with Shopee to sync products and manage sales effectively."
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "title": "TikTok Shop",
+      "description": "Connect TikTok Shop to sell through livestream and videos."
+    },
+    "whatsapp": {
+      "name": "WhatsApp",
+      "title": "WhatsApp",
+      "description": "WhatsApp messages"
+    },
+    "telegram": {
+      "name": "Telegram",
+      "title": "Telegram",
+      "description": "Telegram messages"
     }
   },
   "createTagDialog": {

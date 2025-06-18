@@ -282,6 +282,42 @@
         "editTitle": "Cài đặt phòng ban",
         "createButton": "Tạo phòng ban mới"
       }
+    }  },
+  "platforms": {
+    "all": {
+      "name": "Tất cả nền tảng",
+      "title": "Tất cả nền tảng",
+      "description": "Tất cả tin nhắn"
+    },
+    "zalo": {
+      "name": "Zalo OA",
+      "title": "Zalo OA",
+      "description": "Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo."
+    },
+    "facebook": {
+      "name": "Facebook",
+      "title": "Facebook Shop",
+      "description": "Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook."
+    },
+    "shopee": {
+      "name": "Shopee",
+      "title": "Shopee",
+      "description": "Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả."
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "title": "TikTok Shop",
+      "description": "Kết nối TikTok Shop để bán hàng qua livestream và video."
+    },
+    "whatsapp": {
+      "name": "WhatsApp",
+      "title": "WhatsApp",
+      "description": "Tin nhắn WhatsApp"
+    },
+    "telegram": {
+      "name": "Telegram",
+      "title": "Telegram",
+      "description": "Tin nhắn Telegram"
     }
   },
   "createTagDialog": {
