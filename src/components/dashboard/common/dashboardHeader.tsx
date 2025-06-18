@@ -9,15 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface DashboardHeaderProps {
   title?: string;
 }
 
 const DashboardHeader = ({ title = "Dashboard" }: DashboardHeaderProps) => {
- 
   return (
-    <header className=" bg-background px-4 pt-2">
+    <header className=" bg-background px-4 py-2">
       <div className="flex items-center justify-between">
         {/* Left side - Title */}
         <div className="flex items-center">
@@ -26,6 +26,7 @@ const DashboardHeader = ({ title = "Dashboard" }: DashboardHeaderProps) => {
 
         {/* Right side - Actions and Profile */}
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <Button variant="ghost" size="sm">
             <Bell className="h-4 w-4" />
           </Button>

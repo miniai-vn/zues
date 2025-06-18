@@ -77,15 +77,33 @@
       "send": "Gửi",
       "newChat": "Cuộc trò chuyện mới",
       "history": "Lịch sử"
-    },
-    "channels": {
+    },    "channels": {
       "title": "Quản lý kênh",
+      "salesChannels": "Kênh bán hàng",
       "add": "Thêm kênh",
+      "connect": "Kết nối",
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
+      "disconnect": "Ngắt kết nối",
       "status": "Trạng thái",
       "active": "Hoạt động",
-      "inactive": "Không hoạt động"
+      "inactive": "Tạm dừng",
+      "processing": "Đang xử lý",
+      "connecting": "Đang kết nối",
+      "show": "Xem",
+      "hide": "Ẩn",
+      "avatar": "Ảnh đại diện",
+      "name": "Tên kênh",
+      "createdDate": "Ngày tạo",
+      "updatedDate": "Ngày cập nhật",
+      "actions": "Thao tác",
+      "permissions": "Quyền hạn",
+      "total": "Tổng cộng",      "channelCount": "{{count}} kênh",
+      "loading": "Đang tải danh sách kênh...",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa kênh này?",
+      "management": "Quản lý",
+      "noChannels": "Chưa có kênh nào được kết nối",
+      "addFirst": "Thêm kênh đầu tiên"
     },
     "users": {
       "title": "Quản lý người dùng",

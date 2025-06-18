@@ -77,15 +77,33 @@
       "send": "Send",
       "newChat": "New Chat",
       "history": "History"
-    },
-    "channels": {
+    },    "channels": {
       "title": "Channel Management",
+      "salesChannels": "Sales Channels",
       "add": "Add Channel",
+      "connect": "Connect",
       "edit": "Edit",
       "delete": "Delete",
+      "disconnect": "Disconnect",
       "status": "Status",
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "processing": "Processing",
+      "connecting": "Connecting",
+      "show": "Show",
+      "hide": "Hide",
+      "avatar": "Avatar",
+      "name": "Channel Name",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "actions": "Actions",
+      "permissions": "Permissions",
+      "total": "Total",      "channelCount": "{{count}} channels",
+      "loading": "Loading channel list...",
+      "confirmDelete": "Are you sure you want to delete this channel?",
+      "management": "Management",
+      "noChannels": "No channels connected yet",
+      "addFirst": "Add first channel"
     },
     "users": {
       "title": "User Management",
