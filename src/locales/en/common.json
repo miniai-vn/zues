@@ -70,7 +70,17 @@
       "departments": "Departments",
       "settings": "Settings",
       "reports": "Reports"
-    },    "chat": {
+    },
+    "sidebar": {
+      "automation": "Automation",
+      "staff": "Staff",
+      "integration": "Integration",
+      "reports": "Reports",
+      "documentGroups": "Document Groups",
+      "employees": "Employees",
+      "permissions": "Permissions"
+    },
+    "chat": {
       "title": "AI Chat",
       "placeholder": "Enter your message...",
       "send": "Send",
@@ -128,7 +138,8 @@
         "employee": "Employee",
         "dateRange": "Date Range"
       }
-    },"channels": {
+    },
+    "channels": {
       "title": "Channel Management",
       "salesChannels": "Sales Channels",
       "add": "Add Channel",
@@ -149,7 +160,8 @@
       "updatedDate": "Updated Date",
       "actions": "Actions",
       "permissions": "Permissions",
-      "total": "Total",      "channelCount": "{{count}} channels",
+      "total": "Total",
+      "channelCount": "{{count}} channels",
       "loading": "Loading channel list...",
       "confirmDelete": "Are you sure you want to delete this channel?",
       "management": "Management",
@@ -187,6 +199,21 @@
         "department": "Department",
         "system": "System"
       }
+    }
+  },
+  "createTagDialog": {
+    "title": "Create New Tag",
+    "label": {
+      "name": "Tag Name",
+      "color": "Tag Color"
+    },
+    "input": {
+      "placeholder": "Enter tag name"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "create": "Create Tag",
+      "creating": "Creating..."
     }
   },
   "common": {

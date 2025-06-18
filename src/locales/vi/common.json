@@ -70,7 +70,17 @@
       "departments": "Phòng ban",
       "settings": "Cài đặt",
       "reports": "Báo cáo"
-    },    "chat": {
+    },
+    "sidebar": {
+      "automation": "Tự động",
+      "staff": "Nhân viên",
+      "integration": "Tích hợp",
+      "reports": "Báo cáo",
+      "documentGroups": "Nhóm tài liệu",
+      "employees": "Nhân viên",
+      "permissions": "Phân quyền"
+    },
+    "chat": {
       "title": "Trò chuyện AI",
       "placeholder": "Nhập tin nhắn của bạn...",
       "send": "Gửi",
@@ -128,7 +138,8 @@
         "employee": "Nhân viên",
         "dateRange": "Khoảng thời gian"
       }
-    },"channels": {
+    },
+    "channels": {
       "title": "Quản lý kênh",
       "salesChannels": "Kênh bán hàng",
       "add": "Thêm kênh",
@@ -149,7 +160,8 @@
       "updatedDate": "Ngày cập nhật",
       "actions": "Thao tác",
       "permissions": "Quyền hạn",
-      "total": "Tổng cộng",      "channelCount": "{{count}} kênh",
+      "total": "Tổng cộng",
+      "channelCount": "{{count}} kênh",
       "loading": "Đang tải danh sách kênh...",
       "confirmDelete": "Bạn có chắc chắn muốn xóa kênh này?",
       "management": "Quản lý",
@@ -187,6 +199,21 @@
         "department": "Phòng ban",
         "system": "Hệ thống"
       }
+    }
+  },
+  "createTagDialog": {
+    "title": "Tạo thẻ mới",
+    "label": {
+      "name": "Tên thẻ",
+      "color": "Màu thẻ"
+    },
+    "input": {
+      "placeholder": "Nhập tên thẻ"
+    },
+    "button": {
+      "cancel": "Hủy",
+      "create": "Tạo thẻ",
+      "creating": "Đang tạo..."
     }
   },
   "common": {

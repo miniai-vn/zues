@@ -52,7 +52,8 @@ export const ContactInfo = ({
 
   return (
     <div className="space-y-4">
-      <Card>        <CardHeader>
+      <Card>
+        <CardHeader>
           <CardTitle className="text-sm flex items-center gap-2">
             <Phone className="h-4 w-4" />
             {t("dashboard.chat.contactInfo.editContact")}
