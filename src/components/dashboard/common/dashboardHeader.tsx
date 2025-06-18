@@ -15,9 +15,7 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader = ({ title = "Dashboard" }: DashboardHeaderProps) => {
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") || "{}")
-    : undefined;
+ 
   return (
     <header className=" bg-background px-4 pt-2">
       <div className="flex items-center justify-between">
@@ -38,10 +36,8 @@ const DashboardHeader = ({ title = "Dashboard" }: DashboardHeaderProps) => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-full">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback>
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </AvatarFallback>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>{"M"}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
