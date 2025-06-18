@@ -2,84 +2,123 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
-export const PLATFORMS = [
+export interface Platform {
+  id: string;
+  type: string;
+  name: string;
+  title: string;
+  description: string;
+  icon: string;
+  fallback: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  isPublic?: boolean;
+  status: "Online" | "Offline";
+}
+
+export const PLATFORMS: Platform[] = [
   {
     id: "all",
+    type: "all",
     name: "All Platforms",
+    title: "All Platforms",
+    description: "All messages",
     icon: "/channel-imgs/all-platforms.png",
     fallback: "ALL",
     color: "text-gray-600",
     bgColor: "bg-gray-50",
     borderColor: "border-gray-200",
     status: "Online",
-    description: "All messages",
+    isPublic: false,
   },
   {
     id: "zalo",
+    type: "zalo",
     name: "Zalo OA",
-    icon: "/channel-imgs/zalo-logo.png",
+    title: "Zalo OA",
+    description:
+      "Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo.",
+    icon: "/channel-imgs/zalo-logo.webp",
     fallback: "ZA",
     color: "text-blue-600",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     status: "Online",
-    description: "Customer messages",
+    isPublic: true,
   },
   {
     id: "facebook",
+    type: "facebook",
     name: "Facebook",
+    title: "Facebook Shop",
+    description: "Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook.",
     icon: "/channel-imgs/facebook-logo.png",
     fallback: "FB",
     color: "text-blue-700",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     status: "Online",
-    description: "Page messages",
+    isPublic: true,
   },
   {
     id: "shopee",
+    type: "shopee",
     name: "Shopee",
-    icon: "/channel-imgs/shopee-logo.png",
+    title: "Shopee",
+    description:
+      "Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả.",
+    icon: "/channel-imgs/Shopee-logo.png",
     fallback: "SP",
     color: "text-orange-500",
     bgColor: "bg-orange-50",
     borderColor: "border-orange-200",
     status: "Online",
-    description: "New orders",
+    isPublic: true,
   },
   {
     id: "tiktok",
+    type: "tiktok",
     name: "TikTok",
+    title: "TikTok Shop",
+    description: "Kết nối TikTok Shop để bán hàng qua livestream và video.",
     icon: "/channel-imgs/tiktok-logo.png",
     fallback: "TT",
     color: "text-pink-600",
     bgColor: "bg-pink-50",
     borderColor: "border-pink-200",
     status: "Online",
-    description: "TikTok messages",
+    isPublic: true,
   },
   {
     id: "whatsapp",
+    type: "whatsapp",
     name: "WhatsApp",
+    title: "WhatsApp",
+    description: "WhatsApp messages",
     icon: "/channel-imgs/whatsapp-logo.png",
     fallback: "WA",
     color: "text-green-600",
     bgColor: "bg-green-50",
     borderColor: "border-green-200",
     status: "Online",
-    description: "WhatsApp messages",
+    isPublic: false,
   },
   {
     id: "telegram",
+    type: "telegram",
     name: "Telegram",
+    title: "Telegram",
+    description: "Telegram messages",
     icon: "/channel-imgs/telegram-logo.png",
     fallback: "TG",
     color: "text-blue-500",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     status: "Online",
-    description: "Telegram messages",
+    isPublic: false,
   },
 ];
 
@@ -93,6 +132,7 @@ export const PlatformList = ({
   onSelectChannel,
 }: PlatformListProps) => {
   const { channelsUnreadCount: channelsWithUnreadMessage } = useCsStore();
+  const router = useRouter();
   const getUnreadCount = (platformId: string) => {
     if (platformId === "all") {
       return (
@@ -170,7 +210,6 @@ export const PlatformList = ({
                       {platform.fallback}
                     </AvatarFallback>
                   </Avatar>
-
                 </div>
 
                 {unreadCount > 0 && (
@@ -193,6 +232,23 @@ export const PlatformList = ({
               </div>
             );
           })}
+          <div
+            className={cn(
+              "relative flex items-center justify-center p-1 rounded-lg cursor-pointer transition-all duration-200 border hover:bg-white border-transparent hover:border-gray-200"
+            )}
+            onClick={() => router.push("/dashboard/channels")}
+          >
+            <div
+              className={cn(
+                "p-1 rounded-lg flex items-center justify-center hover:bg-white border-transparent hover:border-gray-200"
+              )}
+            >
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="link.png" className="object-contain p-1" />
+               
+              </Avatar>
+            </div>
+          </div>
         </div>
       </div>
     </div>

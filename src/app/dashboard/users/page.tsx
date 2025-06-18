@@ -1,6 +1,6 @@
 "use client";
 import { PageHeader } from "@/components/dashboard/common/page-header";
-import ActionPopover from "@/components/dashboard/popever";
+import ActionDropdown from "@/components/dashboard/dropdown";
 import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,11 @@ import { useAuth, User } from "@/hooks/data/useAuth";
 import { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { ColumnDef } from "@tanstack/react-table";
-import { Pencil, Search } from "lucide-react";
+import { Phone, Search, Shield, User as UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddOrUpdateUserModal } from "./components/CreateOrUpdateUserModal";
 
-const UserComponents = () => {
+const UserManager = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
@@ -49,19 +49,20 @@ const UserComponents = () => {
 
   const columns: ColumnDef<User>[] = [
     {
-    id: "index",
-    header: "#",
-    cell: ({ row }) => (
-      <div className="text-center">{row.index + 1}</div>
-    ),
-    size: 40,
-  },
+      id: "index",
+      header: "#",
+      cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+      size: 40,
+    },
     {
       accessorKey: "name",
       header: "Tên nhân viên",
       cell: ({ row }) => (
-        <div className="w-full">
-          <p className="break-all line-clamp-2">{row.original.name ?? "Trống"}</p>
+        <div className="flex  gap-2">
+          <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+            <UserIcon className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <span>{row.original.name ?? "Trống"}</span>
         </div>
       ),
     },
@@ -78,8 +79,11 @@ const UserComponents = () => {
       accessorKey: "phone",
       header: "Số điện thoại",
       cell: ({ row }) => (
-        <div className="w-full">
-          <p className="break-all line-clamp-2">{row.original.phone ?? "Trống"}</p>
+        <div className="flex items-center gap-2">
+          <Phone className="h-4 w-4 text-muted-foreground" />
+          <span className="text-muted-foreground">
+            {row.original.phone ?? "Not have"}
+          </span>
         </div>
       ),
     },
@@ -93,15 +97,12 @@ const UserComponents = () => {
         }
         return (
           <div className="flex flex-wrap gap-1 max-w-xs w-full">
-            {roles.map((role) => (
-              <Badge
-                key={role.id}
-                variant={"default"}
-                className="whitespace-nowrap"
-              >
-                {RoleVietnameseNames[role.name] || role.name}
-              </Badge>
-            ))}
+            <Badge variant="secondary" className="whitespace-nowrap">
+              <Shield className="h-3 w-3 mr-1" />
+              {roles
+                .map((role) => RoleVietnameseNames[role.name] || role.name)
+                .join(", ")}
+            </Badge>
           </div>
         );
       },
@@ -134,19 +135,11 @@ const UserComponents = () => {
       header: "Thao tác",
       cell: ({ row }) => {
         return (
-          <ActionPopover
+          <ActionDropdown
             className="w-40 p-2"
             children={
               <AddOrUpdateUserModal
-                children={
-                  <Button
-                    variant="ghost"
-                    className="flex items-center justify-start gap-2 w-full"
-                  >
-                    <Pencil size={16} />
-                    <span>Chỉnh sửa</span>
-                  </Button>
-                }
+                children={<span>Chỉnh sửa</span>}
                 onChange={(data) => {
                   if ("id" in data) {
                     updateUser(data as any);
@@ -158,8 +151,7 @@ const UserComponents = () => {
             onDelete={() => {
               deleteUser(row.original.id);
             }}
-          >
-          </ActionPopover>
+          ></ActionDropdown>
         );
       },
     },
@@ -170,6 +162,7 @@ const UserComponents = () => {
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <PageHeader
           backButtonHref="/dashboard"
+          title=""
           breadcrumbs={[
             {
               label: "Quản lý",
@@ -181,6 +174,7 @@ const UserComponents = () => {
             },
           ]}
         />
+
         <div className="flex justify-between items-center">
           <Input
             placeholder="Tìm kiếm nhân viên theo tên"
@@ -228,4 +222,4 @@ const UserComponents = () => {
   );
 };
 
-export default UserComponents;
+export default UserManager;

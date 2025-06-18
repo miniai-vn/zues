@@ -101,9 +101,9 @@ export function AddOrUpdateUserModal({
       open={isOpen}
     >
       <DialogTrigger asChild>
-        {children || <Button>+ Tạo nhân viên</Button>}
+        {children || <Button >+ Tạo nhân viên</Button>}
       </DialogTrigger>
-      <DialogContent className="w-[70vw] max-w-[70vw] overflow-y-auto">
+      <DialogContent className="w-[40vw] max-w-[70vw] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {user ? "Cập nhật tài khoản nhân viên" : "Tạo tài khoản nhân viên"}
@@ -282,7 +282,7 @@ export function AddOrUpdateUserModal({
                 />
               </div>
               <div className="w-full flex justify-end">
-                <Button type="submit" className="bg-blue-600 text-white">
+                <Button type="submit">
                   {user ? "Cập nhật" : "Tạo tài khoản"}
                 </Button>
               </div>
