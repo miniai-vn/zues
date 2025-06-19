@@ -5,7 +5,9 @@ import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useDepartments from "@/hooks/data/useDepartments";
+import useFAQs, { FAQ } from "@/hooks/data/useFAQs";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { convertBytesToMB } from "@/utils";
@@ -15,9 +17,6 @@ import { File, FileText, Image, Pencil, Search } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
-import DepartmentHeader from "./DepartmentHeader";
-import useDepartments from "@/hooks/data/useDepartments";
-import useFAQs, { FAQ } from "@/hooks/data/useFAQs";
 import { FaqsModal } from "./documents/components/faqs-modal";
 
 const DepartmentDetailComponent = () => {
@@ -68,10 +67,6 @@ const DepartmentDetailComponent = () => {
     limit: pageSize,
     search,
   });
-  const { departmentDetail } = useDepartments({
-    id: departmentId,
-  });
-
   // FAQ state
   const [faqSearch, setFaqSearch] = useState("");
   useDebouncedValue(faqSearch, 500);

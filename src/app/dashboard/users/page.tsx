@@ -107,7 +107,8 @@ const UserManager = () => {
           </div>
         );
       },
-    },    {
+    },
+    {
       accessorKey: "departments",
       header: t("dashboard.users.departments"),
       cell: ({ row }) => {
@@ -159,7 +160,9 @@ const UserManager = () => {
 
   return (
     <ProtectedRoute requiredRole={[Role.Admin]}>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">        <PageHeader
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        {" "}
+        <PageHeader
           backButtonHref="/dashboard"
           title=""
           breadcrumbs={[
@@ -173,7 +176,6 @@ const UserManager = () => {
             },
           ]}
         />
-
         <div className="flex justify-between items-center">
           <Input
             placeholder={t("dashboard.users.searchPlaceholder")}
