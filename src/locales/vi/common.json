@@ -59,8 +59,7 @@
       "hasAccount": "Đã có tài khoản?",
       "signIn": "Đăng nhập ngay"
     }
-  },
-  "dashboard": {
+  },  "dashboard": {
     "nav": {
       "chat": "Trò chuyện",
       "channels": "Kênh",
@@ -78,7 +77,10 @@
       "reports": "Báo cáo",
       "documentGroups": "Nhóm tài liệu",
       "employees": "Nhân viên",
-      "permissions": "Phân quyền"
+      "permissions": "Phân quyền",
+      "platform": "Nền tảng",
+      "createNewChat": "Tạo đoàn chat mới",
+      "chatHistory": "Lịch sử trò chuyện"
     },
     "chat": {
       "title": "Trò chuyện AI",
@@ -276,11 +278,52 @@
       "breadcrumbs": {
         "management": "Quản lý",
         "documentGroupManagement": "Quản lý nhóm tài liệu"
-      },
-      "modal": {
+      },      "modal": {
         "createTitle": "Tạo phòng ban mới",
         "editTitle": "Cài đặt phòng ban",
         "createButton": "Tạo phòng ban mới"
+      },      "detail": {
+        "documentManagement": "Quản lý tài liệu",
+        "documents": "Tài liệu",
+        "fileName": "Tên tệp",
+        "documentType": "Loại tài liệu",
+        "fileSize": "Dung lượng",
+        "description": "Mô tả",
+        "uploadTime": "Thời gian tải lên",
+        "status": "Trạng thái",
+        "statusValues": {
+          "new": "Mới",
+          "processing": "Đã phân đoạn",
+          "finished": "Đã train",
+          "active": "Hoạt động"
+        },
+        "confirmDeleteDocument": "Bạn có chắc chắn muốn xóa tài liệu này không?",
+        "deleteDocument": "Xóa tài liệu",
+        "linkToPlatform": "Liên kết đến nền tảng",
+        "searchDocumentPlaceholder": "Tìm kiếm tài liệu theo tên",
+        "editResource": "Chỉnh sửa tài liệu",
+        "uploadNewDocument": "+ Tải tài liệu mới",
+        "editDocument": "Chỉnh sửa tài liệu",
+        "createNewDocument": "Tạo tài liệu mới",
+        "uploadFilePlaceholder": "Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)",
+        "acceptedFormats": "Chấp nhận các định dạng: .pdf, .doc, .docx, .txt",
+        "selectedFile": "Tệp đã chọn",
+        "descriptionPlaceholder": "Nhập mô tả tài liệu...",
+        "segmentDocument": "Phân đoạn tài liệu",
+        "trainAI": "Đào tạo AI",
+        "faqs": {
+          "title": "FAQs",
+          "question": "Câu hỏi",
+          "answer": "Trả lời",
+          "createdAt": "Ngày tạo",
+          "searchPlaceholder": "Tìm kiếm câu hỏi",
+          "trainAll": "Đào tạo toàn bộ",
+          "confirmDeleteFaq": "Bạn có chắc chắn muốn xóa câu hỏi này không?",
+          "deleteFaq": "Xóa câu hỏi",
+          "uploadFaq": "+ Tải faq",
+          "editFaq": "Chỉnh sửa FAQ",
+          "createFaq": "+ Tạo"
+        }
       }
     }  },
   "platforms": {
@@ -334,15 +377,13 @@
       "create": "Tạo thẻ",
       "creating": "Đang tạo..."
     }
-  },
-  "common": {
+  },  "common": {
     "save": "Lưu",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
     "close": "Đóng",
     "edit": "Chỉnh sửa",
-    "delete": "Xóa",
-    "add": "Thêm",
+    "delete": "Xóa",    "add": "Thêm",
     "search": "Tìm kiếm",
     "filter": "Lọc",
     "sort": "Sắp xếp",
@@ -357,7 +398,29 @@
     "next": "Tiếp theo",
     "previous": "Trước đó",
     "submit": "Gửi",
-    "reset": "Đặt lại"
+    "reset": "Đặt lại",
+    "email": "Email",
+    "phone": "Điện thoại",
+    "phoneNumber": "SỐ ĐIỆN THOẠI",
+    "role": "VAI TRÒ",
+    "permission": "Quyền",
+    "actions": "Thao tác",
+    "index": "STT",
+    "create": "Tạo",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa mục này không?",
+    "confirmDeleteMemberDesc": "Bạn có chắc chắn muốn xóa thành viên này không?",
+    "confirmDeleteMember": "Xác nhận xóa thành viên",
+    "departmentPermissionSettings": "Cài đặt phân quyền nhóm tài liệu",
+    "addMembersToControl": "Thêm email của các thành viên trong dự án để kiểm soát quyền truy cập vào nhóm tài liệu",
+    "searchByEmailAndName": "Tìm kiếm theo email và tên",
+    "botNoAccess": "Bot chưa được phân quyền truy cập.",
+    "addMembersToGrantAccess": "Thêm thành viên để phân quyền truy cập Bot này.",
+    "addMemberToAccessGroup": "Thêm thành viên để truy cập nhóm tài liệu",
+    "addedMembersCanAccess": "Thành viên được thêm sẽ có thể truy cập nhóm tài liệu",
+    "enterMemberEmail": "Nhập email của thành viên",
+    "selectPermission": "Chọn quyền",
+    "noResults": "Không có kết quả.",
+    "rowsPerPage": "Dòng mỗi trang"
   },
   "validation": {
     "required": "Trường này là bắt buộc",

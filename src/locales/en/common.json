@@ -78,7 +78,10 @@
       "reports": "Reports",
       "documentGroups": "Document Groups",
       "employees": "Employees",
-      "permissions": "Permissions"
+      "permissions": "Permissions",
+      "platform": "Platform",
+      "createNewChat": "Create new chat",
+      "chatHistory": "Chat History"
     },
     "chat": {
       "title": "AI Chat",
@@ -288,12 +291,56 @@
         "createTitle": "Create New Department",
         "editTitle": "Department Settings",
         "createButton": "Create New Department"
+      },
+      "detail": {
+        "documentManagement": "Document Management",
+        "documents": "Documents",
+        "fileName": "File Name",
+        "documentType": "Document Type",
+        "fileSize": "File Size",
+        "description": "Description",
+        "uploadTime": "Upload Time",
+        "status": "Status",
+        "statusValues": {
+          "new": "New",
+          "processing": "Processed",
+          "finished": "Trained",
+          "active": "Active"
+        },
+        "confirmDeleteDocument": "Are you sure you want to delete this document?",
+        "deleteDocument": "Delete Document",
+        "linkToPlatform": "Link to Platform",
+        "searchDocumentPlaceholder": "Search document by name",
+        "editResource": "Edit resource",
+        "uploadNewDocument": "+ Upload new document",
+        "editDocument": "Edit document",
+        "createNewDocument": "Create new document",
+        "uploadFilePlaceholder": "Please upload PDF, DOC, XLS, TXT, CSV files (max 10MB/file)",
+        "acceptedFormats": "Accepted formats: .pdf, .doc, .docx, .txt",
+        "selectedFile": "Selected file",
+        "descriptionPlaceholder": "Enter document description...",
+        "segmentDocument": "Segment Document",
+        "trainAI": "Train AI",
+        "faqs": {
+          "title": "FAQs",
+          "question": "Question",
+          "answer": "Answer",
+          "createdAt": "Created Date",
+          "searchPlaceholder": "Search questions",
+          "trainAll": "Train All",
+          "confirmDeleteFaq": "Are you sure you want to delete this FAQ?",
+          "deleteFaq": "Delete FAQ",
+          "uploadFaq": "+ Upload FAQ",
+          "editFaq": "Edit FAQ",
+          "createFaq": "+ Create"
+        }
       }
-    }  },
+    }
+  },
   "platforms": {
     "all": {
       "name": "All Platforms",
-      "title": "All Platforms", 
+      "title": "All Platforms",
       "description": "All messages"
     },
     "zalo": {
@@ -364,7 +411,29 @@
     "next": "Next",
     "previous": "Previous",
     "submit": "Submit",
-    "reset": "Reset"
+    "reset": "Reset",
+    "email": "Email",
+    "phone": "Phone",
+    "phoneNumber": "Phone Number",
+    "role": "Role",
+    "permission": "Permission",
+    "actions": "Actions",
+    "index": "No.",
+    "create": "Create",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "confirmDeleteMemberDesc": "Are you sure you want to delete this member?",
+    "confirmDeleteMember": "Confirm member deletion",
+    "departmentPermissionSettings": "Department permission settings",
+    "addMembersToControl": "Add emails of project members to control access to the document group",
+    "searchByEmailAndName": "Search by email and name",
+    "botNoAccess": "Bot has not been granted access permission.",
+    "addMembersToGrantAccess": "Add members to grant access to this Bot.",
+    "addMemberToAccessGroup": "Add member to access document group",
+    "addedMembersCanAccess": "Added members will be able to access the document group",
+    "enterMemberEmail": "Enter member's email",
+    "selectPermission": "Select permission",
+    "noResults": "No results.",
+    "rowsPerPage": "Rows per page"
   },
   "validation": {
     "required": "This field is required",
