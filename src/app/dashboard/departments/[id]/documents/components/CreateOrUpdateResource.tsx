@@ -17,13 +17,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import useTranslations from "@/hooks/useTranslations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-// Define schema for file upload validation
 // Define schema for file upload validation
 const uploadFormSchema = z.object({
   file: z
@@ -57,6 +57,7 @@ export function CreateOrUpdateResource({
   type,
   onHandleUploadFile,
 }: CreateOrUpdateResourceProps) {
+  const { t } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -106,22 +107,24 @@ export function CreateOrUpdateResource({
             variant="ghost"
             size="sm"
             className="h-8 w-8"
-            aria-label="Edit resource"
+            aria-label={t("dashboard.departments.detail.editResource")}
           >
             <Pencil className="h-4 w-4 text-gray-500" />
           </Button>
         ) : (
           type === "faqs" ? (
-            <Button>+ Tải faq</Button>
+            <Button>{t("dashboard.departments.detail.faqs.uploadFaq")}</Button>
           ) : (
-            <Button>+ Tải tài liệu mới</Button>
+            <Button>{t("dashboard.departments.detail.uploadNewDocument")}</Button>
           )
         )}
       </DialogTrigger>
       <DialogContent className="w-[800px] max-w-[90vw]">
         <DialogHeader>
           <DialogTitle>
-            {resource ? "Chỉnh sửa tài liệu" : "Tạo tài liệu mới"}
+            {resource 
+              ? t("dashboard.departments.detail.editDocument") 
+              : t("dashboard.departments.detail.createNewDocument")}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -132,7 +135,7 @@ export function CreateOrUpdateResource({
               render={({ field }) => (
                 <FormItem>
                   <Input
-                    placeholder="Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)"
+                    placeholder={t("dashboard.departments.detail.uploadFilePlaceholder")}
                     type="file"
                     onChange={(e) => {
                       field.onChange(e);
@@ -142,11 +145,11 @@ export function CreateOrUpdateResource({
                     accept=".pdf,.doc,.docx,.txt,.xlsx"
                   />
                   <FormDescription>
-                    Chấp nhận các định dạng: .pdf, .doc, .docx, .txt
+                    {t("dashboard.departments.detail.acceptedFormats")}
                   </FormDescription>
                   {selectedFile && (
                     <div className="mt-2 text-sm text-gray-500">
-                      Selected file: {selectedFile.name} (
+                      {t("dashboard.departments.detail.selectedFile")}: {selectedFile.name} (
                       {Math.round(selectedFile.size / 1024)} KB)
                     </div>
                   )}
@@ -161,7 +164,7 @@ export function CreateOrUpdateResource({
                 <FormItem>
                   <Textarea
                     {...field}
-                    placeholder="Nhập mô tả tài liệu..."
+                    placeholder={t("dashboard.departments.detail.descriptionPlaceholder")}
                     className="w-full h-40"
                     aria-invalid={fieldState.invalid}
                   />
@@ -176,10 +179,10 @@ export function CreateOrUpdateResource({
                 className="w-full"
                 onClick={handleClose}
               >
-                Hủy bỏ
+                {t("common.cancel")}
               </Button>
               <Button type="submit" className="w-full" disabled={!selectedFile}>
-                {resource ? "Lưu" : "Tạo"}
+                {resource ? t("common.save") : t("common.create")}
               </Button>
             </div>
           </form>

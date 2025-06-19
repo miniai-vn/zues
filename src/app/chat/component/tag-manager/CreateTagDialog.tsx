@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 import useTags, { Tag, TagType } from "@/hooks/data/cs/useTags";
 
@@ -23,6 +24,7 @@ const CreateTagDialog = ({
   onOpenChange,
   onTagCreated,
 }: CreateTagDialogProps) => {
+  const { t } = useTranslations();
   const [tagName, setTagName] = useState("");
   const [selectedColor, setSelectedColor] = useState("#000000");
 
@@ -78,15 +80,15 @@ const CreateTagDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tạo thẻ mới</DialogTitle>
+          <DialogTitle>{t("createTagDialog.title")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="tag-name">Tên thẻ</Label>
+            <Label htmlFor="tag-name">{t("createTagDialog.label.name")}</Label>
             <Input
               id="tag-name"
-              placeholder="Nhập tên thẻ mới..."
+              placeholder={t("createTagDialog.input.placeholder")}
               value={tagName}
               onChange={(e) => setTagName(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleCreate()}
@@ -95,7 +97,7 @@ const CreateTagDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label>Chọn màu</Label>
+            <Label>{t("createTagDialog.label.color")}</Label>
             <div className="flex flex-wrap gap-2">
               {colorOptions.map((color) => (
                 <Button
@@ -122,14 +124,16 @@ const CreateTagDialog = ({
               onClick={handleCancel}
               disabled={isCreatingTag}
             >
-              Hủy
+              {t("createTagDialog.button.cancel")}
             </Button>
             <Button
               onClick={handleCreate}
               disabled={!tagName.trim() || isCreatingTag}
             >
               <Plus className="h-4 w-4 mr-2" />
-              {isCreatingTag ? "Đang tạo..." : "Tạo thẻ"}
+              {isCreatingTag
+                ? t("createTagDialog.button.creating")
+                : t("createTagDialog.button.create")}
             </Button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import useTags, { Tag } from "@/hooks/data/cs/useTags";
+import { useTranslations } from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 import { Check, Plus, Tag as TagIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ const TagManagementSheet = ({
   customerId,
   onUpdateTags,
 }: TagManagementSheetProps) => {
+  const { t } = useTranslations();
   const { tags, isLoadingTags, addTagsToCustomer, isAddingTagsToConversation } =
     useTags();
   const { customer } = useCustomers({
@@ -112,14 +114,13 @@ const TagManagementSheet = ({
   };
 
   if (isLoadingTags) {
-    return (
-      <Sheet open={open} onOpenChange={onOpenChange}>
+    return (      <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent className="w-[400px] sm:w-[540px]">
           <SheetHeader>
-            <SheetTitle>Quản lý thẻ phân loại</SheetTitle>
+            <SheetTitle>{t("dashboard.chat.tagManagement")}</SheetTitle>
           </SheetHeader>
           <div className="flex items-center justify-center h-40">
-            <div className="text-sm text-muted-foreground">Đang tải...</div>
+            <div className="text-sm text-muted-foreground">{t("common.loading")}</div>
           </div>
         </SheetContent>
       </Sheet>
@@ -128,18 +129,17 @@ const TagManagementSheet = ({
 
   return (
     <>
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent className="w-[600px] sm:w-[700px]">
+      <Sheet open={open} onOpenChange={onOpenChange}>        <SheetContent className="w-[600px] sm:w-[700px]">
           {" "}
           {/* Increased width for side-by-side layout */}
           <SheetHeader>
-            <SheetTitle>Quản lý thẻ phân loại</SheetTitle>
+            <SheetTitle>{t("dashboard.chat.tagManagement")}</SheetTitle>
           </SheetHeader>
           <div className="space-y-6 mt-6">
             {/* Current Tags */}
             <div>
               <h4 className="text-sm font-medium mb-3">
-                Thẻ hiện tại ({getUniqueSelectedTags().length})
+                {t("dashboard.chat.addTag")} ({getUniqueSelectedTags().length})
               </h4>
               {getUniqueSelectedTags().length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -169,10 +169,9 @@ const TagManagementSheet = ({
                       </Badge>
                     );
                   })}
-                </div>
-              ) : (
+                </div>              ) : (
                 <p className="text-sm text-muted-foreground">
-                  Chưa có thẻ nào được chọn
+                  {t("dashboard.chat.filters.all")}
                 </p>
               )}
             </div>
@@ -180,17 +179,16 @@ const TagManagementSheet = ({
             <Separator />
 
             {/* Available Tags and Create Tag Section - Side by Side */}
-            <div className="gap-6">
-              <div>
+            <div className="gap-6">              <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-medium">Danh sách thẻ có sẵn</h4>
+                  <h4 className="text-sm font-medium">{t("dashboard.chat.allTags")}</h4>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => setShowCreateTagDialog(true)}
                   >
                     <Plus className="h-4 w-4 mr-1" />
-                    Tạo mới
+                    {t("dashboard.chat.createTag")}
                   </Button>
                 </div>
                 <div className="space-y-2 max-h-80 overflow-y-auto pr-2">
@@ -225,14 +223,13 @@ const TagManagementSheet = ({
             </div>
 
             {/* Save Button */}
-            <div className="pt-4">
-              <Button
+            <div className="pt-4">              <Button
                 onClick={handleSave}
                 className="w-full"
                 disabled={isAddingTagsToConversation}
               >
                 <TagIcon className="h-4 w-4 mr-2" />
-                {isAddingTagsToConversation ? "Đang lưu..." : "Lưu thay đổi"}
+                {isAddingTagsToConversation ? t("common.loading") : t("dashboard.chat.applyTags")}
               </Button>
             </div>
           </div>

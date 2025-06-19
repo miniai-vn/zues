@@ -1,5 +1,6 @@
 import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import { useCS } from "@/hooks/data/cs/useCS";
+import { useTranslations } from "@/hooks/useTranslations";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChatHeader, EmptyState, MessageInput, MessageList } from "./chat-area";
@@ -12,6 +13,7 @@ interface ChatAreaProps {
 }
 
 const ChatArea = ({ conversationId }: ChatAreaProps) => {
+  const { t } = useTranslations();
   const { fullInfoConversationWithMessages: conversation } = useCS({
     conversationId,
   });
@@ -34,12 +36,11 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
   const [showParticipantManagement, setShowParticipantManagement] =
     useState(false);
   const [showTagManagement, setShowTagManagement] = useState(false);
-
   if (!conversationId) {
     return (
       <EmptyState
-        title="Select a conversation"
-        description="Choose a conversation to start messaging"
+        title={t("dashboard.chat.selectConversation")}
+        description={t("dashboard.chat.chooseConversation")}
         icon={<MessageCircle className="h-16 w-16" />}
       />
     );

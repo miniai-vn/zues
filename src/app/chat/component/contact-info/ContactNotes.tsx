@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTranslations } from "@/hooks/useTranslations";
 import { StickyNote, Save } from "lucide-react";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ export const ContactNotes = ({
   initialNotes = "",
   onSave,
 }: ContactNotesProps) => {
+  const { t } = useTranslations();
   const [note, setNote] = useState(initialNotes);
 
   const handleSaveNotes = () => {
@@ -40,18 +42,17 @@ export const ContactNotes = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card>      <CardHeader>
         <CardTitle className="text-sm flex items-center gap-2">
           <StickyNote className="h-4 w-4" />
-          Ghi chú về khách hàng
+          {t("dashboard.chat.contactInfo.note")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Textarea
           id="notes"
           className="min-h-[150px] resize-none"
-          placeholder="Khách hàng thường mua vào cuối tuần, thích màu xanh..."
+          placeholder={t("dashboard.chat.contactInfo.note")}
           value={note}
           onChange={(e) => setNote(e.target.value)}
         />
@@ -59,7 +60,7 @@ export const ContactNotes = ({
       <CardFooter>
         <Button size="sm" onClick={handleSaveNotes} className="w-full">
           <Save className="h-4 w-4 mr-2" />
-          Lưu ghi chú
+          {t("common.save")} {t("dashboard.chat.contactInfo.note")}
         </Button>
       </CardFooter>
     </Card>

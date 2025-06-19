@@ -18,6 +18,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { useAuth, useUserStore } from "@/hooks/data/useAuth";
+import useTranslations from "@/hooks/useTranslations";
 import {
   ChevronRight,
   MessageCircleMore,
@@ -31,6 +32,7 @@ import { useEffect } from "react";
 // Type definitions for better maintainability
 type SubMenuItem = {
   title: string;
+  titleKey?: string; // Translation key for the title
   icon?: LucideIcon;
   url?: string;
   role: string[];
@@ -39,6 +41,7 @@ type SubMenuItem = {
 
 type MenuItem = {
   title: string;
+  titleKey?: string; // Translation key for the title
   url?: string;
   icon?: LucideIcon;
   isActive?: boolean;
@@ -57,6 +60,7 @@ export default function NavMain({
   const router = useRouter();
   const { user } = useUserStore();
   const { loadUserFromLocalStorage } = useAuth({});
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (!user) {
@@ -94,7 +98,9 @@ export default function NavMain({
           >
             <a href={subItem.url}>
               {subItem.icon && <subItem.icon />}
-              <span>{subItem.title}</span>
+              <span>
+                {subItem.titleKey ? t(subItem.titleKey) : subItem.title}
+              </span>
             </a>
           </SidebarMenuSubButton>
         </SidebarMenuSubItem>
@@ -104,7 +110,7 @@ export default function NavMain({
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="text-sm font-medium text-gray-900">
-        Platform
+        {t("dashboard.sidebar.platform")}
       </SidebarGroupLabel>
       <SidebarGroupContent></SidebarGroupContent>
       <SidebarMenu>
@@ -116,7 +122,7 @@ export default function NavMain({
             }}
           >
             <MessageSquarePlus className="h-5 w-5" />
-            <span>Tạo đoàn chat mới</span>
+            <span>{t("dashboard.sidebar.createNewChat")}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         {filteredItems.map((item) => (
@@ -135,7 +141,7 @@ export default function NavMain({
                       router.push(item.url);
                     }
                   }}
-                  tooltip={item.title}
+                  tooltip={item.titleKey ? t(item.titleKey) : item.title}
                   data-active={item.isActive}
                   className={
                     item.isActive
@@ -144,7 +150,7 @@ export default function NavMain({
                   }
                 >
                   {item.icon && <item.icon />}
-                  <span>{item.title}</span>
+                  <span>{item.titleKey ? t(item.titleKey) : item.title}</span>
                   {(item.items ?? []).length > 0 && (
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   )}
@@ -161,11 +167,11 @@ export default function NavMain({
           <SidebarMenuButton
             className="w-full mt-2"
             onClick={() => {
-              setActiveSection("Lịch sử trò chuyện");
+              setActiveSection(t("dashboard.sidebar.chatHistory"));
               router.push("/dashboard/chat");
             }}
           >
-            <MessageCircleMore /> Lịch sử trò chuyện
+            <MessageCircleMore /> {t("dashboard.sidebar.chatHistory")}
           </SidebarMenuButton>
           <SideChat />
         </SidebarMenuItem>

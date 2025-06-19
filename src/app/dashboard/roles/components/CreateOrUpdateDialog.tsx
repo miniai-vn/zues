@@ -20,11 +20,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const roleSchema = z.object({
-  name: z.string().nonempty("Vui lòng nhập tên vai trò."),
-  description: z.string().nonempty("Vui lòng nhập mô tả."),
-});
+import { useTranslations } from "@/hooks/useTranslations";
 
 export interface RoleData {
   id?: number;
@@ -43,7 +39,17 @@ export function CreateOrUpdateRoleDialog({
   onChange,
   children,
 }: CreateOrUpdateRoleDialogProps) {
+  const { t } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
+
+  const roleSchema = z.object({
+    name: z
+      .string()
+      .nonempty(t("dashboard.roles.modal.validation.nameRequired")),
+    description: z
+      .string()
+      .nonempty(t("dashboard.roles.modal.validation.descriptionRequired")),
+  });
 
   const form = useForm<z.infer<typeof roleSchema>>({
     resolver: zodResolver(roleSchema),
@@ -64,12 +70,17 @@ export function CreateOrUpdateRoleDialog({
 
   return (
     <Dialog onOpenChange={setIsOpen} open={isOpen}>
+      {" "}
       <DialogTrigger asChild>
-        {children || <Button>+ Tạo vai trò</Button>}
+        {children || <Button>{t("dashboard.roles.add")}</Button>}
       </DialogTrigger>
       <DialogContent className="w-[400px] max-w-full">
         <DialogHeader>
-          <DialogTitle>{role ? "Cập nhật vai trò" : "Tạo vai trò"}</DialogTitle>
+          <DialogTitle>
+            {role
+              ? t("dashboard.roles.modal.editTitle")
+              : t("dashboard.roles.modal.createTitle")}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -79,13 +90,14 @@ export function CreateOrUpdateRoleDialog({
               render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>
-                    Tên vai trò <span className="text-red-500">*</span>
+                    {t("dashboard.roles.name")}{" "}
+                    <span className="text-red-500">*</span>
                   </FormLabel>
                   <Input
                     type="text"
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="Nhập tên vai trò"
+                    placeholder={t("dashboard.roles.modal.namePlaceholder")}
                   />
                   {fieldState.error && (
                     <FormMessage>{fieldState.error.message}</FormMessage>
@@ -99,23 +111,28 @@ export function CreateOrUpdateRoleDialog({
               render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>
-                    Mô tả <span className="text-red-500">*</span>
+                    {t("dashboard.roles.description")}{" "}
+                    <span className="text-red-500">*</span>
                   </FormLabel>
                   <Input
                     type="text"
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="Nhập mô tả vai trò"
+                    placeholder={t(
+                      "dashboard.roles.modal.descriptionPlaceholder"
+                    )}
                   />
                   {fieldState.error && (
                     <FormMessage>{fieldState.error.message}</FormMessage>
                   )}
                 </FormItem>
               )}
-            />
+            />{" "}
             <div className="w-full flex justify-end">
               <Button type="submit" className="bg-blue-600 text-white">
-                {role ? "Cập nhật" : "Tạo vai trò"}
+                {role
+                  ? t("dashboard.roles.modal.updateButton")
+                  : t("dashboard.roles.modal.createButton")}
               </Button>
             </div>
           </form>

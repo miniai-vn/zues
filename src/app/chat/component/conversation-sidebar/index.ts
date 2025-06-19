@@ -3,4 +3,4 @@ export { ConversationColumn } from './ConversationColumn';
 export { ConversationItem } from './ConversationItem';
 export { ConversationList } from './ConversationList';
 export { ConversationFilter as ConversationListHeader } from './ConversationFilter';
-export { PlatformList, PLATFORMS } from './PlatformList';
+export { PlatformList, getPlatforms } from './PlatformList';

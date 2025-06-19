@@ -18,9 +18,11 @@ import useRoles, {
   PermissionGroupVietnameseNames,
   RoleVietnameseNames,
 } from "@/hooks/data/useRoles";
+import { useTranslations } from "@/hooks/useTranslations";
 import React, { useEffect, useState } from "react";
 
 const PermissionsRoles = () => {
+  const { t } = useTranslations();
   const params = useParams();
   const id = params?.id as string | undefined;
 
@@ -72,34 +74,31 @@ const PermissionsRoles = () => {
   }, [permissions]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0 scroll-y-auto">
-      <PageHeader
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0 scroll-y-auto">      <PageHeader
         backButtonHref="/dashboard"
         breadcrumbs={[
           {
-            label: "Quản lý",
+            label: t("dashboard.roles.breadcrumbs.management"),
             href: "/dashboard",
           },
           {
-            label: "Phân quyền",
+            label: t("dashboard.roles.detail.breadcrumbs.permissions"),
             isCurrentPage: true,
           },
         ]}
       />
 
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold mb-2">Vai trò và quyền</h1>
+      <div className="bg-white p-4 rounded-lg shadow-sm border">        <div className="mb-4">
+          <h1 className="text-2xl font-bold mb-2">{t("dashboard.roles.detail.title")}</h1>
           <p className="text-gray-500">
-            Quản lý vai trò người dùng và quyền hạn tương ứng.
+            {t("dashboard.roles.detail.subtitle")}
           </p>
         </div>
 
         <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
+          <Table>            <TableHeader>
               <TableRow>
-                <TableHead className="w-[150px]">Quyền hạn</TableHead>
+                <TableHead className="w-[150px]">{t("dashboard.roles.detail.permissionsColumn")}</TableHead>
                 <TableHead className="text-center">
                   {displayRole
                     ? RoleVietnameseNames[displayRole.name] || displayRole.name
@@ -142,11 +141,9 @@ const PermissionsRoles = () => {
               ))}
             </TableBody>
           </Table>
-        </div>
-
-        <div className="mt-6 flex justify-end">
+        </div>        <div className="mt-6 flex justify-end">
           <Button onClick={handleSaveChanges} variant="default">
-            Lưu thay đổi
+            {t("dashboard.roles.detail.saveChanges")}
           </Button>
         </div>
       </div>

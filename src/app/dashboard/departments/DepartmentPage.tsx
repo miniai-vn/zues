@@ -8,8 +8,10 @@ import CreateDeptDialog from "./components/dialog/CreateDeptDialog";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export function DepartmentDetailPage() {
+  const { t } = useTranslations();
   const [search, setSearch] = useState("");
 
   const {
@@ -20,47 +22,42 @@ export function DepartmentDetailPage() {
   useDebouncedValue(search, 500);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <PageHeader
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">      <PageHeader
         backButtonHref="/dashboard/departments"
         breadcrumbs={[
           {
-            label: "Quản lý",
+            label: t("dashboard.departments.breadcrumbs.management"),
             href: "/dashboard/chat",
           },
           {
-            label: "Quản lý nhóm tài liệu",
+            label: t("dashboard.departments.breadcrumbs.documentGroupManagement"),
             href: "/dashboard/departments",
             isCurrentPage: true,
           },
         ]}
       />
-      <div className="flex justify-between gap-4 items-center">
-        <Input
+      <div className="flex justify-between gap-4 items-center">        <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Tìm kiếm theo tên nhóm tài liệu"
+          placeholder={t("dashboard.departments.searchPlaceholder")}
           className="mr-4 w-full flex-1"
-        />
-        <Button
+        />        <Button
           onClick={() => refetchDepartments()}
           className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
         >
           <Search />
-          Tìm kiếm
+          {t("dashboard.departments.search")}
         </Button>
         <CreateDeptDialog onChange={createDepartment} />
-      </div>
-
-      {departments?.length === 0 ? (
+      </div>      {departments?.length === 0 ? (
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0 items-center justify-center">
           <img
             src="/logo.png"
-            alt="Không có nhóm tài liệu"
+            alt={t("dashboard.departments.emptyState.alt")}
             className="w-32 h-32 mb-4 opacity-70"
           />
           <span className="text-lg text-muted-foreground">
-            Bạn chưa có nhóm tài liệu nào.
+            {t("dashboard.departments.emptyState.title")}
           </span>
           <CreateDeptDialog onChange={createDepartment} />
         </div>
