@@ -70,8 +70,7 @@
       "departments": "Departments",
       "settings": "Settings",
       "reports": "Reports"
-    },
-    "sidebar": {
+    },    "sidebar": {
       "automation": "Automation",
       "staff": "Staff",
       "integration": "Integration",
@@ -81,9 +80,10 @@
       "permissions": "Permissions",
       "platform": "Platform",
       "createNewChat": "Create new chat",
-      "chatHistory": "Chat History"
-    },
-    "chat": {
+      "chatHistory": "Chat History",
+      "chat": "Internal Chat",
+      "chatCS": "Customer Service"
+    },    "chat": {
       "title": "AI Chat",
       "placeholder": "Enter your message...",
       "send": "Send",
@@ -101,6 +101,9 @@
       "activeNow": "Active now",
       "members": "members",
       "moreOptions": "More options",
+      "noMessages": "No messages yet",
+      "startConversation": "Start the conversation by sending a message",
+      "you": "You",
       "showContactInfo": "Show contact info",
       "hideContactInfo": "Hide contact info",
       "allChannels": "All channels",

@@ -14,8 +14,11 @@ import {
   BotIcon,
   FolderOpen,
   Link,
+  MessageCircleMore,
+  MessageSquarePlus,
   Shield,
   User,
+  UserCog2Icon,
 } from "lucide-react";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -36,6 +39,27 @@ export function AppSidebar({
     },
 
     navMain: [
+      {
+        title: t("dashboard.sidebar.chat"),
+        // url: "/dashboard/chat",
+        icon: MessageSquarePlus,
+        isActive: true,
+        role: [Role.Staff, Role.Admin, Role.Leader],
+        items: [
+          {
+            title: t("dashboard.sidebar.chat"),
+            icon: MessageCircleMore,
+            role: [Role.Staff, Role.Admin, Role.Leader],
+            url: "/dashboard/chat",
+          },
+          {
+            title: t("dashboard.sidebar.chatCS"),
+            icon: BotIcon,
+            role: [Role.Admin, Role.Leader],
+            url: "/chat",
+          },
+        ],
+      },
       {
         title: t("dashboard.sidebar.automation"),
         url: "/dashboard/chat",
@@ -59,8 +83,8 @@ export function AppSidebar({
       },
       {
         title: t("dashboard.sidebar.staff"),
-        url: "/dashboard",
-        icon: User,
+        // url: "/dashboard",
+        icon: UserCog2Icon,
         isActive: false,
         role: [Role.Admin, Role.Staff, Role.Leader],
         items: [

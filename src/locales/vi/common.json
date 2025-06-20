@@ -59,7 +59,8 @@
       "hasAccount": "Đã có tài khoản?",
       "signIn": "Đăng nhập ngay"
     }
-  },  "dashboard": {
+  },
+  "dashboard": {
     "nav": {
       "chat": "Trò chuyện",
       "channels": "Kênh",
@@ -80,7 +81,9 @@
       "permissions": "Phân quyền",
       "platform": "Nền tảng",
       "createNewChat": "Tạo đoàn chat mới",
-      "chatHistory": "Lịch sử trò chuyện"
+      "chatHistory": "Lịch sử trò chuyện",
+      "chat": "Chat nội bộ",
+      "chatCS": "Chăm sóc khách hàng"
     },
     "chat": {
       "title": "Trò chuyện AI",
@@ -100,6 +103,9 @@
       "activeNow": "Đang hoạt động",
       "members": "thành viên",
       "moreOptions": "Tùy chọn khác",
+      "noMessages": "Chưa có tin nhắn nào",
+      "startConversation": "Bắt đầu cuộc trò chuyện bằng cách gửi tin nhắn",
+      "you": "Bạn",
       "showContactInfo": "Hiển thị thông tin liên hệ",
       "hideContactInfo": "Ẩn thông tin liên hệ",
       "allChannels": "Tất cả kênh",
@@ -169,7 +175,8 @@
       "management": "Quản lý",
       "noChannels": "Chưa có kênh nào được kết nối",
       "addFirst": "Thêm kênh đầu tiên"
-    },    "users": {
+    },
+    "users": {
       "title": "Quản lý người dùng",
       "add": "Thêm người dùng",
       "edit": "Chỉnh sửa",
@@ -187,7 +194,8 @@
       "actions": "Thao tác",
       "search": "Tìm kiếm",
       "searchPlaceholder": "Tìm kiếm nhân viên theo tên",
-      "notHave": "Không có",      "empty": "Trống",
+      "notHave": "Không có",
+      "empty": "Trống",
       "management": "Quản lý",
       "userManagement": "Quản lý người dùng",
       "userDetail": "Chi tiết người dùng",
@@ -197,7 +205,8 @@
       },
       "modal": {
         "createTitle": "Thêm người dùng mới",
-        "editTitle": "Chỉnh sửa người dùng",        "password": "Mật khẩu",
+        "editTitle": "Chỉnh sửa người dùng",
+        "password": "Mật khẩu",
         "confirmPassword": "Xác nhận mật khẩu",
         "showPassword": "Hiển thị mật khẩu",
         "hidePassword": "Ẩn mật khẩu",
@@ -213,7 +222,8 @@
           "rolesRequired": "Vui lòng chọn ít nhất một vai trò."
         }
       }
-    },    "roles": {
+    },
+    "roles": {
       "title": "Quản lý vai trò",
       "add": "Thêm vai trò",
       "edit": "Chỉnh sửa",
@@ -233,7 +243,8 @@
       "breadcrumbs": {
         "management": "Quản lý",
         "roleManagement": "Quản lý vai trò"
-      },      "modal": {
+      },
+      "modal": {
         "createTitle": "Tạo vai trò",
         "editTitle": "Cập nhật vai trò",
         "createButton": "Tạo vai trò",
@@ -254,7 +265,8 @@
           "permissions": "Phân quyền"
         }
       }
-    },    "permissions": {
+    },
+    "permissions": {
       "title": "Quản lý quyền hạn",
       "groups": {
         "file": "Tệp",
@@ -265,7 +277,8 @@
         "department": "Phòng ban",
         "system": "Hệ thống"
       }
-    },    "departments": {
+    },
+    "departments": {
       "title": "Quản lý nhóm tài liệu",
       "management": "Quản lý",
       "documentGroupManagement": "Quản lý nhóm tài liệu",
@@ -278,11 +291,13 @@
       "breadcrumbs": {
         "management": "Quản lý",
         "documentGroupManagement": "Quản lý nhóm tài liệu"
-      },      "modal": {
+      },
+      "modal": {
         "createTitle": "Tạo phòng ban mới",
         "editTitle": "Cài đặt phòng ban",
         "createButton": "Tạo phòng ban mới"
-      },      "detail": {
+      },
+      "detail": {
         "documentManagement": "Quản lý tài liệu",
         "documents": "Tài liệu",
         "fileName": "Tên tệp",
@@ -325,7 +340,8 @@
           "createFaq": "+ Tạo"
         }
       }
-    }  },
+    }
+  },
   "platforms": {
     "all": {
       "name": "Tất cả nền tảng",
@@ -377,13 +393,15 @@
       "create": "Tạo thẻ",
       "creating": "Đang tạo..."
     }
-  },  "common": {
+  },
+  "common": {
     "save": "Lưu",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
     "close": "Đóng",
     "edit": "Chỉnh sửa",
-    "delete": "Xóa",    "add": "Thêm",
+    "delete": "Xóa",
+    "add": "Thêm",
     "search": "Tìm kiếm",
     "filter": "Lọc",
     "sort": "Sắp xếp",

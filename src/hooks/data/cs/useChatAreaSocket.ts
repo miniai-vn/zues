@@ -19,13 +19,12 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     setConversations,
     conversations,
   } = useCsStore();
-  const { refetchConversations } = useCS();
+  const { refetchConversations, markReadConversation } = useCS();
   const user =
     typeof window !== "undefined" ? localStorage.getItem("user") : null;
   const currentUser = user ? JSON.parse(user) : undefined;
 
   useEffect(() => {
-    // Ensure we're on the client side
     if (typeof window === "undefined") return;
 
     const token = localStorage.getItem("token");
@@ -57,14 +56,17 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     if (!socketChatIo) return;
 
     const handleReceiveMessage = (data: Message) => {
+      console.log("Received message:", data);
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
+        markReadConversation(data.conversationId as number);
       } else {
         const existingConversation = conversations.find(
           (conv) => conv.id === data.conversationId
         );
         if (existingConversation) {
           existingConversation.unreadMessagesCount += 1;
+          existingConversation.lastestMessage = data.content;
           setConversations(conversations);
         }
       }

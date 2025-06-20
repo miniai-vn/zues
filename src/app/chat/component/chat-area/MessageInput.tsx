@@ -38,7 +38,7 @@ export const MessageInput = ({
   };
 
   return (
-    <div className="border-t p-4 bg-background">
+    <div className="border-t p-4 bg-background fixed bottom-0  w-full">
       <div className="flex items-center gap-2">
         {/* Attachment button */}        <Button 
           size="sm" 

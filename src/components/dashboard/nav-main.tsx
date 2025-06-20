@@ -114,7 +114,7 @@ export default function NavMain({
       </SidebarGroupLabel>
       <SidebarGroupContent></SidebarGroupContent>
       <SidebarMenu>
-        <SidebarMenuItem>
+        {/* <SidebarMenuItem>
           <SidebarMenuButton
             className="w-full"
             onClick={() => {
@@ -124,7 +124,7 @@ export default function NavMain({
             <MessageSquarePlus className="h-5 w-5" />
             <span>{t("dashboard.sidebar.createNewChat")}</span>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
         {filteredItems.map((item) => (
           <Collapsible
             key={item.title}

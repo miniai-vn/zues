@@ -1,4 +1,5 @@
 import { Message } from "@/hooks/data/cs/useCS";
+import useTranslations from "@/hooks/useTranslations";
 import { useEffect, useRef } from "react";
 import { MessageItem } from "./MessageItem";
 
@@ -13,6 +14,7 @@ export const MessageList = ({
   currentUserId,
   autoScroll = true,
 }: MessageListProps) => {
+  const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (autoScroll) {
@@ -24,9 +26,9 @@ export const MessageList = ({
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center text-muted-foreground">
-          <p className="text-sm">No messages yet</p>
+          <p className="text-sm">{t("dashboard.chat.noMessages")}</p>
           <p className="text-xs mt-1">
-            Start the conversation by sending a message
+            {t("dashboard.chat.startConversation")}
           </p>
         </div>
       </div>
@@ -34,7 +36,7 @@ export const MessageList = ({
   }
 
   return (
-    <div className="flex-1 p-4 space-y-4 h-40 overflow-y-auto">
+    <div className="p-4 space-y-4 h-[80vh] overflow-y-auto">
       {messages.map((message, index) => {
         const isOwnMessage = message.senderId === currentUserId;
 
