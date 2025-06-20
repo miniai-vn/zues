@@ -80,10 +80,16 @@
       "permissions": "Permissions",
       "platform": "Platform",
       "createNewChat": "Create new chat",
+<<<<<<< HEAD
       "chatHistory": "Chat History",
       "chat": "Internal Chat",
       "chatCS": "Customer Service"
     },    "chat": {
+=======
+      "chatHistory": "Chat History"
+    },
+    "chat": {
+>>>>>>> 76bb3fda985923d65d636d45dfa7f0aa4b043a48
       "title": "AI Chat",
       "placeholder": "Enter your message...",
       "send": "Send",
@@ -101,9 +107,12 @@
       "activeNow": "Active now",
       "members": "members",
       "moreOptions": "More options",
+<<<<<<< HEAD
       "noMessages": "No messages yet",
       "startConversation": "Start the conversation by sending a message",
       "you": "You",
+=======
+>>>>>>> 76bb3fda985923d65d636d45dfa7f0aa4b043a48
       "showContactInfo": "Show contact info",
       "hideContactInfo": "Hide contact info",
       "allChannels": "All channels",

@@ -14,8 +14,11 @@ import {
   BotIcon,
   FolderOpen,
   Link,
+<<<<<<< HEAD
   MessageCircleMore,
   MessageSquarePlus,
+=======
+>>>>>>> 76bb3fda985923d65d636d45dfa7f0aa4b043a48
   Shield,
   User,
   UserCog2Icon,
