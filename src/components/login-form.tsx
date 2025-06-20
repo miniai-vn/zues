@@ -7,11 +7,13 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { useAuth } from "@/hooks/data/useAuth";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const { t } = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,10 +29,9 @@ export function LoginForm({
       });
       if (res) {
         router.push("/dashboard/chat");
-      }
-    } catch (error) {
-      console.error("Đăng nhập thất bại:", error);
-      alert("Đăng nhập thất bại!");
+      }    } catch (error) {
+      console.error(t('auth.login.error'), error);
+      alert(t('auth.login.error'));
     } finally {
       setLoading(false);
     }
@@ -41,16 +42,14 @@ export function LoginForm({
       className={cn("flex flex-col gap-6", className)}
       {...props}
       onSubmit={handleSubmit}
-    >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Đăng nhập vào tài khoản</h1>
+    >      <div className="flex flex-col items-center gap-2 text-center">
+        <h1 className="text-2xl font-bold">{t('auth.login.title')}</h1>
         <p className="text-balance text-sm text-muted-foreground">
-          Nhập email của bạn để đăng nhập vào hệ thống
+          {t('auth.login.description')}
         </p>
       </div>
-      <div className="grid gap-6">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+      <div className="grid gap-6">        <div className="grid gap-2">
+          <Label htmlFor="email">{t('auth.login.email')}</Label>
           <Input
             id="email"
             type="email"
@@ -59,15 +58,14 @@ export function LoginForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
-        <div className="grid gap-2">
+        </div>        <div className="grid gap-2">
           <div className="flex items-center">
-            <Label htmlFor="password">Mật khẩu</Label>
+            <Label htmlFor="password">{t('auth.login.password')}</Label>
             <a
               href="#"
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
-              Quên mật khẩu?
+              {t('auth.login.forgotPassword')}
             </a>
           </div>
           <Input
@@ -77,15 +75,13 @@ export function LoginForm({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+        </div>        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? t('auth.login.loading') : t('auth.login.submit')}
         </Button>
-      </div>
-      <div className="text-center text-sm">
-        Chưa có tài khoản?{" "}
+      </div>      <div className="text-center text-sm">
+        {t('auth.login.noAccount')}{" "}
         <a href="#" className="underline underline-offset-4">
-          Đăng ký
+          {t('auth.login.signUp')}
         </a>
       </div>
     </form>

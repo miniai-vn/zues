@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/hooks/useTranslations";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = () => {
+  const { t } = useTranslations();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
@@ -53,23 +56,24 @@ const Navbar = () => {
           aria-label="Pulse Robot"
         >
           <img src="/logo.svg" alt="Pulse Robot Logo" className="h-7 sm:h-8" />
-        </a>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8">
-          <button
-            type="button"
-            className="nav-link border border-transparent rounded transition-colors
-              hover:bg-gray-100 hover:border-gray-300 focus:outline-none focus:border-blue-500"
-            onClick={() => {
-              router.push("/login");
-            }}
-          >
-            Dùng thử
-          </button>
-          {/* <a href="#features" className="nav-link">About</a>
-          <a href="#details" className="nav-link">Contact</a> */}
-        </nav>
+        </a>        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-4">
+          <nav className="flex space-x-8">
+            <button
+              type="button"
+              className="nav-link border border-transparent rounded transition-colors
+                hover:bg-gray-100 hover:border-gray-300 focus:outline-none focus:border-blue-500"
+              onClick={() => {
+                router.push("/login");
+              }}
+            >
+              {t('nav.tryNow')}
+            </button>
+            {/* <a href="#features" className="nav-link">About</a>
+            <a href="#details" className="nav-link">Contact</a> */}
+          </nav>
+          <LanguageSwitcher />
+        </div>
 
         {/* Mobile menu button - increased touch target */}
         <button

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "@/hooks/useTranslations";
 import { Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 
@@ -14,11 +15,14 @@ interface MessageInputProps {
 export const MessageInput = ({
   onSendMessage,
   disabled = false,
-  placeholder = "Type a message...",
+  placeholder,
   onAttachFile,
   onEmojiPicker,
 }: MessageInputProps) => {
+  const { t } = useTranslations();
   const [message, setMessage] = useState("");
+
+  const displayPlaceholder = placeholder || t("dashboard.chat.typeMessage");
 
   const handleSend = () => {
     if (!message.trim() || disabled) return;
@@ -36,12 +40,11 @@ export const MessageInput = ({
   return (
     <div className="border-t p-4 bg-background">
       <div className="flex items-center gap-2">
-        {/* Attachment button */}
-        <Button 
+        {/* Attachment button */}        <Button 
           size="sm" 
           variant="ghost" 
           onClick={onAttachFile}
-          title="Attach file"
+          title={t("dashboard.chat.attachFile")}
           disabled={disabled}
         >
           <Paperclip className="h-4 w-4" />
@@ -50,7 +53,7 @@ export const MessageInput = ({
         {/* Message input */}
         <div className="flex-1 relative">
           <Input
-            placeholder={placeholder}
+            placeholder={displayPlaceholder}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
@@ -64,7 +67,7 @@ export const MessageInput = ({
             variant="ghost"
             onClick={onEmojiPicker}
             className="absolute right-1 top-1/2 transform -translate-y-1/2"
-            title="Add emoji"
+            title={t("dashboard.chat.addEmoji")}
             disabled={disabled}
           >
             <Smile className="h-4 w-4" />
@@ -76,7 +79,7 @@ export const MessageInput = ({
           size="sm"
           onClick={handleSend}
           disabled={!message.trim() || disabled}
-          title="Send message"
+          title={t("dashboard.chat.sendMessage")}
         >
           <Send className="h-4 w-4" />
         </Button>

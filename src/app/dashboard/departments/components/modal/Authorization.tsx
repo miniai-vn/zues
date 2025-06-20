@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { User } from "@/hooks/data/useAuth";
 import useDepartments, { Department, PERMISSIONS } from "@/hooks/data/useDepartments";
+import { useTranslations } from "@/hooks/useTranslations";
 import { ColumnDef } from "@tanstack/react-table";
 import { Search, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -15,6 +16,7 @@ export default function AccessControl({
 }: {
   department: Department;
 }) {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState("");
   const [members, setMembers] = useState<User[]>([]);
   const { removeUserFromDept } = useDepartments({});
@@ -36,15 +38,14 @@ export default function AccessControl({
     () => [
       {
         accessorKey: "name",
-        header: "Email",
-      },
-      {
+        header: t("email", "Email"),
+      },      {
         accessorKey: "phone",
-        header: "SỐ ĐIỆN THOẠI",
+        header: t("phoneNumber", "SỐ ĐIỆN THOẠI"),
       },
       {
         accessorKey: "role",
-        header: "VAI TRÒ",
+        header: t("role", "VAI TRÒ"),
         cell: ({ row }) => {
           return (
             <span>
@@ -54,21 +55,19 @@ export default function AccessControl({
           );
         },
       },
-      {
-        id: "actions",
-        header: () => <div className="text-center">Thao tác</div>,
+      {        id: "actions",
+        header: () => <div className="text-center">{t("actions", "Thao tác")}</div>,
         cell: ({ row }) => {
           return (
             <div className="flex justify-center">
-              <AddMemberDialog  department={department} user={row.original} />
-              <AlertDialogComponent
+              <AddMemberDialog  department={department} user={row.original} />              <AlertDialogComponent
                 children={
                   <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
                     <Trash2 className="h-4 w-4 text-gray-500" />
                   </Button>
                 }
-                description="Bạn có chắc chắn muốn xóa thành viên này không?"
-                title="Xác nhận xóa thành viên"
+                description={t("confirmDeleteMemberDesc", "Bạn có chắc chắn muốn xóa thành viên này không?")}
+                title={t("confirmDeleteMember", "Xác nhận xóa thành viên")}
                 onConfirm={() =>
                   removeUserFromDept({
                     department_id: department.id as string,
@@ -86,14 +85,12 @@ export default function AccessControl({
   );
 
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-0">
+    <Card className="w-full">      <CardHeader className="pb-0">
         <h2 className="text-blue-600 font-medium text-lg">
-          Cài đặt phân quyền nhóm tài liệu
+          {t("departmentPermissionSettings", "Cài đặt phân quyền nhóm tài liệu")}
         </h2>
         <p className="text-sm text-gray-700">
-          Thêm email của các thành viên trong dự án để kiểm soát quyền truy cập
-          vào nhóm tài liệu
+          {t("addMembersToControl", "Thêm email của các thành viên trong dự án để kiểm soát quyền truy cập vào nhóm tài liệu")}
         </p>
         <p className="text-sm text-gray-700">
           Khi phân quyền truy cập nhóm tài liệu.
@@ -102,11 +99,10 @@ export default function AccessControl({
 
       <CardContent className="pt-6">
         <div className="flex items-center justify-between mb-6 gap-3">
-          <div className="flex items-center border border-gray-300 rounded-md overflow-hidden flex-1">
-            <Search className="text-gray-500 w-4 h-4 ml-3" />
+          <div className="flex items-center border border-gray-300 rounded-md overflow-hidden flex-1">            <Search className="text-gray-500 w-4 h-4 ml-3" />
             <Input
               type="text"
-              placeholder="Tìm kiếm theo email và tên"
+              placeholder={t("searchByEmailAndName", "Tìm kiếm theo email và tên")}
               className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -117,14 +113,13 @@ export default function AccessControl({
 
         <DataTable
           columns={columns}
-          data={members}
-          noResultsMessage={
+          data={members}          noResultsMessage={
             <div className="flex flex-col items-center justify-center py-10">
               <p className="text-gray-700 mb-2">
-                Bot chưa được phân quyền truy cập.
+                {t("botNoAccess", "Bot chưa được phân quyền truy cập.")}
               </p>
               <p className="text-gray-700 mb-6">
-                Thêm thành viên để phân quyền truy cập Bot này.
+                {t("addMembersToGrantAccess", "Thêm thành viên để phân quyền truy cập Bot này.")}
               </p>
             </div>
           }

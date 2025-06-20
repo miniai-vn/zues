@@ -1,4 +1,5 @@
 import { DataTable } from "./data-table";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface DataTableProps {
   columns: any;
@@ -11,6 +12,8 @@ interface DataTableProps {
 }
 
 const Tables = ({ columns, data, pagination }: DataTableProps) => {
+  const { t } = useTranslations();
+  
   return (
     <DataTable pagination={pagination} columns={columns} data={data}/>
   );

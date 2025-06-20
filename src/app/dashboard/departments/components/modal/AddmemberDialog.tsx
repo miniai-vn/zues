@@ -21,6 +21,7 @@ import useDepartments, {
   Department,
   PERMISSIONS,
 } from "@/hooks/data/useDepartments";
+import { useTranslations } from "@/hooks/useTranslations";
 import { Pencil, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -33,6 +34,7 @@ export default function AddMemberDialog({
   department,
   user,
 }: AddMemberDialogProps) {
+  const { t } = useTranslations();
   const { users } = useAuth({});
   const [permission, setPermission] = useState("");
   const { addUserToDept, updateUserDept } = useDepartments({});
@@ -66,22 +68,20 @@ export default function AddMemberDialog({
           >
             <Pencil className="h-4 w-4 text-gray-500" />
           </Button>
-        ) : (
-          <Button className="bg-blue-600 hover:bg-blue-700">
+        ) : (          <Button className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-4 h-4 mr-2" />
-            Thêm
+            {t("add", "Thêm")}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden">
-        <DialogHeader className="p-6 pb-3">
-          <div className="flex items-center justify-between w-full">
+        <DialogHeader className="p-6 pb-3">          <div className="flex items-center justify-between w-full">
             <DialogTitle className="text-lg font-medium">
-              Thêm thành viên để truy cập nhóm tài liệu
+              {t("addMemberToAccessGroup", "Thêm thành viên để truy cập nhóm tài liệu")}
             </DialogTitle>
           </div>
           <DialogDescription className="text-sm text-gray-600">
-            Thành viên được thêm sẽ có thể truy cập nhóm tài liệu
+            {t("addedMembersCanAccess", "Thành viên được thêm sẽ có thể truy cập nhóm tài liệu")}
             <br />
           </DialogDescription>
         </DialogHeader>
@@ -89,16 +89,15 @@ export default function AddMemberDialog({
         <div className="px-6">
           <div className="space-y-1.5">
             <div className="flex space-x-3">
-              <div className="flex-1">
-                <Label
+              <div className="flex-1">                <Label
                   htmlFor="email"
                   className="text-sm mb-1.5 font-medium block"
                 >
-                  Email
+                  {t("email", "Email")}
                 </Label>
                 <Select value={userId} onValueChange={onChangeUserId}>
                   <SelectTrigger className="w-full border-gray-300 focus:border-blue-300 focus:outline-none rounded-md">
-                    <SelectValue placeholder="Nhập email của thành viên" />
+                    <SelectValue placeholder={t("enterMemberEmail", "Nhập email của thành viên")} />
                   </SelectTrigger>
                   <SelectContent>
                     {(users ?? []).map((user) => (
@@ -109,19 +108,18 @@ export default function AddMemberDialog({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-1/3">
-                <Label
+              <div className="w-1/3">                <Label
                   htmlFor="permission"
                   className="text-sm font-medium mb-1.5 block"
                 >
-                  Quyền
+                  {t("permission", "Quyền")}
                 </Label>
                 <Select value={permission} onValueChange={setPermission}>
                   <SelectTrigger
                     id="permission"
                     className="w-full border-gray-300 focus:border-blue-300 focus:outline-none rounded-md"
                   >
-                    <SelectValue placeholder="Chọn quyền" />
+                    <SelectValue placeholder={t("selectPermission", "Chọn quyền")} />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(PERMISSIONS).map(([value, label]) => (
@@ -160,11 +158,10 @@ export default function AddMemberDialog({
                 setUserId("");
                 setPermission("");
                 setIsOpen(false);
-              }
-            }}
+              }            }}
             disabled={!userId || !permission}
           >
-            Thêm
+            {t("add", "Thêm")}
           </Button>
         </div>
       </DialogContent>

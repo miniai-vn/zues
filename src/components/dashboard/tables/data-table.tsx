@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface PaginationMeta {
   page: number;
@@ -67,8 +68,9 @@ export function DataTable<TData, TValue>({
   onRowSelectionChange,
   onRowClick, // Thêm dòng này
   isLoading = false,
-  noResultsMessage = "No results.",
+  noResultsMessage,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filteredData, setFilteredData] = useState<TData[]>(data);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -250,14 +252,13 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length + 1}
                   className="text-center w-full"
                 >
-                  {isLoading ? "" : noResultsMessage}
+                  {isLoading ? "" : noResultsMessage || t("noResults", "No results.")}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-
       {hasServerPagination && (
         <div className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
@@ -277,7 +278,7 @@ export function DataTable<TData, TValue>({
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              <span className="text-xs">Dòng mỗi trang</span>
+              <span className="text-xs">{t("rowsPerPage", "Rows per page")}</span>
             </div>
           </div>
           <div>

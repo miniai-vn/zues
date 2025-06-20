@@ -14,6 +14,7 @@ import { ConversationQueryParams } from "@/hooks/data/cs/useCS";
 import useTags, { TagType } from "@/hooks/data/cs/useTags";
 import { useUsersWithCs } from "@/hooks/data/cs/useUser";
 import useChannels from "@/hooks/data/useChannels";
+import { useTranslations } from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 import { Phone, Plus, Search, Settings, Tag, User } from "lucide-react";
 import { useState } from "react";
@@ -31,6 +32,7 @@ export const ConversationFilter = ({
   onNewConversation,
   onSettings,
 }: ConversationFilterProps) => {
+  const { t } = useTranslations();
   const [activeTab, setActiveTab] = useState(filters.readStatus || "all");
   const { filteredChannels } = useChannels();
   const { tags } = useTags({
@@ -100,9 +102,8 @@ export const ConversationFilter = ({
   return (
     <div className="border-b w-full">
       {/* Header Section */}
-      <div className="p-4 pb-0">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">Messages</h2>
+      <div className="p-4 pb-0">        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold">{t("dashboard.chat.messages")}</h2>
           <div className="flex gap-1">
             {onNewConversation && (
               <Button
@@ -128,9 +129,8 @@ export const ConversationFilter = ({
         </div>
 
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search conversations..."
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />          <Input
+            placeholder={t("dashboard.chat.searchConversations")}
             className="pl-9"
             value={filters.search || ""}
             onChange={handleSearchChange}
@@ -155,20 +155,19 @@ export const ConversationFilter = ({
               >
                 <Phone className="h-3 w-3" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
+            </DropdownMenuTrigger>            <DropdownMenuContent align="start" className="w-48">
               <DropdownMenuItem onClick={() => handlePhoneFilterChange("all")}>
-                Tất cả
+                {t("dashboard.chat.filters.all")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handlePhoneFilterChange("has-phone")}
               >
-                Có số điện thoại
+                {t("dashboard.chat.hasPhone")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handlePhoneFilterChange("no-phone")}
               >
-                Không có số
+                {t("dashboard.chat.noPhone")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -213,15 +212,14 @@ export const ConversationFilter = ({
               align="start"
               className="w-48 max-h-80 overflow-y-auto"
             >
-              {/* Add "All" option to clear channel filter */}
-              <DropdownMenuItem
+              {/* Add "All" option to clear channel filter */}              <DropdownMenuItem
                 onClick={() => handleChannelChange(undefined)}
                 className={cn(
                   "flex items-center gap-2",
                   !filters.channelId && "bg-accent"
                 )}
               >
-                Tất cả kênh
+                {t("dashboard.chat.allChannels")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {filteredChannels?.map((channel) => (
@@ -262,15 +260,14 @@ export const ConversationFilter = ({
               align="start"
               className="w-48 max-h-80 overflow-y-auto"
             >
-              {/* Add "All" option to clear tag filter */}
-              <DropdownMenuItem
+              {/* Add "All" option to clear tag filter */}              <DropdownMenuItem
                 onClick={() => handleTagChange(undefined)}
                 className={cn(
                   "flex items-center gap-2",
                   !filters.tagId && "bg-accent"
                 )}
               >
-                Tất cả
+                {t("dashboard.chat.filters.all")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {tags?.map((tag) => (
@@ -353,12 +350,11 @@ export const ConversationFilter = ({
                         users?.length && (users?.length || 0) > 0
                     }
                     onCheckedChange={handleSelectAllEmployees}
-                  />
-                  <label
+                  />                  <label
                     htmlFor="select-all"
                     className="text-sm font-medium cursor-pointer"
                   >
-                    Chọn tất cả
+                    {t("dashboard.chat.selectAll")}
                   </label>
                 </div>
                 <DropdownMenuSeparator />
@@ -389,8 +385,7 @@ export const ConversationFilter = ({
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center border-b -mb-px">
-          <button
+        <div className="flex items-center border-b -mb-px">          <button
             className={cn(
               "px-3 py-2 text-sm font-medium border-b-2 transition-colors",
               activeTab === "all"
@@ -399,7 +394,7 @@ export const ConversationFilter = ({
             )}
             onClick={() => handleTabChange("all")}
           >
-            Tất cả
+            {t("dashboard.chat.filters.all")}
           </button>
           <button
             className={cn(
@@ -410,7 +405,7 @@ export const ConversationFilter = ({
             )}
             onClick={() => handleTabChange("unread")}
           >
-            Chưa đọc
+            {t("dashboard.chat.filters.unread")}
           </button>
           <button
             className={cn(
@@ -421,7 +416,7 @@ export const ConversationFilter = ({
             )}
             onClick={() => handleTabChange("read")}
           >
-            Đã đọc
+            {t("dashboard.chat.filters.read")}
           </button>
         </div>
       </div>

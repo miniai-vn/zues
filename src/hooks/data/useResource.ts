@@ -1,4 +1,4 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export type Resource = {
@@ -18,6 +18,15 @@ export type Resource = {
 export type LinkKnowLedge = {
   url: string;
 };
+
+export interface ResourcesQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  type?: string;
+  departmentId?: string;
+}
+
 const useResource = ({
   id,
   departmentId,
@@ -40,23 +49,20 @@ const useResource = ({
     isPending: isPendingFetchingItem,
     refetch: refetchResource,
   } = useQuery({
-    queryKey: ["resource", page, limit, search, type],
+    queryKey: ["resource", page, limit, search, type, departmentId],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (page) params.append("page", page.toString());
-      if (limit) params.append("limit", limit.toString());
-      if (search) params.append("search", search);
-      if (type) params.append("type", type);
-
-      const queryString = params.toString();
-      const endpoint = `/api/resources/by-department/${departmentId}${
-        queryString ? `?${queryString}` : ""
-      }`;
-
-      const res = await chatApiInstance.get(endpoint);
+      const res = await axiosInstance.get("/api/resources", {
+        params: {
+          page: page,
+          limit: limit,
+          search: search,
+          type: type,
+          departmentId: departmentId,
+        },
+      });
 
       return {
-        items: res.data.items || res.data || [], // Adapt based on your API response structure
+        items: res.data.items || res.data || [],
         totalCount: res.data.totalCount || res.data?.length || 0,
         page: page,
         limit: limit,
@@ -73,15 +79,11 @@ const useResource = ({
   const handleUploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await chatApiInstance.post(
-      "/api/resources/upload-file",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axiosInstance.post(`/api/uploads`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     return response.data;
   };
@@ -100,12 +102,12 @@ const useResource = ({
         type: string;
       }) => {
         const data = await handleUploadFile(file);
-        const response = await chatApiInstance.post(
+        const response = await axiosInstance.post(
           `/api/resources/`,
           {
-            department_id: departmentId,
+            departmentId: departmentId,
             extra: data,
-            path: data.path,
+            path: data.url,
             name: data.name,
             type: type,
             description: description,
@@ -136,7 +138,7 @@ const useResource = ({
   const { mutate: deleteResource, isPending: isPendingDeleteResource } =
     useMutation({
       mutationFn: async (id: string) => {
-        const response = await chatApiInstance.delete(`/api/resources/${id}`, {});
+        const response = await axiosInstance.delete(`/api/resources/${id}`, {});
         return response.data;
       },
       onSuccess: () => {
@@ -157,7 +159,7 @@ const useResource = ({
   const { mutate: createChunks, isPending: isPendingCreateChunks } =
     useMutation({
       mutationFn: async (id: string) => {
-        const response = await chatApiInstance.patch(
+        const response = await axiosInstance.patch(
           `/api/resources/create-chunks/${id}`
         );
         return response.data;
@@ -180,7 +182,7 @@ const useResource = ({
   const { mutate: syncResource, isPending: isPendingSyncResource } =
     useMutation({
       mutationFn: async (id: string) => {
-        const response = await chatApiInstance.patch(`/api/resources/sync/${id}`);
+        const response = await axiosInstance.patch(`/api/resources/sync/${id}`);
         return response.data;
       },
       onSuccess: () => {
@@ -201,7 +203,7 @@ const useResource = ({
   const { data: resourceDetail } = useQuery({
     queryKey: ["resource", id],
     queryFn: async () => {
-      const response = await chatApiInstance.get(`/api/resources/${id}`);
+      const response = await axiosInstance.get(`/api/resources/${id}`);
       return response.data as Resource;
     },
     refetchOnWindowFocus: false,

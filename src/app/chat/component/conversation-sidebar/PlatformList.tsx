@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export interface Platform {
   id: string;
@@ -19,13 +20,13 @@ export interface Platform {
   status: "Online" | "Offline";
 }
 
-export const PLATFORMS: Platform[] = [
+export const getPlatforms = (t: (key: string) => string): Platform[] => [
   {
     id: "all",
     type: "all",
-    name: "All Platforms",
-    title: "All Platforms",
-    description: "All messages",
+    name: t("platforms.all.name"),
+    title: t("platforms.all.title"),
+    description: t("platforms.all.description"),
     icon: "/channel-imgs/all-platforms.png",
     fallback: "ALL",
     color: "text-gray-600",
@@ -37,10 +38,9 @@ export const PLATFORMS: Platform[] = [
   {
     id: "zalo",
     type: "zalo",
-    name: "Zalo OA",
-    title: "Zalo OA",
-    description:
-      "Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo.",
+    name: t("platforms.zalo.name"),
+    title: t("platforms.zalo.title"),
+    description: t("platforms.zalo.description"),
     icon: "/channel-imgs/zalo-logo.webp",
     fallback: "ZA",
     color: "text-blue-600",
@@ -52,9 +52,9 @@ export const PLATFORMS: Platform[] = [
   {
     id: "facebook",
     type: "facebook",
-    name: "Facebook",
-    title: "Facebook Shop",
-    description: "Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook.",
+    name: t("platforms.facebook.name"),
+    title: t("platforms.facebook.title"),
+    description: t("platforms.facebook.description"),
     icon: "/channel-imgs/facebook-logo.png",
     fallback: "FB",
     color: "text-blue-700",
@@ -66,10 +66,9 @@ export const PLATFORMS: Platform[] = [
   {
     id: "shopee",
     type: "shopee",
-    name: "Shopee",
-    title: "Shopee",
-    description:
-      "Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả.",
+    name: t("platforms.shopee.name"),
+    title: t("platforms.shopee.title"),
+    description: t("platforms.shopee.description"),
     icon: "/channel-imgs/Shopee-logo.png",
     fallback: "SP",
     color: "text-orange-500",
@@ -81,9 +80,9 @@ export const PLATFORMS: Platform[] = [
   {
     id: "tiktok",
     type: "tiktok",
-    name: "TikTok",
-    title: "TikTok Shop",
-    description: "Kết nối TikTok Shop để bán hàng qua livestream và video.",
+    name: t("platforms.tiktok.name"),
+    title: t("platforms.tiktok.title"),
+    description: t("platforms.tiktok.description"),
     icon: "/channel-imgs/tiktok-logo.png",
     fallback: "TT",
     color: "text-pink-600",
@@ -95,9 +94,9 @@ export const PLATFORMS: Platform[] = [
   {
     id: "whatsapp",
     type: "whatsapp",
-    name: "WhatsApp",
-    title: "WhatsApp",
-    description: "WhatsApp messages",
+    name: t("platforms.whatsapp.name"),
+    title: t("platforms.whatsapp.title"),
+    description: t("platforms.whatsapp.description"),
     icon: "/channel-imgs/whatsapp-logo.png",
     fallback: "WA",
     color: "text-green-600",
@@ -109,9 +108,9 @@ export const PLATFORMS: Platform[] = [
   {
     id: "telegram",
     type: "telegram",
-    name: "Telegram",
-    title: "Telegram",
-    description: "Telegram messages",
+    name: t("platforms.telegram.name"),
+    title: t("platforms.telegram.title"),
+    description: t("platforms.telegram.description"),
     icon: "/channel-imgs/telegram-logo.png",
     fallback: "TG",
     color: "text-blue-500",
@@ -131,8 +130,11 @@ export const PlatformList = ({
   selectedChannel,
   onSelectChannel,
 }: PlatformListProps) => {
+  const { t } = useTranslations();
   const { channelsUnreadCount: channelsWithUnreadMessage } = useCsStore();
   const router = useRouter();
+
+  const platforms = getPlatforms(t);
   const getUnreadCount = (platformId: string) => {
     if (platformId === "all") {
       return (
@@ -148,17 +150,16 @@ export const PlatformList = ({
     );
     return channel?.totalUnreadMessages || 0;
   };
-
   // Filter platforms to only show those that exist in channelsWithUnreadMessage
   const getVisiblePlatforms = () => {
     if (!channelsWithUnreadMessage || channelsWithUnreadMessage.length === 0) {
       return [];
     }
 
-    const allPlatform = PLATFORMS.find((p) => p.id === "all");
+    const allPlatform = platforms.find((p: Platform) => p.id === "all");
 
-    const availablePlatforms = PLATFORMS.filter(
-      (platform) =>
+    const availablePlatforms = platforms.filter(
+      (platform: Platform) =>
         platform.id !== "all" &&
         channelsWithUnreadMessage.some(
           (channel) => channel.type === platform.id
@@ -176,7 +177,7 @@ export const PlatformList = ({
     <div className="w-16 border-r bg-gray-50/50">
       <div className="p-2 border-b">
         <div className="space-y-2">
-          {visiblePlatforms.map((platform) => {
+          {visiblePlatforms.map((platform: Platform) => {
             const isSelected = selectedChannel === platform.id;
             const unreadCount = getUnreadCount(platform.id);
 
@@ -245,7 +246,6 @@ export const PlatformList = ({
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage src="link.png" className="object-contain p-1" />
-               
               </Avatar>
             </div>
           </div>

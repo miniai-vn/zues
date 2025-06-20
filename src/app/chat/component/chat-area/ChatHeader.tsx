@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 import { Info, MoreVertical, Tag, Users } from "lucide-react";
 
@@ -26,6 +27,7 @@ export const ChatHeader = ({
   setShowTagManagement,
   setShowParticipantManagement, // <-- Destructure here
 }: ChatHeaderProps) => {
+  const { t } = useTranslations();
   return (
     <div className="border-b p-4 flex items-center justify-between bg-background">
       <div className="flex items-center gap-3">
@@ -34,18 +36,17 @@ export const ChatHeader = ({
           <AvatarFallback>
             {conversationName?.charAt(0)?.toUpperCase() || "?"}
           </AvatarFallback>
-        </Avatar>
-        <div>
+        </Avatar>        <div>
           <h3 className="font-medium">
-            {conversationName || "Unknown Conversation"}
+            {conversationName || t("dashboard.chat.unknownConversation")}
           </h3>
           {isGroup && (
             <p className="text-sm text-muted-foreground">
-              {participantCount} members
+              {participantCount} {t("dashboard.chat.members")}
             </p>
           )}
           {!isGroup && (
-            <p className="text-sm text-muted-foreground">Active now</p>
+            <p className="text-sm text-muted-foreground">{t("dashboard.chat.activeNow")}</p>
           )}
         </div>
       </div>
@@ -67,12 +68,11 @@ export const ChatHeader = ({
           onClick={() => setShowTagManagement(true)}
         >
           <Tag className="h-4 w-4" />
-        </Button>
-        <Button
+        </Button>        <Button
           size="sm"
           variant="ghost"
           onClick={onMoreOptions}
-          title="More options"
+          title={t("dashboard.chat.moreOptions")}
         >
           <MoreVertical className="h-4 w-4" />
         </Button>
@@ -81,7 +81,7 @@ export const ChatHeader = ({
           variant="ghost"
           onClick={onToggleContactInfo}
           className={cn(showContactInfo && "bg-accent")}
-          title={showContactInfo ? "Hide contact info" : "Show contact info"}
+          title={showContactInfo ? t("dashboard.chat.hideContactInfo") : t("dashboard.chat.showContactInfo")}
         >
           <Info className="h-4 w-4" />
         </Button>

@@ -7,6 +7,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "@/hooks/useTranslations";
 import { MapPin, Phone, Mail, Save } from "lucide-react";
 import { useState } from "react";
 
@@ -35,6 +36,7 @@ export const ContactInfo = ({
   initialAddress = "",
   onSave,
 }: ContactInfoProps) => {
+  const { t } = useTranslations();
   const [phoneNumber, setPhoneNumber] = useState(initialPhone);
   const [email, setEmail] = useState(initialEmail);
   const [address, setAddress] = useState(initialAddress);
@@ -54,17 +56,17 @@ export const ContactInfo = ({
         <CardHeader>
           <CardTitle className="text-sm flex items-center gap-2">
             <Phone className="h-4 w-4" />
-            Thông tin liên hệ
+            {t("dashboard.chat.contactInfo.editContact")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <Phone className="h-3 w-3" />
-              <span>Số điện thoại</span>
+              <span>{t("dashboard.chat.contactInfo.phone")}</span>
             </div>
             <Input
-              placeholder="Nhập số điện thoại"
+              placeholder={t("dashboard.chat.contactInfo.phone")}
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
@@ -73,10 +75,10 @@ export const ContactInfo = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <Mail className="h-3 w-3" />
-              <span>Email</span>
+              <span>{t("dashboard.chat.contactInfo.email")}</span>
             </div>
             <Input
-              placeholder="Nhập email"
+              placeholder={t("dashboard.chat.contactInfo.email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -85,10 +87,10 @@ export const ContactInfo = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <MapPin className="h-3 w-3" />
-              <span>Địa chỉ</span>
+              <span>{t("dashboard.chat.contactInfo.address")}</span>
             </div>
             <Input
-              placeholder="Nhập địa chỉ"
+              placeholder={t("dashboard.chat.contactInfo.address")}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
@@ -98,7 +100,7 @@ export const ContactInfo = ({
         <CardFooter className="flex flex-col space-y-2">
           <Button onClick={handleSaveContact} className="w-full" size="sm">
             <Save className="h-4 w-4 mr-2" />
-            Lưu thông tin
+            {t("dashboard.chat.contactInfo.saveContact")}
           </Button>
         </CardFooter>
       </Card>

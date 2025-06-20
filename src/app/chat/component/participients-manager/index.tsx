@@ -9,6 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import useParticipants from "@/hooks/data/cs/useParticipants";
+import { useTranslations } from "@/hooks/useTranslations";
 import { Crown, Plus, Shield, User, X } from "lucide-react";
 import { useState } from "react";
 import AddParticipantDialog from "./AddparticipantDialog";
@@ -24,6 +25,7 @@ const ParticipantManagementSheet = ({
   onOpenChange,
   conversationId,
 }: ParticipantManagementSheetProps) => {
+  const { t } = useTranslations();
   const { removeParticipant, participants, addParticipants } =
     useParticipants(conversationId);
   // const { user } = useCS();
@@ -49,24 +51,22 @@ const ParticipantManagementSheet = ({
         return <User className="h-3 w-3 text-gray-500" />;
     }
   };
-
   const getRoleLabel = (role: string) => {
     switch (role) {
       case "owner":
-        return "Chủ nhóm";
+        return t("dashboard.chat.owner");
       case "admin":
-        return "Quản trị";
+        return t("dashboard.chat.admin");
       default:
-        return "Thành viên";
+        return t("dashboard.chat.member");
     }
   };
 
   return (
     <>
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent className="w-[400px] sm:w-[540px]">
+      <Sheet open={open} onOpenChange={onOpenChange}>        <SheetContent className="w-[400px] sm:w-[540px]">
           <SheetHeader>
-            <SheetTitle>Quản lý thành viên</SheetTitle>
+            <SheetTitle>{t("dashboard.chat.participantManagement")}</SheetTitle>
           </SheetHeader>
 
           <div className="space-y-6 mt-6">
@@ -74,7 +74,7 @@ const ParticipantManagementSheet = ({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium">
-                  Thành viên hiện tại ({participants.length})
+                  {t("dashboard.chat.member")} ({participants.length})
                 </h4>
                 <Button
                   variant="outline"
@@ -82,7 +82,7 @@ const ParticipantManagementSheet = ({
                   onClick={() => setShowAddDialog(true)}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Thêm thành viên
+                  {t("dashboard.chat.addParticipant")}
                 </Button>
               </div>{" "}
               <div className="space-y-2 max-h-96 overflow-y-auto">

@@ -1,0 +1,456 @@
+{
+  "nav": {
+    "tryNow": "Try Now",
+    "login": "Login",
+    "register": "Register",
+    "home": "Home",
+    "features": "Features",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "About Mi9",
+    "title": "Where Artificial Intelligence Meets Comprehensive Security",
+    "description": "Mi9 is a pioneering technology company in developing dedicated AI solutions for businesses and comprehensive information security. We help businesses improve performance, optimize processes and ensure data safety — all in a reliable platform that does not share information with third parties."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Advanced Intelligence, Human-like Intuition",
+    "description": "Built with modern technology to understand, learn and adapt to your specific needs.",
+    "cards": {
+      "autoLearning": {
+        "title": "Automatic Learning",
+        "description": "Atlas learns from your interactions, continuously improving responses and actions to serve you better."
+      },
+      "naturalInteraction": {
+        "title": "Natural Interaction",
+        "description": "Communicate using natural language and gestures. Atlas understands context and responds appropriately."
+      },
+      "preciseMovement": {
+        "title": "Precise Movement",
+        "description": "Advanced motor joints provide flexible, natural movement with superior balance and coordination capabilities."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login to your account",
+      "description": "Enter your email to login to the system",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Login",
+      "loading": "Logging in...",
+      "error": "Login failed!",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up now"
+    },
+    "register": {
+      "title": "Create new account",
+      "description": "Enter information to create account",
+      "fullName": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Register",
+      "loading": "Creating account...",
+      "success": "Account created successfully!",
+      "error": "Account creation failed!",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in now"
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "chat": "Chat",
+      "channels": "Channels",
+      "users": "Users",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "departments": "Departments",
+      "settings": "Settings",
+      "reports": "Reports"
+    },
+    "sidebar": {
+      "automation": "Automation",
+      "staff": "Staff",
+      "integration": "Integration",
+      "reports": "Reports",
+      "documentGroups": "Document Groups",
+      "employees": "Employees",
+      "permissions": "Permissions",
+      "platform": "Platform",
+      "createNewChat": "Create new chat",
+      "chatHistory": "Chat History"
+    },
+    "chat": {
+      "title": "AI Chat",
+      "placeholder": "Enter your message...",
+      "send": "Send",
+      "newChat": "New Chat",
+      "history": "History",
+      "messages": "Messages",
+      "searchConversations": "Search conversations...",
+      "selectConversation": "Select a conversation",
+      "chooseConversation": "Choose a conversation to start messaging",
+      "typeMessage": "Type a message...",
+      "attachFile": "Attach file",
+      "addEmoji": "Add emoji",
+      "sendMessage": "Send message",
+      "unknownConversation": "Unknown Conversation",
+      "activeNow": "Active now",
+      "members": "members",
+      "moreOptions": "More options",
+      "showContactInfo": "Show contact info",
+      "hideContactInfo": "Hide contact info",
+      "allChannels": "All channels",
+      "allEmployees": "All",
+      "hasPhone": "Has phone",
+      "noPhone": "No phone",
+      "allTags": "All tags",
+      "selectAll": "Select all",
+      "information": "Information",
+      "notes": "Notes",
+      "participantManagement": "Participant Management",
+      "addParticipant": "Add Participant",
+      "removeParticipant": "Remove Participant",
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member",
+      "tagManagement": "Tag Management",
+      "addTag": "Add Tag",
+      "createTag": "Create Tag",
+      "tagName": "Tag Name",
+      "tagColor": "Tag Color",
+      "applyTags": "Apply Tags",
+      "contactInfo": {
+        "phone": "Phone",
+        "email": "Email",
+        "address": "Address",
+        "note": "Note",
+        "saveContact": "Save Contact",
+        "editContact": "Edit Contact"
+      },
+      "filters": {
+        "all": "All",
+        "unread": "Unread",
+        "read": "Read",
+        "phone": "Phone",
+        "channel": "Channel",
+        "tag": "Tag",
+        "employee": "Employee",
+        "dateRange": "Date Range"
+      }
+    },
+    "channels": {
+      "title": "Channel Management",
+      "salesChannels": "Sales Channels",
+      "add": "Add Channel",
+      "connect": "Connect",
+      "edit": "Edit",
+      "delete": "Delete",
+      "disconnect": "Disconnect",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "processing": "Processing",
+      "connecting": "Connecting",
+      "show": "Show",
+      "hide": "Hide",
+      "avatar": "Avatar",
+      "name": "Channel Name",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "actions": "Actions",
+      "permissions": "Permissions",
+      "total": "Total",
+      "channelCount": "{{count}} channels",
+      "loading": "Loading channel list...",
+      "confirmDelete": "Are you sure you want to delete this channel?",
+      "management": "Management",
+      "noChannels": "No channels connected yet",
+      "addFirst": "Add first channel"
+    },
+    "users": {
+      "title": "User Management",
+      "add": "Add User",
+      "edit": "Edit",
+      "delete": "Delete",
+      "name": "Employee Name",
+      "username": "Username",
+      "email": "Email",
+      "phone": "Phone Number",
+      "role": "Role",
+      "roles": "Roles",
+      "department": "Department",
+      "departments": "Departments",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "actions": "Actions",
+      "search": "Search",
+      "searchPlaceholder": "Search employees by name",
+      "notHave": "Not have",
+      "empty": "Empty",
+      "management": "Management",
+      "userManagement": "User Management",
+      "userDetail": "User Detail",
+      "breadcrumbs": {
+        "management": "Management",
+        "userManagement": "User Management"
+      },
+      "modal": {
+        "createTitle": "Add New User",
+        "editTitle": "Edit User",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "showPassword": "Show Password",
+        "hidePassword": "Hide Password",
+        "changePassword": "Change Password",
+        "selectRoles": "Select Roles",
+        "selectDepartments": "Select Departments",
+        "validation": {
+          "usernameRequired": "Please enter username.",
+          "passwordRequired": "Please enter password.",
+          "passwordMin": "Password must be at least 8 characters.",
+          "nameRequired": "Please enter full name.",
+          "phoneInvalid": "Phone number must be numeric",
+          "rolesRequired": "Please select at least one role."
+        }
+      }
+    },
+    "roles": {
+      "title": "Role Management",
+      "add": "Add Role",
+      "edit": "Edit",
+      "delete": "Delete",
+      "name": "Role Name",
+      "description": "Description",
+      "permissions": "Permissions",
+      "actions": "Actions",
+      "search": "Search",
+      "searchPlaceholder": "Search roles",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "empty": "Empty",
+      "deleteRole": "Delete Role",
+      "management": "Management",
+      "roleManagement": "Role Management",
+      "breadcrumbs": {
+        "management": "Management",
+        "roleManagement": "Role Management"
+      },
+      "modal": {
+        "createTitle": "Create Role",
+        "editTitle": "Update Role",
+        "createButton": "Create Role",
+        "updateButton": "Update",
+        "namePlaceholder": "Enter role name",
+        "descriptionPlaceholder": "Enter role description",
+        "validation": {
+          "nameRequired": "Please enter role name.",
+          "descriptionRequired": "Please enter description."
+        }
+      },
+      "detail": {
+        "title": "Roles and Permissions",
+        "subtitle": "Manage user roles and corresponding permissions.",
+        "permissionsColumn": "Permissions",
+        "saveChanges": "Save Changes",
+        "breadcrumbs": {
+          "permissions": "Permissions"
+        }
+      }
+    },
+    "permissions": {
+      "title": "Permission Management",
+      "groups": {
+        "file": "File",
+        "chat": "Chat",
+        "user": "User",
+        "role": "Role",
+        "channel": "Channel",
+        "department": "Department",
+        "system": "System"
+      }
+    },
+    "departments": {
+      "title": "Document Group Management",
+      "management": "Management",
+      "documentGroupManagement": "Document Group Management",
+      "search": "Search",
+      "searchPlaceholder": "Search by document group name",
+      "emptyState": {
+        "title": "You don't have any document groups yet.",
+        "alt": "No document groups"
+      },
+      "breadcrumbs": {
+        "management": "Management",
+        "documentGroupManagement": "Document Group Management"
+      },
+      "modal": {
+        "createTitle": "Create New Department",
+        "editTitle": "Department Settings",
+        "createButton": "Create New Department"
+      },
+      "detail": {
+        "documentManagement": "Document Management",
+        "documents": "Documents",
+        "fileName": "File Name",
+        "documentType": "Document Type",
+        "fileSize": "File Size",
+        "description": "Description",
+        "uploadTime": "Upload Time",
+        "status": "Status",
+        "statusValues": {
+          "new": "New",
+          "processing": "Processed",
+          "finished": "Trained",
+          "active": "Active"
+        },
+        "confirmDeleteDocument": "Are you sure you want to delete this document?",
+        "deleteDocument": "Delete Document",
+        "linkToPlatform": "Link to Platform",
+        "searchDocumentPlaceholder": "Search document by name",
+        "editResource": "Edit resource",
+        "uploadNewDocument": "+ Upload new document",
+        "editDocument": "Edit document",
+        "createNewDocument": "Create new document",
+        "uploadFilePlaceholder": "Please upload PDF, DOC, XLS, TXT, CSV files (max 10MB/file)",
+        "acceptedFormats": "Accepted formats: .pdf, .doc, .docx, .txt",
+        "selectedFile": "Selected file",
+        "descriptionPlaceholder": "Enter document description...",
+        "segmentDocument": "Segment Document",
+        "trainAI": "Train AI",
+        "faqs": {
+          "title": "FAQs",
+          "question": "Question",
+          "answer": "Answer",
+          "createdAt": "Created Date",
+          "searchPlaceholder": "Search questions",
+          "trainAll": "Train All",
+          "confirmDeleteFaq": "Are you sure you want to delete this FAQ?",
+          "deleteFaq": "Delete FAQ",
+          "uploadFaq": "+ Upload FAQ",
+          "editFaq": "Edit FAQ",
+          "createFaq": "+ Create"
+        }
+      }
+    }
+  },
+  "platforms": {
+    "all": {
+      "name": "All Platforms",
+      "title": "All Platforms",
+      "description": "All messages"
+    },
+    "zalo": {
+      "name": "Zalo OA",
+      "title": "Zalo OA",
+      "description": "Connect Zalo OA to interact with customers and sell through Zalo."
+    },
+    "facebook": {
+      "name": "Facebook",
+      "title": "Facebook Shop",
+      "description": "Integrate Facebook Shop to sell directly on Facebook."
+    },
+    "shopee": {
+      "name": "Shopee",
+      "title": "Shopee",
+      "description": "Integrate with Shopee to sync products and manage sales effectively."
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "title": "TikTok Shop",
+      "description": "Connect TikTok Shop to sell through livestream and videos."
+    },
+    "whatsapp": {
+      "name": "WhatsApp",
+      "title": "WhatsApp",
+      "description": "WhatsApp messages"
+    },
+    "telegram": {
+      "name": "Telegram",
+      "title": "Telegram",
+      "description": "Telegram messages"
+    }
+  },
+  "createTagDialog": {
+    "title": "Create New Tag",
+    "label": {
+      "name": "Tag Name",
+      "color": "Tag Color"
+    },
+    "input": {
+      "placeholder": "Enter tag name"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "create": "Create Tag",
+      "creating": "Creating..."
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "email": "Email",
+    "phone": "Phone",
+    "phoneNumber": "Phone Number",
+    "role": "Role",
+    "permission": "Permission",
+    "actions": "Actions",
+    "index": "No.",
+    "create": "Create",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "confirmDeleteMemberDesc": "Are you sure you want to delete this member?",
+    "confirmDeleteMember": "Confirm member deletion",
+    "departmentPermissionSettings": "Department permission settings",
+    "addMembersToControl": "Add emails of project members to control access to the document group",
+    "searchByEmailAndName": "Search by email and name",
+    "botNoAccess": "Bot has not been granted access permission.",
+    "addMembersToGrantAccess": "Add members to grant access to this Bot.",
+    "addMemberToAccessGroup": "Add member to access document group",
+    "addedMembersCanAccess": "Added members will be able to access the document group",
+    "enterMemberEmail": "Enter member's email",
+    "selectPermission": "Select permission",
+    "noResults": "No results.",
+    "rowsPerPage": "Rows per page"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email",
+    "password": "Password must be at least 8 characters",
+    "confirmPassword": "Passwords do not match",
+    "min": "Minimum {{min}} characters",
+    "max": "Maximum {{max}} characters"
+  },
+  "roleNames": {
+    "admin": "Administrator",
+    "moderator": "Moderator",
+    "developer": "Developer",
+    "support_agent": "Support Agent",
+    "content_creator": "Content Creator",
+    "user": "Employee",
+    "guest": "Guest",
+    "leader": "Team Leader"
+  }
+}

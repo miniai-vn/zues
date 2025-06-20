@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import LottieAnimation from "./LottieAnimation";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const Hero = () => {
+  const { t } = useTranslations();
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [lottieData, setLottieData] = useState<any>(null);
@@ -84,27 +86,20 @@ const Hero = () => {
             <div
               className="pulse-chip mb-3 sm:mb-6 animate-fade-in"
               style={{ animationDelay: "0.1s" }}
-            >
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] mr-2">
+            >              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] mr-2">
                 01
               </span>
-              <span>Về Mi9</span>
-            </div>
-            <h1
+              <span>{t('hero.badge')}</span>
+            </div>            <h1
               className="section-title text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight animate-fade-in text-[hsl(var(--foreground))]"
               style={{ animationDelay: "0.3s" }}
             >
-              Nơi trí tuệ nhân tạo gặp bảo mật toàn diện
-            </h1>
-            <p
+              {t('hero.title')}
+            </h1>            <p
               style={{ animationDelay: "0.5s" }}
               className="section-subtitle mt-3 sm:mt-6 mb-4 sm:mb-8 leading-relaxed text-[hsl(var(--foreground))] font-normal text-base sm:text-lg animate-fade-in"
             >
-              Mi9 là công ty công nghệ tiên phong trong việc phát triển giải
-              pháp AI riêng biệt cho doanh nghiệp và bảo mật thông tin toàn
-              diện. Chúng tôi giúp doanh nghiệp nâng cao hiệu suất, tối ưu quy
-              trình và đảm bảo an toàn dữ liệu — tất cả trong một nền tảng đáng
-              tin cậy, không chia sẻ thông tin với bên thứ ba.
+              {t('hero.description')}
             </p>
           </div>
           <div className="w-full lg:w-1/2 relative mt-6 lg:mt-0 flex justify-center items-center">

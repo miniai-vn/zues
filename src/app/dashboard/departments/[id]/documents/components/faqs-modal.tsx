@@ -11,6 +11,7 @@ import {
 
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import useTranslations from "@/hooks/useTranslations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -32,6 +33,7 @@ interface FaqsModalProps {
 }
 
 export function FaqsModal({ faq, onChange, children }: FaqsModalProps) {
+  const { t } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -58,11 +60,21 @@ export function FaqsModal({ faq, onChange, children }: FaqsModalProps) {
       open={isOpen}
     >
       <DialogTrigger asChild>
-        {children || <Button>{faq ? "Edit FAQ" : "+ Tạo"}</Button>}
+        {children || (
+          <Button>
+            {faq
+              ? t("dashboard.departments.detail.faqs.editFaq")
+              : t("dashboard.departments.detail.faqs.createFaq")}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{faq ? "Chỉnh sửa FAQ" : "Tạo FAQ"}</DialogTitle>
+          <DialogTitle>
+            {faq
+              ? t("dashboard.departments.detail.faqs.editFaq")
+              : t("dashboard.departments.detail.faqs.createFaq")}
+          </DialogTitle>
         </DialogHeader>
         <div>
           <Form {...form}>
@@ -72,7 +84,9 @@ export function FaqsModal({ faq, onChange, children }: FaqsModalProps) {
                 name="question"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Question</FormLabel>
+                    <FormLabel>
+                      {t("dashboard.departments.detail.faqs.question")}
+                    </FormLabel>
                     <Textarea
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
@@ -86,7 +100,9 @@ export function FaqsModal({ faq, onChange, children }: FaqsModalProps) {
                 name="answer"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Answer</FormLabel>
+                    <FormLabel>
+                      {t("dashboard.departments.detail.faqs.answer")}
+                    </FormLabel>
                     <Textarea
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value)}
@@ -101,10 +117,10 @@ export function FaqsModal({ faq, onChange, children }: FaqsModalProps) {
                   className="w-full bg-white text-black border"
                   onClick={() => setIsOpen(false)}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button type="submit" className="w-full">
-                  Submit
+                  {t("common.submit")}
                 </Button>
               </div>
             </form>

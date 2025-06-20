@@ -5,9 +5,12 @@ import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useDepartments from "@/hooks/data/useDepartments";
+import useFAQs, { FAQ } from "@/hooks/data/useFAQs";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import useTranslations from "@/hooks/useTranslations";
 import { convertBytesToMB } from "@/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -15,12 +18,10 @@ import { File, FileText, Image, Pencil, Search } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
-import DepartmentHeader from "./DepartmentHeader";
-import useDepartments from "@/hooks/data/useDepartments";
-import useFAQs, { FAQ } from "@/hooks/data/useFAQs";
 import { FaqsModal } from "./documents/components/faqs-modal";
 
 const DepartmentDetailComponent = () => {
+  const { t } = useTranslations();
   const params = useParams();
   const router = useRouter();
   const departmentId = params.id as string;
@@ -68,10 +69,6 @@ const DepartmentDetailComponent = () => {
     limit: pageSize,
     search,
   });
-  const { departmentDetail } = useDepartments({
-    id: departmentId,
-  });
-
   // FAQ state
   const [faqSearch, setFaqSearch] = useState("");
   useDebouncedValue(faqSearch, 500);
@@ -124,7 +121,7 @@ const DepartmentDetailComponent = () => {
   const columns: ColumnDef<Resource>[] = [
     {
       id: "index",
-      header: () => <div className="text-center">STT</div>, // Add this to center the header
+      header: () => <div className="text-center">{t("common.index")}</div>,
       cell: ({ row }) => (
         <div className="flex items-center justify-center">{row.index + 1}</div>
       ),
@@ -132,7 +129,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "name",
-      header: "Tên tệp",
+      header: t("dashboard.departments.detail.fileName"),
       cell: (row) => {
         return (
           <div className="break-all flex items-center gap-2 line-clamp-2">
@@ -147,7 +144,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "type",
-      header: "Loại tài liệu",
+      header: t("dashboard.departments.detail.documentType"),
       cell: (row) => (
         <div className="break-all line-clamp-1">{row.row.original?.type}</div>
       ),
@@ -155,7 +152,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "size",
-      header: "Dung lượng",
+      header: t("dashboard.departments.detail.fileSize"),
       cell: (row) => (
         <div className="break-all line-clamp-1">
           {convertBytesToMB(row.row.original.extra.size as number)}
@@ -165,7 +162,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "description",
-      header: "Mô tả",
+      header: t("dashboard.departments.detail.description"),
       cell: (row) => (
         <div className="break-all line-clamp-1">
           {row.row.original.description}
@@ -175,7 +172,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "createdAt",
-      header: "Thời gian tải lên",
+      header: t("dashboard.departments.detail.uploadTime"),
       cell: (row) => (
         <div className="whitespace-nowrap">
           {dayjs(row.row.original.createdAt).format("DD/MM/YYYY HH:mm")}
@@ -185,7 +182,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "status",
-      header: () => <div className="text-center">Trạng thái</div>,
+      header: () => <div className="text-center">{t("dashboard.departments.detail.status")}</div>,
       cell: (row) => {
         const status = row.row.original.status;
         let statusText = status;
@@ -201,19 +198,19 @@ const DepartmentDetailComponent = () => {
 
         switch (status) {
           case "new":
-            statusText = "Mới";
+            statusText = t("dashboard.departments.detail.statusValues.new");
             statusClass = "bg-blue-100 text-blue-800";
             break;
           case "processing":
-            statusText = "Đã phân đoạn";
+            statusText = t("dashboard.departments.detail.statusValues.processing");
             statusClass = "bg-yellow-100 text-yellow-800";
             break;
           case "finished":
-            statusText = "Đã train";
+            statusText = t("dashboard.departments.detail.statusValues.finished");
             statusClass = "bg-green-100 text-green-800";
             break;
           case "active":
-            statusText = "Hoạt động";
+            statusText = t("dashboard.departments.detail.statusValues.active");
             statusClass = "bg-green-100 text-green-800";
             break;
           default:
@@ -234,7 +231,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       id: "actions",
-      header: () => <div className="text-center">Hành động</div>,
+      header: () => <div className="text-center">{t("common.actions")}</div>,
       cell: (row) => {
         const documentId = row.row.original.id as unknown as string;
         const isActive = row.row.original.isActive === true;
@@ -263,8 +260,8 @@ const DepartmentDetailComponent = () => {
                   `/dashboard/departments/${departmentId}/documents/${documentId}`
                 );
               }}
-              deleteDescription="Bạn có chắc chắn muốn xóa tài liệu này không?"
-              deleteTitle="Xóa tài liệu"
+              deleteDescription={t("dashboard.departments.detail.confirmDeleteDocument")}
+              deleteTitle={t("dashboard.departments.detail.deleteDocument")}
             />
           </div>
         );
@@ -277,7 +274,7 @@ const DepartmentDetailComponent = () => {
   const faqColumns: ColumnDef<FAQ>[] = [
     {
       id: "index",
-      header: () => <div className="text-center">STT</div>,
+      header: () => <div className="text-center">{t("common.index")}</div>,
       cell: ({ row }) => (
         <div className="flex items-center justify-center">{row.index + 1}</div>
       ),
@@ -285,7 +282,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "question",
-      header: "Câu hỏi",
+      header: t("dashboard.departments.detail.faqs.question"),
       cell: (row) => (
         <div className="break-all line-clamp-1">
           {row.row.original.question}
@@ -295,7 +292,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "answer",
-      header: "Trả lời",
+      header: t("dashboard.departments.detail.faqs.answer"),
       cell: (row) => (
         <div className="break-all line-clamp-1">{row.row.original.answer}</div>
       ),
@@ -303,7 +300,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       accessorKey: "createdAt",
-      header: "Ngày tạo",
+      header: t("dashboard.departments.detail.faqs.createdAt"),
       cell: (row) => (
         <div className="whitespace-nowrap">
           {dayjs(row.row.original.createdAt).format("DD/MM/YYYY HH:mm")}
@@ -313,7 +310,7 @@ const DepartmentDetailComponent = () => {
     },
     {
       id: "actions",
-      header: () => <div className="text-center">Hành động</div>,
+      header: () => <div className="text-center">{t("common.actions")}</div>,
       cell: (row) => {
         const documentId = row.row.original.id as unknown as string;
 
@@ -328,7 +325,7 @@ const DepartmentDetailComponent = () => {
                     className="flex items-center justify-start gap-2 w-full"
                   >
                     <Pencil size={16} />
-                    <span>Chỉnh sửa</span>
+                    <span>{t("common.edit")}</span>
                   </Button>
                 }
                 faq={row.row.original}
@@ -339,8 +336,8 @@ const DepartmentDetailComponent = () => {
                 }}
               />
             }
-            deleteDescription="Bạn có chắc chắn muốn xóa tài liệu này không?"
-            deleteTitle="Xóa tài liệu"
+            deleteDescription={t("dashboard.departments.detail.confirmDeleteFaq")}
+            deleteTitle={t("dashboard.departments.detail.deleteFaq")}
           />
         );
       },
@@ -355,11 +352,11 @@ const DepartmentDetailComponent = () => {
         showBackButton={true}
         breadcrumbs={[
           {
-            label: "Quản lý nhóm tài liệu",
+            label: t("dashboard.departments.documentGroupManagement"),
             href: "/dashboard/departments",
           },
           {
-            label: "Quản lý tài liệu",
+            label: t("dashboard.departments.detail.documentManagement"),
             isCurrentPage: true,
           },
         ]}
@@ -370,8 +367,8 @@ const DepartmentDetailComponent = () => {
         <div className="flex items-center justify-between">
           <div>
             <TabsList>
-              <TabsTrigger value="documents">Tài liệu</TabsTrigger>
-              <TabsTrigger value="faqs">FAQs</TabsTrigger>
+              <TabsTrigger value="documents">{t("dashboard.departments.detail.documents")}</TabsTrigger>
+              <TabsTrigger value="faqs">{t("dashboard.departments.detail.faqs.title")}</TabsTrigger>
             </TabsList>
           </div>
           <Button
@@ -381,13 +378,12 @@ const DepartmentDetailComponent = () => {
               router.push(`/dashboard/channels`);
             }}
           >
-            Liên kết đến nền tảng
+            {t("dashboard.departments.detail.linkToPlatform")}
           </Button>
         </div>
-        <TabsContent value="documents">
-          <div className="flex justify-between items-center mb-4">
+        <TabsContent value="documents">          <div className="flex justify-between items-center mb-4">
             <Input
-              placeholder="Tìm kiếm tài tên tài liệu"
+              placeholder={t("dashboard.departments.detail.searchDocumentPlaceholder")}
               className="mr-4 w-full flex-1"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -398,7 +394,7 @@ const DepartmentDetailComponent = () => {
                 className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
               >
                 <Search />
-                Tìm kiếm
+                {t("common.search")}
               </Button>
 
               <CreateOrUpdateResource
@@ -429,7 +425,7 @@ const DepartmentDetailComponent = () => {
         <TabsContent value="faqs">
           <div className="flex justify-between items-center mb-4">
             <Input
-              placeholder="Tìm kiếm câu hỏi"
+              placeholder={t("dashboard.departments.detail.faqs.searchPlaceholder")}
               className="mr-4 w-full flex-1"
               value={faqSearch}
               onChange={(e) => setFaqSearch(e.target.value)}
@@ -440,9 +436,9 @@ const DepartmentDetailComponent = () => {
                 className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
               >
                 <Search />
-                Tìm kiếm
+                {t("common.search")}
               </Button>
-              <Button>Đào tạo toàn bộ</Button>
+              <Button>{t("dashboard.departments.detail.faqs.trainAll")}</Button>
               {/* Add CreateOrUpdateResource for FAQs if needed */}
               <FaqsModal
                 onChange={(data) => {

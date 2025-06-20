@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Settings, Archive, Trash2, Pencil } from "lucide-react";
 import { AlertDialogComponent } from "../alert-modal";
+import useTranslations from "@/hooks/useTranslations";
 
 interface ActionPopoverProps {
   trigger?: React.ReactNode;
@@ -18,8 +19,8 @@ interface ActionPopoverProps {
   onEdit?: () => void;
   children?: React.ReactNode;
   className?: string;
-  deleteTitle?: string; // thêm prop này
-  deleteDescription?: string; // thêm prop này
+  deleteTitle?: string;
+  deleteDescription?: string;
 }
 
 export default function ActionPopover({
@@ -30,9 +31,11 @@ export default function ActionPopover({
   onEdit,
   children,
   className = "w-56",
-  deleteTitle = "Xóa người dùng", // mặc định
-  deleteDescription = "Bạn có chắc chắn muốn xóa người dùng này không?", // mặc định
+  deleteTitle,
+  deleteDescription,
 }: ActionPopoverProps) {
+  const { t } = useTranslations();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -53,7 +56,7 @@ export default function ActionPopover({
               onClick={onConfigure}
             >
               <Settings size={16} />
-              <span>Phân đoạn tài liệu</span>
+              <span>{t("dashboard.departments.detail.segmentDocument")}</span>
             </Button>
           )}
 
@@ -64,7 +67,7 @@ export default function ActionPopover({
               onClick={onArchive}
             >
               <Archive size={16} />
-              <span>Đào tạo AI</span>
+              <span>{t("dashboard.departments.detail.trainAI")}</span>
             </Button>
           )}
 
@@ -75,14 +78,14 @@ export default function ActionPopover({
               onClick={onEdit}
             >
               <Pencil size={16} />
-              <span>Chỉnh sửa</span>
+              <span>{t("common.edit")}</span>
             </Button>
           )}
 
           {onDelete && (
             <AlertDialogComponent
-              title={deleteTitle}
-              description={deleteDescription}
+              title={deleteTitle || t("common.delete")}
+              description={deleteDescription || t("common.confirmDelete")}
               onConfirm={onDelete}
               onCancel={() => {}}
             >
@@ -91,7 +94,7 @@ export default function ActionPopover({
                 className="flex items-center justify-start gap-2 w-full text-destructive hover:text-destructive hover:bg-destructive/10"
               >
                 <Trash2 size={16} />
-                <span>Xóa</span>
+                <span>{t("common.delete")}</span>
               </Button>
             </AlertDialogComponent>
           )}

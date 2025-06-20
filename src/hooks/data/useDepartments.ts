@@ -1,8 +1,8 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useToast } from "../use-toast";
 import { User } from "./useAuth";
-import { useEffect, useState } from "react";
 
 export const PERMISSIONS = {
   user: "Nhân viên",
@@ -36,7 +36,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   } = useQuery({
     queryKey: ["departments"],
     queryFn: async () => {
-      const res = await chatApiInstance.get("/api/departments/get-all", {
+      const res = await axiosInstance.get("/api/departments", {
         params: {
           search,
         },
@@ -49,7 +49,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     queryKey: ["departmentDetail", id],
     queryFn: async () => {
       if (!id) return null;
-      const res = await chatApiInstance.get(`/api/departments/${id}`);
+      const res = await axiosInstance.get(`/api/departments/${id}`);
       return res.data as Department;
     },
     enabled: !!id,
@@ -87,7 +87,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
     isSuccess: isCreatedDepartment,
   } = useMutation({
     mutationFn: async (data: Department) => {
-      const res = await chatApiInstance.post("/api/departments/", {
+      const res = await axiosInstance.post("/api/departments/", {
         name: data.name,
         description: data.description,
         is_public: data.isPublic,
@@ -117,7 +117,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
         department_id: string;
         role: string;
       }) => {
-        const res = await chatApiInstance.post(
+        const res = await axiosInstance.post(
           "/api/departments/create-user",
           data,
           {
@@ -144,7 +144,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   const { mutate: removeUserFromDept, isPending: isPendingRemoveUserFromDept } =
     useMutation({
       mutationFn: async (data: { user_id: string; department_id: string }) => {
-        const res = await chatApiInstance.delete("/api/departments/delete-user", {
+        const res = await axiosInstance.delete("/api/departments/delete-user", {
           params: data,
         });
         return res.data;
@@ -171,7 +171,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
         department_id: string;
         role: string;
       }) => {
-        const res = await chatApiInstance.put(
+        const res = await axiosInstance.put(
           "/api/departments/update-user",
           data,
           {
@@ -198,7 +198,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   const { mutate: deleteDepartment, isPending: isPendingDeleteDepartment } =
     useMutation({
       mutationFn: async (id: string) => {
-        await chatApiInstance.delete(`/api/departments/${id}`);
+        await axiosInstance.delete(`/api/departments/${id}`);
       },
       onSuccess: () => {
         refetchDepartments();
@@ -220,7 +220,7 @@ const useDepartments = ({ id, search }: { id?: string; search?: string }) => {
   const { mutate: updateDepartment, isPending: isPendingUpdateDepartment } =
     useMutation({
       mutationFn: async (data: Department) => {
-        const res = await chatApiInstance.put(`/api/departments/${data.id}`, {
+        const res = await axiosInstance.put(`/api/departments/${data.id}`, {
           name: data.name,
           description: data.description,
           is_public: data.isPublic,

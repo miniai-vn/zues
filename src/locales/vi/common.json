@@ -1,0 +1,443 @@
+{
+  "nav": {
+    "tryNow": "Dùng thử",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "home": "Trang chủ",
+    "features": "Tính năng",
+    "about": "Về chúng tôi",
+    "contact": "Liên hệ"
+  },
+  "hero": {
+    "badge": "Về Mi9",
+    "title": "Nơi trí tuệ nhân tạo gặp bảo mật toàn diện",
+    "description": "Mi9 là công ty công nghệ tiên phong trong việc phát triển giải pháp AI riêng biệt cho doanh nghiệp và bảo mật thông tin toàn diện. Chúng tôi giúp doanh nghiệp nâng cao hiệu suất, tối ưu quy trình và đảm bảo an toàn dữ liệu — tất cả trong một nền tảng đáng tin cậy, không chia sẻ thông tin với bên thứ ba."
+  },
+  "features": {
+    "badge": "Tính năng",
+    "title": "Trí tuệ tiên tiến, Trực giác như con người",
+    "description": "Được xây dựng với công nghệ hiện đại để thấu hiểu, học hỏi và thích nghi với nhu cầu riêng của bạn.",
+    "cards": {
+      "autoLearning": {
+        "title": "Tự động học hỏi",
+        "description": "Atlas học hỏi từ các tương tác của bạn, liên tục cải thiện phản hồi và hành động để phục vụ bạn tốt hơn."
+      },
+      "naturalInteraction": {
+        "title": "Tương tác tự nhiên",
+        "description": "Giao tiếp bằng ngôn ngữ tự nhiên và cử chỉ. Atlas hiểu ngữ cảnh và phản hồi phù hợp."
+      },
+      "preciseMovement": {
+        "title": "Chuyển động chính xác",
+        "description": "Các khớp động cơ tiên tiến mang lại chuyển động linh hoạt, tự nhiên với khả năng cân bằng và phối hợp vượt trội."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Đăng nhập vào tài khoản",
+      "description": "Nhập email của bạn để đăng nhập vào hệ thống",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "submit": "Đăng nhập",
+      "loading": "Đang đăng nhập...",
+      "error": "Đăng nhập thất bại!",
+      "forgotPassword": "Quên mật khẩu?",
+      "noAccount": "Chưa có tài khoản?",
+      "signUp": "Đăng ký ngay"
+    },
+    "register": {
+      "title": "Tạo tài khoản mới",
+      "description": "Nhập thông tin để tạo tài khoản",
+      "fullName": "Họ và tên",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "submit": "Đăng ký",
+      "loading": "Đang tạo tài khoản...",
+      "success": "Tạo tài khoản thành công!",
+      "error": "Tạo tài khoản thất bại!",
+      "hasAccount": "Đã có tài khoản?",
+      "signIn": "Đăng nhập ngay"
+    }
+  },  "dashboard": {
+    "nav": {
+      "chat": "Trò chuyện",
+      "channels": "Kênh",
+      "users": "Người dùng",
+      "roles": "Vai trò",
+      "permissions": "Quyền hạn",
+      "departments": "Phòng ban",
+      "settings": "Cài đặt",
+      "reports": "Báo cáo"
+    },
+    "sidebar": {
+      "automation": "Tự động",
+      "staff": "Nhân viên",
+      "integration": "Tích hợp",
+      "reports": "Báo cáo",
+      "documentGroups": "Nhóm tài liệu",
+      "employees": "Nhân viên",
+      "permissions": "Phân quyền",
+      "platform": "Nền tảng",
+      "createNewChat": "Tạo đoàn chat mới",
+      "chatHistory": "Lịch sử trò chuyện"
+    },
+    "chat": {
+      "title": "Trò chuyện AI",
+      "placeholder": "Nhập tin nhắn của bạn...",
+      "send": "Gửi",
+      "newChat": "Cuộc trò chuyện mới",
+      "history": "Lịch sử",
+      "messages": "Tin nhắn",
+      "searchConversations": "Tìm kiếm cuộc trò chuyện...",
+      "selectConversation": "Chọn một cuộc trò chuyện",
+      "chooseConversation": "Chọn một cuộc trò chuyện để bắt đầu nhắn tin",
+      "typeMessage": "Nhập tin nhắn...",
+      "attachFile": "Đính kèm tệp",
+      "addEmoji": "Thêm emoji",
+      "sendMessage": "Gửi tin nhắn",
+      "unknownConversation": "Cuộc trò chuyện không xác định",
+      "activeNow": "Đang hoạt động",
+      "members": "thành viên",
+      "moreOptions": "Tùy chọn khác",
+      "showContactInfo": "Hiển thị thông tin liên hệ",
+      "hideContactInfo": "Ẩn thông tin liên hệ",
+      "allChannels": "Tất cả kênh",
+      "allEmployees": "Tất cả",
+      "hasPhone": "Có số điện thoại",
+      "noPhone": "Không có số",
+      "allTags": "Tất cả thẻ",
+      "selectAll": "Chọn tất cả",
+      "information": "Thông tin",
+      "notes": "Ghi chú",
+      "participantManagement": "Quản lý thành viên",
+      "addParticipant": "Thêm thành viên",
+      "removeParticipant": "Xóa thành viên",
+      "owner": "Chủ sở hữu",
+      "admin": "Quản trị viên",
+      "member": "Thành viên",
+      "tagManagement": "Quản lý thẻ",
+      "addTag": "Thêm thẻ",
+      "createTag": "Tạo thẻ",
+      "tagName": "Tên thẻ",
+      "tagColor": "Màu thẻ",
+      "applyTags": "Áp dụng thẻ",
+      "contactInfo": {
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "address": "Địa chỉ",
+        "note": "Ghi chú",
+        "saveContact": "Lưu liên hệ",
+        "editContact": "Chỉnh sửa liên hệ"
+      },
+      "filters": {
+        "all": "Tất cả",
+        "unread": "Chưa đọc",
+        "read": "Đã đọc",
+        "phone": "Điện thoại",
+        "channel": "Kênh",
+        "tag": "Thẻ",
+        "employee": "Nhân viên",
+        "dateRange": "Khoảng thời gian"
+      }
+    },
+    "channels": {
+      "title": "Quản lý kênh",
+      "salesChannels": "Kênh bán hàng",
+      "add": "Thêm kênh",
+      "connect": "Kết nối",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "disconnect": "Ngắt kết nối",
+      "status": "Trạng thái",
+      "active": "Hoạt động",
+      "inactive": "Tạm dừng",
+      "processing": "Đang xử lý",
+      "connecting": "Đang kết nối",
+      "show": "Xem",
+      "hide": "Ẩn",
+      "avatar": "Ảnh đại diện",
+      "name": "Tên kênh",
+      "createdDate": "Ngày tạo",
+      "updatedDate": "Ngày cập nhật",
+      "actions": "Thao tác",
+      "permissions": "Quyền hạn",
+      "total": "Tổng cộng",
+      "channelCount": "{{count}} kênh",
+      "loading": "Đang tải danh sách kênh...",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa kênh này?",
+      "management": "Quản lý",
+      "noChannels": "Chưa có kênh nào được kết nối",
+      "addFirst": "Thêm kênh đầu tiên"
+    },    "users": {
+      "title": "Quản lý người dùng",
+      "add": "Thêm người dùng",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "name": "Tên nhân viên",
+      "username": "Tên tài khoản",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "role": "Vai trò",
+      "roles": "Quyền",
+      "department": "Phòng ban",
+      "departments": "Phòng ban",
+      "status": "Trạng thái",
+      "lastLogin": "Đăng nhập lần cuối",
+      "actions": "Thao tác",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm nhân viên theo tên",
+      "notHave": "Không có",      "empty": "Trống",
+      "management": "Quản lý",
+      "userManagement": "Quản lý người dùng",
+      "userDetail": "Chi tiết người dùng",
+      "breadcrumbs": {
+        "management": "Quản lý",
+        "userManagement": "Quản lý người dùng"
+      },
+      "modal": {
+        "createTitle": "Thêm người dùng mới",
+        "editTitle": "Chỉnh sửa người dùng",        "password": "Mật khẩu",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "showPassword": "Hiển thị mật khẩu",
+        "hidePassword": "Ẩn mật khẩu",
+        "changePassword": "Đổi mật khẩu",
+        "selectRoles": "Chọn vai trò",
+        "selectDepartments": "Chọn phòng ban",
+        "validation": {
+          "usernameRequired": "Vui lòng nhập tài khoản.",
+          "passwordRequired": "Vui lòng nhập mật khẩu.",
+          "passwordMin": "Mật khẩu phải có ít nhất 8 ký tự.",
+          "nameRequired": "Vui lòng nhập họ và tên.",
+          "phoneInvalid": "Số điện thoại phải là số",
+          "rolesRequired": "Vui lòng chọn ít nhất một vai trò."
+        }
+      }
+    },    "roles": {
+      "title": "Quản lý vai trò",
+      "add": "Thêm vai trò",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "name": "Tên vai trò",
+      "description": "Mô tả",
+      "permissions": "Quyền hạn",
+      "actions": "Thao tác",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm vai trò",
+      "createdDate": "Ngày tạo",
+      "updatedDate": "Ngày cập nhật",
+      "empty": "Trống",
+      "deleteRole": "Xóa vai trò",
+      "management": "Quản lý",
+      "roleManagement": "Quản lý vai trò",
+      "breadcrumbs": {
+        "management": "Quản lý",
+        "roleManagement": "Quản lý vai trò"
+      },      "modal": {
+        "createTitle": "Tạo vai trò",
+        "editTitle": "Cập nhật vai trò",
+        "createButton": "Tạo vai trò",
+        "updateButton": "Cập nhật",
+        "namePlaceholder": "Nhập tên vai trò",
+        "descriptionPlaceholder": "Nhập mô tả vai trò",
+        "validation": {
+          "nameRequired": "Vui lòng nhập tên vai trò.",
+          "descriptionRequired": "Vui lòng nhập mô tả."
+        }
+      },
+      "detail": {
+        "title": "Vai trò và quyền",
+        "subtitle": "Quản lý vai trò người dùng và quyền hạn tương ứng.",
+        "permissionsColumn": "Quyền hạn",
+        "saveChanges": "Lưu thay đổi",
+        "breadcrumbs": {
+          "permissions": "Phân quyền"
+        }
+      }
+    },    "permissions": {
+      "title": "Quản lý quyền hạn",
+      "groups": {
+        "file": "Tệp",
+        "chat": "Trò chuyện",
+        "user": "Người dùng",
+        "role": "Vai trò",
+        "channel": "Kênh",
+        "department": "Phòng ban",
+        "system": "Hệ thống"
+      }
+    },    "departments": {
+      "title": "Quản lý nhóm tài liệu",
+      "management": "Quản lý",
+      "documentGroupManagement": "Quản lý nhóm tài liệu",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm theo tên nhóm tài liệu",
+      "emptyState": {
+        "title": "Bạn chưa có nhóm tài liệu nào.",
+        "alt": "Không có nhóm tài liệu"
+      },
+      "breadcrumbs": {
+        "management": "Quản lý",
+        "documentGroupManagement": "Quản lý nhóm tài liệu"
+      },      "modal": {
+        "createTitle": "Tạo phòng ban mới",
+        "editTitle": "Cài đặt phòng ban",
+        "createButton": "Tạo phòng ban mới"
+      },      "detail": {
+        "documentManagement": "Quản lý tài liệu",
+        "documents": "Tài liệu",
+        "fileName": "Tên tệp",
+        "documentType": "Loại tài liệu",
+        "fileSize": "Dung lượng",
+        "description": "Mô tả",
+        "uploadTime": "Thời gian tải lên",
+        "status": "Trạng thái",
+        "statusValues": {
+          "new": "Mới",
+          "processing": "Đã phân đoạn",
+          "finished": "Đã train",
+          "active": "Hoạt động"
+        },
+        "confirmDeleteDocument": "Bạn có chắc chắn muốn xóa tài liệu này không?",
+        "deleteDocument": "Xóa tài liệu",
+        "linkToPlatform": "Liên kết đến nền tảng",
+        "searchDocumentPlaceholder": "Tìm kiếm tài liệu theo tên",
+        "editResource": "Chỉnh sửa tài liệu",
+        "uploadNewDocument": "+ Tải tài liệu mới",
+        "editDocument": "Chỉnh sửa tài liệu",
+        "createNewDocument": "Tạo tài liệu mới",
+        "uploadFilePlaceholder": "Vui lòng tải lên tệp định dạng PDF, DOC, XLS, TXT, CSV (tối đa 10MB/tệp)",
+        "acceptedFormats": "Chấp nhận các định dạng: .pdf, .doc, .docx, .txt",
+        "selectedFile": "Tệp đã chọn",
+        "descriptionPlaceholder": "Nhập mô tả tài liệu...",
+        "segmentDocument": "Phân đoạn tài liệu",
+        "trainAI": "Đào tạo AI",
+        "faqs": {
+          "title": "FAQs",
+          "question": "Câu hỏi",
+          "answer": "Trả lời",
+          "createdAt": "Ngày tạo",
+          "searchPlaceholder": "Tìm kiếm câu hỏi",
+          "trainAll": "Đào tạo toàn bộ",
+          "confirmDeleteFaq": "Bạn có chắc chắn muốn xóa câu hỏi này không?",
+          "deleteFaq": "Xóa câu hỏi",
+          "uploadFaq": "+ Tải faq",
+          "editFaq": "Chỉnh sửa FAQ",
+          "createFaq": "+ Tạo"
+        }
+      }
+    }  },
+  "platforms": {
+    "all": {
+      "name": "Tất cả nền tảng",
+      "title": "Tất cả nền tảng",
+      "description": "Tất cả tin nhắn"
+    },
+    "zalo": {
+      "name": "Zalo OA",
+      "title": "Zalo OA",
+      "description": "Kết nối Zalo OA để tương tác khách hàng và bán hàng qua Zalo."
+    },
+    "facebook": {
+      "name": "Facebook",
+      "title": "Facebook Shop",
+      "description": "Tích hợp Facebook Shop để bán hàng trực tiếp trên Facebook."
+    },
+    "shopee": {
+      "name": "Shopee",
+      "title": "Shopee",
+      "description": "Tích hợp với Shopee để đồng bộ sản phẩm và quản lý bán hàng hiệu quả."
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "title": "TikTok Shop",
+      "description": "Kết nối TikTok Shop để bán hàng qua livestream và video."
+    },
+    "whatsapp": {
+      "name": "WhatsApp",
+      "title": "WhatsApp",
+      "description": "Tin nhắn WhatsApp"
+    },
+    "telegram": {
+      "name": "Telegram",
+      "title": "Telegram",
+      "description": "Tin nhắn Telegram"
+    }
+  },
+  "createTagDialog": {
+    "title": "Tạo thẻ mới",
+    "label": {
+      "name": "Tên thẻ",
+      "color": "Màu thẻ"
+    },
+    "input": {
+      "placeholder": "Nhập tên thẻ"
+    },
+    "button": {
+      "cancel": "Hủy",
+      "create": "Tạo thẻ",
+      "creating": "Đang tạo..."
+    }
+  },  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "sort": "Sắp xếp",
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra",
+    "success": "Thành công",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "yes": "Có",
+    "no": "Không",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước đó",
+    "submit": "Gửi",
+    "reset": "Đặt lại",
+    "email": "Email",
+    "phone": "Điện thoại",
+    "phoneNumber": "SỐ ĐIỆN THOẠI",
+    "role": "VAI TRÒ",
+    "permission": "Quyền",
+    "actions": "Thao tác",
+    "index": "STT",
+    "create": "Tạo",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa mục này không?",
+    "confirmDeleteMemberDesc": "Bạn có chắc chắn muốn xóa thành viên này không?",
+    "confirmDeleteMember": "Xác nhận xóa thành viên",
+    "departmentPermissionSettings": "Cài đặt phân quyền nhóm tài liệu",
+    "addMembersToControl": "Thêm email của các thành viên trong dự án để kiểm soát quyền truy cập vào nhóm tài liệu",
+    "searchByEmailAndName": "Tìm kiếm theo email và tên",
+    "botNoAccess": "Bot chưa được phân quyền truy cập.",
+    "addMembersToGrantAccess": "Thêm thành viên để phân quyền truy cập Bot này.",
+    "addMemberToAccessGroup": "Thêm thành viên để truy cập nhóm tài liệu",
+    "addedMembersCanAccess": "Thành viên được thêm sẽ có thể truy cập nhóm tài liệu",
+    "enterMemberEmail": "Nhập email của thành viên",
+    "selectPermission": "Chọn quyền",
+    "noResults": "Không có kết quả.",
+    "rowsPerPage": "Dòng mỗi trang"
+  },
+  "validation": {
+    "required": "Trường này là bắt buộc",
+    "email": "Email không hợp lệ",
+    "password": "Mật khẩu phải có ít nhất 8 ký tự",
+    "confirmPassword": "Mật khẩu không khớp",
+    "min": "Tối thiểu {{min}} ký tự",
+    "max": "Tối đa {{max}} ký tự"
+  },
+  "roleNames": {
+    "admin": "Quản trị viên",
+    "moderator": "Người kiểm duyệt",
+    "developer": "Nhà phát triển",
+    "support_agent": "Nhân viên hỗ trợ",
+    "content_creator": "Người tạo nội dung",
+    "user": "Nhân viên",
+    "guest": "Khách",
+    "leader": "Trưởng phòng"
+  }
+}
