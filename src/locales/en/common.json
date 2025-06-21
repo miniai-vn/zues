@@ -445,8 +445,7 @@
     "confirmPassword": "Passwords do not match",
     "min": "Minimum {{min}} characters",
     "max": "Maximum {{max}} characters"
-  },
-  "roleNames": {
+  },  "roleNames": {
     "admin": "Administrator",
     "moderator": "Moderator",
     "developer": "Developer",
@@ -455,5 +454,125 @@
     "user": "Employee",
     "guest": "Guest",
     "leader": "Team Leader"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "moderator": "Moderator",
+    "developer": "Developer",
+    "support_agent": "Support Agent",
+    "content_creator": "Content Creator",
+    "user": "Employee",
+    "guest": "Guest",
+    "leader": "Team Leader",
+    "actions": {
+      "create": "Create Role",
+      "update": "Update Role",
+      "delete": "Delete Role",
+      "addUserToRole": "Add User to Role",
+      "updateMultiple": "Update Multiple Roles"
+    },
+    "messages": {
+      "createSuccess": "Role created successfully",
+      "updateSuccess": "Role updated successfully",
+      "deleteSuccess": "Role deleted successfully",
+      "addUserSuccess": "User added to role successfully",
+      "updateMultipleSuccess": "Multiple roles updated successfully"
+    }
+  },
+  "permissions": {
+    "groups": {
+      "file": "File",
+      "chat": "Chat",
+      "user": "User",
+      "role": "Role",
+      "permission": "Permission",
+      "setting": "Setting",
+      "department": "Department",
+      "conversation": "Conversation",
+      "chunk": "Chunk"
+    },
+    "file": {
+      "create": "Upload File",
+      "read": "View File",
+      "update": "Edit File Information",
+      "delete": "Delete File",
+      "download": "Download File",
+      "share": "Share File",
+      "sync": "AI Training",
+      "chunk": "File Segmentation"
+    },
+    "chat": {
+      "read": "View Chat History",
+      "create": "Send Message",
+      "update": "Edit Message",
+      "delete": "Delete Message"
+    },
+    "user": {
+      "create": "Create User",
+      "read": "View User",
+      "update": "Update User",
+      "delete": "Delete User",
+      "assign_role": "Assign Role to User"
+    },
+    "role": {
+      "create": "Create Role",
+      "read": "View Role",
+      "update": "Update Role",
+      "delete": "Delete Role"
+    },
+    "permission": {
+      "assign": "Assign Permission to Role",
+      "read": "View All Permissions"
+    },
+    "setting": {
+      "read": "View System Settings",
+      "update": "Update System Settings",
+      "reset": "Reset System"
+    },
+    "department": {
+      "create": "Create Department",
+      "read": "View Department and Members",
+      "update": "Update Department",
+      "delete": "Delete Department",
+      "assign_user": "Assign User to Department",
+      "manage_roles": "Manage Department Level Roles"
+    },
+    "conversation": {
+      "create": "Create Conversation",
+      "read": "View Conversation",
+      "update": "Update Conversation",
+      "delete": "Delete Conversation",
+      "assign_user": "Assign User to Conversation"
+    },
+    "chunk": {
+      "create": "Create Chunk",
+      "read": "View Chunk",
+      "update": "Update Chunk",
+      "delete": "Delete Chunk"
+    },
+    "report": {
+      "create": "Create Report",
+      "read": "View Report",
+      "update": "Update Report",
+      "delete": "Delete Report"
+    },
+    "faq": {
+      "create": "Create FAQ",
+      "read": "View FAQ",
+      "update": "Update FAQ",
+      "delete": "Delete FAQ"
+    },
+    "domain": {
+      "create": "Create Domain",
+      "read": "View Domain",
+      "update": "Update Domain",
+      "delete": "Delete Domain"
+    },
+    "channel": {
+      "create": "Create Channel",
+      "read": "View Channel",
+      "update": "Update Channel",
+      "delete": "Delete Channel"
+    }
   }
 }

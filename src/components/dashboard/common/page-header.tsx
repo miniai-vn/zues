@@ -53,7 +53,7 @@ export function PageHeader({
 
   return (
     <div
-      className={`sticky top-0 z-10 py-4 flex items-center justify-between gap-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b ${className}`}
+      className={`z-10 py-4 flex items-center justify-between gap-2  border-b ${className}`}
     >
       {title && <h6 className="text-xl py-4 font-semibold">{title}</h6>}
       <div className="flex items-center gap-2">

@@ -1,6 +1,7 @@
 import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
+import { useTranslations } from "../useTranslations";
 export type Permission = {
   id: string;
   name: string;
@@ -27,6 +28,23 @@ export const RoleVietnameseNames: Record<string, string> = {
   guest: "Khách",
   leader: "Trưởng phòng",
 };
+
+// Hook to get localized role names
+export const useRoleNames = () => {
+  const { t } = useTranslations();
+  
+  return {
+    admin: t("roles.admin"),
+    moderator: t("roles.moderator"),
+    developer: t("roles.developer"),
+    support_agent: t("roles.support_agent"),
+    content_creator: t("roles.content_creator"),
+    user: t("roles.user"),
+    guest: t("roles.guest"),
+    leader: t("roles.leader"),
+  };
+};
+
 export const PermissionGroupVietnameseNames: Record<string, string> = {
   file: "Tệp",
   chat: "Trò chuyện",
@@ -37,6 +55,23 @@ export const PermissionGroupVietnameseNames: Record<string, string> = {
   department: "Phòng ban",
   conversation: "Cuộc trò chuyện",
   chunk: "Đoạn văn",
+};
+
+// Hook to get localized permission group names
+export const usePermissionGroupNames = () => {
+  const { t } = useTranslations();
+  
+  return {
+    file: t("permissions.groups.file"),
+    chat: t("permissions.groups.chat"),
+    user: t("permissions.groups.user"),
+    role: t("permissions.groups.role"),
+    permission: t("permissions.groups.permission"),
+    setting: t("permissions.groups.setting"),
+    department: t("permissions.groups.department"),
+    conversation: t("permissions.groups.conversation"),
+    chunk: t("permissions.groups.chunk"),
+  };
 };
 
 export const PermissionVietnameseNames: Record<string, string> = {
@@ -55,15 +90,12 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "chat.create": "Gửi tin nhắn",
   "chat.update": "Chỉnh sửa tin nhắn",
   "chat.delete": "Xoá tin nhắn",
-  // "chat.train": "Huấn luyện chatbot",
-  // "chat.manage_settings": "Quản lý cài đặt chatbot",
 
   // User
   "user.create": "Tạo người dùng",
   "user.read": "Xem người dùng",
   "user.update": "Cập nhật người dùng",
   "user.delete": "Xoá người dùng",
-  // "user.ban": "Cấm hoặc mở cấm người dùng",
   "user.assign_role": "Gán vai trò cho người dùng",
 
   // Role & Permission
@@ -125,6 +157,94 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "channel.delete": "Xoá kênh",
 };
 
+// Hook to get localized permission names
+export const usePermissionNames = () => {
+  const { t } = useTranslations();
+  
+  return {
+    // File permissions
+    "file.create": t("permissions.file.create"),
+    "file.read": t("permissions.file.read"),
+    "file.update": t("permissions.file.update"),
+    "file.delete": t("permissions.file.delete"),
+    "file.download": t("permissions.file.download"),
+    "file.share": t("permissions.file.share"),
+    "file.sync": t("permissions.file.sync"),
+    "file.chunk": t("permissions.file.chunk"),
+
+    // Chat permissions
+    "chat.read": t("permissions.chat.read"),
+    "chat.create": t("permissions.chat.create"),
+    "chat.update": t("permissions.chat.update"),
+    "chat.delete": t("permissions.chat.delete"),
+
+    // User permissions
+    "user.create": t("permissions.user.create"),
+    "user.read": t("permissions.user.read"),
+    "user.update": t("permissions.user.update"),
+    "user.delete": t("permissions.user.delete"),
+    "user.assign_role": t("permissions.user.assign_role"),
+
+    // Role & Permission
+    "role.create": t("permissions.role.create"),
+    "role.read": t("permissions.role.read"),
+    "role.update": t("permissions.role.update"),
+    "role.delete": t("permissions.role.delete"),
+    "permission.assign": t("permissions.permission.assign"),
+    "permission.read": t("permissions.permission.read"),
+
+    // Settings
+    "setting.read": t("permissions.setting.read"),
+    "setting.update": t("permissions.setting.update"),
+    "setting.reset": t("permissions.setting.reset"),
+
+    // Department
+    "department.create": t("permissions.department.create"),
+    "department.read": t("permissions.department.read"),
+    "department.update": t("permissions.department.update"),
+    "department.delete": t("permissions.department.delete"),
+    "department.assign_user": t("permissions.department.assign_user"),
+    "department.manage_roles": t("permissions.department.manage_roles"),
+
+    // Conversation
+    "conversation.create": t("permissions.conversation.create"),
+    "conversation.read": t("permissions.conversation.read"),
+    "conversation.update": t("permissions.conversation.update"),
+    "conversation.delete": t("permissions.conversation.delete"),
+    "conversation.assign_user": t("permissions.conversation.assign_user"),
+
+    // Chunk
+    "chunk.create": t("permissions.chunk.create"),
+    "chunk.read": t("permissions.chunk.read"),
+    "chunk.update": t("permissions.chunk.update"),
+    "chunk.delete": t("permissions.chunk.delete"),
+
+    // Report
+    "report.create": t("permissions.report.create"),
+    "report.read": t("permissions.report.read"),
+    "report.update": t("permissions.report.update"),
+    "report.delete": t("permissions.report.delete"),
+
+    // FAQ
+    "faq.create": t("permissions.faq.create"),
+    "faq.read": t("permissions.faq.read"),
+    "faq.update": t("permissions.faq.update"),
+    "faq.delete": t("permissions.faq.delete"),
+
+    // Domain
+    "domain.create": t("permissions.domain.create"),
+    "domain.read": t("permissions.domain.read"),
+    "domain.update": t("permissions.domain.update"),
+    "domain.delete": t("permissions.domain.delete"),
+
+    // Channel
+    "channel.create": t("permissions.channel.create"),
+    "channel.read": t("permissions.channel.read"),
+    "channel.update": t("permissions.channel.update"),
+    "channel.delete": t("permissions.channel.delete"),
+  };
+};
+
 type UseRolesWithPermissionsProps = {
   page?: number;
   limit?: number;
@@ -139,6 +259,7 @@ const useRoles = ({
   id,
 }: UseRolesWithPermissionsProps = {}) => {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const { data: permissions, isLoading: isFetchingPermissions } = useQuery({
     queryKey: ["permissions"],
     queryFn: async () => {
@@ -200,7 +321,6 @@ const useRoles = ({
       };
     },
   });
-
   const { mutate: createRole, isSuccess: isCreatedRole } = useMutation({
     mutationFn: async (data: Role) => {
       const res = await axiosInstance.post("/api/roles/", {
@@ -212,18 +332,18 @@ const useRoles = ({
     onSuccess: () => {
       refetchRoles();
       toast({
-        title: "Create Role",
-        description: "Create Role successfully",
+        title: t("roles.actions.create"),
+        description: t("roles.messages.createSuccess"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Create Role",
+        title: t("roles.actions.create"),
         description: error.message,
+        variant: "destructive",
       });
     },
   });
-
   const { mutate: addUserToRole } = useMutation({
     mutationFn: async (data: { user_id: string; role_id: string }) => {
       const res = await axiosInstance.post("/api/roles/create-user", data, {
@@ -234,18 +354,18 @@ const useRoles = ({
     onSuccess: () => {
       refetchRoles();
       toast({
-        title: "Add User to Role",
-        description: "Add User to Role successfully",
+        title: t("roles.actions.addUserToRole"),
+        description: t("roles.messages.addUserSuccess"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Add User to Role",
+        title: t("roles.actions.addUserToRole"),
         description: error.message,
+        variant: "destructive",
       });
     },
   });
-
   const { mutate: deleteRole } = useMutation({
     mutationFn: async (id: string) => {
       await axiosInstance.delete(`/api/roles/${id}`);
@@ -253,18 +373,18 @@ const useRoles = ({
     onSuccess: () => {
       refetchRoles();
       toast({
-        title: "Delete Role",
-        description: "Delete Role successfully",
+        title: t("roles.actions.delete"),
+        description: t("roles.messages.deleteSuccess"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Delete Role",
+        title: t("roles.actions.delete"),
         description: error.message,
+        variant: "destructive",
       });
     },
   });
-
   const { mutate: updateRole } = useMutation({
     mutationFn: async (data: Role) => {
       const res = await axiosInstance.put(`/api/roles/${data.id}`, {
@@ -277,18 +397,18 @@ const useRoles = ({
     onSuccess: () => {
       refetchRoles();
       toast({
-        title: "Update Role",
-        description: "Update Role successfully",
+        title: t("roles.actions.update"),
+        description: t("roles.messages.updateSuccess"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Update Role",
+        title: t("roles.actions.update"),
         description: error.message,
+        variant: "destructive",
       });
     },
   });
-
   const { mutate: updateMutipleRole } = useMutation({
     mutationFn: async (data: Role[]) => {
       const res = await axiosInstance.post(`/api/roles/multiple`, {
@@ -299,14 +419,15 @@ const useRoles = ({
     onSuccess: () => {
       refetchRoles();
       toast({
-        title: "Update Role",
-        description: "Update Role successfully",
+        title: t("roles.actions.updateMultiple"),
+        description: t("roles.messages.updateMultipleSuccess"),
       });
     },
     onError: (error) => {
       toast({
-        title: "Update Role",
+        title: t("roles.actions.updateMultiple"),
         description: error.message,
+        variant: "destructive",
       });
     },
   });

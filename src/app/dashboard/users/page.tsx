@@ -4,66 +4,175 @@ import ActionDropdown from "@/components/dashboard/dropdown";
 import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import ProtectedRoute, { Role } from "@/configs/protect-route";
-import { useAuth, User } from "@/hooks/data/useAuth";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { User } from "@/hooks/data/useAuth";
 import { RoleVietnameseNames } from "@/hooks/data/useRoles";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useTranslations } from "@/hooks/useTranslations";
+import { useUsersQuery } from "@/hooks/useUser";
 import { ColumnDef } from "@tanstack/react-table";
-import { Phone, Search, Shield, User as UserIcon } from "lucide-react";
+import {
+  Filter,
+  Phone,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  User as UserIcon,
+  Users,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { AddOrUpdateUserModal } from "./components/CreateOrUpdateUserModal";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import RoleSelector from "../roles/components/RoleSelector";
 
 const UserManager = () => {
   const { t } = useTranslations();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
-  useDebouncedValue(search, 2000);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+
+  const debouncedSearch = useDebouncedValue(search, 500);
+
+  const {
+    data: users,
+    isLoading: isFetchingUserHasPagination,
+    refetch,
+    goToPage,
+    updatePageSize,
+    updateFilter,
+    clearFilter,
+    clearAllFilters,
+    filters,
+    hasFilters,
+    paginationInfo,
+  } = useUsersQuery({
+    initialPage: 1,
+    initialPageSize: 10,
+    initialFilters: {
+      status: "active", // Default filter
+    },
+  });
+
+  // Update search filter when debounced search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      updateFilter("search", debouncedSearch);
+    } else {
+      clearFilter("search");
+    }
+  }, [debouncedSearch, updateFilter, clearFilter]);
+
+  // Update status filter
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    if (status && status !== "all") {
+      updateFilter("status", status);
+    } else {
+      clearFilter("status");
+    }
+  };
+
+  // Update role filter
+  const handleRoleFilter = (role: string) => {
+    setRoleFilter(role);
+    if (role && role !== "all") {
+      updateFilter("role", role);
+    } else {
+      clearFilter("role");
+    }
+  };
+
+  // Clear all filters
+  const handleClearAllFilters = () => {
+    setSearch("");
+    setStatusFilter("all"); // Change to "all"
+    setRoleFilter("all"); // Change to "all"
+    clearAllFilters();
+  };
+
+  // Clear individual filter
+  const handleClearFilter = (filterKey: string) => {
+    switch (filterKey) {
+      case "search":
+        setSearch("");
+        break;
+      case "status":
+        setStatusFilter("all"); // Change to "all" instead of ""
+        break;
+      case "role":
+        setRoleFilter("all"); // Change to "all" instead of ""
+        break;
+    }
+    clearFilter(filterKey);
+  };
 
   const handlePaginationChange = (newPage: number) => {
-    setPage(newPage);
+    goToPage(newPage);
   };
 
   const handlePageSizeChange = (newSize: number) => {
-    setPageSize(newSize);
-    setPage(1);
+    updatePageSize(newSize);
   };
-  const {
-    deleteUser,
-    createUser,
-    updateUser,
-    userHasPagination: users,
-    refetch,
-    isFetchingUserHasPagination,
-    isPendingUpdateUser,
-    isPendingDeleteUser,
-    isPendingCreateUser,
-  } = useAuth({ page, limit: pageSize, search });
 
-  useEffect(() => {
-    if (users) {
-      setPage(users.page || 1);
-      setPageSize(users.limit || 10);
-    }
-  }, [users]);
+  // Mock functions for user operations
+  const deleteUser = async (id: string) => {
+    console.log("Delete user:", id);
+    refetch();
+  };
+
+  const createUser = async (userData: any) => {
+    console.log("Create user:", userData);
+    refetch();
+  };
+
+  const updateUser = async (userData: any) => {
+    console.log("Update user:", userData);
+    refetch();
+  };
+
   const columns: ColumnDef<User>[] = [
     {
       id: "index",
       header: "#",
-      cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
+      cell: ({ row }) => (
+        <div className="text-center font-medium text-muted-foreground">
+          {row.index + 1}
+        </div>
+      ),
       size: 40,
     },
     {
       accessorKey: "name",
       header: t("dashboard.users.name"),
       cell: ({ row }) => (
-        <div className="flex  gap-2">
+        <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
             <UserIcon className="h-4 w-4 text-muted-foreground" />
           </div>
-          <span>{row.original.name ?? t("dashboard.users.empty")}</span>
+          <div>
+            <p className="font-medium">
+              {row.original.name ?? t("dashboard.users.empty")}
+            </p>
+          </div>
         </div>
       ),
     },
@@ -72,7 +181,9 @@ const UserManager = () => {
       header: t("dashboard.users.username"),
       cell: ({ row }) => (
         <div className="w-full">
-          <p className="break-all line-clamp-2">{row.original.username}</p>
+          <p className="break-all line-clamp-2 text-sm text-muted-foreground">
+            {row.original.username}
+          </p>
         </div>
       ),
     },
@@ -82,7 +193,7 @@ const UserManager = () => {
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4 text-muted-foreground" />
-          <span className="text-muted-foreground">
+          <span className="text-sm text-muted-foreground">
             {row.original.phone ?? t("dashboard.users.notHave")}
           </span>
         </div>
@@ -121,7 +232,7 @@ const UserManager = () => {
             {departments.map((dept) => (
               <Badge
                 key={dept.id}
-                variant={"default"}
+                variant="outline"
                 className="whitespace-nowrap"
               >
                 {dept.name}
@@ -152,74 +263,151 @@ const UserManager = () => {
             onDelete={() => {
               deleteUser(row.original.id);
             }}
-          ></ActionDropdown>
+          />
         );
       },
     },
   ];
 
-  return (
-    <ProtectedRoute requiredRole={[Role.Admin]}>
+  if (isFetchingUserHasPagination) {
+    return (
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        {" "}
-        <PageHeader
-          backButtonHref="/dashboard"
-          title=""
-          breadcrumbs={[
-            {
-              label: t("dashboard.users.breadcrumbs.management"),
-              href: "/dashboard/users",
-            },
-            {
-              label: t("dashboard.users.breadcrumbs.userManagement"),
-              isCurrentPage: true,
-            },
-          ]}
-        />
-        <div className="flex justify-between items-center">
-          <Input
-            placeholder={t("dashboard.users.searchPlaceholder")}
-            className="mr-4 w-full flex-1"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => refetch()}
-              className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
-            >
-              <Search />
-              {t("dashboard.users.search")}
-            </Button>
-            <AddOrUpdateUserModal
-              onChange={(data) => {
-                if ("username" in data && "password" in data) {
-                  createUser(data);
-                }
-              }}
-            />
-          </div>
-        </div>
-        <DataTable
-          columns={columns}
-          data={users?.items || []}
-          pagination={{
-            page: page,
-            limit: pageSize,
-            total: users?.totalCount || 0,
-          }}
-          onPaginationChange={handlePaginationChange}
-          onPageSizeChange={handlePageSizeChange}
-          isLoading={
-            isFetchingUserHasPagination ||
-            isPendingUpdateUser ||
-            isPendingDeleteUser ||
-            isPendingCreateUser
-          }
-        />
+        <Skeleton className="h-8 w-full" />
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-4 w-64" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-4">
+              <Skeleton className="h-10 flex-1" />
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-10 w-32" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
       </div>
-    </ProtectedRoute>
+    );
+  }
+
+  return (
+    <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
+      {/* Main Content Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            User Management
+          </CardTitle>
+          <CardDescription>
+            Manage and filter users in your system. Use the filters below to
+            find specific users.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Filters Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              <Label className="text-base font-medium">Filters</Label>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-4">
+              {/* Search Input */}
+              <div className="space-y-2">
+                <Label htmlFor="search">{t("dashboard.users.search")}</Label>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="search"
+                    placeholder={t("dashboard.users.searchPlaceholder")}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+              </div>
+
+              {/* Status Filter */}
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={statusFilter || "all"}
+                  onValueChange={handleStatusFilter}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Role Filter */}
+              <div className="space-y-2">
+                <Label>Role</Label>
+                <RoleSelector
+                  value={roleFilter || "all"}
+                  onValueChange={handleRoleFilter}
+                  placeholder="All Roles"
+                  includeAllOption={true}
+                  allOptionLabel="All Roles"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <Label>Actions</Label>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => refetch()}
+                    className="flex items-center gap-2"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Refresh
+                  </Button>
+                  <AddOrUpdateUserModal
+                    children={
+                      <Button size="sm" className="flex items-center gap-2">
+                        <Plus className="h-4 w-4" />
+                        Add User
+                      </Button>
+                    }
+                    onChange={(data) => {
+                      if ("username" in data && "password" in data) {
+                        createUser(data);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Data Table */}
+          <DataTable
+            columns={columns}
+            data={users?.data || []}
+            pagination={{
+              page: paginationInfo.page,
+              limit: paginationInfo.pageSize,
+              total: paginationInfo.totalItems,
+            }}
+            onPaginationChange={handlePaginationChange}
+            onPageSizeChange={handlePageSizeChange}
+            isLoading={isFetchingUserHasPagination}
+          />
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

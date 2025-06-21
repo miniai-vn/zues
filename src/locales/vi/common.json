@@ -447,8 +447,7 @@
     "confirmPassword": "Mật khẩu không khớp",
     "min": "Tối thiểu {{min}} ký tự",
     "max": "Tối đa {{max}} ký tự"
-  },
-  "roleNames": {
+  },  "roleNames": {
     "admin": "Quản trị viên",
     "moderator": "Người kiểm duyệt",
     "developer": "Nhà phát triển",
@@ -457,5 +456,125 @@
     "user": "Nhân viên",
     "guest": "Khách",
     "leader": "Trưởng phòng"
+  },
+  "roles": {
+    "admin": "Quản trị viên",
+    "moderator": "Người kiểm duyệt",
+    "developer": "Nhà phát triển",
+    "support_agent": "Nhân viên hỗ trợ",
+    "content_creator": "Người tạo nội dung",
+    "user": "Nhân viên",
+    "guest": "Khách",
+    "leader": "Trưởng phòng",
+    "actions": {
+      "create": "Tạo vai trò",
+      "update": "Cập nhật vai trò",
+      "delete": "Xóa vai trò",
+      "addUserToRole": "Thêm người dùng vào vai trò",
+      "updateMultiple": "Cập nhật nhiều vai trò"
+    },
+    "messages": {
+      "createSuccess": "Tạo vai trò thành công",
+      "updateSuccess": "Cập nhật vai trò thành công",
+      "deleteSuccess": "Xóa vai trò thành công",
+      "addUserSuccess": "Thêm người dùng vào vai trò thành công",
+      "updateMultipleSuccess": "Cập nhật nhiều vai trò thành công"
+    }
+  },
+  "permissions": {
+    "groups": {
+      "file": "Tệp",
+      "chat": "Trò chuyện",
+      "user": "Người dùng",
+      "role": "Vai trò",
+      "permission": "Quyền",
+      "setting": "Cài đặt",
+      "department": "Phòng ban",
+      "conversation": "Cuộc trò chuyện",
+      "chunk": "Đoạn văn"
+    },
+    "file": {
+      "create": "Tải lên tệp",
+      "read": "Xem tệp",
+      "update": "Chỉnh sửa thông tin tệp",
+      "delete": "Xoá tệp",
+      "download": "Tải xuống tệp",
+      "share": "Chia sẻ tệp",
+      "sync": "Đạo tạo AI",
+      "chunk": "Phân đoạn tệp"
+    },
+    "chat": {
+      "read": "Xem lịch sử trò chuyện",
+      "create": "Gửi tin nhắn",
+      "update": "Chỉnh sửa tin nhắn",
+      "delete": "Xoá tin nhắn"
+    },
+    "user": {
+      "create": "Tạo người dùng",
+      "read": "Xem người dùng",
+      "update": "Cập nhật người dùng",
+      "delete": "Xoá người dùng",
+      "assign_role": "Gán vai trò cho người dùng"
+    },
+    "role": {
+      "create": "Tạo vai trò",
+      "read": "Xem vai trò",
+      "update": "Cập nhật vai trò",
+      "delete": "Xoá vai trò"
+    },
+    "permission": {
+      "assign": "Gán quyền cho vai trò",
+      "read": "Xem tất cả quyền"
+    },
+    "setting": {
+      "read": "Xem cài đặt hệ thống",
+      "update": "Cập nhật cài đặt hệ thống",
+      "reset": "Đặt lại hệ thống"
+    },
+    "department": {
+      "create": "Tạo phòng ban",
+      "read": "Xem phòng ban và thành viên",
+      "update": "Cập nhật phòng ban",
+      "delete": "Xoá phòng ban",
+      "assign_user": "Gán người dùng vào phòng ban",
+      "manage_roles": "Quản lý vai trò cấp phòng ban"
+    },
+    "conversation": {
+      "create": "Tạo cuộc trò chuyện",
+      "read": "Xem cuộc trò chuyện",
+      "update": "Cập nhật cuộc trò chuyện",
+      "delete": "Xoá cuộc trò chuyện",
+      "assign_user": "Gán người dùng vào cuộc trò chuyện"
+    },
+    "chunk": {
+      "create": "Tạo đoạn đoạn văn",
+      "read": "Xem đoạn văn",
+      "update": "Cập nhật đoạn văn",
+      "delete": "Xoá đoạn văn"
+    },
+    "report": {
+      "create": "Tạo báo cáo",
+      "read": "Xem báo cáo",
+      "update": "Cập nhật báo cáo",
+      "delete": "Xoá báo cáo"
+    },
+    "faq": {
+      "create": "Tạo câu hỏi thường gặp",
+      "read": "Xem câu hỏi thường gặp",
+      "update": "Cập nhật câu hỏi thường gặp",
+      "delete": "Xoá câu hỏi thường gặp"
+    },
+    "domain": {
+      "create": "Tạo miền",
+      "read": "Xem miền",
+      "update": "Cập nhật miền",
+      "delete": "Xoá miền"
+    },
+    "channel": {
+      "create": "Tạo kênh",
+      "read": "Xem kênh",
+      "update": "Cập nhật kênh",
+      "delete": "Xoá kênh"
+    }
   }
 }

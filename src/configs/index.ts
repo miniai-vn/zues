@@ -56,7 +56,7 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
           // }, 1200);
         } else if (status === 404) {
           toast.error("Không tìm thấy tài nguyên!");
-          window.history.back();
+          // window.history.back();
         } else if (status >= 500) {
           toast.error("Lỗi máy chủ. Vui lòng thử lại sau!");
         }

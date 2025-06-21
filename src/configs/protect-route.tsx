@@ -7,7 +7,7 @@ export enum Role {
   Admin = "admin",
   Manager = "manager",
   Staff = "staff",
-  Leader = "leader"
+  Leader = "leader",
 }
 
 interface ProtectedRouteProps {
@@ -23,6 +23,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
+    debugger
     if (!user) {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {

@@ -10,21 +10,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { PageHeader } from "./page-header";
+import { useTranslations } from "@/hooks/useTranslations";
+import { useEffect, useState } from "react";
 
 interface DashboardHeaderProps {
   title?: string;
 }
 
-const DashboardHeader = ({ title = "Dashboard" }: DashboardHeaderProps) => {
+const DashboardHeader = ({ title = "" }: DashboardHeaderProps) => {
+  const { t } = useTranslations();
+  const [breadcrumbs, setBreadcrumbs] = useState<
+    {
+      label: string;
+      href?: string;
+      isCurrentPage?: boolean;
+    }[]
+  >([]);
+  useEffect(() => {
+    if (title === "employees") {
+      setBreadcrumbs([
+        {
+          label: t("dashboard.users.breadcrumbs.management"),
+          href: "/dashboard/users",
+        },
+        {
+          label: t("dashboard.users.breadcrumbs.userManagement"),
+          isCurrentPage: true,
+        },
+      ]);
+    }
+  }, [title]);
   return (
-    <header className=" bg-background px-4 py-2">
+    <header className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">
       <div className="flex items-center justify-between">
-        {/* Left side - Title */}
-        <div className="flex items-center">
-          <h1 className="text-xl font-semibold text-foreground">{title}</h1>
-        </div>
+        <PageHeader
+          backButtonHref="/dashboard"
+          breadcrumbs={breadcrumbs.length > 0 ? breadcrumbs : []}
+        />
 
-        {/* Right side - Actions and Profile */}
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Button variant="ghost" size="sm">
