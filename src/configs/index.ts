@@ -25,7 +25,11 @@ export const chatApiInstance = axios.create({
 const attachInterceptors = (instance: typeof axiosInstance) => {
   instance.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("accessToken="))
+        ?.split("=")[1];
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -45,11 +49,11 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
           return;
         }
         if (status === 401) {
-          localStorage.removeItem("token");
-          toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 1200);
+          // localStorage.removeItem("token");
+          // toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+          // setTimeout(() => {
+          //   window.location.href = "/login";
+          // }, 1200);
         } else if (status === 404) {
           toast.error("Không tìm thấy tài nguyên!");
           window.history.back();
@@ -67,6 +71,6 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
 };
 
 attachInterceptors(axiosInstance);
-attachInterceptors(chatApiInstance);
+attachInterceptors(axiosInstance);
 
 export default axiosInstance;

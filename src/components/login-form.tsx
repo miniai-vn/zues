@@ -28,7 +28,7 @@ export function LoginForm({
         password,
       });
       if (res) {
-        router.push("/dashboard/chat");
+        router.push("/dashboard/channels");
       }    } catch (error) {
       console.error(t('auth.login.error'), error);
       alert(t('auth.login.error'));

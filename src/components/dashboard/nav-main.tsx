@@ -17,17 +17,15 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { useAuth, useUserStore } from "@/hooks/data/useAuth";
+import { useUserStore } from "@/hooks/data/useAuth";
 import useTranslations from "@/hooks/useTranslations";
 import {
   ChevronRight,
   MessageCircleMore,
-  MessageSquarePlus,
-  type LucideIcon,
+  type LucideIcon
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useEffect } from "react";
 
 // Type definitions for better maintainability
 type SubMenuItem = {
@@ -58,53 +56,38 @@ export default function NavMain({
   setActiveSection: (section: string) => void;
 }) {
   const router = useRouter();
-  const { user } = useUserStore();
-  const { loadUserFromLocalStorage } = useAuth({});
   const { t } = useTranslations();
 
-  useEffect(() => {
-    if (!user) {
-      loadUserFromLocalStorage();
-    }
-  }, [user, loadUserFromLocalStorage]);
-
-  if (!user) return null;
-  const filteredItems = items?.filter((item) => {
-    const userRolesSet = new Set(user.roles.map((role) => role.name));
-    return item.role.some((role) => userRolesSet.has(role));
-  });
-
-  // Helper function to render sub-items
+  // if (!user) return null;
+  // const filteredItems = items?.filter((item) => {
+  //   const userRolesSet = new Set(user.roles.map((role) => role.name));
+  //   return item.role.some((role) => userRolesSet.has(role));
+  // });
   const renderSubItems = (subItems?: SubMenuItem[]) => {
     if (!subItems?.length) return null;
-    return subItems
-      .filter((item) => {
-        const userRolesSet = new Set(user.roles.map((role) => role.name));
-        return item.role.some((role) => userRolesSet.has(role));
-      })
-      .map((subItem) => (
-        <SidebarMenuSubItem key={subItem.title}>
-          <SidebarMenuSubButton
-            asChild
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveSection(subItem.title);
-              if (subItem.url) {
-                router.push(subItem.url);
-              }
-            }}
-            data-active={subItem.isActive}
-            className={subItem.isActive ? "bg-accent" : ""}
-          >
-            <a href={subItem.url}>
-              {subItem.icon && <subItem.icon />}
-              <span>
-                {subItem.titleKey ? t(subItem.titleKey) : subItem.title}
-              </span>
-            </a>
-          </SidebarMenuSubButton>
-        </SidebarMenuSubItem>
-      ));
+    return subItems.map((subItem) => (
+      <SidebarMenuSubItem key={subItem.title}>
+        <SidebarMenuSubButton
+          asChild
+          onClick={(e) => {
+            e.preventDefault();
+            setActiveSection(subItem.title);
+            if (subItem.url) {
+              router.push(subItem.url);
+            }
+          }}
+          data-active={subItem.isActive}
+          className={subItem.isActive ? "bg-accent" : ""}
+        >
+          <a href={subItem.url}>
+            {subItem.icon && <subItem.icon />}
+            <span>
+              {subItem.titleKey ? t(subItem.titleKey) : subItem.title}
+            </span>
+          </a>
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    ));
   };
 
   return (
@@ -125,7 +108,7 @@ export default function NavMain({
             <span>{t("dashboard.sidebar.createNewChat")}</span>
           </SidebarMenuButton>
         </SidebarMenuItem> */}
-        {filteredItems.map((item) => (
+        {items.map((item) => (
           <Collapsible
             key={item.title}
             asChild

@@ -27,7 +27,10 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const token = localStorage.getItem("token");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("accessToken="))
+      ?.split("=")[1];
 
     const socketIo = io(process.env.NEXT_PUBLIC_API_URL as string, {
       auth: {

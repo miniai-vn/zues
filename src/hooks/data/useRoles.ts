@@ -1,4 +1,4 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export type Permission = {
@@ -142,7 +142,7 @@ const useRoles = ({
   const { data: permissions, isLoading: isFetchingPermissions } = useQuery({
     queryKey: ["permissions"],
     queryFn: async () => {
-      const res = await chatApiInstance.get("/api/permissions/get-all", {
+      const res = await axiosInstance.get("/api/permissions/get-all", {
         params: {},
       });
       return (res.data as Permission[]) || [];
@@ -156,7 +156,7 @@ const useRoles = ({
   } = useQuery({
     queryKey: ["roles-with-full-permissions"],
     queryFn: async () => {
-      const res = await chatApiInstance.get(`/api/roles/${id}`, {
+      const res = await axiosInstance.get(`/api/roles/${id}`, {
         params: {},
       });
       return (res.data as Role) || [];
@@ -170,7 +170,7 @@ const useRoles = ({
   } = useQuery({
     queryKey: ["roles"],
     queryFn: async () => {
-      const res = await chatApiInstance.get("/api/roles/get-all", {
+      const res = await axiosInstance.get("/api/roles/get-all", {
         params: {},
       });
       return (res.data as Role[]) || [];
@@ -189,7 +189,7 @@ const useRoles = ({
         limit,
       };
       if (search) params.search = search;
-      const res = await chatApiInstance.get("/api/roles/", {
+      const res = await axiosInstance.get("/api/roles/", {
         params,
       });
       return {
@@ -203,7 +203,7 @@ const useRoles = ({
 
   const { mutate: createRole, isSuccess: isCreatedRole } = useMutation({
     mutationFn: async (data: Role) => {
-      const res = await chatApiInstance.post("/api/roles/", {
+      const res = await axiosInstance.post("/api/roles/", {
         name: data.name,
         description: data.description,
       });
@@ -226,7 +226,7 @@ const useRoles = ({
 
   const { mutate: addUserToRole } = useMutation({
     mutationFn: async (data: { user_id: string; role_id: string }) => {
-      const res = await chatApiInstance.post("/api/roles/create-user", data, {
+      const res = await axiosInstance.post("/api/roles/create-user", data, {
         params: {},
       });
       return res.data;
@@ -248,7 +248,7 @@ const useRoles = ({
 
   const { mutate: deleteRole } = useMutation({
     mutationFn: async (id: string) => {
-      await chatApiInstance.delete(`/api/roles/${id}`);
+      await axiosInstance.delete(`/api/roles/${id}`);
     },
     onSuccess: () => {
       refetchRoles();
@@ -267,7 +267,7 @@ const useRoles = ({
 
   const { mutate: updateRole } = useMutation({
     mutationFn: async (data: Role) => {
-      const res = await chatApiInstance.put(`/api/roles/${data.id}`, {
+      const res = await axiosInstance.put(`/api/roles/${data.id}`, {
         name: data.name,
         description: data.description,
         permissions: data.permissions,
@@ -291,7 +291,7 @@ const useRoles = ({
 
   const { mutate: updateMutipleRole } = useMutation({
     mutationFn: async (data: Role[]) => {
-      const res = await chatApiInstance.post(`/api/roles/multiple`, {
+      const res = await axiosInstance.post(`/api/roles/multiple`, {
         data,
       });
       return res.data;

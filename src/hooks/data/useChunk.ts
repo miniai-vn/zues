@@ -1,4 +1,4 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 
@@ -19,12 +19,12 @@ interface UseChunkProps {
 }
 
 const updateChunk = async (chunk: Chunk) => {
-  const response = await chatApiInstance.put(`/api/chunks/${chunk.id}`, chunk);
+  const response = await axiosInstance.put(`/api/chunks/${chunk.id}`, chunk);
   return response.data;
 };
 
 const deleteChunk = async (id: string) => {
-  const response = await chatApiInstance.delete(`/api/chunks/${id}`);
+  const response = await axiosInstance.delete(`/api/chunks/${id}`);
   return response.data;
 };
 
@@ -37,7 +37,7 @@ const useChunk = ({ id, search }: UseChunkProps) => {
   } = useQuery({
     queryKey: ["chunks", search],
     queryFn: async () => {
-      const res = await chatApiInstance.get(
+      const res = await axiosInstance.get(
         `/api/chunks/get-by-resource-id/${id}`,
         {
           params: { search },
@@ -90,7 +90,7 @@ const useChunk = ({ id, search }: UseChunkProps) => {
 
   const { mutate: createChunk } = useMutation({
     mutationFn: async (chunk: Chunk) => {
-      await chatApiInstance.post(`/api/chunks`, chunk);
+      await axiosInstance.post(`/api/chunks`, chunk);
     },
     onSuccess: () => {
       refetchChunk();
