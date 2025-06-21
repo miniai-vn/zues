@@ -1,9 +1,9 @@
 import axios from "axios";
 import { toast } from "sonner";
-
 // Instance cho API chính
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -24,12 +24,9 @@ export const chatApiInstance = axios.create({
 // Interceptor cho cả 2 instance (nếu cần giống nhau)
 const attachInterceptors = (instance: typeof axiosInstance) => {
   instance.interceptors.request.use(
-    (config) => {
-      // const token = localStorage.getItem("token");
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("accessToken="))
-        ?.split("=")[1];
+    async (config) => {
+      const token = localStorage.getItem("token");
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

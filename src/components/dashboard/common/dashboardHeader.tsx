@@ -42,13 +42,15 @@ const DashboardHeader = ({ title = "" }: DashboardHeaderProps) => {
     }
   }, [title]);
   return (
-    <header className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">
+    <header className="sticky border-b mb-2 top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">
       <div className="flex items-center justify-between">
-        <PageHeader
-          backButtonHref="/dashboard"
-          breadcrumbs={breadcrumbs.length > 0 ? breadcrumbs : []}
-        />
-
+        <div>
+          <PageHeader
+            // title="Quản lý nhân viên"
+            backButtonHref="/dashboard"
+            breadcrumbs={breadcrumbs.length > 0 ? breadcrumbs : []}
+          />
+        </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Button variant="ghost" size="sm">

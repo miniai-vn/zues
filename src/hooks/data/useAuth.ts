@@ -95,9 +95,9 @@ const useAuth = ({
         username,
         password,
       });
-      console.log("response", response);
-      localStorage.setItem("user", JSON.stringify(response));
-      setUser(response);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("token", response.data.accessToken);
+      setUser(response.data.user);
       return response;
     },
   });

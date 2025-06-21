@@ -28,6 +28,7 @@ import { Eye, EyeOff, Key, LockOpen } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Hàm tạo schema động dựa trên props user và translation
 const getFormSchema = (user?: User, t?: any) =>
@@ -135,7 +136,7 @@ export function AddOrUpdateUserModal({
       <DialogTrigger asChild>
         {children || <Button>{t("dashboard.users.add")}</Button>}
       </DialogTrigger>
-      <DialogContent className="w-[40vw] max-w-[70vw] overflow-y-auto">
+      <DialogContent className="max-w-2xl mx-auto max-h-[90vh] p-4">
         <DialogHeader>
           <DialogTitle>
             {user
@@ -143,7 +144,7 @@ export function AddOrUpdateUserModal({
               : t("dashboard.users.modal.createTitle")}
           </DialogTitle>
         </DialogHeader>
-        <div>
+        <ScrollArea className="max-h-[calc(90vh-120px)]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -328,7 +329,7 @@ export function AddOrUpdateUserModal({
               </div>
             </form>
           </Form>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

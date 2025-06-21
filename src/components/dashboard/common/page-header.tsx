@@ -52,10 +52,7 @@ export function PageHeader({
   };
 
   return (
-    <div
-      className={`z-10 py-4 flex items-center justify-between gap-2  border-b ${className}`}
-    >
-      {title && <h6 className="text-xl py-4 font-semibold">{title}</h6>}
+    <div className={`z-10  gap-2  ${className}`}>
       <div className="flex items-center gap-2">
         {showBackButton ? (
           <Button
@@ -96,8 +93,7 @@ export function PageHeader({
           </Breadcrumb>
         )}
       </div>
-
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {title && <span className="text-xl py-4 font-semibold">{title}</span>}
     </div>
   );
 }
