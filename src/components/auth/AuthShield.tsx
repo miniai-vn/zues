@@ -10,7 +10,7 @@ interface AuthShieldProps {
 
 export default function AuthShield({
   children,
-  publicRoutes = ["/login", "/register", "/forgot-password","/"],
+  publicRoutes = ["/login", "/register", "/forgot-password", "/"],
 }: AuthShieldProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -18,9 +18,12 @@ export default function AuthShield({
   const [, setIsAuthorized] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("accessToken="))
+      ?.split("=")[1];
 
-    if (!token) {
+    if (!token) { 
       router.push("/login");
     } else {
       setIsAuthorized(true);

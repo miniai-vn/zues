@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import React from "react";
 import { AlertDialogComponent } from "../alert-modal";
 
@@ -35,7 +35,7 @@ export default function ActionDropdown({
       <DropdownMenuTrigger asChild>
         {trigger || (
           <Button variant="ghost" size="icon">
-            <MoreVertical size={16} />
+            <MoreHorizontal size={16} />
           </Button>
         )}
       </DropdownMenuTrigger>

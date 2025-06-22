@@ -59,7 +59,8 @@
       "hasAccount": "Đã có tài khoản?",
       "signIn": "Đăng nhập ngay"
     }
-  },  "dashboard": {
+  },
+  "dashboard": {
     "nav": {
       "chat": "Trò chuyện",
       "channels": "Kênh",
@@ -80,7 +81,9 @@
       "permissions": "Phân quyền",
       "platform": "Nền tảng",
       "createNewChat": "Tạo đoàn chat mới",
-      "chatHistory": "Lịch sử trò chuyện"
+      "chatHistory": "Lịch sử trò chuyện",
+      "chat": "Chat nội bộ",
+      "chatCS": "Chăm sóc khách hàng"
     },
     "chat": {
       "title": "Trò chuyện AI",
@@ -100,6 +103,9 @@
       "activeNow": "Đang hoạt động",
       "members": "thành viên",
       "moreOptions": "Tùy chọn khác",
+      "noMessages": "Chưa có tin nhắn nào",
+      "startConversation": "Bắt đầu cuộc trò chuyện bằng cách gửi tin nhắn",
+      "you": "Bạn",
       "showContactInfo": "Hiển thị thông tin liên hệ",
       "hideContactInfo": "Ẩn thông tin liên hệ",
       "allChannels": "Tất cả kênh",
@@ -169,7 +175,8 @@
       "management": "Quản lý",
       "noChannels": "Chưa có kênh nào được kết nối",
       "addFirst": "Thêm kênh đầu tiên"
-    },    "users": {
+    },
+    "users": {
       "title": "Quản lý người dùng",
       "add": "Thêm người dùng",
       "edit": "Chỉnh sửa",
@@ -187,17 +194,41 @@
       "actions": "Thao tác",
       "search": "Tìm kiếm",
       "searchPlaceholder": "Tìm kiếm nhân viên theo tên",
-      "notHave": "Không có",      "empty": "Trống",
+      "notHave": "Không có",
+      "empty": "Trống",
       "management": "Quản lý",
       "userManagement": "Quản lý người dùng",
+      "userManagementDescription": "Quản lý và lọc người dùng trong hệ thống của bạn. Sử dụng các bộ lọc bên dưới để tìm người dùng cụ thể.",
       "userDetail": "Chi tiết người dùng",
+      "totalUsers": "Tổng số người dùng",
+      "currentPage": "Trang hiện tại",
+      "activeFilters": "Bộ lọc đang hoạt động",
+      "filteredResults": "Kết quả đã lọc",
+      "allUsers": "Tất cả người dùng",
+      "pageOf": "Trang {{page}} trong {{totalPages}}",
+      "filtered": "Đã lọc",
+      "all": "Tất cả",
+      "activeFiltersCount": "{{count}} bộ lọc đang hoạt động",
+      "noFiltersApplied": "Không có bộ lọc nào được áp dụng",
+      "allStatus": "Tất cả trạng thái",
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động",
+      "pending": "Đang chờ",
+      "allRoles": "Tất cả vai trò",
+      "admin": "Quản trị viên",
+      "user": "Người dùng",
+      "moderator": "Điều hành viên",
+      "refresh": "Làm mới",
+      "toggleColumns": "Chuyển đổi cột",
+      "addUser": "Thêm người dùng",
       "breadcrumbs": {
         "management": "Quản lý",
         "userManagement": "Quản lý người dùng"
       },
       "modal": {
         "createTitle": "Thêm người dùng mới",
-        "editTitle": "Chỉnh sửa người dùng",        "password": "Mật khẩu",
+        "editTitle": "Chỉnh sửa người dùng",
+        "password": "Mật khẩu",
         "confirmPassword": "Xác nhận mật khẩu",
         "showPassword": "Hiển thị mật khẩu",
         "hidePassword": "Ẩn mật khẩu",
@@ -213,27 +244,40 @@
           "rolesRequired": "Vui lòng chọn ít nhất một vai trò."
         }
       }
-    },    "roles": {
+    },
+    "roles": {
       "title": "Quản lý vai trò",
       "add": "Thêm vai trò",
+      "addRole": "Thêm vai trò",
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
-      "name": "Tên vai trò",
+      "name": "Tên",
       "description": "Mô tả",
       "permissions": "Quyền hạn",
+      "permissionsCount": "quyền",
       "actions": "Thao tác",
       "search": "Tìm kiếm",
-      "searchPlaceholder": "Tìm kiếm vai trò",
+      "searchPlaceholder": "Tìm kiếm vai trò...",
       "createdDate": "Ngày tạo",
       "updatedDate": "Ngày cập nhật",
-      "empty": "Trống",
+      "empty": "Không có mô tả",
       "deleteRole": "Xóa vai trò",
       "management": "Quản lý",
       "roleManagement": "Quản lý vai trò",
+      "roleManagementDescription": "Quản lý vai trò và quyền hạn trong hệ thống",
+      "status": "Trạng thái",
+      "allStatus": "Tất cả trạng thái",
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động",
+      "refresh": "Làm mới",
+      "toggleColumns": "Ẩn/Hiện cột",
+      "viewDetails": "Xem chi tiết",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa vai trò này?",
       "breadcrumbs": {
         "management": "Quản lý",
         "roleManagement": "Quản lý vai trò"
-      },      "modal": {
+      },
+      "modal": {
         "createTitle": "Tạo vai trò",
         "editTitle": "Cập nhật vai trò",
         "createButton": "Tạo vai trò",
@@ -254,7 +298,8 @@
           "permissions": "Phân quyền"
         }
       }
-    },    "permissions": {
+    },
+    "permissions": {
       "title": "Quản lý quyền hạn",
       "groups": {
         "file": "Tệp",
@@ -265,7 +310,8 @@
         "department": "Phòng ban",
         "system": "Hệ thống"
       }
-    },    "departments": {
+    },
+    "departments": {
       "title": "Quản lý nhóm tài liệu",
       "management": "Quản lý",
       "documentGroupManagement": "Quản lý nhóm tài liệu",
@@ -278,11 +324,13 @@
       "breadcrumbs": {
         "management": "Quản lý",
         "documentGroupManagement": "Quản lý nhóm tài liệu"
-      },      "modal": {
+      },
+      "modal": {
         "createTitle": "Tạo phòng ban mới",
         "editTitle": "Cài đặt phòng ban",
         "createButton": "Tạo phòng ban mới"
-      },      "detail": {
+      },
+      "detail": {
         "documentManagement": "Quản lý tài liệu",
         "documents": "Tài liệu",
         "fileName": "Tên tệp",
@@ -325,7 +373,8 @@
           "createFaq": "+ Tạo"
         }
       }
-    }  },
+    }
+  },
   "platforms": {
     "all": {
       "name": "Tất cả nền tảng",
@@ -377,13 +426,15 @@
       "create": "Tạo thẻ",
       "creating": "Đang tạo..."
     }
-  },  "common": {
+  },
+  "common": {
     "save": "Lưu",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
     "close": "Đóng",
     "edit": "Chỉnh sửa",
-    "delete": "Xóa",    "add": "Thêm",
+    "delete": "Xóa",
+    "add": "Thêm",
     "search": "Tìm kiếm",
     "filter": "Lọc",
     "sort": "Sắp xếp",
@@ -439,5 +490,125 @@
     "user": "Nhân viên",
     "guest": "Khách",
     "leader": "Trưởng phòng"
+  },
+  "roles": {
+    "admin": "Quản trị viên",
+    "moderator": "Người kiểm duyệt",
+    "developer": "Nhà phát triển",
+    "support_agent": "Nhân viên hỗ trợ",
+    "content_creator": "Người tạo nội dung",
+    "user": "Nhân viên",
+    "guest": "Khách",
+    "leader": "Trưởng phòng",
+    "actions": {
+      "create": "Tạo vai trò",
+      "update": "Cập nhật vai trò",
+      "delete": "Xóa vai trò",
+      "addUserToRole": "Thêm người dùng vào vai trò",
+      "updateMultiple": "Cập nhật nhiều vai trò"
+    },
+    "messages": {
+      "createSuccess": "Tạo vai trò thành công",
+      "updateSuccess": "Cập nhật vai trò thành công",
+      "deleteSuccess": "Xóa vai trò thành công",
+      "addUserSuccess": "Thêm người dùng vào vai trò thành công",
+      "updateMultipleSuccess": "Cập nhật nhiều vai trò thành công"
+    }
+  },
+  "permissions": {
+    "groups": {
+      "file": "Tệp",
+      "chat": "Trò chuyện",
+      "user": "Người dùng",
+      "role": "Vai trò",
+      "permission": "Quyền",
+      "setting": "Cài đặt",
+      "department": "Phòng ban",
+      "conversation": "Cuộc trò chuyện",
+      "chunk": "Đoạn văn"
+    },
+    "file": {
+      "create": "Tải lên tệp",
+      "read": "Xem tệp",
+      "update": "Chỉnh sửa thông tin tệp",
+      "delete": "Xoá tệp",
+      "download": "Tải xuống tệp",
+      "share": "Chia sẻ tệp",
+      "sync": "Đạo tạo AI",
+      "chunk": "Phân đoạn tệp"
+    },
+    "chat": {
+      "read": "Xem lịch sử trò chuyện",
+      "create": "Gửi tin nhắn",
+      "update": "Chỉnh sửa tin nhắn",
+      "delete": "Xoá tin nhắn"
+    },
+    "user": {
+      "create": "Tạo người dùng",
+      "read": "Xem người dùng",
+      "update": "Cập nhật người dùng",
+      "delete": "Xoá người dùng",
+      "assign_role": "Gán vai trò cho người dùng"
+    },
+    "role": {
+      "create": "Tạo vai trò",
+      "read": "Xem vai trò",
+      "update": "Cập nhật vai trò",
+      "delete": "Xoá vai trò"
+    },
+    "permission": {
+      "assign": "Gán quyền cho vai trò",
+      "read": "Xem tất cả quyền"
+    },
+    "setting": {
+      "read": "Xem cài đặt hệ thống",
+      "update": "Cập nhật cài đặt hệ thống",
+      "reset": "Đặt lại hệ thống"
+    },
+    "department": {
+      "create": "Tạo phòng ban",
+      "read": "Xem phòng ban và thành viên",
+      "update": "Cập nhật phòng ban",
+      "delete": "Xoá phòng ban",
+      "assign_user": "Gán người dùng vào phòng ban",
+      "manage_roles": "Quản lý vai trò cấp phòng ban"
+    },
+    "conversation": {
+      "create": "Tạo cuộc trò chuyện",
+      "read": "Xem cuộc trò chuyện",
+      "update": "Cập nhật cuộc trò chuyện",
+      "delete": "Xoá cuộc trò chuyện",
+      "assign_user": "Gán người dùng vào cuộc trò chuyện"
+    },
+    "chunk": {
+      "create": "Tạo đoạn đoạn văn",
+      "read": "Xem đoạn văn",
+      "update": "Cập nhật đoạn văn",
+      "delete": "Xoá đoạn văn"
+    },
+    "report": {
+      "create": "Tạo báo cáo",
+      "read": "Xem báo cáo",
+      "update": "Cập nhật báo cáo",
+      "delete": "Xoá báo cáo"
+    },
+    "faq": {
+      "create": "Tạo câu hỏi thường gặp",
+      "read": "Xem câu hỏi thường gặp",
+      "update": "Cập nhật câu hỏi thường gặp",
+      "delete": "Xoá câu hỏi thường gặp"
+    },
+    "domain": {
+      "create": "Tạo miền",
+      "read": "Xem miền",
+      "update": "Cập nhật miền",
+      "delete": "Xoá miền"
+    },
+    "channel": {
+      "create": "Tạo kênh",
+      "read": "Xem kênh",
+      "update": "Cập nhật kênh",
+      "delete": "Xoá kênh"
+    }
   }
 }

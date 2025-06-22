@@ -16,14 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <TanStackProviders>
-        <I18nProvider>
-          <body className={`antialiased`}>
+      <body className={`antialiased`}>
+        <TanStackProviders>
+          <I18nProvider>
             {children}
             <Toaster />
-          </body>
-        </I18nProvider>
-      </TanStackProviders>
+          </I18nProvider>
+        </TanStackProviders>
+      </body>
     </html>
   );
 }

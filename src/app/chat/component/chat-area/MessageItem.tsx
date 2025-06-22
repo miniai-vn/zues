@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Message } from "@/hooks/data/cs/useCS";
+import useTranslations from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 
 interface MessageItemProps {
@@ -17,6 +18,8 @@ export const MessageItem = ({
   senderName,
   senderAvatar,
 }: MessageItemProps) => {
+  const { t } = useTranslations();
+
   const formatMessageTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString([], {
       hour: "2-digit",
@@ -79,7 +82,7 @@ export const MessageItem = ({
         <Avatar className="h-8 w-8 mt-1 flex-shrink-0">
           <AvatarImage src={senderAvatar ?? defaultAvatar} />
           <AvatarFallback>
-            {senderName?.charAt(0)?.toUpperCase() || "You"}
+            {senderName?.charAt(0)?.toUpperCase() || t("dashboard.chat.you")}
           </AvatarFallback>
         </Avatar>
       )}

@@ -1,6 +1,16 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import axiosInstance from "@/configs";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
+import { useState, useMemo, useCallback } from "react";
 import { useToast } from "../use-toast";
+import { useTranslations } from "../useTranslations";
+import {
+  PaginatedQueryParams,
+  PaginatedResponse,
+  UsePaginatedQueryProps,
+  PaginationInfo,
+  MutationResponse,
+} from "@/types/api";
+
 export type Permission = {
   id: string;
   name: string;
@@ -9,14 +19,371 @@ export type Permission = {
   createdAt?: string;
   updatedAt?: string;
 };
+
 export type Role = {
   id: number;
   name: string;
-  permissions: Record<string, boolean>;
+  permissions: Permission[];
   description?: string;
   createdAt?: string;
   updatedAt?: string;
 };
+
+// Extended Role interface for creation
+interface CreateRoleData extends Omit<Role, "id" | "createdAt" | "updatedAt"> {
+  permissionIds?: string[];
+}
+
+// Extended Role interface for updates
+interface UpdateRoleData
+  extends Partial<Omit<Role, "id" | "createdAt" | "updatedAt">> {
+  permissionIds?: string[];
+}
+
+export const useRoles = ({
+  initialPage = 1,
+  initialPageSize = 10,
+  initialFilters = {},
+  initialSort = null,
+  enabled = true,
+  staleTime = 5 * 60 * 1000, // 5 minutes
+  gcTime = 10 * 60 * 1000, // 10 minutes
+}: UsePaginatedQueryProps) => {
+  const { toast } = useToast();
+
+  const [page, setPage] = useState<number>(initialPage);
+  const [pageSize, setPageSize] = useState<number>(initialPageSize);
+  const [filters, setFilters] = useState<Record<string, any>>(initialFilters);
+  const [sort, setSort] = useState<{
+    field: string;
+    direction: "asc" | "desc";
+  } | null>(initialSort);
+
+  // Memoized query parameters
+  const queryParams = useMemo(
+    () => ({
+      page,
+      pageSize,
+      filters,
+      sort,
+    }),
+    [page, pageSize, filters, sort]
+  );
+
+  // API functions
+  const createRole = async (
+    data: CreateRoleData
+  ): Promise<MutationResponse<Role>> => {
+    return await axiosInstance.post("/api/roles", {
+      name: data.name,
+      description: data.description,
+      permissions: data.permissions,
+      permissionIds: data.permissionIds,
+    });
+  };
+
+  const updateRole = async ({
+    id,
+    data,
+  }: {
+    id: string | number;
+    data: UpdateRoleData;
+  }): Promise<MutationResponse<Role>> => {
+    return await axiosInstance.put(`/api/roles/${id}`, {
+      name: data.name,
+      description: data.description,
+      permissionIds: data.permissions?.map((p) => p.id),
+    });
+  };
+
+  const deleteRole = async (id: string | number): Promise<MutationResponse> => {
+    return await axiosInstance.delete(`/api/roles/${id}`);
+  };
+
+  const fetchRoles = async ({
+    page,
+    pageSize,
+    filters,
+    sort,
+  }: PaginatedQueryParams): Promise<PaginatedResponse<Role>> => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: pageSize.toString(),
+      ...filters,
+      ...(sort && { sortBy: sort.field, sortOrder: sort.direction }),
+    });
+
+    const response: PaginatedResponse<Role> = await axiosInstance.get(
+      `/api/roles?${params.toString()}`
+    );
+
+    return response;
+  };
+
+  // Get single role with full permissions
+  const fetchRoleById = async (id: string | number): Promise<Role> => {
+    return await axiosInstance.get(`/api/roles/${id}`);
+  };
+
+  // Mutation hooks for create, update, delete
+  const { mutate: createRoleMutation } = useMutation({
+    mutationFn: createRole,
+    onSuccess: () => {
+      toast({
+        title: "Role Created",
+        description: `Role created successfully at ${new Date().toLocaleTimeString()}`,
+      });
+      query.refetch(); // Refetch roles after creation
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Creating Role",
+        description: error.message || "Failed to create role",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const { mutate: updateRoleMutation } = useMutation({
+    mutationFn: updateRole,
+    onSuccess: () => {
+      toast({
+        title: "Role Updated",
+        description: `Role updated successfully at ${new Date().toLocaleTimeString()}`,
+      });
+      query.refetch(); // Refetch roles after update
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Updating Role",
+        description: error.message || "Failed to update role",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const { mutate: deleteRoleMutation } = useMutation({
+    mutationFn: deleteRole,
+    onSuccess: () => {
+      toast({
+        title: "Role Deleted",
+        description: `Role deleted successfully at ${new Date().toLocaleTimeString()}`,
+      });
+      query.refetch(); // Refetch roles after deletion
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error Deleting Role",
+        description: error.message || "Failed to delete role",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // TanStack Query for roles
+  const query = useQuery({
+    queryKey: ["roles", queryParams],
+    queryFn: () => fetchRoles(queryParams),
+    enabled,
+    staleTime,
+    gcTime,
+    refetchOnWindowFocus: false, // Refetch when window is focused
+    placeholderData: keepPreviousData, // Keeps previous data while fetching new data
+  });
+
+  // Single role query (for editing)
+  const useRoleById = (id: string | number) => {
+    return useQuery({
+      queryKey: ["role", id],
+      queryFn: () => fetchRoleById(id),
+      enabled: !!id,
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  // Pagination helpers
+  const goToPage = useCallback((newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const nextPage = useCallback(() => {
+    if (query.data?.hasNext) {
+      setPage((prev) => prev + 1);
+    }
+  }, [query.data?.hasNext]);
+
+  const previousPage = useCallback(() => {
+    if (page > 1) {
+      setPage((prev) => prev - 1);
+    }
+  }, [page]);
+
+  const goToFirstPage = useCallback(() => {
+    setPage(1);
+  }, []);
+
+  const goToLastPage = useCallback(() => {
+    if (query.data?.totalPages) {
+      setPage(query.data.totalPages);
+    }
+  }, [query.data?.totalPages]);
+
+  // Filter helpers
+  const updateFilter = useCallback((key: string, value: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    setPage(1); // Reset to first page when filters change
+  }, []);
+
+  const updateFilters = useCallback((newFilters: Record<string, any>) => {
+    setFilters(newFilters);
+    setPage(1); // Reset to first page when filters change
+  }, []);
+
+  const clearFilter = useCallback((key: string) => {
+    setFilters((prev) => {
+      const newFilters = { ...prev };
+      delete newFilters[key];
+      return newFilters;
+    });
+    setPage(1);
+  }, []);
+
+  const clearAllFilters = useCallback(() => {
+    setFilters({});
+    setPage(1);
+  }, []);
+
+  // Sort helpers
+  const updateSort = useCallback(
+    (field: string, direction: "asc" | "desc" = "asc") => {
+      setSort({ field, direction });
+      setPage(1); // Reset to first page when sort changes
+    },
+    []
+  );
+
+  const clearSort = useCallback(() => {
+    setSort(null);
+    setPage(1);
+  }, []);
+
+  const toggleSort = useCallback((field: string) => {
+    setSort((prev) => {
+      if (!prev || prev.field !== field) {
+        return { field, direction: "asc" };
+      }
+      if (prev.direction === "asc") {
+        return { field, direction: "desc" };
+      }
+      return null; // Clear sort if was desc
+    });
+    setPage(1);
+  }, []);
+
+  // Page size helper
+  const updatePageSize = useCallback((newPageSize: number) => {
+    setPageSize(newPageSize);
+    setPage(1); // Reset to first page when page size changes
+  }, []);
+
+  // Reset all parameters
+  const reset = useCallback(() => {
+    setPage(initialPage);
+    setPageSize(initialPageSize);
+    setFilters(initialFilters);
+    setSort(initialSort);
+  }, [initialPage, initialPageSize, initialFilters, initialSort]);
+
+  // Computed values
+  const hasFilters = Object.keys(filters).length > 0;
+  const hasSort = sort !== null;
+  const canGoNext = query.data?.hasNext ?? false;
+  const canGoPrevious = page > 1;
+  const totalPages = query.data?.totalPages ?? 0;
+  const totalItems = query.data?.total ?? 0;
+
+  // Enhanced pagination info using global type
+  const paginationInfo: PaginationInfo = useMemo(
+    () => ({
+      page,
+      pageSize,
+      totalPages: query.data?.totalPages ?? 0,
+      totalItems: query.data?.total ?? 0,
+      hasNextPage: query.data?.hasNext ?? false,
+      hasPreviousPage: page > 1,
+      from: (page - 1) * pageSize + 1,
+      to: Math.min(page * pageSize, query.data?.total ?? 0),
+      isFirstPage: page === 1,
+      isLastPage: page === (query.data?.totalPages ?? 1),
+    }),
+    [page, pageSize, query.data]
+  );
+
+  return {
+    // Query state
+    ...query,
+    data: query.data?.data || [], // Roles array
+
+    // Current parameters
+    page,
+    pageSize,
+    filters,
+    sort,
+
+    // Pagination actions
+    goToPage,
+    nextPage,
+    previousPage,
+    goToFirstPage,
+    goToLastPage,
+    updatePageSize,
+
+    // Filter actions
+    updateFilter,
+    updateFilters,
+    clearFilter,
+    clearAllFilters,
+
+    // Sort actions
+    updateSort,
+    clearSort,
+    toggleSort,
+
+    // Reset
+    reset,
+
+    // Computed values
+    hasFilters,
+    hasSort,
+    canGoNext,
+    canGoPrevious,
+    totalPages,
+    totalItems,
+
+    // Enhanced pagination info
+    paginationInfo,
+
+    // CRUD operations
+    createRole: createRoleMutation,
+    updateRole: updateRoleMutation,
+    deleteRole: deleteRoleMutation,
+
+    // Helper function to get role by ID
+    useRoleById,
+
+    // Refetch functions
+    refetch: query.refetch,
+  };
+};
+
+// Export types
+export type { CreateRoleData, UpdateRoleData };
+
+// Keep existing exports and helper hooks
 export const RoleVietnameseNames: Record<string, string> = {
   admin: "Quản trị viên",
   moderator: "Người kiểm duyệt",
@@ -27,6 +394,23 @@ export const RoleVietnameseNames: Record<string, string> = {
   guest: "Khách",
   leader: "Trưởng phòng",
 };
+
+// Hook to get localized role names
+export const useRoleNames = () => {
+  const { t } = useTranslations();
+
+  return {
+    admin: t("roles.admin"),
+    moderator: t("roles.moderator"),
+    developer: t("roles.developer"),
+    support_agent: t("roles.support_agent"),
+    content_creator: t("roles.content_creator"),
+    user: t("roles.user"),
+    guest: t("roles.guest"),
+    leader: t("roles.leader"),
+  };
+};
+
 export const PermissionGroupVietnameseNames: Record<string, string> = {
   file: "Tệp",
   chat: "Trò chuyện",
@@ -37,6 +421,23 @@ export const PermissionGroupVietnameseNames: Record<string, string> = {
   department: "Phòng ban",
   conversation: "Cuộc trò chuyện",
   chunk: "Đoạn văn",
+};
+
+// Hook to get localized permission group names
+export const usePermissionGroupNames = () => {
+  const { t } = useTranslations();
+
+  return {
+    file: t("permissions.groups.file"),
+    chat: t("permissions.groups.chat"),
+    user: t("permissions.groups.user"),
+    role: t("permissions.groups.role"),
+    permission: t("permissions.groups.permission"),
+    setting: t("permissions.groups.setting"),
+    department: t("permissions.groups.department"),
+    conversation: t("permissions.groups.conversation"),
+    chunk: t("permissions.groups.chunk"),
+  };
 };
 
 export const PermissionVietnameseNames: Record<string, string> = {
@@ -55,15 +456,12 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "chat.create": "Gửi tin nhắn",
   "chat.update": "Chỉnh sửa tin nhắn",
   "chat.delete": "Xoá tin nhắn",
-  // "chat.train": "Huấn luyện chatbot",
-  // "chat.manage_settings": "Quản lý cài đặt chatbot",
 
   // User
   "user.create": "Tạo người dùng",
   "user.read": "Xem người dùng",
   "user.update": "Cập nhật người dùng",
   "user.delete": "Xoá người dùng",
-  // "user.ban": "Cấm hoặc mở cấm người dùng",
   "user.assign_role": "Gán vai trò cho người dùng",
 
   // Role & Permission
@@ -125,209 +523,91 @@ export const PermissionVietnameseNames: Record<string, string> = {
   "channel.delete": "Xoá kênh",
 };
 
-type UseRolesWithPermissionsProps = {
-  page?: number;
-  limit?: number;
-  search?: string;
-  id?: string;
-};
+// Hook to get localized permission names
+export const usePermissionNames = () => {
+  const { t } = useTranslations();
 
-const useRoles = ({
-  page = 1,
-  limit = 10,
-  search = "",
-  id,
-}: UseRolesWithPermissionsProps = {}) => {
-  const { toast } = useToast();
-  const { data: permissions, isLoading: isFetchingPermissions } = useQuery({
-    queryKey: ["permissions"],
-    queryFn: async () => {
-      const res = await chatApiInstance.get("/api/permissions/get-all", {
-        params: {},
-      });
-      return (res.data as Permission[]) || [];
-    },
-  });
-
-  const {
-    data: roleWithFullPermissions,
-    isLoading: isFetchingRoleWithFullPermissions,
-    refetch: refetchRoleWithFullPermissions,
-  } = useQuery({
-    queryKey: ["roles-with-full-permissions"],
-    queryFn: async () => {
-      const res = await chatApiInstance.get(`/api/roles/${id}`, {
-        params: {},
-      });
-      return (res.data as Role) || [];
-    },
-    enabled: !!id,
-  });
-  const {
-    data: roleWithPermissions,
-    isLoading: isFetchingRolesWithPermissions,
-    refetch: refetchRolesWithPermissions,
-  } = useQuery({
-    queryKey: ["roles"],
-    queryFn: async () => {
-      const res = await chatApiInstance.get("/api/roles/get-all", {
-        params: {},
-      });
-      return (res.data as Role[]) || [];
-    },
-  });
-
-  const {
-    data: roles,
-    isLoading: isFetchingRoles,
-    refetch: refetchRoles,
-  } = useQuery({
-    queryKey: ["roles-with-permissions"],
-    queryFn: async () => {
-      const params: Record<string, any> = {
-        page,
-        limit,
-      };
-      if (search) params.search = search;
-      const res = await chatApiInstance.get("/api/roles/", {
-        params,
-      });
-      return {
-        items: (res.data.items || []) as Role[],
-        totalCount: res.data.totalCount || 0,
-        page,
-        limit,
-      };
-    },
-  });
-
-  const { mutate: createRole, isSuccess: isCreatedRole } = useMutation({
-    mutationFn: async (data: Role) => {
-      const res = await chatApiInstance.post("/api/roles/", {
-        name: data.name,
-        description: data.description,
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      refetchRoles();
-      toast({
-        title: "Create Role",
-        description: "Create Role successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Create Role",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: addUserToRole } = useMutation({
-    mutationFn: async (data: { user_id: string; role_id: string }) => {
-      const res = await chatApiInstance.post("/api/roles/create-user", data, {
-        params: {},
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      refetchRoles();
-      toast({
-        title: "Add User to Role",
-        description: "Add User to Role successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Add User to Role",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: deleteRole } = useMutation({
-    mutationFn: async (id: string) => {
-      await chatApiInstance.delete(`/api/roles/${id}`);
-    },
-    onSuccess: () => {
-      refetchRoles();
-      toast({
-        title: "Delete Role",
-        description: "Delete Role successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Delete Role",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: updateRole } = useMutation({
-    mutationFn: async (data: Role) => {
-      const res = await chatApiInstance.put(`/api/roles/${data.id}`, {
-        name: data.name,
-        description: data.description,
-        permissions: data.permissions,
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      refetchRoles();
-      toast({
-        title: "Update Role",
-        description: "Update Role successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Update Role",
-        description: error.message,
-      });
-    },
-  });
-
-  const { mutate: updateMutipleRole } = useMutation({
-    mutationFn: async (data: Role[]) => {
-      const res = await chatApiInstance.post(`/api/roles/multiple`, {
-        data,
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      refetchRoles();
-      toast({
-        title: "Update Role",
-        description: "Update Role successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Update Role",
-        description: error.message,
-      });
-    },
-  });
   return {
-    updateMutipleRole,
-    updateRole,
-    deleteRole,
-    createRole,
-    isCreatedRole,
-    addUserToRole,
-    roleWithPermissions,
-    isFetchingRoles,
-    refetchRoles,
-    permissions,
-    isFetchingPermissions,
-    roles,
-    isFetchingRolesWithPermissions,
-    refetchRolesWithPermissions,
-    roleWithFullPermissions,
-    isFetchingRoleWithFullPermissions,
-    refetchRoleWithFullPermissions,
+    // File permissions
+    "file.create": t("permissions.file.create"),
+    "file.read": t("permissions.file.read"),
+    "file.update": t("permissions.file.update"),
+    "file.delete": t("permissions.file.delete"),
+    "file.download": t("permissions.file.download"),
+    "file.share": t("permissions.file.share"),
+    "file.sync": t("permissions.file.sync"),
+    "file.chunk": t("permissions.file.chunk"),
+
+    // Chat permissions
+    "chat.read": t("permissions.chat.read"),
+    "chat.create": t("permissions.chat.create"),
+    "chat.update": t("permissions.chat.update"),
+    "chat.delete": t("permissions.chat.delete"),
+
+    // User permissions
+    "user.create": t("permissions.user.create"),
+    "user.read": t("permissions.user.read"),
+    "user.update": t("permissions.user.update"),
+    "user.delete": t("permissions.user.delete"),
+    "user.assign_role": t("permissions.user.assign_role"),
+
+    // Role & Permission
+    "role.create": t("permissions.role.create"),
+    "role.read": t("permissions.role.read"),
+    "role.update": t("permissions.role.update"),
+    "role.delete": t("permissions.role.delete"),
+    "permission.assign": t("permissions.permission.assign"),
+    "permission.read": t("permissions.permission.read"),
+
+    // Settings
+    "setting.read": t("permissions.setting.read"),
+    "setting.update": t("permissions.setting.update"),
+    "setting.reset": t("permissions.setting.reset"),
+
+    // Department
+    "department.create": t("permissions.department.create"),
+    "department.read": t("permissions.department.read"),
+    "department.update": t("permissions.department.update"),
+    "department.delete": t("permissions.department.delete"),
+    "department.assign_user": t("permissions.department.assign_user"),
+    "department.manage_roles": t("permissions.department.manage_roles"),
+
+    // Conversation
+    "conversation.create": t("permissions.conversation.create"),
+    "conversation.read": t("permissions.conversation.read"),
+    "conversation.update": t("permissions.conversation.update"),
+    "conversation.delete": t("permissions.conversation.delete"),
+    "conversation.assign_user": t("permissions.conversation.assign_user"),
+
+    // Chunk
+    "chunk.create": t("permissions.chunk.create"),
+    "chunk.read": t("permissions.chunk.read"),
+    "chunk.update": t("permissions.chunk.update"),
+    "chunk.delete": t("permissions.chunk.delete"),
+
+    // Report
+    "report.create": t("permissions.report.create"),
+    "report.read": t("permissions.report.read"),
+    "report.update": t("permissions.report.update"),
+    "report.delete": t("permissions.report.delete"),
+
+    // FAQ
+    "faq.create": t("permissions.faq.create"),
+    "faq.read": t("permissions.faq.read"),
+    "faq.update": t("permissions.faq.update"),
+    "faq.delete": t("permissions.faq.delete"),
+
+    // Domain
+    "domain.create": t("permissions.domain.create"),
+    "domain.read": t("permissions.domain.read"),
+    "domain.update": t("permissions.domain.update"),
+    "domain.delete": t("permissions.domain.delete"),
+
+    // Channel
+    "channel.create": t("permissions.channel.create"),
+    "channel.read": t("permissions.channel.read"),
+    "channel.update": t("permissions.channel.update"),
+    "channel.delete": t("permissions.channel.delete"),
   };
 };
 

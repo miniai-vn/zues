@@ -129,7 +129,7 @@ export function CreateOrUpdateRoleDialog({
               )}
             />{" "}
             <div className="w-full flex justify-end">
-              <Button type="submit" className="bg-blue-600 text-white">
+              <Button type="submit">
                 {role
                   ? t("dashboard.roles.modal.updateButton")
                   : t("dashboard.roles.modal.createButton")}

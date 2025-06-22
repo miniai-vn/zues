@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {} from "@/app/dashboard/permissions/page";
 import {
   Form,
   FormField,
@@ -28,6 +27,8 @@ import { Eye, EyeOff, Key, LockOpen } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUsers } from "@/hooks/useUser";
 
 // Hàm tạo schema động dựa trên props user và translation
 const getFormSchema = (user?: User, t?: any) =>
@@ -83,7 +84,7 @@ interface AddUserProps {
   children?: React.ReactNode;
 }
 
-export function AddOrUpdateUserModal({
+export function CreateOrUpdateUserDialog({
   user,
   children,
   onChange,
@@ -92,8 +93,8 @@ export function AddOrUpdateUserModal({
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
-
-  // Sử dụng schema động với translation
+  const { createUser, updateUser } = useUsers({});
+  const { data: roles } = useRoles({});
   const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
     resolver: zodResolver(getFormSchema(user, t)),
     defaultValues: {
@@ -106,7 +107,7 @@ export function AddOrUpdateUserModal({
     },
   });
   const { departments } = useDepartments({});
-  const { roleWithPermissions } = useRoles();
+  // const {} = useRoles({});
 
   const onSubmit = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
     onChange?.({
@@ -120,6 +121,31 @@ export function AddOrUpdateUserModal({
           }
         : {}),
     });
+
+    if (user) {
+      await updateUser({
+        id: user.id,
+        data: {
+          username: data.username,
+        password: data.password as string,
+        name: data.name,
+        phone: data.phone as string,
+
+        roleIds: data.roles,
+        departmentIds: data.departments,
+        }
+      });
+    } else {
+      // Tạo người dùng mới
+      await createUser({
+        username: data.username,
+        password: data.password as string,
+        name: data.name,
+        phone: data.phone as string,
+        roleIds: data.roles,
+        departmentIds: data.departments,
+      });
+    }
     setIsOpen(false);
     form.reset();
   };
@@ -135,7 +161,7 @@ export function AddOrUpdateUserModal({
       <DialogTrigger asChild>
         {children || <Button>{t("dashboard.users.add")}</Button>}
       </DialogTrigger>
-      <DialogContent className="w-[40vw] max-w-[70vw] overflow-y-auto">
+      <DialogContent className="max-w-2xl mx-auto max-h-[90vh] p-4">
         <DialogHeader>
           <DialogTitle>
             {user
@@ -143,7 +169,7 @@ export function AddOrUpdateUserModal({
               : t("dashboard.users.modal.createTitle")}
           </DialogTitle>
         </DialogHeader>
-        <div>
+        <ScrollArea className="max-h-[calc(90vh-120px)]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -274,7 +300,7 @@ export function AddOrUpdateUserModal({
                       </FormLabel>
                       <Selector
                         className="w-full"
-                        items={(roleWithPermissions || []).map((role) => ({
+                        items={roles.map((role: any) => ({
                           value: role.id,
                           label: RoleVietnameseNames[role.name] || role.name,
                         }))}
@@ -320,7 +346,7 @@ export function AddOrUpdateUserModal({
                     </FormItem>
                   )}
                 />
-              </div>{" "}
+              </div>
               <div className="w-full flex justify-end">
                 <Button type="submit">
                   {user ? t("common.edit") : t("dashboard.users.add")}
@@ -328,7 +354,7 @@ export function AddOrUpdateUserModal({
               </div>
             </form>
           </Form>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
