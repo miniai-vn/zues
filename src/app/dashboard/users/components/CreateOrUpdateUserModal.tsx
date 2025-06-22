@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {} from "@/app/dashboard/permissions/page";
 import {
   Form,
   FormField,
@@ -29,6 +28,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUsers } from "@/hooks/useUser";
 
 // Hàm tạo schema động dựa trên props user và translation
 const getFormSchema = (user?: User, t?: any) =>
@@ -93,7 +93,8 @@ export function CreateOrUpdateUserDialog({
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
-  // Sử dụng schema động với translation
+  const { createUser, updateUser } = useUsers({});
+  const { data: roles } = useRoles({});
   const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
     resolver: zodResolver(getFormSchema(user, t)),
     defaultValues: {
@@ -106,7 +107,7 @@ export function CreateOrUpdateUserDialog({
     },
   });
   const { departments } = useDepartments({});
-  const { roleWithPermissions } = useRoles();
+  // const {} = useRoles({});
 
   const onSubmit = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
     onChange?.({
@@ -120,6 +121,31 @@ export function CreateOrUpdateUserDialog({
           }
         : {}),
     });
+
+    if (user) {
+      await updateUser({
+        id: user.id,
+        data: {
+          username: data.username,
+        password: data.password as string,
+        name: data.name,
+        phone: data.phone as string,
+
+        roleIds: data.roles,
+        departmentIds: data.departments,
+        }
+      });
+    } else {
+      // Tạo người dùng mới
+      await createUser({
+        username: data.username,
+        password: data.password as string,
+        name: data.name,
+        phone: data.phone as string,
+        roleIds: data.roles,
+        departmentIds: data.departments,
+      });
+    }
     setIsOpen(false);
     form.reset();
   };
@@ -274,7 +300,7 @@ export function CreateOrUpdateUserDialog({
                       </FormLabel>
                       <Selector
                         className="w-full"
-                        items={(roleWithPermissions || []).map((role) => ({
+                        items={roles.map((role: any) => ({
                           value: role.id,
                           label: RoleVietnameseNames[role.name] || role.name,
                         }))}

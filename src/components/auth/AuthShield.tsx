@@ -24,7 +24,6 @@ export default function AuthShield({
       ?.split("=")[1];
 
     if (!token) { 
-      debugger
       router.push("/login");
     } else {
       setIsAuthorized(true);

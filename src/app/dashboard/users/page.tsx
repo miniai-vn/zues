@@ -56,7 +56,6 @@ const UserManager = () => {
       status: "active",
     },
   });
-
   useEffect(() => {
     if (debouncedSearch) {
       updateFilter("search", debouncedSearch);

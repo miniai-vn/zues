@@ -36,7 +36,10 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
   );
 
   instance.interceptors.response.use(
-    (response) => response.data,
+    (response) => {
+      const { data } = response;
+      return data;
+    },
     (error) => {
       if (error.response) {
         const { status } = error.response;

@@ -241,24 +241,33 @@
           "rolesRequired": "Please select at least one role."
         }
       }
-    },
-    "roles": {
+    },    "roles": {
       "title": "Role Management",
       "add": "Add Role",
+      "addRole": "Add Role",
       "edit": "Edit",
       "delete": "Delete",
-      "name": "Role Name",
+      "name": "Name",
       "description": "Description",
       "permissions": "Permissions",
+      "permissionsCount": "permissions",
       "actions": "Actions",
       "search": "Search",
-      "searchPlaceholder": "Search roles",
+      "searchPlaceholder": "Search roles...",
       "createdDate": "Created Date",
       "updatedDate": "Updated Date",
-      "empty": "Empty",
+      "empty": "No description",
       "deleteRole": "Delete Role",
       "management": "Management",
       "roleManagement": "Role Management",
+      "roleManagementDescription": "Manage system roles and permissions",
+      "status": "Status",
+      "allStatus": "All Status",      "active": "Active",
+      "inactive": "Inactive",
+      "refresh": "Refresh",
+      "toggleColumns": "Toggle Columns",
+      "viewDetails": "View Details",
+      "confirmDelete": "Are you sure you want to delete this role?",
       "breadcrumbs": {
         "management": "Management",
         "roleManagement": "Role Management"

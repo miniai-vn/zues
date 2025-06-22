@@ -210,7 +210,6 @@ const useCS = ({
       queryFn: async () => {
         setLoadingConversations(true);
         try {
-          console.log(apiFilters());
           const response = await axiosInstance.get("/api/conversations", {
             params: apiFilters(),
           });

@@ -28,13 +28,13 @@ export type User = {
   username: string;
   password: string;
   name: string;
-  roles: Role[];
+  roles?: Role[];
   role?: String;
-  email: string;
-  phone: string;
-  avatar: string;
-  departments: Department[];
-  position: string;
+  email?: string;
+  phone?: string;
+  avatar?: string;
+  departments?: Department[];
+  position?: string;
 };
 
 export const useUserStore = create<{

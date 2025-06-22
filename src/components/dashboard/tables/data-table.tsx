@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface PaginationMeta {
   page: number;
@@ -66,7 +68,7 @@ export function DataTable<TData, TValue>({
   onPageSizeChange,
   onSortingChange,
   onRowSelectionChange,
-  onRowClick, // Thêm dòng này
+  onRowClick,
   isLoading = false,
   noResultsMessage,
 }: DataTableProps<TData, TValue>) {
@@ -74,6 +76,18 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filteredData, setFilteredData] = useState<TData[]>(data);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const hasServerPagination = Boolean(pagination && onPaginationChange);
   const totalItems = pagination?.total || data.length;
@@ -172,6 +186,69 @@ export function DataTable<TData, TValue>({
   // Thêm biến để xác định cột không cho phép onRowClick
   const ACTION_COLUMN_IDS = ["actions", "delete", "update"];
 
+  // Mobile Card Component
+  const MobileCard = ({ row }: { row: any }) => (
+    <Card
+      className={cn(
+        "mb-3 cursor-pointer transition-colors hover:bg-muted/50",
+        row.getIsSelected() && "bg-muted"
+      )}
+      onClick={() => onRowClick?.(row.original)}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Select row"
+          />
+          <div className="flex gap-2">
+            {/* Render action buttons from the actions column */}
+            {row
+              .getVisibleCells()
+              .filter((cell: any) => ACTION_COLUMN_IDS.includes(cell.column.id))
+              .map((cell: any) => (
+                <div key={cell.id} onClick={(e) => e.stopPropagation()}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {row
+            .getVisibleCells()
+            .filter(
+              (cell: any) =>
+                !ACTION_COLUMN_IDS.includes(cell.column.id) &&
+                cell.column.id !== "select"
+            )
+            .map((cell: any) => {
+              const columnHeader = flexRender(
+                cell.column.columnDef.header,
+                cell.getContext()
+              );
+
+              return (
+                <div
+                  key={cell.id}
+                  className="flex justify-between items-center py-1"
+                >
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {columnHeader}:
+                  </span>
+                  <span className="text-sm text-right max-w-[60%] truncate">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </span>
+                </div>
+              );
+            })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="rounded-md border flex flex-col h-full">
       <div className="relative flex-1 min-h-0 overflow-auto">
@@ -181,87 +258,117 @@ export function DataTable<TData, TValue>({
           </div>
         )}
 
-        <Table>
-          <TableHeader className="sticky top-0 bg-background z-10">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      className={
-                        header.column.getCanSort()
-                          ? "cursor-pointer select-none"
-                          : ""
-                      }
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      {{
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted() as string] ?? null}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
+        {isMobile ? (
+          // Mobile view - Card layout
+          <div className="p-4">
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={(e) => {
-                    // Nếu click vào cell thuộc cột trong ACTION_COLUMN_IDS thì không gọi onRowClick
-                    const cell = (e.target as HTMLElement).closest("td");
-                    if (
-                      cell &&
-                      ACTION_COLUMN_IDS.some(
-                        (colId) => cell.getAttribute("data-column-id") === colId
-                      )
-                    ) {
-                      return;
-                    }
-                    onRowClick?.(row.original);
-                  }}
-                  className={onRowClick ? "cursor-pointer" : ""}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      data-column-id={cell.column.id}
-                      className="whitespace-nowrap"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              <div className="space-y-3">
+                {table.getRowModel().rows.map((row) => (
+                  <MobileCard key={row.id} row={row} />
+                ))}
+              </div>
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="text-center h-32"
-                >
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
                   {isLoading
                     ? ""
                     : noResultsMessage || t("noResults", "No results.")}
-                </TableCell>
-              </TableRow>
+                </p>
+              </div>
             )}
-          </TableBody>
-        </Table>
+          </div>
+        ) : (
+          // Desktop view - Table layout
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="sticky top-0 bg-background z-10">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          onClick={header.column.getToggleSortingHandler()}
+                          className={cn(
+                            "whitespace-nowrap",
+                            header.column.getCanSort()
+                              ? "cursor-pointer select-none"
+                              : ""
+                          )}
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      onClick={(e) => {
+                        // Nếu click vào cell thuộc cột trong ACTION_COLUMN_IDS thì không gọi onRowClick
+                        const cell = (e.target as HTMLElement).closest("td");
+                        if (
+                          cell &&
+                          ACTION_COLUMN_IDS.some(
+                            (colId) =>
+                              cell.getAttribute("data-column-id") === colId
+                          )
+                        ) {
+                          return;
+                        }
+                        onRowClick?.(row.original);
+                      }}
+                      className={cn(
+                        "cursor-pointer hover:bg-muted/50",
+                        onRowClick ? "cursor-pointer" : ""
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          data-column-id={cell.column.id}
+                          className="whitespace-nowrap"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="text-center h-32"
+                    >
+                      {isLoading
+                        ? ""
+                        : noResultsMessage || t("noResults", "No results.")}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
+
       {hasServerPagination && (
         <div className="flex items-center justify-between px-4 py-4 border-t flex-shrink-0">
           <div className="flex items-center gap-4">
@@ -281,106 +388,132 @@ export function DataTable<TData, TValue>({
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              <span className="text-xs">
+              <span className="text-xs hidden sm:inline">
                 {t("rowsPerPage", "Rows per page")}
               </span>
             </div>
           </div>
-          <div>
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(currentPage - 1);
-                    }}
-                    aria-disabled={currentPage === 1 || isLoading}
-                    className={
-                      currentPage === 1 || isLoading
-                        ? "pointer-events-none opacity-50"
-                        : ""
-                    }
-                  />
-                </PaginationItem>
 
-                <PaginationItem>
-                  <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(1);
-                    }}
-                    isActive={currentPage === 1}
-                  >
-                    1
-                  </PaginationLink>
-                </PaginationItem>
+          <div className="flex items-center gap-2">
+            {/* Mobile pagination - simplified */}
+            <div className="flex sm:hidden items-center gap-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || isLoading}
+                className="p-2 rounded border disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ←
+              </button>
+              <span className="text-sm">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages || isLoading}
+                className="p-2 rounded border disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                →
+              </button>
+            </div>
 
-                {currentPage > 3 && (
+            {/* Desktop pagination - full */}
+            <div className="hidden sm:block">
+              <Pagination>
+                <PaginationContent>
                   <PaginationItem>
-                    <PaginationEllipsis />
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(currentPage - 1);
+                      }}
+                      aria-disabled={currentPage === 1 || isLoading}
+                      className={
+                        currentPage === 1 || isLoading
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
                   </PaginationItem>
-                )}
 
-                {Array.from({ length: 3 }, (_, i) => {
-                  const pageNumber = currentPage - 1 + i;
-                  if (pageNumber <= 1 || pageNumber >= totalPages) return null;
-                  return (
-                    <PaginationItem key={pageNumber}>
-                      <PaginationLink
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(pageNumber);
-                        }}
-                        isActive={currentPage === pageNumber}
-                      >
-                        {pageNumber}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-
-                {currentPage < totalPages - 2 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-
-                {totalPages > 1 && (
                   <PaginationItem>
                     <PaginationLink
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        handlePageChange(totalPages);
+                        handlePageChange(1);
                       }}
-                      isActive={currentPage === totalPages}
+                      isActive={currentPage === 1}
                     >
-                      {totalPages}
+                      1
                     </PaginationLink>
                   </PaginationItem>
-                )}
 
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(currentPage + 1);
-                    }}
-                    aria-disabled={currentPage >= totalPages || isLoading}
-                    className={
-                      currentPage >= totalPages || isLoading
-                        ? "pointer-events-none opacity-50"
-                        : ""
-                    }
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+                  {currentPage > 3 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+
+                  {Array.from({ length: 3 }, (_, i) => {
+                    const pageNumber = currentPage - 1 + i;
+                    if (pageNumber <= 1 || pageNumber >= totalPages)
+                      return null;
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(pageNumber);
+                          }}
+                          isActive={currentPage === pageNumber}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  {currentPage < totalPages - 2 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+
+                  {totalPages > 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePageChange(totalPages);
+                        }}
+                        isActive={currentPage === totalPages}
+                      >
+                        {totalPages}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(currentPage + 1);
+                      }}
+                      aria-disabled={currentPage >= totalPages || isLoading}
+                      className={
+                        currentPage >= totalPages || isLoading
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
         </div>
       )}

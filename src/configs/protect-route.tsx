@@ -23,7 +23,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    debugger
     if (!user) {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
@@ -32,7 +31,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         setIsRedirecting(true);
       }
     } else if (
-      !user.roles.some((role: RoleModel) => requiredRole.includes(role.name))
+      !user.roles?.some((role: RoleModel) => requiredRole.includes(role.name))
     ) {
       setIsRedirecting(true);
     }

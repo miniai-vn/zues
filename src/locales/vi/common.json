@@ -175,7 +175,8 @@
       "management": "Quản lý",
       "noChannels": "Chưa có kênh nào được kết nối",
       "addFirst": "Thêm kênh đầu tiên"
-    },    "users": {
+    },
+    "users": {
       "title": "Quản lý người dùng",
       "add": "Thêm người dùng",
       "edit": "Chỉnh sửa",
@@ -247,20 +248,31 @@
     "roles": {
       "title": "Quản lý vai trò",
       "add": "Thêm vai trò",
+      "addRole": "Thêm vai trò",
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
-      "name": "Tên vai trò",
+      "name": "Tên",
       "description": "Mô tả",
       "permissions": "Quyền hạn",
+      "permissionsCount": "quyền",
       "actions": "Thao tác",
       "search": "Tìm kiếm",
-      "searchPlaceholder": "Tìm kiếm vai trò",
+      "searchPlaceholder": "Tìm kiếm vai trò...",
       "createdDate": "Ngày tạo",
       "updatedDate": "Ngày cập nhật",
-      "empty": "Trống",
+      "empty": "Không có mô tả",
       "deleteRole": "Xóa vai trò",
       "management": "Quản lý",
       "roleManagement": "Quản lý vai trò",
+      "roleManagementDescription": "Quản lý vai trò và quyền hạn trong hệ thống",
+      "status": "Trạng thái",
+      "allStatus": "Tất cả trạng thái",
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động",
+      "refresh": "Làm mới",
+      "toggleColumns": "Ẩn/Hiện cột",
+      "viewDetails": "Xem chi tiết",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa vai trò này?",
       "breadcrumbs": {
         "management": "Quản lý",
         "roleManagement": "Quản lý vai trò"
@@ -468,7 +480,8 @@
     "confirmPassword": "Mật khẩu không khớp",
     "min": "Tối thiểu {{min}} ký tự",
     "max": "Tối đa {{max}} ký tự"
-  },  "roleNames": {
+  },
+  "roleNames": {
     "admin": "Quản trị viên",
     "moderator": "Người kiểm duyệt",
     "developer": "Nhà phát triển",

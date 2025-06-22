@@ -40,6 +40,31 @@ const DashboardHeader = ({ title = "" }: DashboardHeaderProps) => {
         },
       ]);
     }
+    if (title.toLowerCase() === "permissions") {
+      setBreadcrumbs([
+        {
+          label: t("dashboard.roles.breadcrumbs.management"),
+          href: "/dashboard/roles",
+        },
+        {
+          label: t("dashboard.roles.breadcrumbs.roleManagement"),
+          isCurrentPage: true,
+        },
+      ]);
+    }
+
+    if (title.toLowerCase() === "roles") {
+      setBreadcrumbs([
+        {
+          label: t("dashboard.roles.breadcrumbs.management"),
+          href: "/dashboard/roles",
+        },
+        {
+          label: t("dashboard.roles.breadcrumbs.roleManagement"),
+          isCurrentPage: true,
+        },
+      ]);
+    }
   }, [title]);
   return (
     <header className="sticky border-b mb-2 top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">

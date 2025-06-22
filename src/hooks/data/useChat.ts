@@ -34,7 +34,7 @@ const useChat = ({ id }: { id?: string }) => {
       try {
         const response = await axiosInstance.get(`/api/conversations/${id}`);
         // console.log(response.data);
-        return (response.data.messages as Message[]) ?? ([] as Message[]);
+        return [];
       } catch (error) {
         router.push("/dashboard/chat");
         throw new Error("Failed to fetch messages");
@@ -97,7 +97,7 @@ const useChat = ({ id }: { id?: string }) => {
     queryKey: ["conversations"],
     queryFn: async () => {
       const res = await axiosInstance.get(`/api/conversations`);
-      return (res.data as Conversation[]) || [];
+      return [];
     },
     enabled: !id,
   });

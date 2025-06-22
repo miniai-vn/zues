@@ -2,33 +2,32 @@ import axiosInstance from "@/configs";
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { useState, useMemo, useCallback } from "react";
 import { User } from "./data/useAuth";
+import { useToast } from "./use-toast";
+import {
+  PaginatedQueryParams,
+  PaginatedResponse,
+  UsePaginatedQueryProps,
+  PaginationInfo,
+  MutationResponse,
+} from "../types/api";
 
-interface PaginatedQueryParams {
-  page: number;
-  pageSize: number;
-  filters: Record<string, any>;
-  sort: { field: string; direction: "asc" | "desc" } | null;
+// User-specific interfaces
+interface CreateUserData
+  extends Omit<
+    User,
+    "id" | "roles" | "departments" | "createdAt" | "updatedAt"
+  > {
+  roleIds: number[];
+  departmentIds: number[];
+  password: string;
+  confirmPassword?: string;
 }
 
-interface PaginatedResponse<T> {
-  data: T[];
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-  currentPage: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
-}
-
-interface UsePaginatedQueryProps {
-  initialPage?: number;
-  initialPageSize?: number;
-  initialFilters?: Record<string, any>;
-  initialSort?: { field: string; direction: "asc" | "desc" } | null;
-  enabled?: boolean;
-  staleTime?: number;
-  gcTime?: number;
+interface UpdateUserData
+  extends Partial<Omit<User, "id" | "createdAt" | "updatedAt">> {
+  roleIds?: number[];
+  departmentIds?: number[];
+  password?: string;
 }
 
 export const useUsers = ({
@@ -40,7 +39,7 @@ export const useUsers = ({
   staleTime = 5 * 60 * 1000, // 5 minutes
   gcTime = 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
 }: UsePaginatedQueryProps) => {
-  // State management
+  const { toast } = useToast();
   const [page, setPage] = useState<number>(initialPage);
   const [pageSize, setPageSize] = useState<number>(initialPageSize);
   const [filters, setFilters] = useState<Record<string, any>>(initialFilters);
@@ -60,17 +59,24 @@ export const useUsers = ({
     [page, pageSize, filters, sort]
   );
 
-  const createUser = async (data: User) => {
-    const response = await axiosInstance.post("/api/users", data);
-    return response.data;
+  const createUser = async (
+    data: CreateUserData
+  ): Promise<MutationResponse<User>> => {
+    return await axiosInstance.post("/api/users", data);
   };
-  const updateUser = async ({ id, data }: { id: string; data: User }) => {
-    const response = await axiosInstance.put(`/api/users/${id}`, data);
-    return response.data;
+
+  const updateUser = async ({
+    id,
+    data,
+  }: {
+    id: string;
+    data: UpdateUserData;
+  }): Promise<MutationResponse<User>> => {
+    return await axiosInstance.put(`/api/users/${id}`, data);
   };
-  const deleteUser = async (id: string) => {
-    const response = await axiosInstance.delete(`/api/users/${id}`);
-    return response.data;
+
+  const deleteUser = async (id: string): Promise<MutationResponse> => {
+    return await axiosInstance.delete(`/api/users/${id}`);
   };
 
   const fetchUsers = async ({
@@ -78,7 +84,7 @@ export const useUsers = ({
     pageSize,
     filters,
     sort,
-  }: PaginatedQueryParams): Promise<PaginatedResponse<any>> => {
+  }: PaginatedQueryParams): Promise<PaginatedResponse<User>> => {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: pageSize.toString(),
@@ -86,29 +92,32 @@ export const useUsers = ({
       ...(sort && { sortBy: sort.field, sortOrder: sort.direction }),
     });
 
-    const response = await axiosInstance.get(`/api/users?${params.toString()}`);
-    return {
-      data: response.data.data,
-      page: response.data.meta.page,
-      limit: response.data.meta.limit,
-      total: response.data.meta.total,
-      totalPages: response.data.meta.totalPages,
-      currentPage: response.data.meta.currentPage,
-      hasNext: response.data.meta.hasNext,
-      hasPrevious: response.data.hasPrevious,
-    };
+    const response: PaginatedResponse<User> = await axiosInstance.get(
+      `/api/users?${params.toString()}`
+    );
+
+    return response;
   };
 
   // Mutation hooks for create, update, delete
   const { mutate: createUserMutation } = useMutation({
     mutationFn: createUser,
     onSuccess: () => {
-      // Optionally refetch or invalidate queries
+      toast({
+        title: "User Created",
+        description: `User created successfully at ${new Date().toLocaleTimeString()}`,
+      });
+      query.refetch(); // Refetch users after creation
     },
   });
   const { mutate: updateUserMutation } = useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
+      toast({
+        title: "User Updated",
+        description: `User updated successfully at ${new Date().toLocaleTimeString()}`,
+      });
+      query.refetch(); // Refetch users after update
       // Optionally refetch or invalidate queries
     },
   });
@@ -116,6 +125,11 @@ export const useUsers = ({
   const { mutate: deleteUserMutation } = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
+      toast({
+        title: "User Deleted",
+        description: `User deleted successfully at ${new Date().toLocaleTimeString()}`,
+      });
+      query.refetch(); // Refetch users after deletion
       // Optionally refetch or invalidate queries
     },
   });
@@ -126,6 +140,7 @@ export const useUsers = ({
     enabled,
     staleTime,
     gcTime,
+    refetchOnWindowFocus: false, // Refetch when window is focused
     placeholderData: keepPreviousData, // Keeps previous data while fetching new data
   });
 
@@ -233,6 +248,23 @@ export const useUsers = ({
   const totalPages = query.data?.totalPages ?? 0;
   const totalItems = query.data?.total ?? 0;
 
+  // Enhanced pagination info using global type
+  const paginationInfo: PaginationInfo = useMemo(
+    () => ({
+      page,
+      pageSize,
+      totalPages: query.data?.totalPages ?? 0,
+      totalItems: query.data?.total ?? 0,
+      hasNextPage: query.data?.hasNext ?? false,
+      hasPreviousPage: page > 1,
+      from: (page - 1) * pageSize + 1,
+      to: Math.min(page * pageSize, query.data?.total ?? 0),
+      isFirstPage: page === 1,
+      isLastPage: page === (query.data?.totalPages ?? 1),
+    }),
+    [page, pageSize, query.data]
+  );
+
   return {
     // Query state
     ...query,
@@ -273,17 +305,8 @@ export const useUsers = ({
     totalPages,
     totalItems,
 
-    // Pagination info
-    paginationInfo: {
-      page,
-      pageSize,
-      totalPages,
-      totalItems,
-      hasNextPage: canGoNext,
-      hasPreviousPage: canGoPrevious,
-      from: (page - 1) * pageSize + 1,
-      to: Math.min(page * pageSize, totalItems),
-    },
+    // Enhanced pagination info
+    paginationInfo,
 
     // Mutation functions
     createUser: createUserMutation,
@@ -291,3 +314,6 @@ export const useUsers = ({
     deleteUser: deleteUserMutation,
   };
 };
+
+// Export the extended types
+export type { CreateUserData, UpdateUserData };

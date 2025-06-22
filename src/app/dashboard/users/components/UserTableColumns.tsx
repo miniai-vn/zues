@@ -129,11 +129,6 @@ export const useUserTableColumns = ({
             children={
               <CreateOrUpdateUserDialog
                 children={<span>{t("dashboard.users.edit")}</span>}
-                onChange={(data) => {
-                  if ("id" in data) {
-                    onUpdateUser(data as any);
-                  }
-                }}
                 user={row.original}
               />
             }
