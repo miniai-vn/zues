@@ -1,6 +1,7 @@
 import axiosInstance from "@/configs";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { useState, useMemo, useCallback } from "react";
+import { User } from "./data/useAuth";
 
 interface PaginatedQueryParams {
   page: number;
@@ -20,9 +21,7 @@ interface PaginatedResponse<T> {
   hasPrevious: boolean;
 }
 
-interface UsePaginatedQueryProps<T> {
-  queryKey: string;
-  queryFn: (params: PaginatedQueryParams) => Promise<PaginatedResponse<T>>;
+interface UsePaginatedQueryProps {
   initialPage?: number;
   initialPageSize?: number;
   initialFilters?: Record<string, any>;
@@ -32,10 +31,7 @@ interface UsePaginatedQueryProps<T> {
   gcTime?: number;
 }
 
-// Custom hook for managing paginated and filtered data with TanStack Query
-export const usePaginatedQuery = <T>({
-  queryKey,
-  queryFn,
+export const useUsers = ({
   initialPage = 1,
   initialPageSize = 10,
   initialFilters = {},
@@ -43,7 +39,7 @@ export const usePaginatedQuery = <T>({
   enabled = true,
   staleTime = 5 * 60 * 1000, // 5 minutes
   gcTime = 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
-}: UsePaginatedQueryProps<T>) => {
+}: UsePaginatedQueryProps) => {
   // State management
   const [page, setPage] = useState<number>(initialPage);
   const [pageSize, setPageSize] = useState<number>(initialPageSize);
@@ -64,10 +60,69 @@ export const usePaginatedQuery = <T>({
     [page, pageSize, filters, sort]
   );
 
+  const createUser = async (data: User) => {
+    const response = await axiosInstance.post("/api/users", data);
+    return response.data;
+  };
+  const updateUser = async ({ id, data }: { id: string; data: User }) => {
+    const response = await axiosInstance.put(`/api/users/${id}`, data);
+    return response.data;
+  };
+  const deleteUser = async (id: string) => {
+    const response = await axiosInstance.delete(`/api/users/${id}`);
+    return response.data;
+  };
+
+  const fetchUsers = async ({
+    page,
+    pageSize,
+    filters,
+    sort,
+  }: PaginatedQueryParams): Promise<PaginatedResponse<any>> => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: pageSize.toString(),
+      ...filters,
+      ...(sort && { sortBy: sort.field, sortOrder: sort.direction }),
+    });
+
+    const response = await axiosInstance.get(`/api/users?${params.toString()}`);
+    return {
+      data: response.data.data,
+      page: response.data.meta.page,
+      limit: response.data.meta.limit,
+      total: response.data.meta.total,
+      totalPages: response.data.meta.totalPages,
+      currentPage: response.data.meta.currentPage,
+      hasNext: response.data.meta.hasNext,
+      hasPrevious: response.data.hasPrevious,
+    };
+  };
+
+  // Mutation hooks for create, update, delete
+  const { mutate: createUserMutation } = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      // Optionally refetch or invalidate queries
+    },
+  });
+  const { mutate: updateUserMutation } = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      // Optionally refetch or invalidate queries
+    },
+  });
+
+  const { mutate: deleteUserMutation } = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      // Optionally refetch or invalidate queries
+    },
+  });
   // TanStack Query
   const query = useQuery({
-    queryKey: [queryKey, queryParams],
-    queryFn: () => queryFn(queryParams),
+    queryKey: ["users", queryParams],
+    queryFn: () => fetchUsers(queryParams),
     enabled,
     staleTime,
     gcTime,
@@ -229,44 +284,10 @@ export const usePaginatedQuery = <T>({
       from: (page - 1) * pageSize + 1,
       to: Math.min(page * pageSize, totalItems),
     },
+
+    // Mutation functions
+    createUser: createUserMutation,
+    updateUser: updateUserMutation,
+    deleteUser: deleteUserMutation,
   };
-};
-
-// Example usage with a mock API function
-export const useUsersQuery = (
-  options: Partial<UsePaginatedQueryProps<any>> = {}
-) => {
-  const fetchUsers = async ({
-    page,
-    pageSize,
-    filters,
-    sort,
-  }: PaginatedQueryParams): Promise<PaginatedResponse<any>> => {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: pageSize.toString(),
-      ...filters,
-      ...(sort && { sortBy: sort.field, sortOrder: sort.direction }),
-    });
-
-    const response = await axiosInstance.get(`/api/users?${params.toString()}`);
-    return {
-      data: response.data.data,
-      page: response.data.meta.page,
-      limit: response.data.meta.limit,
-      total: response.data.meta.total,
-      totalPages: response.data.meta.totalPages,
-      currentPage: response.data.meta.currentPage,
-      hasNext: response.data.meta.hasNext,
-      hasPrevious: response.data.hasPrevious,
-    };
-  };
-
-  return usePaginatedQuery({
-    queryKey: "users",
-    queryFn: fetchUsers,
-    initialFilters: { status: "active" },
-    initialSort: { field: "createdAt", direction: "desc" },
-    ...options,
-  });
 };

@@ -173,8 +173,8 @@ export function DataTable<TData, TValue>({
   const ACTION_COLUMN_IDS = ["actions", "delete", "update"];
 
   return (
-    <div className="rounded-md border">
-      <div className="relative min-h-[24rem]">
+    <div className="rounded-md border flex flex-col h-full">
+      <div className="relative flex-1 min-h-0 overflow-auto">
         {isLoading && (
           <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
             <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
@@ -182,7 +182,7 @@ export function DataTable<TData, TValue>({
         )}
 
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 bg-background z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -212,7 +212,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="min-h-[24rem]">
+          <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -237,6 +237,7 @@ export function DataTable<TData, TValue>({
                     <TableCell
                       key={cell.id}
                       data-column-id={cell.column.id}
+                      className="whitespace-nowrap"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -247,12 +248,14 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))
             ) : (
-              <TableRow className="h-[24rem]">
+              <TableRow>
                 <TableCell
-                  colSpan={columns.length + 1}
-                  className="text-center w-full"
+                  colSpan={columns.length}
+                  className="text-center h-32"
                 >
-                  {isLoading ? "" : noResultsMessage || t("noResults", "No results.")}
+                  {isLoading
+                    ? ""
+                    : noResultsMessage || t("noResults", "No results.")}
                 </TableCell>
               </TableRow>
             )}
@@ -260,7 +263,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       {hasServerPagination && (
-        <div className="flex items-center justify-between px-4 py-4">
+        <div className="flex items-center justify-between px-4 py-4 border-t flex-shrink-0">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Select
@@ -278,7 +281,9 @@ export function DataTable<TData, TValue>({
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              <span className="text-xs">{t("rowsPerPage", "Rows per page")}</span>
+              <span className="text-xs">
+                {t("rowsPerPage", "Rows per page")}
+              </span>
             </div>
           </div>
           <div>

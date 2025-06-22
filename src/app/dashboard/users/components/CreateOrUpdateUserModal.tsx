@@ -84,7 +84,7 @@ interface AddUserProps {
   children?: React.ReactNode;
 }
 
-export function AddOrUpdateUserModal({
+export function CreateOrUpdateUserDialog({
   user,
   children,
   onChange,
@@ -93,7 +93,6 @@ export function AddOrUpdateUserModal({
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
-
   // Sử dụng schema động với translation
   const form = useForm<z.infer<ReturnType<typeof getFormSchema>>>({
     resolver: zodResolver(getFormSchema(user, t)),
@@ -321,7 +320,7 @@ export function AddOrUpdateUserModal({
                     </FormItem>
                   )}
                 />
-              </div>{" "}
+              </div>
               <div className="w-full flex justify-end">
                 <Button type="submit">
                   {user ? t("common.edit") : t("dashboard.users.add")}
