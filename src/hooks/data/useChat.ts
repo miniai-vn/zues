@@ -1,5 +1,5 @@
 "use client";
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -32,9 +32,9 @@ const useChat = ({ id }: { id?: string }) => {
     queryKey: ["load_messages", id],
     queryFn: async () => {
       try {
-        const response = await chatApiInstance.get(`/api/conversations/${id}`);
+        const response = await axiosInstance.get(`/api/conversations/${id}`);
         // console.log(response.data);
-        return (response.data.messages as Message[]) ?? ([] as Message[]);
+        return [];
       } catch (error) {
         router.push("/dashboard/chat");
         throw new Error("Failed to fetch messages");
@@ -57,7 +57,7 @@ const useChat = ({ id }: { id?: string }) => {
       conversation_id: number;
       department_id: string[];
     }) => {
-      const response = await chatApiInstance.post("/api/chat", {
+      const response = await axiosInstance.post("/api/chat", {
         content,
         conversation_id,
         department_id,
@@ -96,8 +96,8 @@ const useChat = ({ id }: { id?: string }) => {
   } = useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
-      const res = await chatApiInstance.get(`/api/conversations`);
-      return (res.data as Conversation[]) || [];
+      const res = await axiosInstance.get(`/api/conversations`);
+      return [];
     },
     enabled: !id,
   });
@@ -105,7 +105,7 @@ const useChat = ({ id }: { id?: string }) => {
   const { data: conversation } = useQuery({
     queryKey: ["conversation", id],
     queryFn: async () => {
-      const res = await chatApiInstance.get(`/api/conversations/${id}`);
+      const res = await axiosInstance.get(`/api/conversations/${id}`);
       return res.data || [];
     },
     enabled: !!id,
@@ -113,7 +113,7 @@ const useChat = ({ id }: { id?: string }) => {
 
   const { mutateAsync: createConversation } = useMutation({
     mutationFn: async (data: Conversation) => {
-      const res = await chatApiInstance.post(`/api/conversations`, data);
+      const res = await axiosInstance.post(`/api/conversations`, data);
       return res.data;
     },
     onSuccess: (data: Conversation) => {
@@ -124,7 +124,7 @@ const useChat = ({ id }: { id?: string }) => {
 
   const { mutate: deleteConversation } = useMutation({
     mutationFn: async (id: string) => {
-      const res = await chatApiInstance.delete(`/api/conversations/${id}`);
+      const res = await axiosInstance.delete(`/api/conversations/${id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -146,7 +146,7 @@ const useChat = ({ id }: { id?: string }) => {
 
   const { mutate: renameConversation } = useMutation({
     mutationFn: async ({ id, name }: { id: string; name: string }) => {
-      const res = await chatApiInstance.patch(`/api/conversations/rename/${id}`, {
+      const res = await axiosInstance.patch(`/api/conversations/rename/${id}`, {
         name,
       });
       return res.data;

@@ -10,21 +10,72 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { PageHeader } from "./page-header";
+import { useTranslations } from "@/hooks/useTranslations";
+import { useEffect, useState } from "react";
 
 interface DashboardHeaderProps {
   title?: string;
 }
 
-const DashboardHeader = ({ title = "Dashboard" }: DashboardHeaderProps) => {
-  return (
-    <header className=" bg-background px-4 py-2">
-      <div className="flex items-center justify-between">
-        {/* Left side - Title */}
-        <div className="flex items-center">
-          <h1 className="text-xl font-semibold text-foreground">{title}</h1>
-        </div>
+const DashboardHeader = ({ title = "" }: DashboardHeaderProps) => {
+  const { t } = useTranslations();
+  const [breadcrumbs, setBreadcrumbs] = useState<
+    {
+      label: string;
+      href?: string;
+      isCurrentPage?: boolean;
+    }[]
+  >([]);
+  useEffect(() => {
+    if (title === "employees") {
+      setBreadcrumbs([
+        {
+          label: t("dashboard.users.breadcrumbs.management"),
+          href: "/dashboard/users",
+        },
+        {
+          label: t("dashboard.users.breadcrumbs.userManagement"),
+          isCurrentPage: true,
+        },
+      ]);
+    }
+    if (title.toLowerCase() === "permissions") {
+      setBreadcrumbs([
+        {
+          label: t("dashboard.roles.breadcrumbs.management"),
+          href: "/dashboard/roles",
+        },
+        {
+          label: t("dashboard.roles.breadcrumbs.roleManagement"),
+          isCurrentPage: true,
+        },
+      ]);
+    }
 
-        {/* Right side - Actions and Profile */}
+    if (title.toLowerCase() === "roles") {
+      setBreadcrumbs([
+        {
+          label: t("dashboard.roles.breadcrumbs.management"),
+          href: "/dashboard/roles",
+        },
+        {
+          label: t("dashboard.roles.breadcrumbs.roleManagement"),
+          isCurrentPage: true,
+        },
+      ]);
+    }
+  }, [title]);
+  return (
+    <header className="sticky border-b mb-2 top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">
+      <div className="flex items-center justify-between">
+        <div>
+          <PageHeader
+            // title="Quản lý nhân viên"
+            backButtonHref="/dashboard"
+            breadcrumbs={breadcrumbs.length > 0 ? breadcrumbs : []}
+          />
+        </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Button variant="ghost" size="sm">

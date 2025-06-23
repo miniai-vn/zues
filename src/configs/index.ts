@@ -1,9 +1,9 @@
 import axios from "axios";
 import { toast } from "sonner";
-
 // Instance cho API chính
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -24,8 +24,9 @@ export const chatApiInstance = axios.create({
 // Interceptor cho cả 2 instance (nếu cần giống nhau)
 const attachInterceptors = (instance: typeof axiosInstance) => {
   instance.interceptors.request.use(
-    (config) => {
+    async (config) => {
       const token = localStorage.getItem("token");
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -35,7 +36,10 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
   );
 
   instance.interceptors.response.use(
-    (response) => response.data,
+    (response) => {
+      const { data } = response;
+      return data;
+    },
     (error) => {
       if (error.response) {
         const { status } = error.response;
@@ -45,14 +49,14 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
           return;
         }
         if (status === 401) {
-          localStorage.removeItem("token");
-          toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 1200);
+          // localStorage.removeItem("token");
+          // toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+          // setTimeout(() => {
+          //   window.location.href = "/login";
+          // }, 1200);
         } else if (status === 404) {
           toast.error("Không tìm thấy tài nguyên!");
-          window.history.back();
+          // window.history.back();
         } else if (status >= 500) {
           toast.error("Lỗi máy chủ. Vui lòng thử lại sau!");
         }
@@ -67,6 +71,6 @@ const attachInterceptors = (instance: typeof axiosInstance) => {
 };
 
 attachInterceptors(axiosInstance);
-attachInterceptors(chatApiInstance);
+attachInterceptors(axiosInstance);
 
 export default axiosInstance;

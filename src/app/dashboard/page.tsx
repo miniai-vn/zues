@@ -1,6 +1,5 @@
-"use client"
-import { useSocket } from "@/hooks/useSocket";
+"use client";
 
 export default function Page() {
-  const { isConnected } = useSocket();
+  return <></>;
 }

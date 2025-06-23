@@ -1,4 +1,4 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 const useShopSettings = () => {

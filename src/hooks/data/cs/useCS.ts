@@ -7,9 +7,9 @@ import { useCallback, useEffect } from "react";
 import { DateRange } from "react-day-picker";
 import { useToast } from "../../use-toast";
 import { User } from "../useAuth";
+import { Channel } from "../useChannels";
 import { useCsStore } from "./useCsStore";
 import { Tag } from "./useTags";
-import { Channel } from "../useChannels";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -131,14 +131,12 @@ const useCS = ({
     conversationFilters,
     setConversationFilters,
     resetConversationFilters,
-    messages,
     setMessages,
     setLoadingMessages,
     isLoadingMessages,
     channelsUnreadCount,
     setChannelsUnreadCount,
     addMessage,
-    markConversationAsRead,
     setSelectedConversationId,
     selectedConversationId,
     getMessagesByConversationId,
@@ -206,32 +204,27 @@ const useCS = ({
   }, [conversationFilters]);
 
   // Get conversations with filters
-  const {
-    data: conversationsData,
-    isFetching: isFetchingConversations,
-    refetch: refetchConversations,
-    error: queryError,
-  } = useQuery({
-    queryKey: ["conversation-query", conversationFilters],
-    queryFn: async () => {
-      setLoadingConversations(true);
-      try {
-        console.log(apiFilters());
-        const response = await axiosInstance.get("/api/conversations", {
-          params: apiFilters(),
-        });
-        const data = (response?.data || []) as Conversation[];
-        setConversations(data);
-        return data;
-      } catch (error) {
-        throw new Error("Failed to fetch conversations");
-      } finally {
-        setLoadingConversations(false);
-      }
-    },
-    refetchOnWindowFocus: false,
-    enabled: !id,
-  });
+  const { isFetching: isFetchingConversations, refetch: refetchConversations } =
+    useQuery({
+      queryKey: ["conversation-query", conversationFilters],
+      queryFn: async () => {
+        setLoadingConversations(true);
+        try {
+          const response = await axiosInstance.get("/api/conversations", {
+            params: apiFilters(),
+          });
+          const data = (response?.data || []) as Conversation[];
+          setConversations(data);
+          return data;
+        } catch (error) {
+          throw new Error("Failed to fetch conversations");
+        } finally {
+          setLoadingConversations(false);
+        }
+      },
+      refetchOnWindowFocus: false,
+      enabled: !id,
+    });
 
   // Get messages for a specific conversation
   const {
@@ -265,10 +258,7 @@ const useCS = ({
   });
 
   // Get channels with unread messages
-  const {
-    data: channelsWithUnreadMessage,
-    refetch: refetchChannelsWithUnreadMessages,
-  } = useQuery({
+  const { refetch: refetchChannelsWithUnreadMessages } = useQuery({
     queryKey: ["channels", "unread"],
     queryFn: async () => {
       const res = await axiosInstance.get(`/api/channels/unread-count`);
@@ -283,142 +273,6 @@ const useCS = ({
     retry: false,
   });
 
-  // Create new conversation
-  const {
-    mutate: createConversation,
-    isPending: isCreatingConversation,
-    error: createConversationError,
-  } = useMutation({
-    mutationFn: async (data: CreateConversationDto) => {
-      const response = await axiosInstance.post<ApiResponse<Conversation>>(
-        "/api/conversations",
-        data
-      );
-      return response.data.data;
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Tạo cuộc trò chuyện thành công",
-        description: `Cuộc trò chuyện "${data.name}" đã được tạo`,
-        duration: 3000,
-      });
-    },
-    onError: (error) => {
-      console.error("Error creating conversation:", error);
-      toast({
-        title: "Tạo cuộc trò chuyện thất bại",
-        description: "Không thể tạo cuộc trò chuyện mới",
-        variant: "destructive",
-        duration: 3000,
-      });
-    },
-  });
-
-  // Update conversation
-  const {
-    mutate: updateConversation,
-    isPending: isUpdatingConversation,
-    error: updateConversationError,
-  } = useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: number;
-      data: UpdateConversationDto;
-    }) => {
-      const response = await axiosInstance.put<ApiResponse<Conversation>>(
-        `/api/conversations/${id}`,
-        data
-      );
-      return response.data.data;
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Cập nhật thành công",
-        description: `Cuộc trò chuyện "${data.name}" đã được cập nhật`,
-        duration: 3000,
-      });
-    },
-    onError: (error) => {
-      console.error("Error updating conversation:", error);
-      toast({
-        title: "Cập nhật thất bại",
-        description: "Không thể cập nhật cuộc trò chuyện",
-        variant: "destructive",
-        duration: 3000,
-      });
-    },
-  });
-
-  // Delete conversation
-  const {
-    mutate: deleteConversation,
-    isPending: isDeletingConversation,
-    error: deleteConversationError,
-  } = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await axiosInstance.delete<ApiResponse<{ id: number }>>(
-        `/api/conversations/${id}`
-      );
-      return response.data.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Xóa cuộc trò chuyện thành công",
-        description: "Cuộc trò chuyện đã được xóa",
-        duration: 3000,
-      });
-      router.push("/chat");
-    },
-    onError: (error) => {
-      console.error("Error deleting conversation:", error);
-      toast({
-        title: "Xóa cuộc trò chuyện thất bại",
-        description: "Không thể xóa cuộc trò chuyện",
-        variant: "destructive",
-        duration: 3000,
-      });
-    },
-  });
-
-  // Add participants to conversation
-  const {
-    mutate: addParticipants,
-    isPending: isAddingParticipants,
-    error: addParticipantsError,
-  } = useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: number;
-      data: AddParticipantsDto;
-    }) => {
-      const response = await axiosInstance.post<ApiResponse<Conversation>>(
-        `/api/conversations/${id}/participants`,
-        data
-      );
-      return response.data.data;
-    },
-    onSuccess: () => {
-      toast({
-        title: "Thêm thành viên thành công",
-        description: "Đã thêm thành viên vào cuộc trò chuyện",
-        duration: 3000,
-      });
-    },
-    onError: (error) => {
-      console.error("Error adding participants:", error);
-      toast({
-        title: "Thêm thành viên thất bại",
-        description: "Không thể thêm thành viên vào cuộc trò chuyện",
-        variant: "destructive",
-        duration: 3000,
-      });
-    },
-  });
-
   const { mutateAsync: markReadConversation } = useMutation({
     mutationFn: async (id: number) => {
       const response = await axiosInstance.put<ApiResponse<Conversation>>(
@@ -427,7 +281,6 @@ const useCS = ({
       return response.data;
     },
     onSuccess: (_, conversationId) => {
-      // markConversationAsRead(conversationId);
       refetchMessages();
       refetchChannelsWithUnreadMessages();
       refetchConversations();

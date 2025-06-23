@@ -32,7 +32,6 @@ const ParticipantManagementSheet = ({
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   const handleAddParticipants = (selectedUserIds: string[]) => {
-    debugger;
     addParticipants({
       conversationId: conversationId,
       participantIds: selectedUserIds,

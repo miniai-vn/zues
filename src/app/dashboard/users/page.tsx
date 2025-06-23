@@ -1,225 +1,169 @@
 "use client";
-import { PageHeader } from "@/components/dashboard/common/page-header";
-import ActionDropdown from "@/components/dashboard/dropdown";
 import { DataTable } from "@/components/dashboard/tables/data-table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import ProtectedRoute, { Role } from "@/configs/protect-route";
-import { useAuth, User } from "@/hooks/data/useAuth";
-import { RoleVietnameseNames } from "@/hooks/data/useRoles";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useTranslations } from "@/hooks/useTranslations";
-import { ColumnDef } from "@tanstack/react-table";
-import { Phone, Search, Shield, User as UserIcon } from "lucide-react";
+import { useUsers } from "@/hooks/useUser";
+import { Plus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AddOrUpdateUserModal } from "./components/CreateOrUpdateUserModal";
+import { CreateOrUpdateUserDialog } from "./components/CreateOrUpdateUserModal";
+import { UserFilters } from "./components/UserFilters";
+import { UserLoadingSkeleton } from "./components/UserLoadingSkeleton";
+import { useUserTableColumns } from "./components/UserTableColumns";
+import { Button } from "@/components/ui/button";
 
 const UserManager = () => {
   const { t } = useTranslations();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
-  useDebouncedValue(search, 2000);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+
+  const [columnVisibility, setColumnVisibility] = useState({
+    index: true,
+    name: true,
+    username: true,
+    phone: true,
+    roles: true,
+    departments: true,
+    actions: true,
+  });
+
+  const debouncedSearch = useDebouncedValue(search, 500);
+
+  const {
+    data: users,
+    isLoading: isFetchingUserHasPagination,
+    refetch,
+    goToPage,
+    updatePageSize,
+    updateFilter,
+    clearFilter,
+    paginationInfo,
+    createUser,
+    updateUser,
+    deleteUser,
+  } = useUsers({
+    initialPage: 1,
+    initialPageSize: 10,
+    initialFilters: {
+      status: "active",
+    },
+  });
+  useEffect(() => {
+    if (debouncedSearch) {
+      updateFilter("search", debouncedSearch);
+    } else {
+      clearFilter("search");
+    }
+  }, [debouncedSearch, updateFilter, clearFilter]);
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    if (status && status !== "all") {
+      updateFilter("status", status);
+    } else {
+      clearFilter("status");
+    }
+  };
+
+  const handleRoleFilter = (role: string) => {
+    setRoleFilter(role);
+    if (role && role !== "all") {
+      updateFilter("role", role);
+    } else {
+      clearFilter("role");
+    }
+  };
 
   const handlePaginationChange = (newPage: number) => {
-    setPage(newPage);
+    goToPage(newPage);
   };
 
   const handlePageSizeChange = (newSize: number) => {
-    setPageSize(newSize);
-    setPage(1);
+    updatePageSize(newSize);
   };
-  const {
-    deleteUser,
-    createUser,
-    updateUser,
-    userHasPagination: users,
-    refetch,
-    isFetchingUserHasPagination,
-    isPendingUpdateUser,
-    isPendingDeleteUser,
-    isPendingCreateUser,
-  } = useAuth({ page, limit: pageSize, search });
 
-  useEffect(() => {
-    if (users) {
-      setPage(users.page || 1);
-      setPageSize(users.limit || 10);
-    }
-  }, [users]);
-  const columns: ColumnDef<User>[] = [
-    {
-      id: "index",
-      header: "#",
-      cell: ({ row }) => <div className="text-center">{row.index + 1}</div>,
-      size: 40,
-    },
-    {
-      accessorKey: "name",
-      header: t("dashboard.users.name"),
-      cell: ({ row }) => (
-        <div className="flex  gap-2">
-          <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-            <UserIcon className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <span>{row.original.name ?? t("dashboard.users.empty")}</span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "username",
-      header: t("dashboard.users.username"),
-      cell: ({ row }) => (
-        <div className="w-full">
-          <p className="break-all line-clamp-2">{row.original.username}</p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "phone",
-      header: t("dashboard.users.phone"),
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Phone className="h-4 w-4 text-muted-foreground" />
-          <span className="text-muted-foreground">
-            {row.original.phone ?? t("dashboard.users.notHave")}
-          </span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "roles",
-      header: t("dashboard.users.roles"),
-      cell: ({ row }) => {
-        const roles = row.original.roles;
-        if (!roles || roles.length === 0) {
-          return <div className="w-full"></div>;
-        }
-        return (
-          <div className="flex flex-wrap gap-1 max-w-xs w-full">
-            <Badge variant="secondary" className="whitespace-nowrap">
-              <Shield className="h-3 w-3 mr-1" />
-              {roles
-                .map((role) => RoleVietnameseNames[role.name] || role.name)
-                .join(", ")}
-            </Badge>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "departments",
-      header: t("dashboard.users.departments"),
-      cell: ({ row }) => {
-        const departments = row.original.departments;
-        if (!departments || departments.length === 0) {
-          return <div className="w-full"></div>;
-        }
-        return (
-          <div className="flex flex-wrap gap-1 max-w-xs w-full">
-            {departments.map((dept) => (
-              <Badge
-                key={dept.id}
-                variant={"default"}
-                className="whitespace-nowrap"
-              >
-                {dept.name}
-              </Badge>
-            ))}
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      header: t("dashboard.users.actions"),
-      cell: ({ row }) => {
-        return (
-          <ActionDropdown
-            className="w-40 p-2"
-            children={
-              <AddOrUpdateUserModal
-                children={<span>{t("dashboard.users.edit")}</span>}
-                onChange={(data) => {
-                  if ("id" in data) {
-                    updateUser(data as any);
-                  }
-                }}
-                user={row.original}
-              />
-            }
-            onDelete={() => {
-              deleteUser(row.original.id);
-            }}
-          ></ActionDropdown>
-        );
-      },
-    },
-  ];
+  const columns = useUserTableColumns({
+    onUpdateUser: updateUser,
+    onDeleteUser: deleteUser,
+  });
+
+  if (isFetchingUserHasPagination) {
+    return <UserLoadingSkeleton />;
+  }
+
+  const visibleColumns = columns.filter((column) => {
+    const columnId = column.id || (column as any).accessorKey;
+    return columnVisibility[columnId as keyof typeof columnVisibility];
+  });
 
   return (
-    <ProtectedRoute requiredRole={[Role.Admin]}>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        {" "}
-        <PageHeader
-          backButtonHref="/dashboard"
-          title=""
-          breadcrumbs={[
-            {
-              label: t("dashboard.users.breadcrumbs.management"),
-              href: "/dashboard/users",
-            },
-            {
-              label: t("dashboard.users.breadcrumbs.userManagement"),
-              isCurrentPage: true,
-            },
-          ]}
-        />
-        <div className="flex justify-between items-center">
-          <Input
-            placeholder={t("dashboard.users.searchPlaceholder")}
-            className="mr-4 w-full flex-1"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => refetch()}
-              className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
-            >
-              <Search />
-              {t("dashboard.users.search")}
-            </Button>
-            <AddOrUpdateUserModal
-              onChange={(data) => {
-                if ("username" in data && "password" in data) {
-                  createUser(data);
+    <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
+      <Card className="flex flex-col flex-1 overflow-hidden">
+        <CardHeader className="px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                {t("dashboard.users.userManagement")}
+              </CardTitle>
+              <CardDescription>
+                {t("dashboard.users.userManagementDescription")}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <CreateOrUpdateUserDialog
+                children={
+                  <Button size="sm" className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    {t("dashboard.users.addUser")}
+                  </Button>
                 }
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
+          <div className="flex-shrink-0">
+            <UserFilters
+              search={search}
+              setSearch={setSearch}
+              statusFilter={statusFilter}
+              handleStatusFilter={handleStatusFilter}
+              roleFilter={roleFilter}
+              handleRoleFilter={handleRoleFilter}
+              onRefetch={refetch}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+              onCreateUser={createUser}
+            />
+            <Separator className="mt-4" />
+          </div>
+          {/* Data Table */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <DataTable
+              columns={visibleColumns}
+              data={users?.data || []}
+              pagination={{
+                page: paginationInfo.page,
+                limit: paginationInfo.pageSize,
+                total: paginationInfo.totalItems,
               }}
+              onPaginationChange={handlePaginationChange}
+              onPageSizeChange={handlePageSizeChange}
+              isLoading={isFetchingUserHasPagination}
             />
           </div>
-        </div>
-        <DataTable
-          columns={columns}
-          data={users?.items || []}
-          pagination={{
-            page: page,
-            limit: pageSize,
-            total: users?.totalCount || 0,
-          }}
-          onPaginationChange={handlePaginationChange}
-          onPageSizeChange={handlePageSizeChange}
-          isLoading={
-            isFetchingUserHasPagination ||
-            isPendingUpdateUser ||
-            isPendingDeleteUser ||
-            isPendingCreateUser
-          }
-        />
-      </div>
-    </ProtectedRoute>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

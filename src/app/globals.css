@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @font-face {
-  font-family: 'Brockmann';
-  src: url('/brockmann-medium-webfont.ttf') format('truetype'),
-       url('/brockmann-medium.otf') format('opentype');
+  font-family: "Brockmann";
+  src: url("/brockmann-medium-webfont.ttf") format("truetype"),
+    url("/brockmann-medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -120,6 +120,13 @@
     background-size: cover;
     background-position: center;
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 
   .section-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12;
@@ -127,7 +134,7 @@
 
   .section-title {
     @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
   }
 
   .section-subtitle {
@@ -141,7 +148,7 @@
   .feature-card {
     @apply p-6 rounded-2xl transition-all duration-500 hover:-translate-y-1;
   }
-  
+
   .btn-primary {
     @apply bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95;
   }
@@ -149,7 +156,7 @@
   .btn-secondary {
     @apply bg-transparent border border-border hover:border-primary text-foreground hover:text-primary font-medium py-3 px-6 rounded-full transition-all duration-300;
   }
-  
+
   .nav-link {
     @apply relative text-foreground hover:text-primary py-2 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full;
   }
@@ -183,10 +190,18 @@
   }
 }
 
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
 
 .hover-lift {
   @apply transition-transform duration-300 hover:-translate-y-1;

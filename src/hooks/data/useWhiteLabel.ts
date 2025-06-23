@@ -1,4 +1,4 @@
-import { axiosInstance, chatApiInstance } from "@/configs";
+import { axiosInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 
@@ -56,7 +56,7 @@ const useWhiteLabel = () => {
   } = useQuery({
     queryKey: ["whiteLabel"],
     queryFn: async () => {
-      const res = await chatApiInstance.get("/api/whitelabel");
+      const res = await axiosInstance.get("/api/whitelabel");
       return res.data as WhiteLabel;
     },
     refetchOnWindowFocus: false,
@@ -65,7 +65,7 @@ const useWhiteLabel = () => {
   const { mutate: createWhiteLabel, isPending: isPendingCreateWhiteLabel } =
     useMutation({
       mutationFn: async (data: Partial<WhiteLabel>) => {
-        const res = await chatApiInstance.post("/api/whitelabel", data);
+        const res = await axiosInstance.post("/api/whitelabel", data);
         return res.data;
       },
       onSuccess: () => {
@@ -80,7 +80,7 @@ const useWhiteLabel = () => {
   const { mutate: updateWhiteLabel, isPending: isPendingUpdateWhiteLabel } =
     useMutation({
       mutationFn: async (data: Partial<WhiteLabel> & { id: string }) => {
-        const res = await chatApiInstance.put(
+        const res = await axiosInstance.put(
           `/api/whitelabel/${data.id}`,
           data
         );
@@ -98,7 +98,7 @@ const useWhiteLabel = () => {
   const { mutate: deleteWhiteLabel, isPending: isPendingDeleteWhiteLabel } =
     useMutation({
       mutationFn: async (_id: string) => {
-        await chatApiInstance.delete(`/api/whitelabel/${_id}`);
+        await axiosInstance.delete(`/api/whitelabel/${_id}`);
       },
       onSuccess: () => {
         refetchWhiteLabel();
