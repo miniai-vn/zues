@@ -29,7 +29,7 @@ export const ChatHeader = ({
 }: ChatHeaderProps) => {
   const { t } = useTranslations();
   return (
-    <div className="border-b p-4 flex items-center justify-between bg-background">
+    <div className="border-b p-4 flex items-center justify-between bg-background sticky top-0 z-10">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src={conversationAvatar} />

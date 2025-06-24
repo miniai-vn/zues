@@ -36,7 +36,7 @@ export const MessageList = ({
   }
 
   return (
-    <div className="p-4 space-y-4 h-[80vh] overflow-y-auto">
+    <div className="p-4 space-y-4 h-[72vh] overflow-y-auto">
       {messages.map((message, index) => {
         const isOwnMessage = message.senderId === currentUserId;
 

@@ -174,9 +174,9 @@ export const PlatformList = ({
   const visiblePlatforms = getVisiblePlatforms();
 
   return (
-    <div className="w-16 border-r bg-gray-50/50">
+    <div className="w-16 border-r h-full bg-gray-50/50  ">
       <div className="p-2 border-b">
-        <div className="space-y-2">
+        <div className="space-y-2 h-[72vh] overflow-y-auto flex-shrink-0">
           {visiblePlatforms.map((platform: Platform) => {
             const isSelected = selectedChannel === platform.id;
             const unreadCount = getUnreadCount(platform.id);
@@ -185,7 +185,7 @@ export const PlatformList = ({
               <div
                 key={platform.id}
                 className={cn(
-                  "relative flex items-center justify-center p-1 rounded-lg cursor-pointer transition-all duration-200 border",
+                  "relative flex items-center justify-center p-1 rounded-lg cursor-pointer  border",
                   isSelected
                     ? `${platform.bgColor} ${platform.borderColor} shadow-sm`
                     : "hover:bg-white border-transparent hover:border-gray-200"

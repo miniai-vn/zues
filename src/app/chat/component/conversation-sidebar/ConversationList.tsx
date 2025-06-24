@@ -32,7 +32,7 @@ export const ConversationList = ({
   const emptyState = getEmptyStateMessage();
 
   return (
-    <div className="flex-1 w-full overflow-y-auto">
+    <div className=" w-full overflow-y-auto h-[68vh]">
       <div className="space-y-1 p-2">
         {conversations?.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground w-full">
