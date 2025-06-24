@@ -56,7 +56,7 @@ const RolesPage = () => {
       status: "active",
     },
   });
-
+  console.log("Roles data:", roles);
   useEffect(() => {
     if (debouncedSearch) {
       updateFilter("search", debouncedSearch);
@@ -97,78 +97,78 @@ const RolesPage = () => {
   });
 
   return (
-    <ProtectedRoute requiredRole={[Role.Admin]}>
-      <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
-        <Card className="flex flex-col flex-1 overflow-hidden">
-          <CardHeader className="px-6 py-4 flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  {t("dashboard.roles.roleManagement")}
-                </CardTitle>
-                <CardDescription>
-                  {t("dashboard.roles.roleManagementDescription")}
-                </CardDescription>
-              </div>
-              <div className="flex items-center gap-2">
-                <CreateOrUpdateRoleDialog
-                  onChange={(data) => {
-                    createRole({
-                      ...data,
-                      permissions: (data as any).permissions || {},
-                    } as any);
-                  }}
-                  children={
-                    <Button size="sm" className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" />
-                      {t("dashboard.roles.addRole")}
-                    </Button>
-                  }
-                />
-              </div>
+    // <ProtectedRoute requiredRole={[Role.Admin]}>
+    <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
+      <Card className="flex flex-col flex-1 overflow-hidden">
+        <CardHeader className="px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                {t("dashboard.roles.roleManagement")}
+              </CardTitle>
+              <CardDescription>
+                {t("dashboard.roles.roleManagementDescription")}
+              </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
-            <div className="flex-shrink-0">
-              <RoleFilters
-                search={search}
-                setSearch={setSearch}
-                statusFilter={statusFilter}
-                handleStatusFilter={handleStatusFilter}
-                onRefetch={refetch}
-                columnVisibility={columnVisibility}
-                setColumnVisibility={setColumnVisibility}
-                onCreateRole={createRole}
-              />
-              <Separator className="mt-4" />
-            </div>
-            {/* Data Table */}
-            <div className="flex-1 min-h-0 overflow-hidden">
-              <DataTable
-                columns={visibleColumns}
-                data={roles.map((role: any) => ({
-                  id: role.id,
-                  name: role.name,
-                  description: role.description,
-                  permissions: role.permissions || {},
-                  created_at: role.created_at ?? role.createdAt ?? "",
-                  updated_at: role.updated_at ?? role.updatedAt ?? "",
-                }))}
-                pagination={{
-                  page: paginationInfo.page,
-                  limit: paginationInfo.pageSize,
-                  total: paginationInfo.totalItems,
+            <div className="flex items-center gap-2">
+              <CreateOrUpdateRoleDialog
+                onChange={(data) => {
+                  createRole({
+                    ...data,
+                    permissions: (data as any).permissions || {},
+                  } as any);
                 }}
-                onPaginationChange={handlePaginationChange}
-                onPageSizeChange={handlePageSizeChange}
-                isLoading={isFetchingRoles}
+                children={
+                  <Button size="sm" className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    {t("dashboard.roles.addRole")}
+                  </Button>
+                }
               />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </ProtectedRoute>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
+          <div className="flex-shrink-0">
+            <RoleFilters
+              search={search}
+              setSearch={setSearch}
+              statusFilter={statusFilter}
+              handleStatusFilter={handleStatusFilter}
+              onRefetch={refetch}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+              onCreateRole={createRole}
+            />
+            <Separator className="mt-4" />
+          </div>
+          {/* Data Table */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <DataTable
+              columns={visibleColumns}
+              data={roles.map((role: any) => ({
+                id: role.id,
+                name: role.name,
+                description: role.description,
+                permissions: role.permissions || {},
+                created_at: role.created_at ?? role.createdAt ?? "",
+                updated_at: role.updated_at ?? role.updatedAt ?? "",
+              }))}
+              pagination={{
+                page: paginationInfo.page,
+                limit: paginationInfo.pageSize,
+                total: paginationInfo.totalItems,
+              }}
+              onPaginationChange={handlePaginationChange}
+              onPageSizeChange={handlePageSizeChange}
+              isLoading={isFetchingRoles}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+    // </ProtectedRoute>
   );
 };
 
