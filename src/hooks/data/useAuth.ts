@@ -5,6 +5,7 @@ import { UserUpdateFormValues } from "../../components/dashboard/user-update-for
 import { useToast } from "../use-toast";
 import { Department } from "./useDepartments";
 import { Role } from "./useRoles";
+import { useEffect } from "react";
 
 export type UserData = {
   id?: string;
@@ -55,7 +56,9 @@ const useAuth = ({
   search?: string;
 }) => {
   const { setUser, user } = useUserStore();
-
+  useEffect(() => {
+    loadUserFromLocalStorage();
+  }, []);
   const { toast } = useToast();
   const { data: users, isFetching } = useQuery({
     queryKey: ["user"],

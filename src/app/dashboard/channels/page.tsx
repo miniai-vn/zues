@@ -169,9 +169,11 @@ export default function ChannelsManagementPage() {
   const channelsByPlatform = useMemo(() => {
     const grouped: Record<string, ChannelItem[]> = {};
 
-    platforms.filter((platform: Platform) => !platform.isPublic).forEach((platform: Platform) => {
-      grouped[platform.type] = [];
-    });
+    platforms
+      .filter((platform: Platform) => !platform.isPublic)
+      .forEach((platform: Platform) => {
+        grouped[platform.type] = [];
+      });
 
     channels?.forEach((channel) => {
       const channelItem = transformChannelToChannelItem(channel, t);
@@ -230,14 +232,6 @@ export default function ChannelsManagementPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <PageHeader
-        backButtonHref="/dashboard"
-        breadcrumbs={[
-          { label: t("dashboard.channels.management"), href: "/dashboard" },
-          { label: t("dashboard.channels.salesChannels"), isCurrentPage: true },
-        ]}
-      />
-
       <div className="w-full max-w-6xl mx-auto space-y-6">
         {isLoadingChannels ? (
           <div className="text-center py-12">
@@ -247,8 +241,11 @@ export default function ChannelsManagementPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-6">            {platforms.filter((platform: Platform) => platform.isPublic).map(
-              (platform: Platform) => (
+          <div className="space-y-6">
+            {" "}
+            {platforms
+              .filter((platform: Platform) => platform.isPublic)
+              .map((platform: Platform) => (
                 <PlatformCard
                   key={platform.type}
                   platform={platform}
@@ -259,8 +256,7 @@ export default function ChannelsManagementPage() {
                   onDeleteChannel={handleDeleteChannel}
                   isLoading={isDeletingChannel}
                 />
-              )
-            )}
+              ))}
           </div>
         )}
       </div>

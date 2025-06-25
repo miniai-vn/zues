@@ -61,7 +61,12 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
         <MessageList messages={chatMessages} currentUserId={userId} />
         <MessageInput
           onSendMessage={(content) => {
-            sendMessage(conversationId as number, content);
+            sendMessage({
+              conversationId: conversationId as number,
+              message: content,
+              messageType: "text",
+              channelId: conversation?.channelId,
+            });
           }}
         />
       </div>

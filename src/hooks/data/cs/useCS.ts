@@ -23,6 +23,8 @@ export type Message = {
   createdAt: string;
   senderId: string;
   senderType: string;
+  channelId?: number;
+  messageType: string;
   sender?: {
     id: string;
     name: string;
@@ -226,6 +228,19 @@ const useCS = ({
       enabled: !id,
     });
 
+  const { mutate: sendMessage, isPending: isSendingMessage } = useMutation({
+    mutationFn: async (message: Message) => {
+      if (!message) {
+        throw new Error("No conversation selected");
+      }
+      const response = await axiosInstance.post<ApiResponse<Message>>(
+        `/api/chat/sms`,
+        message
+      );
+      return response.data;
+    },
+  });
+
   // Get messages for a specific conversation
   const {
     data: messagesData,
@@ -332,6 +347,8 @@ const useCS = ({
     addMessageToStore: addMessage,
     setSelectedConversation: setSelectedConversationId,
     selectedConversationId,
+
+    sendMessage,
   };
 };
 

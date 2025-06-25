@@ -3,6 +3,7 @@ import { Message, useCS } from "@/hooks/data/cs/useCS";
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useCsStore } from "./useCsStore";
+import { useAuth, useUserStore } from "../useAuth";
 
 interface UseChatAreaProps {
   conversationId?: number;
@@ -19,18 +20,12 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     setConversations,
     conversations,
   } = useCsStore();
-  const { refetchConversations, markReadConversation } = useCS();
-  const user =
-    typeof window !== "undefined" ? localStorage.getItem("user") : null;
-  const currentUser = user ? JSON.parse(user) : undefined;
-
+  const { refetchConversations, markReadConversation, sendMessage } = useCS();
+  const { user } = useAuth({});
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("accessToken="))
-      ?.split("=")[1];
+    const token = localStorage.getItem("token");
 
     const socketIo = io(process.env.NEXT_PUBLIC_API_URL as string, {
       auth: {
@@ -90,13 +85,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       socketChatIo.off("newConversation", handleNewConversation);
       socketChatIo.off("receiveMessage", handleReceiveMessage);
     };
-  }, [
-    socketChatIo,
-    conversationId,
-    conversations,
-    setConversations,
-    refetchConversations,
-  ]);
+  }, [socketChatIo, conversationId, conversations]);
 
   useEffect(() => {
     if (chatMessages && conversationId) {
@@ -114,27 +103,34 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   );
 
   const joinAllConversationWithUserId = useCallback(() => {
-    if (socketChatIo && currentUser?.id) {
+    if (socketChatIo && user?.id) {
       socketChatIo.emit("joinAllConversationsWithUserId", {
-        userId: currentUser?.id,
+        userId: user?.id,
       });
     }
-  }, [socketChatIo, currentUser]);
+  }, [socketChatIo, user]);
 
-  const sendMessage = useCallback(
-    (conversationId: number, message: string, messageType: string = "text") => {
-      console.log("Sending message:", {
+  const sendMessageToChannels = useCallback(
+    ({
+      conversationId,
+      message,
+      messageType = "text",
+      channelId,
+    }: {
+      conversationId: number;
+      message: string;
+      messageType: string;
+      channelId: number;
+    }) => {
+      sendMessage({
         conversationId,
-        message,
-        messageType,
+        content: message,
+        messageType: messageType,
+        channelId,
+        createdAt: new Date().toISOString(),
+        senderId: user?.id || "",
+        senderType: "user", // or another appropriate value
       });
-      if (socketChatIo) {
-        socketChatIo.emit("sendMessageToConversation", {
-          conversationId,
-          message,
-          messageType,
-        });
-      }
     },
     [socketChatIo]
   );
@@ -152,13 +148,13 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   return {
     // Data
     messages,
-    currentUserId: currentUser?.id || "",
+    currentUserId: user?.id || "",
     showContactInfo,
     isChatConnected,
 
     // Actions
     joinAllConversationWithUserId,
-    sendMessage,
+    sendMessage: sendMessageToChannels,
     toggleContactInfo,
     setShowContactInfo,
   };

@@ -138,7 +138,7 @@ export const ConversationFilter = ({
 
       {/* Filters Section */}
       <div className="px-4 pb-3">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex-wrap items-center gap-2 mb-3">
           {/* Phone Filter */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
