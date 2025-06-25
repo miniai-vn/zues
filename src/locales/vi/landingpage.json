@@ -1,0 +1,198 @@
+{
+  "nav": {
+    "tryNow": "Dùng thử",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "home": "Trang chủ",
+    "features": "Tính năng",
+    "about": "Về chúng tôi",
+    "contact": "Liên hệ"
+  },
+  "hero": {
+    "badge": "Về Mi9",
+    "title": "Nơi trí tuệ nhân tạo gặp bảo mật toàn diện",
+    "description": "Mi9 là công ty công nghệ tiên phong trong việc phát triển giải pháp AI riêng biệt cho doanh nghiệp và bảo mật thông tin toàn diện. Chúng tôi giúp doanh nghiệp nâng cao hiệu suất, tối ưu quy trình và đảm bảo an toàn dữ liệu — tất cả trong một nền tảng đáng tin cậy, không chia sẻ thông tin với bên thứ ba."
+  },
+  "features": {
+    "badge": "Tính năng",
+    "title": "Trí tuệ tiên tiến, Trực giác như con người",
+    "description": "Được xây dựng với công nghệ hiện đại để thấu hiểu, học hỏi và thích nghi với nhu cầu riêng của bạn.",
+    "cards": {
+      "autoLearning": {
+        "title": "Tự động học hỏi",
+        "description": "Atlas học hỏi từ các tương tác của bạn, liên tục cải thiện phản hồi và hành động để phục vụ bạn tốt hơn."
+      },
+      "naturalInteraction": {
+        "title": "Tương tác tự nhiên",
+        "description": "Giao tiếp bằng ngôn ngữ tự nhiên và cử chỉ. Atlas hiểu ngữ cảnh và phản hồi phù hợp."
+      },
+      "preciseMovement": {
+        "title": "Chuyển động chính xác",
+        "description": "Các khớp động cơ tiên tiến mang lại chuyển động linh hoạt, tự nhiên với khả năng cân bằng và phối hợp vượt trội."
+      }
+    }
+  },
+  "humanoidSection": {
+    "badge": "Robot hình người",
+    "title": "Được xây dựng với độ chính xác của kỹ thuật Thuỵ Điển và khả năng thích ứng của trực giác con người",
+    "description": "Atlas đại diện cho đỉnh cao của sự đổi mới robot, kết hợp công nghệ tiên tiến với trí thông minh và chuyển động giống con người.",
+    "card1": {
+      "badge": "Trí Tuệ Thích Ứng",
+      "title": "Học hỏi từ mọi tương tác để trở nên có khả năng hơn"
+    },
+    "card2": {
+      "badge": "Khả Năng Vật Lý",
+      "title": "Xử lý các nhiệm vụ phức tạp với độ chính xác và cẩn thận"
+    },
+    "card3": {
+      "badge": "Tích Hợp Con Người",
+      "title": "Làm việc cùng con người như một",
+      "highlight": "đối tác"
+    },
+    "features": {
+      "naturalMovement": {
+        "title": "Chuyển động tự nhiên",
+        "description": "Các mẫu chuyển động trôi chảy, sống động"
+      },
+      "cognitiveAI": {
+        "title": "AI nhận thức",
+        "description": "Học tập và thích ứng tiên tiến"
+      },
+      "emotionalIntelligence": {
+        "title": "Trí tuệ cảm xúc",
+        "description": "Hiểu cảm xúc và ngữ cảnh của con người"
+      }
+    }
+  },
+  "specs": {
+    "badge": "Thông số",
+    "title": "Bằng cách tự động hóa tác vụ lặp đi lặp lại, nâng cao bảo mật hệ thống và học hỏi liên tục từ quy trình nội bộ, Mi9 giúp doanh nghiệp tối ưu vận hành để con người tập trung vào những giá trị cốt lõi: sáng tạo, ra quyết định và đổi mới."
+  },
+  "details": {
+    "leftCard": {
+      "title": "Chi tiết",
+      "subtitle": "Kỹ thuật chính xác kết hợp trí tuệ thích ứng",
+      "specs": {
+        "height": {
+          "label": "Chiều cao",
+          "value": "1.73m"
+        },
+        "capacity": {
+          "label": "Sức chứa",
+          "value": "25kg"
+        },
+        "weight": {
+          "label": "Trọng lượng",
+          "value": "64kg"
+        },
+        "uptime": {
+          "label": "Thời gian hoạt động",
+          "value": "6 giờ"
+        },
+        "movement": {
+          "label": "Chuyển động",
+          "value": "1.5M/S"
+        }
+      }
+    },
+    "rightCard": {
+      "badge": "Yêu cầu demo",
+      "title": "Trải nghiệm ngay",
+      "form": {
+        "fullNamePlaceholder": "Họ và tên",
+        "emailPlaceholder": "Địa chỉ email",
+        "companyPlaceholder": "Công ty (tùy chọn)",
+        "submitButton": "Yêu cầu truy cập",
+        "validationError": "Vui lòng điền đầy đủ các trường bắt buộc",
+        "successMessage": "Gửi yêu cầu thành công!"
+      }
+    }
+  },
+  "showcase": {
+    "title": "Trải nghiệm tương lai ngay hôm nay",
+    "description": "Robot hình người tiên tiến của chúng tôi được thiết kế để thay đổi cách chúng ta tương tác với công nghệ trong môi trường hàng ngày.",
+    "imageAlt": "Robot hình người tiên tiến với thiết kế cam và trắng",
+    "cardTitle": "Robot thế hệ mới",
+    "cardDescription": "Được xây dựng với kỹ thuật chính xác và AI tinh vi, robot của chúng tôi tích hợp liền mạch vào các môi trường khác nhau, từ nhà ở đến bệnh viện, cung cấp hỗ trợ và làm phong phú trải nghiệm con người."
+  },
+  "testimonials": {
+    "badge": "Nhận xét",
+    "title": "Ý kiến của khách hàng",
+    "items": {
+      "manufacturing": {
+        "content": "Atlas đã biến đổi dây chuyền sản xuất của chúng tôi, xử lý các tác vụ lặp đi lặp lại trong khi đội ngũ tập trung vào đổi mới. Tăng 30% sản lượng trong ba tháng.",
+        "author": "Sarah Chen",
+        "role": "Phó Giám đốc Vận hành, Axion Manufacturing"
+      },
+      "logistics": {
+        "content": "Triển khai Atlas tại trung tâm thực hiện đơn hàng giảm 40% tai nạn lao động đồng thời cải thiện độ chính xác đơn hàng. Khả năng học hỏi thật đáng chú ý.",
+        "author": "Michael Rodriguez",
+        "role": "Giám đốc Logistics, GlobalShip"
+      },
+      "research": {
+        "content": "Atlas thích ứng với quy trình phòng thí nghiệm nhanh hơn bất kỳ hệ thống nào chúng tôi từng sử dụng. Như có thêm một nhà nghiên cứu không bao giờ mệt mỏi và duy trì độ chính xác hoàn hảo.",
+        "author": "Tiến sĩ Amara Patel",
+        "role": "Nhà khoa học trưởng, BioAdvance Research"
+      },
+      "business": {
+        "content": "Là một doanh nghiệp vừa, chúng tôi không bao giờ nghĩ rằng robot tiên tiến sẽ có thể tiếp cận được. Atlas đã thay đổi hoàn toàn phương trình đó với tính linh hoạt và dễ triển khai.",
+        "author": "Jason Lee",
+        "role": "Giám đốc điều hành, Innovative Solutions Inc."
+      }
+    }
+  },
+  "newsletter": {
+    "badge": "Bản tin",
+    "title": "Đăng ký nhận bản tin",
+    "description": "Là người đầu tiên nghe về những đột phá, quan hệ đối tác và cơ hội triển khai",
+    "form": {
+      "placeholder": "Địa chỉ email",
+      "submit": "Gửi",
+      "submitting": "Đang gửi..."
+    },
+    "validation": {
+      "emailRequired": "Vui lòng nhập địa chỉ email của bạn"
+    },
+    "success": {
+      "title": "Cảm ơn bạn đã đăng ký!",
+      "description": "Bạn sẽ sớm nhận được cập nhật về Atlas."
+    }
+  },
+  "footer": {
+    "company": {
+      "name": "Mi9",
+      "description": "Nhà cung cấp hàng đầu các giải pháp kinh doanh được hỗ trợ bởi AI và dịch vụ bảo mật thông tin toàn diện."
+    },
+    "links": {
+      "features": "Tính năng",
+      "about": "Về chúng tôi",
+      "pricing": "Bảng giá",
+      "contact": "Liên hệ",
+      "privacy": "Chính sách bảo mật",
+      "terms": "Điều khoản dịch vụ",
+      "support": "Hỗ trợ"
+    },
+    "contact": {
+      "title": "Liên hệ",
+      "address": "123 Phố Công nghệ, Khu Đổi mới",
+      "phone": "+84 (28) 123-4567",
+      "email": "hello@mi9.com"
+    },
+    "social": {
+      "title": "Theo dõi chúng tôi",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram"
+    },
+    "newsletter": {
+      "title": "Cập nhật tin tức",
+      "description": "Nhận tin tức và cập nhật mới nhất từ Mi9",
+      "placeholder": "Nhập email của bạn",
+      "subscribe": "Đăng ký",
+      "success": "Đăng ký nhận tin thành công!",
+      "error": "Đăng ký thất bại. Vui lòng thử lại."
+    },
+    "copyright": "© 2024 Mi9. Tất cả quyền được bảo lưu."
+  }
+}

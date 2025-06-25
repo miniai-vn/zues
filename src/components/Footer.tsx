@@ -1,19 +1,34 @@
-
 import React from "react";
+import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+
 const Footer = () => {
-  return <footer className="w-full bg-white py-0">
+  const { t } = useLandingPageTranslations();
+
+  return (
+    <footer className="w-full bg-white py-0">
       <div className="section-container">
         <p className="text-center text-gray-600 text-sm">
-          This template takes inspiration from{" "}
-          <a href="https://x.com/BrettFromDJ" target="_blank" rel="noopener noreferrer" className="text-pulse-500 hover:underline">
-            DesignJoy's
+          {t("footer.inspiration")}{" "}
+          <a
+            href="https://x.com/BrettFromDJ"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-pulse-500 hover:underline"
+          >
+            {t("footer.designJoy")}
           </a>{" "}
-          BUILD WARS design, built entirely with Lovable by{" "}
-          <a href="https://x.com/rezaul_arif" target="_blank" rel="noopener noreferrer" className="text-pulse-500 hover:underline">
-            Rezaul Arif
+          {t("footer.builtWith")}{" "}
+          <a
+            href="https://x.com/rezaul_arif"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-pulse-500 hover:underline"
+          >
+            {t("footer.author")}
           </a>
         </p>
       </div>
-    </footer>;
+    </footer>
+  );
 };
 export default Footer;

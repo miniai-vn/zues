@@ -5,8 +5,12 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import HumanoidSection from "@/components/HumanoidSection";
 import ImageShowcaseSection from "@/components/ImageShowcaseSection";
+import MadeByHumans from "@/components/MadeByHumans";
 import Navbar from "@/components/Navbar";
+import Newsletter from "@/components/Newsletter";
 import SpecsSection from "@/components/SpecsSection";
+import Testimonials from "@/components/Testimonials";
+import { I18nProvider } from "@/providers/I18nProvider";
 import { useEffect } from "react";
 
 const Index = () => {
@@ -54,23 +58,24 @@ const Index = () => {
       });
     });
   }, []);
-
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <main className="space-y-4 sm:space-y-8">
-        <Hero />
-        <HumanoidSection />
-        <SpecsSection />
-        <DetailsSection />
-        <ImageShowcaseSection />
-        <Features />
-        {/* <Testimonials /> */}
-        {/* <Newsletter /> */}
-        {/* <MadeByHumans /> */}
-      </main>
-      <Footer />
-    </div>
+    <I18nProvider>
+      <div className="min-h-screen">
+        <Navbar />
+        <main className="space-y-4 sm:space-y-8">
+          <Hero />
+          <HumanoidSection />
+          <SpecsSection />
+          <DetailsSection />
+          <ImageShowcaseSection />
+          <Features />
+          <Testimonials />
+          <Newsletter />
+          {/* <MadeByHumans /> */}
+        </main>
+        <Footer />
+      </div>
+    </I18nProvider>
   );
 };
 

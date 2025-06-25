@@ -8,9 +8,9 @@ export default function LoginPage() {
           <div className="w-full max-w-xs">
             <div className="mb-8 flex flex-col items-center">
               <img
-                src="/logo.png"
+                src="/logowebmi9.png"
                 alt="shadcn/ui"
-                className="h-10 w-40"
+                className="h-full w-40"
               />
             </div>
             <LoginForm />

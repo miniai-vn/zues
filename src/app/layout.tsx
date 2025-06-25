@@ -5,6 +5,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/logowebmi9.png",
+  },
   title: "mi9.io",
   description: "AI-powered startup solutions and innovation platform",
 };

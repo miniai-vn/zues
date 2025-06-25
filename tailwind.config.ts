@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
@@ -19,6 +19,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        display: ["Brockmann", "Playfair Display", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,8 +56,7 @@ const config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        },
-        // Sidebar specific colors
+        }, // Sidebar specific colors
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -63,6 +66,19 @@ const config = {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        // Pulse color palette
+        pulse: {
+          50: "hsl(var(--pulse-50))",
+          100: "hsl(var(--pulse-100))",
+          200: "hsl(var(--pulse-200))",
+          300: "hsl(var(--pulse-300))",
+          400: "hsl(var(--pulse-400))",
+          500: "hsl(var(--pulse-500))",
+          600: "hsl(var(--pulse-600))",
+          700: "hsl(var(--pulse-700))",
+          800: "hsl(var(--pulse-800))",
+          900: "hsl(var(--pulse-900))",
         },
       },
       borderRadius: {
@@ -87,6 +103,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;
