@@ -14,34 +14,21 @@ export function DepartmentDetailPage() {
   const { t } = useTranslations();
   const [search, setSearch] = useState("");
 
-  const {
-    departments,
-    createDepartment,
-    refetchDepartments,
-  } = useDepartments({ search });
+  const { departments, createDepartment, refetchDepartments } = useDepartments({
+    search,
+  });
   useDebouncedValue(search, 500);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">      <PageHeader
-        backButtonHref="/dashboard/departments"
-        breadcrumbs={[
-          {
-            label: t("dashboard.departments.breadcrumbs.management"),
-            href: "/dashboard/chat",
-          },
-          {
-            label: t("dashboard.departments.breadcrumbs.documentGroupManagement"),
-            href: "/dashboard/departments",
-            isCurrentPage: true,
-          },
-        ]}
-      />
-      <div className="flex justify-between gap-4 items-center">        <Input
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="flex justify-between gap-4 items-center">
+        <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("dashboard.departments.searchPlaceholder")}
           className="mr-4 w-full flex-1"
-        />        <Button
+        />{" "}
+        <Button
           onClick={() => refetchDepartments()}
           className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
         >
@@ -49,7 +36,8 @@ export function DepartmentDetailPage() {
           {t("dashboard.departments.search")}
         </Button>
         <CreateDeptDialog onChange={createDepartment} />
-      </div>      {departments?.length === 0 ? (
+      </div>{" "}
+      {departments?.length === 0 ? (
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0 items-center justify-center">
           <img
             src="/logo.png"

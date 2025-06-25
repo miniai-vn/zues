@@ -2,6 +2,7 @@ import { Message } from "@/hooks/data/cs/useCS";
 import useTranslations from "@/hooks/useTranslations";
 import { useEffect, useRef } from "react";
 import { MessageItem } from "./MessageItem";
+import { useAuth } from "@/hooks/data/useAuth";
 
 interface MessageListProps {
   messages: Message[];
@@ -16,6 +17,7 @@ export const MessageList = ({
 }: MessageListProps) => {
   const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth({});
   useEffect(() => {
     if (autoScroll) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,9 +38,9 @@ export const MessageList = ({
   }
 
   return (
-    <div className="p-4 space-y-4 h-[80vh] overflow-y-auto">
+    <div className="p-4 space-y-4 h-[72vh] overflow-y-auto">
       {messages.map((message, index) => {
-        const isOwnMessage = message.senderId === currentUserId;
+        const isOwnMessage = message.senderId === user?.id;
 
         const previousMessage = index > 0 ? messages[index - 1] : null;
         const showSenderName =

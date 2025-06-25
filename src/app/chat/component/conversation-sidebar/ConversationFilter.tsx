@@ -95,16 +95,14 @@ export const ConversationFilter = ({
     });
   };
 
-  const handleDateRangeChange = (dateRange: any) => {
-    onFiltersChange({ dateRange });
-  };
-
   return (
-    <div className="border-b w-full">
-      {/* Header Section */}
-      <div className="p-4 pb-0">        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">{t("dashboard.chat.messages")}</h2>
-          <div className="flex gap-1">
+    <div className="border-b w-full sticky top-0 z-10 bg-background">
+      <div className="p-4 pb-0">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold">
+            {t("dashboard.chat.messages")}
+          </h2>
+          <div className="flex-wrap gap-1">
             {onNewConversation && (
               <Button
                 size="sm"
@@ -127,9 +125,9 @@ export const ConversationFilter = ({
             )}
           </div>
         </div>
-
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />          <Input
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />{" "}
+          <Input
             placeholder={t("dashboard.chat.searchConversations")}
             className="pl-9"
             value={filters.search || ""}
@@ -140,7 +138,7 @@ export const ConversationFilter = ({
 
       {/* Filters Section */}
       <div className="px-4 pb-3">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex-wrap items-center gap-2 mb-3">
           {/* Phone Filter */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -155,7 +153,8 @@ export const ConversationFilter = ({
               >
                 <Phone className="h-3 w-3" />
               </Button>
-            </DropdownMenuTrigger>            <DropdownMenuContent align="start" className="w-48">
+            </DropdownMenuTrigger>{" "}
+            <DropdownMenuContent align="start" className="w-48">
               <DropdownMenuItem onClick={() => handlePhoneFilterChange("all")}>
                 {t("dashboard.chat.filters.all")}
               </DropdownMenuItem>
@@ -212,7 +211,8 @@ export const ConversationFilter = ({
               align="start"
               className="w-48 max-h-80 overflow-y-auto"
             >
-              {/* Add "All" option to clear channel filter */}              <DropdownMenuItem
+              {/* Add "All" option to clear channel filter */}{" "}
+              <DropdownMenuItem
                 onClick={() => handleChannelChange(undefined)}
                 className={cn(
                   "flex items-center gap-2",
@@ -260,7 +260,8 @@ export const ConversationFilter = ({
               align="start"
               className="w-48 max-h-80 overflow-y-auto"
             >
-              {/* Add "All" option to clear tag filter */}              <DropdownMenuItem
+              {/* Add "All" option to clear tag filter */}{" "}
+              <DropdownMenuItem
                 onClick={() => handleTagChange(undefined)}
                 className={cn(
                   "flex items-center gap-2",
@@ -350,7 +351,8 @@ export const ConversationFilter = ({
                         users?.length && (users?.length || 0) > 0
                     }
                     onCheckedChange={handleSelectAllEmployees}
-                  />                  <label
+                  />{" "}
+                  <label
                     htmlFor="select-all"
                     className="text-sm font-medium cursor-pointer"
                   >
@@ -385,7 +387,9 @@ export const ConversationFilter = ({
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center border-b -mb-px">          <button
+        <div className="flex items-center border-b -mb-px">
+          {" "}
+          <button
             className={cn(
               "px-3 py-2 text-sm font-medium border-b-2 transition-colors",
               activeTab === "all"

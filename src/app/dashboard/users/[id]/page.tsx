@@ -9,11 +9,12 @@ const UserDetailComponents = () => {
   const { t } = useTranslations();
   const params = useParams();
   const userId = params.id as string;
-  const { roles } = useRoles();
+  const { data: roles } = useRoles({});
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <PageHeader
-        backButtonHref="/dashboard/users"        breadcrumbs={[
+        backButtonHref="/dashboard/users"
+        breadcrumbs={[
           {
             label: t("dashboard.users.breadcrumbs.management"),
             href: "/dashboard",
@@ -30,7 +31,7 @@ const UserDetailComponents = () => {
       />
       <div>
         <span>Cài đặt quyền</span>
-        {roles?.items?.map((role) => (
+        {roles?.map((role) => (
           <div key={role.id} className="flex items-center gap-2">
             <input
               type="checkbox"

@@ -4,10 +4,9 @@ import { ConversationColumn } from "./conversation-sidebar";
 
 const ConversationCsPage = () => {
   const [selectedConversationId, setSelectedConversation] = useState<number>();
- 
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
+    <div className="flex w-full bg-background">
       <div className="flex h-full border-r">
         <ConversationColumn
           selectedConversationId={selectedConversationId}
