@@ -8,7 +8,7 @@ const translations = {
 };
 
 export const useLandingPageTranslations = () => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation("langdingpage");
   const language = i18n.language || "en";
 
   const t = (key: string): string => {

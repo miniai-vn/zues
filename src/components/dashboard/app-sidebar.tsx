@@ -36,7 +36,6 @@ export function AppSidebar({
       title: t("dashboard.sidebar.chat"),
       // url: "/dashboard/chat",
       icon: MessageSquarePlus,
-      isActive: true,
       role: [Role.Staff, Role.Admin, Role.Leader],
       items: [
         {
@@ -57,7 +56,6 @@ export function AppSidebar({
       title: t("dashboard.sidebar.automation"),
       url: "/dashboard/chat",
       icon: BotIcon,
-      isActive: true,
       role: [Role.Staff, Role.Admin, Role.Leader],
       items: [
         {
