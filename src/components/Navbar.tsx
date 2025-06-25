@@ -86,7 +86,7 @@ const Navbar = () => {
             href="#details"
             onClick={(e) => {
               e.preventDefault();
-              router.push("/try-now");
+              router.push("/login");
             }}
             className="nav-link"
           >
