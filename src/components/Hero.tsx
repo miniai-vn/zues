@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import LottieAnimation from "./LottieAnimation";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const Hero = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [lottieData, setLottieData] = useState<any>(null);

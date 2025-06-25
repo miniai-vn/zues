@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const HumanoidSection = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);

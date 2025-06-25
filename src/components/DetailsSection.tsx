@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const DetailsSection = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",

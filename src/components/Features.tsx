@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -58,7 +58,7 @@ const FeatureCard = ({ icon, title, description, index }: FeatureCardProps) => {
 };
 
 const Features = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

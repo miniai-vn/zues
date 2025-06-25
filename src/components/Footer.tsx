@@ -1,8 +1,8 @@
 import React from "react";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const Footer = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
 
   return (
     <footer className="w-full bg-white py-0">

@@ -1,8 +1,8 @@
 import React from "react";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const SpecsSection = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
 
   return (
     <section className="w-full py-6 sm:py-10 bg-white" id="specifications">

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface TestimonialProps {
   content: string;
@@ -36,7 +36,7 @@ const TestimonialCard = ({
 };
 
 const Testimonials = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const testimonials: TestimonialProps[] = [

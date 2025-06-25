@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const Navbar = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);

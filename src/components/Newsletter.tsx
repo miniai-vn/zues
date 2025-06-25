@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useLandingPageTranslations } from "@/hooks/useLandingPageTranslations";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const Newsletter = () => {
-  const { t } = useLandingPageTranslations();
+  const { t } = useTranslations();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
