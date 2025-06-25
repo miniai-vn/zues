@@ -47,12 +47,12 @@ export function SideChat() {
 
   return (
     <div className="">
-      {conversations?.map((conversation) => {
+      {conversations?.map((conversation: any) => {
         return (
           <div
-            key={conversation.id}
+            key={conversation?.id}
             className={`flex justify-between group/item items-center group ${
-              conversation.id == currentChatId
+              conversation?.id == currentChatId
                 ? "bg-gray-200 opacity-0.5"
                 : "bg-transparent"
             } rounded-sm hover:bg-gray-100`}
