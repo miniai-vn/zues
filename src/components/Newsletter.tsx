@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from "@/hooks/useTranslations";
 
 const Newsletter = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();

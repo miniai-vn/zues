@@ -58,7 +58,7 @@ const FeatureCard = ({ icon, title, description, index }: FeatureCardProps) => {
 };
 
 const Features = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

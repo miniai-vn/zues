@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslations } from "@/hooks/useTranslations";
 
 const ImageShowcaseSection = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
   return (
     <section className="w-full pt-0 pb-8 sm:pb-12 bg-white" id="showcase">
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto">

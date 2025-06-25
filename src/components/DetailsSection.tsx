@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useTranslations } from "@/hooks/useTranslations";
 
 const DetailsSection = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",

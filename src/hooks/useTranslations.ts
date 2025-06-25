@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
-export const useTranslations = (namespace = 'common') => {
+export const useTranslations = (namespace = "common") => {
   const { t, i18n } = useTranslation(namespace);
-  
+
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
   };
@@ -13,8 +13,8 @@ export const useTranslations = (namespace = 'common') => {
     t,
     changeLanguage,
     currentLanguage,
-    isVietnamese: currentLanguage === 'vi',
-    isEnglish: currentLanguage === 'en',
+    isVietnamese: currentLanguage === "vi",
+    isEnglish: currentLanguage === "en",
   };
 };
 

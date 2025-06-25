@@ -1,17 +1,21 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 // Import translation files
-import en from '../locales/en/common.json';
-import vi from '../locales/vi/common.json';
+import enCommon from "../locales/en/common.json";
+import viCommon from "../locales/vi/common.json";
+import enLandingPage from "../locales/en/landingpage.json";
+import viLandingPage from "../locales/vi/landingpage.json";
 
 const resources = {
   en: {
-    common: en,
+    common: enCommon,
+    landingpage: enLandingPage,
   },
   vi: {
-    common: vi,
+    common: viCommon,
+    landingpage: viLandingPage,
   },
 };
 
@@ -20,20 +24,20 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'vi', // Default to Vietnamese
-    debug: process.env.NODE_ENV === 'development',
-    
+    fallbackLng: "vi", // Default to Vietnamese
+    debug: process.env.NODE_ENV === "development",
+
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
+      order: ["localStorage", "navigator", "htmlTag"],
+      caches: ["localStorage"],
     },
 
     interpolation: {
       escapeValue: false, // React already escapes values
     },
 
-    defaultNS: 'common',
-    ns: ['common'],
+    ns: ["common", "landingpage"], // Add namespaces
+    defaultNS: "common", // Default namespace
   });
 
 export default i18n;

@@ -6,7 +6,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslations } from "@/hooks/useTranslations";
 
 const Navbar = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);

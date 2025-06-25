@@ -36,7 +36,7 @@ const TestimonialCard = ({
 };
 
 const Testimonials = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const testimonials: TestimonialProps[] = [
