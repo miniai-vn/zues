@@ -128,6 +128,15 @@ const useChannels = ({
     },
   });
 
+  const { mutate: syncConversations } = useMutation({
+    mutationFn: async (channelId: number) => {
+      const response = await axiosInstance.post(
+        `/api/integration/zalo/sync-conversations/${channelId}`
+      );
+      return response.data;
+    },
+  });
+
   return {
     filteredChannels,
     isLoadingFilteredChannels,
@@ -140,6 +149,7 @@ const useChannels = ({
     deleteChannel,
     isDeletingChannel,
     deleteChannelError,
+    syncConversations,
   };
 };
 

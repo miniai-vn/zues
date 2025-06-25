@@ -158,6 +158,7 @@ export default function ChannelsManagementPage() {
     deleteChannel,
     isDeletingChannel,
     updateShopId,
+    syncConversations,
   } = useChannels({
     limit: 100, // Get all channels
   });
@@ -195,6 +196,7 @@ export default function ChannelsManagementPage() {
     if (appIdParam) {
       if (appType === "zalo") {
         updateShopId({ appId: appIdParam });
+        syncConversations(Number(appIdParam));
       } else {
         const appIds = appIdParam.includes(",")
           ? appIdParam.split(",")
