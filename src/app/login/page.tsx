@@ -19,7 +19,7 @@ export default function LoginPage() {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="/mosco.png"
+          src="/lovable-uploads/5663820f-6c97-4492-9210-9eaa1a8dc415.png"
           alt="Hình ảnh"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

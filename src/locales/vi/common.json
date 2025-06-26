@@ -149,6 +149,7 @@
     },
     "channels": {
       "title": "Quản lý kênh",
+      "description": "Quản lý và giám sát tất cả các kênh bán hàng được kết nối. Kết nối các nền tảng mới và xem hiệu suất kênh.",
       "salesChannels": "Kênh bán hàng",
       "add": "Thêm kênh",
       "connect": "Kết nối",
@@ -172,6 +173,8 @@
       "channelCount": "{{count}} kênh",
       "loading": "Đang tải danh sách kênh...",
       "confirmDelete": "Bạn có chắc chắn muốn xóa kênh này?",
+      "activate": "Kích hoạt kênh",
+      "deactivate": "Vô hiệu hóa kênh",
       "management": "Quản lý",
       "noChannels": "Chưa có kênh nào được kết nối",
       "addFirst": "Thêm kênh đầu tiên"
