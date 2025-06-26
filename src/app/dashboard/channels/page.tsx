@@ -3,9 +3,15 @@
 import { getPlatforms } from "@/app/chat/component/conversation-sidebar";
 import { PageHeader } from "@/components/dashboard/common/page-header";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import useChannels, { Channel, ChannelStatus } from "@/hooks/data/useChannels";
-import { Eye, EyeOff, Link, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Link, Loader2, Settings } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
@@ -67,6 +73,7 @@ interface PlatformCardProps {
   onToggle: () => void;
   onAddChannel: () => void;
   onDeleteChannel: (channelId: number) => void;
+  onToggleChannelStatus: (channelId: number, checked: boolean) => void;
   isLoading?: boolean;
 }
 
@@ -77,6 +84,7 @@ const PlatformCard = ({
   onToggle,
   onAddChannel,
   onDeleteChannel,
+  onToggleChannelStatus,
   isLoading = false,
 }: PlatformCardProps) => {
   const { t } = useTranslations();
@@ -140,6 +148,7 @@ const PlatformCard = ({
           platformTitle={platform.title}
           channels={channels}
           onDeleteChannel={onDeleteChannel}
+          onToggleChannelStatus={onToggleChannelStatus}
           onAddChannel={onAddChannel}
           isLoading={isLoading}
         />
@@ -158,6 +167,7 @@ export default function ChannelsManagementPage() {
     deleteChannel,
     isDeletingChannel,
     updateShopId,
+    updateStatus,
     syncConversations,
   } = useChannels({
     limit: 100, // Get all channels
@@ -192,17 +202,18 @@ export default function ChannelsManagementPage() {
     const params = new URLSearchParams(location.search);
     const appIdParam = params.get("appId");
     const appType = params.get("type");
+    if (!appIdParam || !appType) {
+      return;
+    }
 
-    if (appIdParam) {
-      if (appType === "zalo") {
-        updateShopId({ appId: appIdParam });
-        syncConversations(Number(appIdParam));
-      } else {
-        const appIds = appIdParam.includes(",")
-          ? appIdParam.split(",")
-          : [appIdParam];
-        appIds.forEach((id) => updateShopId({ appId: id }));
-      }
+    if (appType === "zalo") {
+      updateShopId({ appId: appIdParam });
+      syncConversations(appIdParam);
+    } else {
+      const appIds = appIdParam.includes(",")
+        ? appIdParam.split(",")
+        : [appIdParam];
+      appIds.forEach((id) => updateShopId({ appId: id }));
     }
   }, []);
 
@@ -232,36 +243,63 @@ export default function ChannelsManagementPage() {
     }
   };
 
+  const handleToggleChannelStatus = async (
+    channelId: number,
+    checked: boolean
+  ) => {
+    updateStatus({
+      channelId,
+      status: checked ? ChannelStatus.ACTIVE : ChannelStatus.INACTIVE,
+    });
+  };
+
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="w-full max-w-6xl mx-auto space-y-6">
-        {isLoadingChannels ? (
-          <div className="text-center py-12">
-            <Loader2 className="mx-auto h-8 w-8 animate-spin" />
-            <p className="text-gray-500 mt-2">
-              {t("dashboard.channels.loading")}
-            </p>
+    <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
+      <Card className="flex flex-col flex-1 overflow-hidden">
+        <CardHeader className="px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                {t("dashboard.channels.title")}
+              </CardTitle>
+              <CardDescription>
+                {t("dashboard.channels.description")}
+              </CardDescription>
+            </div>
           </div>
-        ) : (
-          <div className="space-y-6">
-            {" "}
-            {platforms
-              .filter((platform: Platform) => platform.isPublic)
-              .map((platform: Platform) => (
-                <PlatformCard
-                  key={platform.type}
-                  platform={platform}
-                  channels={channelsByPlatform[platform.type] || []}
-                  isExpanded={expandedPlatforms[platform.type] || false}
-                  onToggle={() => togglePlatform(platform.type)}
-                  onAddChannel={() => handleAddChannel(platform.type)}
-                  onDeleteChannel={handleDeleteChannel}
-                  isLoading={isDeletingChannel}
-                />
-              ))}
+        </CardHeader>
+        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
+          <div className="w-full max-w-6xl mx-auto space-y-6">
+            {isLoadingChannels ? (
+              <div className="text-center py-12">
+                <Loader2 className="mx-auto h-8 w-8 animate-spin" />
+                <p className="text-gray-500 mt-2">
+                  {t("dashboard.channels.loading")}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {platforms
+                  .filter((platform: Platform) => platform.isPublic)
+                  .map((platform: Platform) => (
+                    <PlatformCard
+                      key={platform.type}
+                      platform={platform}
+                      channels={channelsByPlatform[platform.type] || []}
+                      isExpanded={expandedPlatforms[platform.type] || false}
+                      onToggle={() => togglePlatform(platform.type)}
+                      onAddChannel={() => handleAddChannel(platform.type)}
+                      onDeleteChannel={handleDeleteChannel}
+                      onToggleChannelStatus={handleToggleChannelStatus}
+                      isLoading={isDeletingChannel}
+                    />
+                  ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

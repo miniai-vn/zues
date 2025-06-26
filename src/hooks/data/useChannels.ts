@@ -129,15 +129,48 @@ const useChannels = ({
   });
 
   const { mutate: syncConversations } = useMutation({
-    mutationFn: async (channelId: number) => {
+    mutationFn: async (appId: string) => {
       const response = await axiosInstance.post(
-        `/api/integration/zalo/sync-conversations/${channelId}`
+        `/api/integration/zalo/sync-conversations/${appId}`
       );
       return response.data;
     },
   });
 
+  const { mutate: updateStatus } = useMutation({
+    mutationFn: async ({
+      channelId,
+      status,
+    }: {
+      channelId: number;
+      status: ChannelStatus;
+    }) => {
+      const response = await axiosInstance.patch(
+        `/api/channels/${channelId}/status`,
+        {
+          status,
+        }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Channel status updated",
+        description: "The channel status has been successfully updated.",
+      });
+      refetchChannels();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error updating channel status",
+        description: error.message,
+      });
+    },
+  });
+
   return {
+    updateStatus,
+
     filteredChannels,
     isLoadingFilteredChannels,
     fetchFilteredChannelsError,

@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
+import { title } from "process";
 export function AppSidebar({
   setActiveSection,
   ...props
@@ -69,6 +70,12 @@ export function AppSidebar({
           icon: FolderOpen,
           role: [Role.Admin, Role.Leader],
           url: "/dashboard/departments",
+        },
+        {
+          title: "Agent",
+          icon: BotIcon,
+          role: [Role.Admin, Role.Staff, Role.Leader],
+          url: "/dashboard/agents",
         },
       ],
     },
