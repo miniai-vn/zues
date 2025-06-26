@@ -146,35 +146,6 @@ Chỉ trả lời không đưa ra thông tin trích xuất từ ngữ cảnh`,
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="prompt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Lời nhắc <span className="text-red-500">*</span>
-              </FormLabel>
-              <Textarea
-                value={field.value ?? ""}
-                placeholder="Chức năng này giúp bạn xây dựng tính cách, phong cách trả lời của trợ lý AI. Càng cung cấp dữ liệu đầy đủ, hệ thống sẽ càng hiểu hơn về loại tính cách, giọng văn, kiểu phong cách bạn muốn xây dựng cho trợ lý."
-                onChange={(e) => field.onChange(e.target.value)}
-                className="w-full h-24"
-              />
-              <div className="text-xs text-gray-500 mt-1">
-                <b>{`{context}`}</b>: Nội dung ngữ cảnh được AI trích xuất từ
-                tài liệu, dùng làm dữ liệu tham khảo để trả lời.
-                <br />
-                <b>{`{question}`}</b>: Câu hỏi mà người dùng gửi tới hệ thống
-                AI.
-                <b>{`{history}`}</b>: Lịch sử trò chuyện giữa người dùng và
-                trợ lý AI.
-                <br />
-                AI.
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <div className="w-full">
           <div className="w-full mt-auto flex gap-4">
             <Button

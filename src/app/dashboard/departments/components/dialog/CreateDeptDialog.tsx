@@ -36,15 +36,16 @@ export default function CreateDeptDialog({
         setIsOpen(open);
       }}
       open={isOpen}
-    >      <DialogTrigger asChild>
+    >
+      <DialogTrigger asChild>
         <Button>+ {t("dashboard.departments.modal.createButton")}</Button>
       </DialogTrigger>
-      <DialogContent className="w-[800px] max-w-[90vw]">        <DialogHeader>
+      <DialogContent className="w-[800px] max-w-[90vw]">
+        <DialogHeader>
           <DialogTitle>
-            {department 
-              ? t("dashboard.departments.modal.editTitle") 
-              : t("dashboard.departments.modal.createTitle")
-            }
+            {department
+              ? t("dashboard.departments.modal.editTitle")
+              : t("dashboard.departments.modal.createTitle")}
           </DialogTitle>
         </DialogHeader>
         <div>

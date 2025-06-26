@@ -223,7 +223,6 @@ const PermissionsRoles = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-y-auto">
-    
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -255,7 +254,6 @@ const PermissionsRoles = () => {
             <div className="flex items-center gap-2">
               <Checkbox
                 checked={areAllPermissionsSelected()}
-                // indeterminate={areSomePermissionsSelected()}
                 onCheckedChange={(checked) =>
                   handleSelectAllPermissions(checked as boolean)
                 }

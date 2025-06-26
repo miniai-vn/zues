@@ -71,9 +71,9 @@ export default function CreateOrUpdateDeptModal({
                   setIsOpen={setIsOpen}
                 />
               </TabsContent>
-              <TabsContent value="authorization" className="mt-4 h-[400px]">
+              {/* <TabsContent value="authorization" className="mt-4 h-[400px]">
                 {department && <AccessControl department={department} />}
-              </TabsContent>
+              </TabsContent> */}
             </div>
           </Tabs>
         </div>

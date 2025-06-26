@@ -248,6 +248,17 @@
         }
       }
     },
+    "agents": {
+      "title": "Quản lý Agent",
+      "description": "Cấu hình và quản lý các agent AI cho hệ thống của bạn. Thiết lập hành vi agent, prompt và môi trường kiểm thử.",
+      "createAgent": "Tạo Agent",
+      "searchPlaceholder": "Tìm kiếm agent theo tên hoặc mô tả...",
+      "search": "Tìm kiếm",
+      "emptyState": {
+        "title": "Không tìm thấy agent nào",
+        "description": "Tạo agent AI đầu tiên để bắt đầu"
+      }
+    },
     "roles": {
       "title": "Quản lý vai trò",
       "add": "Thêm vai trò",
