@@ -1,0 +1,208 @@
+{
+  "nav": {
+    "tryNow": "Try Now",
+    "login": "Login",
+    "register": "Register",
+    "home": "Home",
+    "features": "Features",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "About Mi9",
+    "title": "Where Artificial Intelligence Meets Comprehensive Security",
+    "description": "Mi9 is a pioneering technology company in developing dedicated AI solutions for businesses and comprehensive information security. We help businesses improve performance, optimize processes and ensure data safety — all in a reliable platform that does not share information with third parties."
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Advanced Intelligence, Human-like Intuition",
+    "description": "Built with modern technology to understand, learn and adapt to your specific needs.",
+    "cards": {
+      "autoLearning": {
+        "title": "Automatic Learning",
+        "description": "Atlas learns from your interactions, continuously improving responses and actions to serve you better."
+      },
+      "naturalInteraction": {
+        "title": "Natural Interaction",
+        "description": "Communicate using natural language and gestures. Atlas understands context and responds appropriately."
+      },
+      "preciseMovement": {
+        "title": "Precise Movement",
+        "description": "Advanced motor joints provide flexible, natural movement with superior balance and coordination capabilities."
+      }
+    }
+  },
+  "humanoidSection": {
+    "badge": "Humanoid",
+    "title": "Built with the precision of Swedish engineering and the adaptability of human intuition",
+    "description": "Atlas represents the pinnacle of robotic innovation, combining cutting-edge technology with human-like intelligence and movement.",
+    "card1": {
+      "badge": "Adaptive Intelligence",
+      "title": "Learning from every interaction to become more capable"
+    },
+    "card2": {
+      "badge": "Physical Capability",
+      "title": "Handling complex tasks with precision and care"
+    },
+    "card3": {
+      "badge": "Human Integration",
+      "title": "Working alongside humans as a trusted",
+      "highlight": "partner"
+    },
+    "features": {
+      "naturalMovement": {
+        "title": "Natural Movement",
+        "description": "Fluid, life-like motion patterns"
+      },
+      "cognitiveAI": {
+        "title": "Cognitive AI",
+        "description": "Advanced learning and adaptation"
+      },
+      "emotionalIntelligence": {
+        "title": "Emotional Intelligence",
+        "description": "Understanding human emotions and context"
+      }
+    }
+  },
+  "specs": {
+    "badge": "Specs",
+    "title": "By automating repetitive tasks, enhancing system security, and continuously learning from internal processes, Mi9 helps businesses optimize operations so people can focus on core values: creativity, decision-making, and innovation."
+  },
+  "details": {
+    "leftCard": {
+      "title": "The details",
+      "subtitle": "Precision engineering meets adaptive intelligence",
+      "specs": {
+        "height": {
+          "label": "Height",
+          "value": "5'8\""
+        },
+        "capacity": {
+          "label": "Capacity",
+          "value": "55lbs"
+        },
+        "weight": {
+          "label": "Weight",
+          "value": "140lbs"
+        },
+        "uptime": {
+          "label": "Uptime",
+          "value": "6hr"
+        },
+        "movement": {
+          "label": "Movement",
+          "value": "1.5M/S"
+        }
+      }
+    },
+    "rightCard": {
+      "badge": "Request a demo",
+      "title": "See it for yourself",
+      "form": {
+        "fullNamePlaceholder": "Full name",
+        "emailPlaceholder": "Email address",
+        "companyPlaceholder": "Company (optional)",
+        "submitButton": "Request access",
+        "validationError": "Please fill in all required fields",
+        "successMessage": "Request submitted successfully!"
+      }
+    },
+    "form": {
+      "fullName": "Full name",
+      "email": "Email address",
+      "company": "Company (optional)",
+      "submit": "Request access",
+      "submitSuccess": "Request submitted successfully!",
+      "validation": {
+        "required": "Please fill in all required fields"
+      }
+    }
+  },
+  "showcase": {
+    "title": "Experience the Future Today",
+    "description": "Our cutting-edge humanoid robot is designed to transform how we interact with technology in everyday environments.",
+    "imageAlt": "Advanced humanoid robot with orange and white design",
+    "cardTitle": "Next Generation Robotics",
+    "cardDescription": "Built with precision engineering and sophisticated AI, our robots seamlessly integrate into various environments, from homes to hospitals, providing assistance and enriching human experiences."
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "What others say",
+    "items": {
+      "manufacturing": {
+        "content": "Atlas transformed our production line, handling repetitive tasks while our team focuses on innovation. 30% increase in output within three months.",
+        "author": "Sarah Chen",
+        "role": "VP of Operations, Axion Manufacturing"
+      },
+      "logistics": {
+        "content": "Implementing Atlas in our fulfillment centers reduced workplace injuries by 40% while improving order accuracy. The learning capabilities are remarkable.",
+        "author": "Michael Rodriguez",
+        "role": "Director of Logistics, GlobalShip"
+      },
+      "research": {
+        "content": "Atlas adapted to our lab protocols faster than any system we've used. It's like having another researcher who never gets tired and maintains perfect precision.",
+        "author": "Dr. Amara Patel",
+        "role": "Lead Scientist, BioAdvance Research"
+      },
+      "business": {
+        "content": "As a mid-size business, we never thought advanced robotics would be accessible to us. Atlas changed that equation entirely with its versatility and ease of deployment.",
+        "author": "Jason Lee",
+        "role": "CEO, Innovative Solutions Inc."
+      }
+    }
+  },
+  "newsletter": {
+    "badge": "Newsletter",
+    "title": "Subscribe to the newsletter",
+    "description": "Be first to hear about breakthroughs, partnerships, and deployment opportunities",
+    "form": {
+      "placeholder": "Email address",
+      "submit": "Submit",
+      "submitting": "Submitting..."
+    },
+    "validation": {
+      "emailRequired": "Please enter your email address"
+    },
+    "success": {
+      "title": "Thank you for subscribing!",
+      "description": "You'll receive updates about Atlas soon."
+    }
+  },
+  "footer": {
+    "company": {
+      "name": "Mi9",
+      "description": "Leading provider of AI-powered business solutions and comprehensive information security services."
+    },
+    "links": {
+      "features": "Features",
+      "about": "About",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "support": "Support"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "address": "123 Tech Street, Innovation District",
+      "phone": "+1 (555) 123-4567",
+      "email": "hello@mi9.com"
+    },
+    "social": {
+      "title": "Follow Us",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get the latest news and updates from Mi9",
+      "placeholder": "Enter your email",
+      "subscribe": "Subscribe",
+      "success": "Successfully subscribed to newsletter!",
+      "error": "Failed to subscribe. Please try again."
+    },
+    "copyright": "© 2024 Mi9. All rights reserved."
+  }
+}

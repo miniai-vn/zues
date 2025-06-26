@@ -17,13 +17,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { useUserStore } from "@/hooks/data/useAuth";
 import useTranslations from "@/hooks/useTranslations";
-import {
-  ChevronRight,
-  MessageCircleMore,
-  type LucideIcon
-} from "lucide-react";
+import { ChevronRight, MessageCircleMore, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 

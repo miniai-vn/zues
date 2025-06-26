@@ -36,7 +36,6 @@ export function AppSidebar({
       title: t("dashboard.sidebar.chat"),
       // url: "/dashboard/chat",
       icon: MessageSquarePlus,
-      isActive: true,
       role: [Role.Staff, Role.Admin, Role.Leader],
       items: [
         {
@@ -57,7 +56,6 @@ export function AppSidebar({
       title: t("dashboard.sidebar.automation"),
       url: "/dashboard/chat",
       icon: BotIcon,
-      isActive: true,
       role: [Role.Staff, Role.Admin, Role.Leader],
       items: [
         {
@@ -107,11 +105,15 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white">
-            <span className="text-lg font-bold">M</span>
+        <div className="flex items-center pr-2 pl-4  pt-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full">
+            <img
+              src="/logoin-vectical.png"
+              alt="Pulse Robot Logo"
+              className="h-7 sm:h-8"
+            />
           </div>
-          <div className="font-medium text-blue-600">MI9 Portal</div>
+          <div className="font-medium ">MI9 Dashboard</div>
         </div>
       </SidebarHeader>
       <SidebarContent>

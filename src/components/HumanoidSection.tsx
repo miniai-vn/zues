@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const HumanoidSection = () => {
+  const { t } = useTranslations("landingpage");
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
@@ -102,13 +104,15 @@ const HumanoidSection = () => {
               >
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] mr-2">
                   02
+                </span>{" "}
+                <span className="text-[hsl(var(--foreground))]">
+                  {t("humanoidSection.badge")}
                 </span>
-                <span className="text-[hsl(var(--foreground))]">Humanoid</span>
               </div>
             </div>
 
             <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-1 md:mb-2 text-[hsl(var(--foreground))]">
-              Tại sao chọn Mi9?
+              {t("humanoidSection.title")}
             </h2>
           </div>
 
@@ -142,17 +146,18 @@ const HumanoidSection = () => {
 
               <div className="absolute top-4 right-4 z-20">
                 <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[hsl(var(--background)/0.2)] backdrop-blur-sm text-[hsl(var(--foreground))]">
+                  {" "}
                   <span className="text-sm font-medium">
-                    Công nghệ tiên tiến
+                    {t("humanoidSection.card1.badge")}
                   </span>
                 </div>
               </div>
 
               <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
                 <div className="max-w-lg">
+                  {" "}
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-display text-[hsl(var(--foreground))] font-bold leading-tight mb-4">
-                    Được phát triển với các công nghệ mới nhất trong lĩnh vực
-                    robot và trí tuệ nhân tạo.
+                    {t("humanoidSection.card1.title")}
                   </h3>
                 </div>
               </div>
@@ -189,15 +194,17 @@ const HumanoidSection = () => {
 
               <div className="absolute top-4 right-4 z-20">
                 <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[hsl(var(--background)/0.2)] backdrop-blur-sm text-[hsl(var(--foreground))]">
-                  <span className="text-sm font-medium">Tính linh hoạt:</span>
+                  <span className="text-sm font-medium">
+                    {t("humanoidSection.card2.badge")}
+                  </span>
                 </div>
               </div>
 
               <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
                 <div className="max-w-lg">
+                  {" "}
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-display text-[hsl(var(--foreground))] font-bold leading-tight mb-4">
-                    Dễ dàng tùy chỉnh và tích hợp vào các hệ thống hiện có của
-                    doanh nghiệp.
+                    {t("humanoidSection.card2.title")}
                   </h3>
                 </div>
               </div>
@@ -234,17 +241,19 @@ const HumanoidSection = () => {
 
               <div className="absolute top-4 right-4 z-20">
                 <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[hsl(var(--background)/0.2)] backdrop-blur-sm text-[hsl(var(--foreground))]">
-                  <span className="text-sm font-medium">Hỗ trợ toàn diện</span>
+                  <span className="text-sm font-medium">
+                    {t("humanoidSection.card3.badge")}
+                  </span>
                 </div>
               </div>
 
               <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
                 <div className="max-w-lg">
+                  {" "}
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-display text-[hsl(var(--foreground))] font-bold leading-tight mb-4">
-                    Đội ngũ chuyên gia sẵn sàng hỗ trợ từ khâu triển khai đến
-                    bảo trì.{" "}
+                    {t("humanoidSection.card3.title")}{" "}
                     <span className="text-[hsl(var(--primary))]">
-                      not replacements
+                      {t("humanoidSection.card3.highlight")}
                     </span>
                   </h3>
                 </div>

@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "@/hooks/useTranslations";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslations } from "@/hooks/useTranslations";
 
 const Navbar = () => {
-  const { t } = useTranslations();
+  const { t } = useTranslations("landingpage");
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const router = useRouter();
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -55,25 +56,44 @@ const Navbar = () => {
           }}
           aria-label="Pulse Robot"
         >
-          <img src="/logo.svg" alt="Pulse Robot Logo" className="h-7 sm:h-8" />
-        </a>        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-4">
-          <nav className="flex space-x-8">
-            <button
-              type="button"
-              className="nav-link border border-transparent rounded transition-colors
-                hover:bg-gray-100 hover:border-gray-300 focus:outline-none focus:border-blue-500"
-              onClick={() => {
-                router.push("/login");
-              }}
-            >
-              {t('nav.tryNow')}
-            </button>
-            {/* <a href="#features" className="nav-link">About</a>
-            <a href="#details" className="nav-link">Contact</a> */}
-          </nav>
+          <img
+            src="/logowebmi9.png"
+            alt="Pulse Robot Logo"
+            className="h-7 sm:h-8"
+          />
+        </a>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex space-x-8">
+          {" "}
+          <a
+            href="#"
+            className="nav-link"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToTop();
+            }}
+          >
+            {t("nav.home")}
+          </a>
+          <a href="#features" className="nav-link">
+            {t("nav.about")}
+          </a>
+          <a href="#details" className="nav-link">
+            {t("nav.contact")}
+          </a>
+          <a
+            href="#details"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push("/login");
+            }}
+            className="nav-link"
+          >
+            {t("nav.tryNow")}
+          </a>
           <LanguageSwitcher />
-        </div>
+        </nav>
 
         {/* Mobile menu button - increased touch target */}
         <button
@@ -105,7 +125,7 @@ const Navbar = () => {
               document.body.style.overflow = "";
             }}
           >
-            Home
+            {t("nav.home")}
           </a>
           <a
             href="#features"
@@ -115,7 +135,8 @@ const Navbar = () => {
               document.body.style.overflow = "";
             }}
           >
-            About
+            {" "}
+            {t("nav.about")}
           </a>
           <a
             href="#details"
@@ -125,7 +146,17 @@ const Navbar = () => {
               document.body.style.overflow = "";
             }}
           >
-            Contact
+            {t("nav.contact")}
+          </a>
+          <a
+            href="#details"
+            className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100"
+            onClick={() => {
+              setIsMenuOpen(false);
+              document.body.style.overflow = "";
+            }}
+          >
+            {t("nav.tryNow")}
           </a>
         </nav>
       </div>
