@@ -11,6 +11,7 @@ interface AgentListProps {
   onDeactivate: (id: number) => void;
   onView: (agent: Agent) => void;
   onChannelUpdate: () => void;
+  onUserUpdate: () => void;
   isDeleting?: boolean;
   isActivating?: boolean;
   isDeactivating?: boolean;
@@ -24,6 +25,7 @@ const AgentList: React.FC<AgentListProps> = ({
   onDeactivate,
   onView,
   onChannelUpdate,
+  onUserUpdate,
   isDeleting,
   isActivating,
   isDeactivating,
@@ -40,6 +42,7 @@ const AgentList: React.FC<AgentListProps> = ({
           onDeactivate={onDeactivate}
           onView={onView}
           onChannelUpdate={onChannelUpdate}
+          onUserUpdate={onUserUpdate}
           isDeleting={isDeleting}
           isActivating={isActivating}
           isDeactivating={isDeactivating}

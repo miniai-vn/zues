@@ -3,9 +3,10 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "@/hooks/useTranslations";
-import { Bot, Loader2, Link } from "lucide-react";
+import { Bot, Loader2, Link, Users } from "lucide-react";
 import { Agent, AgentStatus } from "@/hooks/data/useAgents";
 import ChannelLinkDialog from "./ChannelLinkDialog";
+import UserAssignDialog from "./UserAssignDialog";
 
 interface AgentCardProps {
   agent: Agent;
@@ -15,6 +16,7 @@ interface AgentCardProps {
   onDeactivate: (id: number) => void;
   onView: (agent: Agent) => void;
   onChannelUpdate: () => void;
+  onUserUpdate: () => void;
   isDeleting?: boolean;
   isActivating?: boolean;
   isDeactivating?: boolean;
@@ -28,6 +30,7 @@ const AgentCard: React.FC<AgentCardProps> = ({
   onDeactivate,
   onView,
   onChannelUpdate,
+  onUserUpdate,
   isDeleting,
   isActivating,
   isDeactivating,
@@ -107,6 +110,29 @@ const AgentCard: React.FC<AgentCardProps> = ({
                     Created: {new Date(agent.createdAt).toLocaleDateString()}
                   </span>
                 </div>
+                <div className="flex items-center gap-3">
+                  {agent.channels && agent.channels.length > 0 && (
+                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                      <Link className="h-3 w-3" />
+                      {agent.channels.length} channel
+                      {agent.channels.length > 1 ? "s" : ""}
+                    </span>
+                  )}
+                  {agent.users && agent.users.length > 0 && (
+                    <span className="flex items-center gap-1 text-xs text-gray-500">
+                      <Users className="h-3 w-3" />
+                      {agent.users.length} user
+                      {agent.users.length > 1 ? "s" : ""}
+                    </span>
+                  )}
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${getStatusBadgeClass(
+                      agent.status
+                    )}`}
+                  >
+                    {agent.status}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -115,6 +141,7 @@ const AgentCard: React.FC<AgentCardProps> = ({
               agent={agent}
               onChannelUpdate={onChannelUpdate}
             />
+            <UserAssignDialog agent={agent} onUserUpdate={onUserUpdate} />
             <Button variant="outline" size="sm" onClick={() => onView(agent)}>
               View
             </Button>

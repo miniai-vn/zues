@@ -16,6 +16,7 @@ interface AgentContentProps {
   onView: (agent: Agent) => void;
   onChannelUpdate: () => void;
   onCreateAgent: () => void;
+  onUserUpdate: () => void;
   isDeleting?: boolean;
   isActivating?: boolean;
   isDeactivating?: boolean;
@@ -31,6 +32,7 @@ const AgentContent: React.FC<AgentContentProps> = ({
   onView,
   onChannelUpdate,
   onCreateAgent,
+  onUserUpdate,
   isDeleting,
   isActivating,
   isDeactivating,
@@ -67,6 +69,7 @@ const AgentContent: React.FC<AgentContentProps> = ({
       onActivate={onActivate}
       onDeactivate={onDeactivate}
       onChannelUpdate={onChannelUpdate}
+      onUserUpdate={onUserUpdate}
       isDeleting={isDeleting}
       isActivating={isActivating}
       isDeactivating={isDeactivating}

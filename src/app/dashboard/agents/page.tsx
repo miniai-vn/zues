@@ -79,6 +79,10 @@ const AgentManagementPage = () => {
     refetchAgents();
   };
 
+  const handleUserUpdate = () => {
+    refetchAgents(); // Refresh agents to get updated user assignments
+  };
+
   return (
     <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
       <Card className="flex flex-col flex-1 overflow-hidden">
@@ -117,6 +121,7 @@ const AgentManagementPage = () => {
               onDeactivate={handleDeactivateAgent}
               onChannelUpdate={handleChannelUpdate}
               onCreateAgent={handleCreateAgent}
+              onUserUpdate={handleUserUpdate}
               isDeleting={isDeletingAgent}
               isActivating={isActivatingAgent}
               isDeactivating={isDeactivatingAgent}

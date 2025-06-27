@@ -8,6 +8,7 @@ export interface AgentActionHandlers {
   onDeactivate: (id: number) => void;
   onView: (agent: Agent) => void;
   onChannelUpdate: () => void;
+  onUserUpdate: () => void;
   onCreateAgent: () => void;
 }
 

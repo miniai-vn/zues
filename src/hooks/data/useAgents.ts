@@ -299,6 +299,41 @@ const useAgents = ({
     },
   });
 
+  // Add users to agent mutation
+  const {
+    mutateAsync: addUsersToAgent,
+    isPending: isAddingUsers,
+    error: addUsersError,
+  } = useMutation({
+    mutationFn: async ({
+      userIds,
+      agentId,
+    }: {
+      userIds: string[];
+      agentId: number;
+    }) => {
+      const response = await axiosInstance.post(`/api/agents/add-users`, {
+        userIds,
+        agentId,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success ",
+        description: "Users have been assigned to agent successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["agents"] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to assign users to agent. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     // Data
     agents: agentsResponse || [],
@@ -312,6 +347,7 @@ const useAgents = ({
     isActivatingAgent,
     isDeactivatingAgent,
     isAddingChannel,
+    isAddingUsers,
 
     // Errors
     fetchAgentsError,
@@ -321,6 +357,7 @@ const useAgents = ({
     activateAgentError,
     deactivateAgentError,
     addChannelError,
+    addUsersError,
 
     // Actions
     createAgent,
@@ -329,6 +366,7 @@ const useAgents = ({
     activateAgent,
     deactivateAgent,
     addChannelToAgent,
+    addUsersToAgent,
     refetchAgents,
 
     // Nested hooks
