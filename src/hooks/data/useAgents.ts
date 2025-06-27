@@ -35,6 +35,11 @@ export interface Agent {
     id: number;
     name: string;
   }>;
+  channels?: Array<{
+    id: number;
+    name: string;
+    type: string;
+  }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -195,7 +200,6 @@ const useAgents = ({
         description: "Agent has been successfully deleted.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
-      queryClient.removeQueries({ queryKey: ["agent", id] });
     },
     onError: () => {
       toast({
@@ -260,6 +264,41 @@ const useAgents = ({
     },
   });
 
+  // Add channel to agent mutation
+  const {
+    mutateAsync: addChannelToAgent,
+    isPending: isAddingChannel,
+    error: addChannelError,
+  } = useMutation({
+    mutationFn: async ({
+      channelIds,
+      agentId,
+    }: {
+      channelIds: number[];
+      agentId: number;
+    }) => {
+      const response = await axiosInstance.post(`/api/agents/add-channel`, {
+        channelIds,
+        agentId,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Channel has been linked to agent successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["agents"] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to link channel to agent. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     // Data
     agents: agentsResponse || [],
@@ -272,6 +311,7 @@ const useAgents = ({
     isDeletingAgent,
     isActivatingAgent,
     isDeactivatingAgent,
+    isAddingChannel,
 
     // Errors
     fetchAgentsError,
@@ -280,6 +320,7 @@ const useAgents = ({
     deleteAgentError,
     activateAgentError,
     deactivateAgentError,
+    addChannelError,
 
     // Actions
     createAgent,
@@ -287,6 +328,7 @@ const useAgents = ({
     deleteAgent,
     activateAgent,
     deactivateAgent,
+    addChannelToAgent,
     refetchAgents,
 
     // Nested hooks
