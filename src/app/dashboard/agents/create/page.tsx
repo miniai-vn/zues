@@ -25,6 +25,7 @@ import useAgents, {
   AgentStatus,
   CreateAgentDto,
 } from "@/hooks/data/useAgents";
+import useDepartments from "@/hooks/data/useDepartments";
 import {
   Bot,
   ChevronDown,
@@ -44,15 +45,43 @@ const AgentConfigurationUI = () => {
   const params = useParams();
   const { toast } = useToast();
 
-  // Check if we're in edit mode
   const agentId = params?.id ? parseInt(params.id as string) : null;
   const isEditMode = Boolean(agentId);
 
-  // Form state
+  // Valid models for each provider
+  const validModels = {
+    [ModelProvider.OPENAI]: [
+      "gpt-4",
+      "gpt-4-turbo",
+      "gpt-3.5-turbo",
+      "gpt-4o",
+      "gpt-4o-mini",
+    ],
+    [ModelProvider.ANTHROPIC]: [
+      "claude-3-opus",
+      "claude-3-sonnet",
+      "claude-3-haiku",
+      "claude-3-5-sonnet",
+    ],
+    [ModelProvider.DEEPSEEK]: [
+      "deepseek-chat",
+      "deepseek-coder",
+      "deepseek-v3",
+      "deepseek-v2",
+    ],
+    [ModelProvider.GOOGLE]: [
+      "gemini-pro",
+      "gemini-pro-vision",
+      "gemini-1.5-pro",
+      "gemini-1.5-flash",
+    ],
+    [ModelProvider.LOCAL]: [], // Allow any model name for local
+  };
+
   const [formData, setFormData] = useState<CreateAgentDto>({
     name: "",
     modelProvider: ModelProvider.DEEPSEEK,
-    modelName: "DeepSeek-V3",
+    modelName: "deepseek-v3",
     prompt: `# Vai trò: Trợ lý tạo trang AI
 
 ## Hồ sơ
@@ -65,6 +94,8 @@ const AgentConfigurationUI = () => {
   });
 
   const [outputLanguage, setOutputLanguage] = useState("auto");
+  const [selectedDepartmentId, setSelectedDepartmentId] =
+    useState<string>("none");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Use hooks
@@ -74,19 +105,17 @@ const AgentConfigurationUI = () => {
     isCreatingAgent,
     isUpdatingAgent,
     useAgent,
-    useAvailableModels,
   } = useAgents();
 
-  // Get agent data if in edit mode
-  const { data: existingAgent, isLoading: isLoadingAgent } = useAgent(
-    agentId || 0
-  );
+  // Get departments
+  const { departments, isFetchingDepartments } = useDepartments({});
+  console.log("Departments:", departments);
+  const {
+    data: existingAgent,
+    isLoading: isLoadingAgent,
+    error: loadingError,
+  } = useAgent(agentId as number);
 
-  // Get available models for the selected provider
-  const { data: availableModels, isLoading: isLoadingModels } =
-    useAvailableModels(formData.modelProvider);
-
-  // Load existing agent data when in edit mode
   useEffect(() => {
     if (isEditMode && existingAgent) {
       setFormData({
@@ -98,10 +127,15 @@ const AgentConfigurationUI = () => {
         status: existingAgent.status,
         modelConfig: existingAgent.modelConfig,
       });
-    }
-  }, [isEditMode, existingAgent]);
 
-  // Validation
+      // Set department if it exists
+      if (existingAgent.shop?.id) {
+        setSelectedDepartmentId(existingAgent.shop.id.toString());
+      } else {
+        setSelectedDepartmentId("none");
+      }
+    }
+  }, [isEditMode, existingAgent, agentId]);
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -121,7 +155,6 @@ const AgentConfigurationUI = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!validateForm()) {
       toast({
@@ -132,9 +165,18 @@ const AgentConfigurationUI = () => {
       return;
     }
 
+    // Prepare form data with department
+    const submitData = {
+      ...formData,
+      departmentIds:
+        selectedDepartmentId && selectedDepartmentId !== "none"
+          ? [parseInt(selectedDepartmentId)]
+          : undefined,
+    };
+
     if (isEditMode && agentId) {
       updateAgent(
-        { id: agentId, data: formData },
+        { id: agentId, data: submitData },
         {
           onSuccess: () => {
             router.push("/dashboard/agents");
@@ -142,7 +184,7 @@ const AgentConfigurationUI = () => {
         }
       );
     } else {
-      createAgent(formData, {
+      createAgent(submitData, {
         onSuccess: () => {
           router.push("/dashboard/agents");
         },
@@ -150,26 +192,23 @@ const AgentConfigurationUI = () => {
     }
   };
 
-  // Handle input changes
   const handleInputChange = (field: keyof CreateAgentDto, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
-  // Handle model provider change
   const handleModelProviderChange = (provider: ModelProvider) => {
+    const firstModel = validModels[provider]?.[0] || "";
     setFormData((prev) => ({
       ...prev,
       modelProvider: provider,
-      modelName: "", // Reset model name when provider changes
+      modelName: firstModel,
     }));
   };
 
-  // Chat preview state
   const [messages, setMessages] = useState([
     {
       type: "bot",
@@ -213,6 +252,24 @@ const AgentConfigurationUI = () => {
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin" />
           <p>Loading agent...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isEditMode && loadingError) {
+    return (
+      <div className="flex flex-1 items-center justify-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <Bot className="w-16 h-16 text-gray-400" />
+          <h2 className="text-xl font-semibold">Agent not found</h2>
+          <p className="text-muted-foreground">
+            The agent you're trying to edit doesn't exist or you don't have
+            permission to access it.
+          </p>
+          <Button onClick={() => router.push("/dashboard/agents")}>
+            Back to Agents
+          </Button>
         </div>
       </div>
     );
@@ -265,6 +322,11 @@ const AgentConfigurationUI = () => {
                             ).toLocaleString()}`
                           : `Created: ${new Date().toLocaleString()}`}
                       </span>
+                      {isEditMode && existingAgent?.shop && (
+                        <span className="text-sm px-2 py-1 bg-blue-100 text-blue-700 rounded-md">
+                          {existingAgent.shop.name}
+                        </span>
+                      )}
                       <Button
                         onClick={handleSubmit}
                         disabled={isCreatingAgent || isUpdatingAgent}
@@ -393,13 +455,16 @@ const AgentConfigurationUI = () => {
                       {/* Model Selection */}
                       <div className="space-y-2">
                         <Label htmlFor="model">Model *</Label>
-                        {isLoadingModels ? (
-                          <div className="flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span className="text-sm text-muted-foreground">
-                              Loading models...
-                            </span>
-                          </div>
+                        {formData.modelProvider === ModelProvider.LOCAL ? (
+                          <Input
+                            id="model"
+                            value={formData.modelName}
+                            onChange={(e) =>
+                              handleInputChange("modelName", e.target.value)
+                            }
+                            placeholder="Enter local model name"
+                            className={errors.modelName ? "border-red-500" : ""}
+                          />
                         ) : (
                           <Select
                             value={formData.modelName}
@@ -415,20 +480,12 @@ const AgentConfigurationUI = () => {
                               <SelectValue placeholder="Select model" />
                             </SelectTrigger>
                             <SelectContent>
-                              {availableModels?.map((model) => (
-                                <SelectItem key={model.id} value={model.id}>
-                                  {model.name}
-                                </SelectItem>
-                              )) || (
-                                <>
-                                  <SelectItem value="DeepSeek-V3">
-                                    DeepSeek-V3
+                              {validModels[formData.modelProvider]?.map(
+                                (model) => (
+                                  <SelectItem key={model} value={model}>
+                                    {model}
                                   </SelectItem>
-                                  <SelectItem value="GPT-4">GPT-4</SelectItem>
-                                  <SelectItem value="Claude-3">
-                                    Claude-3
-                                  </SelectItem>
-                                </>
+                                )
                               )}
                             </SelectContent>
                           </Select>
@@ -437,6 +494,44 @@ const AgentConfigurationUI = () => {
                           <p className="text-sm text-red-500">
                             {errors.modelName}
                           </p>
+                        )}
+                      </div>
+
+                      {/* Department Selection */}
+                      <div className="space-y-2">
+                        <Label htmlFor="department">Department</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Select the department this agent belongs to
+                        </p>
+                        {isFetchingDepartments || !departments ? (
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span className="text-sm text-muted-foreground">
+                              Loading departments...
+                            </span>
+                          </div>
+                        ) : (
+                          <Select
+                            value={selectedDepartmentId}
+                            onValueChange={setSelectedDepartmentId}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select department" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">
+                                No Department
+                              </SelectItem>
+                              {departments?.map((department) => (
+                                <SelectItem
+                                  key={department.id}
+                                  value={department.id!}
+                                >
+                                  {department.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         )}
                       </div>
 
@@ -455,7 +550,7 @@ const AgentConfigurationUI = () => {
                           }
                           rows={12}
                           placeholder="Enter agent prompt..."
-                          className={`resize-none ${
+                          className={`resize-none whitespace-pre-wrap text-sm bg-gray-50 p-4 rounded-lg border ${
                             errors.prompt ? "border-red-500" : ""
                           }`}
                         />

@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useAgents, { AgentStatus } from "@/hooks/data/useAgents";
-import { useTranslations } from "@/hooks/useTranslations";
 import {
   ArrowLeft,
   Bot,
@@ -23,7 +22,6 @@ import {
 import { useParams, useRouter } from "next/navigation";
 
 const AgentDetailPage = () => {
-  const { t } = useTranslations();
   const router = useRouter();
   const params = useParams();
 
@@ -40,7 +38,6 @@ const AgentDetailPage = () => {
   } = useAgents();
 
   const { data: agent, isLoading, error } = useAgent(agentId || 0);
-
   const handleEdit = () => {
     router.push(`/dashboard/agents/${agentId}/edit`);
   };

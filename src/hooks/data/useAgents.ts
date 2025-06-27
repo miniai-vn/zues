@@ -49,6 +49,7 @@ export interface CreateAgentDto {
   description?: string;
   shopId?: number;
   userIds?: number[];
+  departmentIds?: number[];
 }
 
 export interface UpdateAgentDto extends Partial<CreateAgentDto> {}
@@ -95,7 +96,7 @@ const useAgents = ({
       const response = await axiosInstance.get("/api/agents", {
         params: { page, limit, search, status, modelProvider, shopId },
       });
-      return response.data as PaginatedResponse<Agent>;
+      return response.data;
     },
   });
 
@@ -107,7 +108,7 @@ const useAgents = ({
         const response = await axiosInstance.get(`/api/agents/${id}`);
         return response.data as Agent;
       },
-      enabled: !!id,
+      enabled: !!id && id > 0, // Only fetch if we have a valid positive ID
     });
   };
 
@@ -119,7 +120,7 @@ const useAgents = ({
         const response = await axiosInstance.get(
           `/api/agents/models/${provider}`
         );
-        return response.data as AvailableModel[];
+        return (response.data as AvailableModel[]) || [];
       },
       enabled: !!provider,
     });
@@ -135,17 +136,17 @@ const useAgents = ({
       const response = await axiosInstance.post("/api/agents", data);
       return response.data as Agent;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
-        title: "Agent created",
-        description: `Agent "${data.name}" has been successfully created.`,
+        title: "Success",
+        description: "Agent has been successfully created.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
-        title: "Error creating agent",
-        description: error.response?.data?.message || error.message,
+        title: "Error",
+        description: "Failed to create agent. Please try again.",
         variant: "destructive",
       });
     },
@@ -163,16 +164,16 @@ const useAgents = ({
     },
     onSuccess: (data) => {
       toast({
-        title: "Agent updated",
-        description: `Agent "${data.name}" has been successfully updated.`,
+        title: "Success",
+        description: "Agent has been successfully updated.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
-        title: "Error updating agent",
-        description: error.response?.data?.message || error.message,
+        title: "Error",
+        description: "Failed to update agent. Please try again.",
         variant: "destructive",
       });
     },
@@ -190,16 +191,16 @@ const useAgents = ({
     },
     onSuccess: (_, id) => {
       toast({
-        title: "Agent deleted",
-        description: "The agent has been successfully deleted.",
+        title: "Success",
+        description: "Agent has been successfully deleted.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       queryClient.removeQueries({ queryKey: ["agent", id] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
-        title: "Error deleting agent",
-        description: error.response?.data?.message || error.message,
+        title: "Error",
+        description: "Failed to delete agent. Please try again.",
         variant: "destructive",
       });
     },
@@ -217,16 +218,16 @@ const useAgents = ({
     },
     onSuccess: (data) => {
       toast({
-        title: "Agent activated",
-        description: `Agent "${data.name}" has been successfully activated.`,
+        title: "Success",
+        description: "Agent has been successfully activated.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
-        title: "Error activating agent",
-        description: error.response?.data?.message || error.message,
+        title: "Error",
+        description: "Failed to activate agent. Please try again.",
         variant: "destructive",
       });
     },
@@ -244,16 +245,16 @@ const useAgents = ({
     },
     onSuccess: (data) => {
       toast({
-        title: "Agent deactivated",
-        description: `Agent "${data.name}" has been successfully deactivated.`,
+        title: "Success",
+        description: "Agent has been successfully deactivated.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
-        title: "Error deactivating agent",
-        description: error.response?.data?.message || error.message,
+        title: "Error",
+        description: "Failed to deactivate agent. Please try again.",
         variant: "destructive",
       });
     },
