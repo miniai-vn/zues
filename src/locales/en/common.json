@@ -248,6 +248,17 @@
         }
       }
     },
+    "agents": {
+      "title": "Agent Management",
+      "description": "Configure and manage AI agents for your system. Set up agent behavior, prompts, and testing environment.",
+      "createAgent": "Create Agent",
+      "searchPlaceholder": "Search agents by name or description...",
+      "search": "Search",
+      "emptyState": {
+        "title": "No agents found",
+        "description": "Create your first AI agent to get started"
+      }
+    },
     "roles": {
       "title": "Role Management",
       "add": "Add Role",
