@@ -415,6 +415,11 @@
       "title": "TikTok Shop",
       "description": "Kết nối TikTok Shop để bán hàng qua livestream và video."
     },
+    "lazada": {
+      "name": "Lazada",
+      "title": "Lazada",
+      "description": "Tích hợp với Lazada để quản lý sản phẩm và đơn hàng hiệu quả."
+    },
     "whatsapp": {
       "name": "WhatsApp",
       "title": "WhatsApp",

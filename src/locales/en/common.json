@@ -415,6 +415,11 @@
       "title": "TikTok Shop",
       "description": "Connect TikTok Shop to sell through livestream and videos."
     },
+    "lazada": {
+      "name": "Lazada",
+      "title": "Lazada",
+      "description": "Integrate with Lazada to manage products and orders efficiently."
+    },
     "whatsapp": {
       "name": "WhatsApp",
       "title": "WhatsApp",

@@ -169,6 +169,7 @@ export default function ChannelsManagementPage() {
     updateShopId,
     updateStatus,
     syncConversations,
+    syncConversationsLazada,
   } = useChannels({
     limit: 100, // Get all channels
   });
@@ -209,7 +210,12 @@ export default function ChannelsManagementPage() {
     if (appType === "zalo") {
       updateShopId({ appId: appIdParam });
       syncConversations(appIdParam);
-    } else {
+    }
+    if (appType === "lazada") {
+      updateShopId({ appId: appIdParam });
+      syncConversationsLazada(appIdParam);
+    }
+    if (appType === "facebook") {
       const appIds = appIdParam.includes(",")
         ? appIdParam.split(",")
         : [appIdParam];
@@ -233,6 +239,12 @@ export default function ChannelsManagementPage() {
     if (platformType === "facebook") {
       // Redirect to Facebook Auth URL
       window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
+      return;
+    }
+
+    if (platformType === "lazada") {
+      // Redirect to Lazada Auth URL
+      window.open(process.env.NEXT_PUBLIC_OAUTH_LAZADA, "_blank");
       return;
     }
   };
@@ -269,7 +281,7 @@ export default function ChannelsManagementPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
+        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4 overflow-y-auto">
           <div className="w-full max-w-6xl mx-auto space-y-6">
             {isLoadingChannels ? (
               <div className="text-center py-12">
