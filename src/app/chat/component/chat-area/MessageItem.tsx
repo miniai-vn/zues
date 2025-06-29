@@ -34,7 +34,7 @@ export const MessageItem = ({
     <div
       className={cn(
         "flex gap-3",
-        isOwnMessage ? "justify-end" : "justify-start"
+        isOwnMessage ? "justify-end" : "justify-start",
       )}
     >
       {/* Left avatar for received messages */}
@@ -51,7 +51,7 @@ export const MessageItem = ({
       <div
         className={cn(
           "max-w-[70%] space-y-1 flex flex-col",
-          isOwnMessage ? "items-end" : "items-start"
+          isOwnMessage ? "items-end" : "items-start",
         )}
       >
         {/* Sender name for received messages */}
@@ -65,7 +65,7 @@ export const MessageItem = ({
         <div
           className={cn(
             "rounded-lg px-3 py-2 text-sm break-words",
-            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted"
+            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted",
           )}
         >
           {message.content}
@@ -75,6 +75,25 @@ export const MessageItem = ({
         <p className="text-xs text-muted-foreground">
           {formatMessageTime(message.createdAt)}
         </p>
+
+        {/* Người đã đọc message này */}
+        {message.readBy && message.readBy.length > 0 && (
+          <div className="flex gap-1 mt-1 items-center">
+            {message.readBy.map((u) => (
+              <div key={u.id}>
+                <span className="text-xs text-muted-foreground">
+                  Đã đọc bởi: {u.name}
+                </span>
+                {/* <Avatar className="h-5 w-5" title={u.name}>
+                  <AvatarImage src={u.avatar || defaultAvatar} />
+                  <AvatarFallback>
+                    {u.name?.charAt(0).toUpperCase() || "?"}
+                  </AvatarFallback>
+                </Avatar> */}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Right avatar for sent messages */}

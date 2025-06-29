@@ -29,10 +29,32 @@ interface ChannelItem {
   type: string;
 }
 
+type PlatformType = "zalo" | "facebook";
+
+const OAUTH_URLS: Record<PlatformType, string | undefined> = {
+  zalo: process.env.NEXT_PUBLIC_OAUTH_ZALO,
+  facebook: process.env.NEXT_PUBLIC_OAUTH_FACEBOOK,
+};
+
+const openCenteredPopup = (
+  url: string,
+  title = "oauthPopup",
+  w = 600,
+  h = 600,
+) => {
+  const left = (window.innerWidth - w) / 2;
+  const top = (window.innerHeight - h) / 2;
+  return window.open(
+    url,
+    title,
+    `width=${w},height=${h},top=${top},left=${left}`,
+  );
+};
+
 // Utility functions
 const mapChannelStatus = (
   status: ChannelStatus,
-  t: any
+  t: any,
 ): ChannelItem["status"] => {
   switch (status) {
     case ChannelStatus.ACTIVE:
@@ -54,7 +76,7 @@ const formatDate = (dateString: string): string => {
 
 const transformChannelToChannelItem = (
   channel: Channel,
-  t: any
+  t: any,
 ): ChannelItem => ({
   id: channel.id,
   name: channel.name,
@@ -72,6 +94,7 @@ interface PlatformCardProps {
   isExpanded: boolean;
   onToggle: () => void;
   onAddChannel: () => void;
+
   onDeleteChannel: (channelId: number) => void;
   onToggleChannelStatus: (channelId: number, checked: boolean) => void;
   isLoading?: boolean;
@@ -206,14 +229,16 @@ export default function ChannelsManagementPage() {
       return;
     }
 
-    if (appType === "zalo") {
-      updateShopId({ appId: appIdParam });
-      syncConversations(appIdParam);
-    } else {
-      const appIds = appIdParam.includes(",")
-        ? appIdParam.split(",")
-        : [appIdParam];
-      appIds.forEach((id) => updateShopId({ appId: id }));
+    if (appIdParam) {
+      if (appType === "zalo") {
+        updateShopId({ appId: appIdParam });
+        syncConversations(appIdParam);
+      } else {
+        const appIds = appIdParam.includes(",")
+          ? appIdParam.split(",")
+          : [appIdParam];
+        appIds.forEach((id) => updateShopId({ appId: id }));
+      }
     }
   }, []);
 
@@ -224,15 +249,19 @@ export default function ChannelsManagementPage() {
     }));
   };
 
-  const handleAddChannel = (platformType: string) => {
+  const handleAddChannel = (platformType: PlatformType) => {
+    const authUrl = OAUTH_URLS[platformType];
+
+    if (!authUrl) {
+      return;
+    }
+
     if (platformType === "zalo") {
-      // Redirect to Zalo OA authentication URL
-      window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
+      window.open(authUrl, "_blank");
       return;
     }
     if (platformType === "facebook") {
-      // Redirect to Facebook Auth URL
-      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
+      window.open(authUrl, "_blank");
       return;
     }
   };
@@ -242,10 +271,9 @@ export default function ChannelsManagementPage() {
       deleteChannel(channelId);
     }
   };
-
   const handleToggleChannelStatus = async (
     channelId: number,
-    checked: boolean
+    checked: boolean,
   ) => {
     updateStatus({
       channelId,
@@ -289,7 +317,9 @@ export default function ChannelsManagementPage() {
                       channels={channelsByPlatform[platform.type] || []}
                       isExpanded={expandedPlatforms[platform.type] || false}
                       onToggle={() => togglePlatform(platform.type)}
-                      onAddChannel={() => handleAddChannel(platform.type)}
+                      onAddChannel={() =>
+                        handleAddChannel(platform.type as PlatformType)
+                      }
                       onDeleteChannel={handleDeleteChannel}
                       onToggleChannelStatus={handleToggleChannelStatus}
                       isLoading={isDeletingChannel}

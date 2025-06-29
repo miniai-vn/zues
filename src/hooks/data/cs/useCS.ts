@@ -10,10 +10,20 @@ import { User } from "../useAuth";
 import { Channel } from "../useChannels";
 import { useCsStore } from "./useCsStore";
 import { Tag } from "./useTags";
+import { channel } from "diagnostics_channel";
 
 export enum ConversationType {
   DIRECT = "direct",
   GROUP = "group",
+}
+
+export interface ReadByUser {
+  id: number;
+  name: string;
+  avatar?: string;
+  type?: string;
+  userId?: string;
+  customerId?: string;
 }
 
 export type Message = {
@@ -25,6 +35,7 @@ export type Message = {
   senderType: string;
   channelId?: number;
   messageType: string;
+  readBy?: ReadByUser[];
   sender?: {
     id: string;
     name: string;
@@ -155,7 +166,7 @@ const useCS = ({
     (newFilters: Partial<ConversationQueryParams>) => {
       setConversationFilters(newFilters);
     },
-    [setConversationFilters]
+    [setConversationFilters],
   );
 
   const resetFilters = useCallback(() => {
@@ -235,7 +246,7 @@ const useCS = ({
       }
       const response = await axiosInstance.post<ApiResponse<Message>>(
         `/api/chat/sms`,
-        message
+        message,
       );
       return response.data;
     },
@@ -255,7 +266,7 @@ const useCS = ({
       setLoadingMessages(true);
       try {
         const response = await axiosInstance.get(
-          `/api/conversations/${conversationId}/messages`
+          `/api/conversations/${conversationId}/messages`,
         );
         const data = response.data;
         if (data?.messages) {
@@ -291,7 +302,7 @@ const useCS = ({
   const { mutateAsync: markReadConversation } = useMutation({
     mutationFn: async (id: number) => {
       const response = await axiosInstance.put<ApiResponse<Conversation>>(
-        `/api/conversations/${id}/mark-read`
+        `/api/conversations/${id}/mark-read`,
       );
       return response.data;
     },

@@ -156,14 +156,14 @@ export function CreateOrUpdateChannelDialog({
                 <p className="font-medium mb-1">Trước khi bắt đầu</p>
                 <p>
                   Bạn cần có một tài khoản OA Zalo chính thức. Nếu chưa có, vui
-                  lòng tạo OA trên{" "}
+                  lòng tạo OA trên
                   <a
                     href="https://oa.zalo.me"
                     target="_blank"
                     className="text-blue-600 underline hover:text-blue-800"
                   >
                     Zalo Business
-                  </a>{" "}
+                  </a>
                   trước khi tiếp tục.
                 </p>
               </div>
