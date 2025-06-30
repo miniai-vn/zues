@@ -106,9 +106,10 @@ const useResource = ({
           `/api/resources/`,
           {
             departmentId: departmentId,
-            extra: data,
+            extra: data.extra,
             path: data.url,
             name: data.name,
+            s3Key: data.key,
             type: type,
             description: description,
           },

@@ -2,18 +2,26 @@
 import ActionPopover from "@/components/dashboard/popever";
 import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import useTranslations from "@/hooks/useTranslations";
 import { convertBytesToMB } from "@/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { File, FileText, Image, Search } from "lucide-react";
+import { File, FileText, Image, FolderOpen } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
+import { ResourceFilters } from "./components/ResourceFilters";
 
 const DepartmentDetailComponent = () => {
   const { t } = useTranslations();
@@ -22,6 +30,18 @@ const DepartmentDetailComponent = () => {
   const departmentId = params.id as string;
 
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [columnVisibility, setColumnVisibility] = useState({
+    index: true,
+    name: true,
+    type: true,
+    size: true,
+    description: true,
+    createdAt: true,
+    status: true,
+    actions: true,
+  });
   useDebouncedValue(search, 500);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -100,6 +120,35 @@ const DepartmentDetailComponent = () => {
     setPageSize(newSize);
     setPage(1);
   };
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setPage(1);
+  };
+
+  const handleTypeFilter = (type: string) => {
+    setTypeFilter(type);
+    setPage(1);
+  };
+
+  // Filter the data based on search, status, and type
+  const filteredData = useMemo(() => {
+    if (!materialItems?.items) return [];
+
+    return materialItems.items.filter((item: Resource) => {
+      const matchesSearch =
+        search === "" ||
+        item.name?.toLowerCase().includes(search.toLowerCase()) ||
+        item.description?.toLowerCase().includes(search.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
+      const matchesType = typeFilter === "all" || item.type === typeFilter;
+
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [materialItems?.items, search, statusFilter, typeFilter]);
 
   const columns: ColumnDef<Resource>[] = [
     {
@@ -204,6 +253,10 @@ const DepartmentDetailComponent = () => {
             statusText = t("dashboard.departments.detail.statusValues.active");
             statusClass = "bg-green-100 text-green-800";
             break;
+          case "error":
+            statusText = t("dashboard.resources.error");
+            statusClass = "bg-red-100 text-red-800";
+            break;
           default:
             break;
         }
@@ -263,49 +316,73 @@ const DepartmentDetailComponent = () => {
     },
   ];
 
-  return (
-    <div className="flex flex-1 flex-col px-4 space-y-2">
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder={t(
-            "dashboard.departments.detail.searchDocumentPlaceholder"
-          )}
-          className="mr-4 w-full flex-1"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={() => refetchMaterialItems()}
-            className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <Search />
-            {t("common.search")}
-          </Button>
+  // Filter visible columns based on columnVisibility state
+  const visibleColumns = columns.filter((column) => {
+    const columnId = column.id || (column as any).accessorKey;
+    return columnVisibility[columnId as keyof typeof columnVisibility];
+  });
 
-          <CreateOrUpdateResource
-            type="document"
-            onHandleUploadFile={onHandleUploadFile}
-            resource={undefined}
-          />
-        </div>
-      </div>
-      <DataTable
-        columns={columns}
-        data={materialItems?.items || []}
-        pagination={{
-          page: page,
-          limit: pageSize,
-          total: materialItems?.totalCount || 0,
-        }}
-        onPaginationChange={handlePaginationChange}
-        onPageSizeChange={handlePageSizeChange}
-        isLoading={
-          isPendingFetchingItem ||
-          isPendingCreateResource ||
-          isPendingDeleteResource
-        }
-      />
+  return (
+    <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
+      <Card className="flex flex-col flex-1 overflow-hidden">
+        <CardHeader className="px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <FolderOpen className="h-5 w-5" />
+                {t("dashboard.departments.detail.documentManagement")}
+              </CardTitle>
+              <CardDescription>
+                {t("dashboard.departments.detail.documents")}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <CreateOrUpdateResource
+                type="document"
+                onHandleUploadFile={onHandleUploadFile}
+                resource={undefined}
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
+          <div className="flex-shrink-0">
+            <ResourceFilters
+              search={search}
+              setSearch={setSearch}
+              statusFilter={statusFilter}
+              handleStatusFilter={handleStatusFilter}
+              typeFilter={typeFilter}
+              handleTypeFilter={handleTypeFilter}
+              onRefetch={refetchMaterialItems}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+              onCreateResource={() => {}}
+            />
+            <Separator className="mt-4" />
+          </div>
+
+          {/* Data Table */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <DataTable
+              columns={visibleColumns}
+              data={filteredData || []}
+              pagination={{
+                page: page,
+                limit: pageSize,
+                total: materialItems?.totalCount || 0,
+              }}
+              onPaginationChange={handlePaginationChange}
+              onPageSizeChange={handlePageSizeChange}
+              isLoading={
+                isPendingFetchingItem ||
+                isPendingCreateResource ||
+                isPendingDeleteResource
+              }
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -18,8 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "@/hooks/useTranslations";
-import { Columns, Plus, RefreshCw, Search } from "lucide-react";
-import { CreateOrUpdateUserDialog } from "./CreateOrUpdateUserModal";
+import { Columns, RefreshCw, Search } from "lucide-react";
 
 interface UserFiltersProps {
   search: string;

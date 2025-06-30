@@ -11,6 +11,7 @@ import { Department } from "@/hooks/data/useDepartments";
 import { useState } from "react";
 import CreateOrUpdateForm from "../form/CreateOrUpdateDepartmentForm";
 import { useTranslations } from "@/hooks/useTranslations";
+import { Plus } from "lucide-react";
 
 interface CreateDeptModalProps {
   department?: Department;
@@ -38,7 +39,10 @@ export default function CreateDeptDialog({
       open={isOpen}
     >
       <DialogTrigger asChild>
-        <Button>+ {t("dashboard.departments.modal.createButton")}</Button>
+        <Button size="sm" className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          {t("dashboard.departments.modal.createButton") || "Add Department"}
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-[800px] max-w-[90vw]">
         <DialogHeader>
