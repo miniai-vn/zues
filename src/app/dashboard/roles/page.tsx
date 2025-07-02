@@ -28,7 +28,7 @@ const RolesPage = () => {
   const [columnVisibility, setColumnVisibility] = useState({
     index: true,
     name: true,
-    description: true,
+    description: false,
     permissions: true,
     created_at: true,
     updated_at: true,
@@ -56,7 +56,6 @@ const RolesPage = () => {
       status: "active",
     },
   });
-  console.log("Roles data:", roles);
   useEffect(() => {
     if (debouncedSearch) {
       updateFilter("search", debouncedSearch);

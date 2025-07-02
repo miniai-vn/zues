@@ -373,8 +373,8 @@
         "status": "Trạng thái",
         "statusValues": {
           "new": "Mới",
-          "processing": "Đã phân đoạn",
-          "finished": "Đã train",
+          "processing": "Đang xử lý",
+          "finished": "Xử lý xong",
           "active": "Hoạt động"
         },
         "confirmDeleteDocument": "Bạn có chắc chắn muốn xóa tài liệu này không?",

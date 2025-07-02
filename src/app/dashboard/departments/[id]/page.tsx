@@ -36,7 +36,7 @@ const DepartmentDetailComponent = () => {
     index: true,
     name: true,
     type: true,
-    size: true,
+    size: false,
     description: true,
     createdAt: true,
     status: true,
@@ -78,6 +78,7 @@ const DepartmentDetailComponent = () => {
     isPendingDeleteResource,
     isPendingFetchingItem,
     isPendingSyncResource,
+    reEtl,
   } = useResource({
     departmentId: departmentId,
     page,
@@ -157,60 +158,66 @@ const DepartmentDetailComponent = () => {
       cell: ({ row }) => (
         <div className="flex items-center justify-center">{row.index + 1}</div>
       ),
-      size: 60,
     },
     {
       accessorKey: "name",
       header: t("dashboard.departments.detail.fileName"),
       cell: (row) => {
+        const fileName = row.row.original.name;
         return (
-          <div className="break-all flex items-center gap-2 line-clamp-2">
-            <span>
+          <div className="flex items-center gap-2 max-w-[200px]">
+            <span className="flex-shrink-0">
               {getFileIcon(row.row.original.extra.extension as string)}
             </span>
-            <span>{row.row.original.name}</span>
+            <span className="truncate" title={fileName}>
+              {fileName}
+            </span>
           </div>
         );
       },
-      size: 250,
     },
     {
       accessorKey: "type",
       header: t("dashboard.departments.detail.documentType"),
       cell: (row) => (
-        <div className="break-all line-clamp-1">{row.row.original?.type}</div>
+        <div className="max-w-[100px]">
+          <span className="truncate block" title={row.row.original?.type}>
+            {row.row.original?.type}
+          </span>
+        </div>
       ),
-      size: 100,
     },
     {
       accessorKey: "size",
       header: t("dashboard.departments.detail.fileSize"),
       cell: (row) => (
-        <div className="break-all line-clamp-1">
+        <div className="whitespace-nowrap">
           {convertBytesToMB(row.row.original.extra.size as number)}
         </div>
       ),
-      size: 100,
     },
     {
       accessorKey: "description",
       header: t("dashboard.departments.detail.description"),
-      cell: (row) => (
-        <div className="break-all line-clamp-1">
-          {row.row.original.description}
-        </div>
-      ),
-      size: 100,
+      cell: (row) => {
+        const description = row.row.original.description;
+        return (
+          <div className="max-w-[250px]">
+            <span className="line-clamp-2 text-sm" title={description}>
+              {description}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdAt",
       header: t("dashboard.departments.detail.uploadTime"),
       cell: (row) => (
-        <div className="whitespace-nowrap">
+        <div className="whitespace-nowrap text-sm">
           {dayjs(row.row.original.createdAt).format("DD/MM/YYYY HH:mm")}
         </div>
       ),
-      size: 150,
     },
     {
       accessorKey: "status",
@@ -264,14 +271,13 @@ const DepartmentDetailComponent = () => {
         return (
           <div className="flex items-center justify-center w-full">
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${statusClass}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass}`}
             >
               {statusText}
             </span>
           </div>
         );
       },
-      size: 120,
     },
     {
       id: "actions",
@@ -287,23 +293,17 @@ const DepartmentDetailComponent = () => {
                 id={`status-switch-${documentId}`}
                 checked={isActive}
                 onCheckedChange={(checked) => {
-                  createChunks(documentId);
-                  console.log(
-                    `Document ${documentId} status changed to ${
-                      checked ? "active" : "inactive"
-                    }`
-                  );
+                  if (checked) {
+                    createChunks(documentId);
+                  } else {
+                    syncResource(documentId);
+                  }
                 }}
               />
             </div>
             <ActionPopover
-              onArchive={() => syncResource(documentId)}
+              onArchive={() => reEtl(documentId)}
               onDelete={() => deleteResource(documentId)}
-              onConfigure={() => {
-                router.push(
-                  `/dashboard/departments/${departmentId}/documents/${documentId}`
-                );
-              }}
               deleteDescription={t(
                 "dashboard.departments.detail.confirmDeleteDocument"
               )}
@@ -312,7 +312,6 @@ const DepartmentDetailComponent = () => {
           </div>
         );
       },
-      size: 140,
     },
   ];
 

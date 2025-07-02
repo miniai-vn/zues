@@ -54,7 +54,6 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     if (!socketChatIo) return;
 
     const handleReceiveMessage = (data: Message) => {
-      console.log("Received message:", data);
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
         markReadConversation(data.conversationId as number);

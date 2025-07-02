@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,11 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import useDepartments from "@/hooks/data/useDepartments";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useTranslations } from "@/hooks/useTranslations";
-import { Building2, Plus } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Building2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import CardDepartmentList from "./components/CardDepartmentList";
-import CreateDeptDialog from "./components/dialog/CreateDeptDialog";
 import { DepartmentFilters } from "./components/DepartmentFilters";
+import CreateDeptDialog from "./components/dialog/CreateDeptDialog";
 
 export function DepartmentDetailPage() {
   const { t } = useTranslations();
