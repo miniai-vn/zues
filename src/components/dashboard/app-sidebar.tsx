@@ -35,7 +35,6 @@ export function AppSidebar({
   const navMain = [
     {
       title: t("dashboard.sidebar.chat"),
-      // url: "/dashboard/chat",
       icon: MessageSquarePlus,
       role: [Role.Staff, Role.Admin, Role.Leader],
       items: [
@@ -55,16 +54,15 @@ export function AppSidebar({
     },
     {
       title: t("dashboard.sidebar.automation"),
-      url: "/dashboard/chat",
       icon: BotIcon,
       role: [Role.Staff, Role.Admin, Role.Leader],
       items: [
-        {
-          title: t("dashboard.sidebar.reports"),
-          icon: BarChart3,
-          role: [Role.Admin, Role.Leader],
-          url: "/dashboard/report",
-        },
+        // {
+        //   title: t("dashboard.sidebar.reports"),
+        //   icon: BarChart3,
+        //   role: [Role.Admin, Role.Leader],
+        //   url: "/dashboard/report",
+        // },
         {
           title: t("dashboard.sidebar.documentGroups"),
           icon: FolderOpen,
@@ -81,7 +79,6 @@ export function AppSidebar({
     },
     {
       title: t("dashboard.sidebar.staff"),
-      // url: "/dashboard",
       icon: UserCog2Icon,
       isActive: false,
       role: [Role.Admin, Role.Staff, Role.Leader],

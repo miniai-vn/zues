@@ -57,6 +57,7 @@ export type Conversation = {
   id: number;
   name: string;
   channelId?: number;
+  isBot?: boolean;
   avatar: string;
   channelType?: string;
   isGroup?: boolean;
@@ -121,7 +122,6 @@ const useCS = ({
   conversationId?: number;
   initialFilters?: Partial<ConversationQueryParams>;
 } = {}) => {
-  const router = useRouter();
   const { toast } = useToast();
 
   // Store actions and state
@@ -233,10 +233,16 @@ const useCS = ({
       if (!message) {
         throw new Error("No conversation selected");
       }
-      const response = await axiosInstance.post<ApiResponse<Message>>(
-        `/api/chat/sms`,
-        message
-      );
+      const response = await axiosInstance.post(`/api/chat/sms`, message);
+      debugger;
+      if (response.data.status == "BOT_IS_ACTIVE") {
+        toast({
+          title: "Bot is active",
+          description: "Please wait for the bot to respond.",
+
+          duration: 3000,
+        });
+      }
       return response.data;
     },
   });
@@ -311,6 +317,29 @@ const useCS = ({
     },
   });
 
+  const { mutate: updateConversationStatusBot } = useMutation({
+    mutationFn: async (conversationId: number) => {
+      return await axiosInstance.patch("/api/conversations/status-bot", {
+        conversationId,
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cập nhật thành công",
+      });
+      refetchConversations();
+    },
+    onError: (error) => {
+      console.error("Error updating conversation status bot:", error);
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Không thể cập nhật trạng thái bot cho cuộc trò chuyện",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
   // Helper to get messages for current conversation
   const currentMessages = conversationId
     ? getMessagesByConversationId(conversationId)
@@ -349,6 +378,7 @@ const useCS = ({
     selectedConversationId,
 
     sendMessage,
+    updateConversationStatusBot,
   };
 };
 

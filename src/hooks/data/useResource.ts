@@ -106,9 +106,10 @@ const useResource = ({
           `/api/resources/`,
           {
             departmentId: departmentId,
-            extra: data,
+            extra: data.extra,
             path: data.url,
             name: data.name,
+            s3Key: data.key,
             type: type,
             description: description,
           },
@@ -209,6 +210,26 @@ const useResource = ({
     refetchOnWindowFocus: false,
     enabled: !!id,
   });
+
+  const { mutate: reEtl } = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await axiosInstance.patch(`/api/resources/re-etl/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Re-ETL thành công",
+        description: "Re-ETL tài liệu thành công",
+      });
+      refetchResource();
+    },
+    onError: () => {
+      toast({
+        title: "Re-ETL thất bại",
+        description: "Re-ETL tài liệu thất bại",
+      });
+    },
+  });
   return {
     deleteResource,
     createResource,
@@ -223,6 +244,7 @@ const useResource = ({
     resourceDetail,
     handleUploadFile,
     refetchMaterialItems: refetchResource,
+    reEtl,
   };
 };
 
