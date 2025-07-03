@@ -2,7 +2,6 @@
 import { axiosInstance } from "@/configs";
 import { ApiResponse } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { DateRange } from "react-day-picker";
 import { useToast } from "../../use-toast";
@@ -234,7 +233,6 @@ const useCS = ({
         throw new Error("No conversation selected");
       }
       const response = await axiosInstance.post(`/api/chat/sms`, message);
-      debugger;
       if (response.data.status == "BOT_IS_ACTIVE") {
         toast({
           title: "Bot is active",
@@ -275,6 +273,7 @@ const useCS = ({
       }
     },
     retry: false,
+    refetchOnWindowFocus: false,
     enabled: !!conversationId,
   });
 
@@ -327,7 +326,6 @@ const useCS = ({
       toast({
         title: "Cập nhật thành công",
       });
-      refetchConversations();
     },
     onError: (error) => {
       console.error("Error updating conversation status bot:", error);

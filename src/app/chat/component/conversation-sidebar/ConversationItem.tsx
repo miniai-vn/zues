@@ -24,7 +24,7 @@ export const ConversationItem = ({
   onClick,
   onTagDialog,
 }: ConversationItemProps) => {
-  const { updateConversationStatusBot } = useCS();
+  // const { updateConversationStatusBot } = useCS();
   return (
     <div
       className={cn(
@@ -113,7 +113,7 @@ export const ConversationItem = ({
             Manage Tags
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => updateConversationStatusBot(conversation.id)}
+          // onClick={() => updateConversationStatusBot(conversation.id)}
           >
             <Tag className="h-4 w-4 mr-2" />
             Toggle Bot
