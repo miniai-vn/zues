@@ -48,67 +48,42 @@ const AgentConfigurationUI = () => {
   const agentId = params?.id ? parseInt(params.id as string) : null;
   const isEditMode = Boolean(agentId);
 
-  // Valid models for each provider
-  const validModels = {
-    [ModelProvider.OPENAI]: [
-      "gpt-4",
-      "gpt-4-turbo",
-      "gpt-3.5-turbo",
-      "gpt-4o",
-      "gpt-4o-mini",
-    ],
-    [ModelProvider.ANTHROPIC]: [
-      "claude-3-opus",
-      "claude-3-sonnet",
-      "claude-3-haiku",
-      "claude-3-5-sonnet",
-    ],
-    [ModelProvider.DEEPSEEK]: [
-      "deepseek-chat",
-      "deepseek-coder",
-      "deepseek-v3",
-      "deepseek-v2",
-    ],
+  // Updated to only include Google/Gemini models
+  const validModels: Partial<Record<ModelProvider, string[]>> = {
     [ModelProvider.GOOGLE]: [
       "gemini-pro",
       "gemini-pro-vision",
       "gemini-1.5-pro",
       "gemini-1.5-flash",
     ],
-    [ModelProvider.LOCAL]: [], // Allow any model name for local
   };
 
   const [formData, setFormData] = useState<CreateAgentDto>({
     name: "",
-    modelProvider: ModelProvider.DEEPSEEK,
-    modelName: "deepseek-v3",
-    prompt: `Bạn là một trợ lý AI chuyên nghiệp và hữu ích. Nhiệm vụ của bạn là trả lời câu hỏi của người dùng một cách chính xác và đầy đủ. Hãy tuân thủ nghiêm ngặt các quy tắc sau:
-
-**Quy tắc:**
-1. **CHỈ SỬ DỤNG** thông tin từ **Bối cảnh tài liệu** được cung cấp dưới đây để tạo câu trả lời. Tuyệt đối không sử dụng kiến thức bên ngoài hoặc bịa đặt thông tin.
-2. Nếu câu trả lời không có trong **Bối cảnh tài liệu**, hãy trả lời một cách trung thực rằng: "Tôi không tìm thấy thông tin này trong tài liệu được cung cấp."
-3. Sử dụng **Lịch sử trò chuyện** để hiểu rõ ngữ cảnh của câu hỏi hiện tại, đặc biệt là các câu hỏi nối tiếp hoặc các đại từ (ví dụ: 'nó', 'anh ấy', 'vấn đề đó').
-4. Trình bày câu trả lời một cách rõ ràng, súc tích và đi thẳng vào vấn đề. Nếu có thể, hãy trích dẫn nguồn tài liệu đã sử dụng.
-5. Luôn trả lời bằng ngôn ngữ của câu hỏi.
-
----
-
-**Lịch sử trò chuyện:**
+    modelProvider: ModelProvider.GOOGLE, // Set default to Google
+    modelName: "gemini-1.5-pro", // Set default to a Gemini model
+    prompt: `[BẮT BUỘC] VAI TRÒ:
+Bạn là một trợ lý AI chuyên nghiệp, [chèn chuyên môn cụ thể, ví dụ: chuyên gia phân tích tài chính, nhà văn sáng tạo, cố vấn pháp lý].
+[BẮT BUỘC] MỤC TIÊU CHÍNH:
+Nhiệm vụ của bạn là [chèn mục tiêu, ví dụ: trả lời câu hỏi, tóm tắt, phân tích, tạo nội dung mới] dựa trên các thông tin được cung cấp một cách chính xác, logic và hữu ích nhất cho người dùng.
+[TÙY CHỌN] CHẾ ĐỘ LÀM VIỆC (Chọn một):
+Chế độ 1 - Truy vấn Chính xác: Chỉ sử dụng thông tin từ Bối cảnh tài liệu. Tuyệt đối không suy diễn hoặc dùng kiến thức bên ngoài. Nếu thông tin không có, hãy trả lời: "Tôi không tìm thấy thông tin này trong tài liệu được cung cấp."
+Chế độ 2 - Tổng hợp & Diễn giải: Sử dụng thông tin từ Bối cảnh tài liệu làm nguồn chính, nhưng có thể diễn giải, sắp xếp lại và tóm tắt bằng lời văn của bạn để dễ hiểu hơn. Không thêm thông tin mới không có trong tài liệu.
+Chế độ 3 - Sáng tạo & Mở rộng: Sử dụng Bối cảnh tài liệu làm nền tảng hoặc nguồn cảm hứng. Được phép kết hợp với kiến thức chung của bạn để tạo ra nội dung mới, đề xuất ý tưởng, hoặc đưa ra các phân tích sâu hơn.
+[TÙY CHỌN] ĐỊNH DẠNG ĐẦU RA:
+Vui lòng trình bày câu trả lời dưới dạng [chèn định dạng, ví dụ: đoạn văn, gạch đầu dòng, bảng, email, JSON, bài đăng mạng xã hội]. Giọng văn cần [chèn giọng văn, ví dụ: chuyên nghiệp, thân thiện, học thuật, thuyết phục].
+QUY TẮC CHUNG:
+Luôn sử dụng Lịch sử trò chuyện để hiểu ngữ cảnh của các câu hỏi nối tiếp.
+Luôn trả lời bằng ngôn ngữ của câu hỏi.
+Trích dẫn nguồn (nếu có thể) khi sử dụng Chế độ 1 hoặc 2.
+[NGUỒN THÔNG TIN]
+Lịch sử trò chuyện:
 {history}
-
----
-
-**Bối cảnh tài liệu:**
+Bối cảnh tài liệu:
 {context}
-
----
-
-**Câu hỏi:**
-{question}
-
----
-
-**Câu trả lời của bạn:**`,
+[YÊU CẦU CỤ THỂ]
+Câu hỏi:
+{question}`,
     description: "",
     status: AgentStatus.INACTIVE,
   });
