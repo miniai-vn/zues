@@ -6,18 +6,9 @@ import { cn } from "@/lib/utils";
 interface MessageItemProps {
   message: Message;
   isOwnMessage: boolean;
-  showSenderName?: boolean;
-  senderName?: string;
-  senderAvatar?: string;
 }
 
-export const MessageItem = ({
-  message,
-  isOwnMessage,
-  showSenderName = true,
-  senderName,
-  senderAvatar,
-}: MessageItemProps) => {
+export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
   const { t } = useTranslations();
 
   const formatMessageTime = (timestamp: string) => {
@@ -37,16 +28,15 @@ export const MessageItem = ({
         isOwnMessage ? "justify-end" : "justify-start",
       )}
     >
-      {/* Left avatar for received messages */}
+      {/* Left avatar for received messages */} 
       {!isOwnMessage && (
         <Avatar className="h-8 w-8 mt-1 flex-shrink-0">
-          <AvatarImage src={senderAvatar ?? defaultAvatar} />
+          <AvatarImage src={message.sender?.avatar ?? defaultAvatar} />
           <AvatarFallback>
-            {senderName?.charAt(0)?.toUpperCase() || "?"}
+            {message.sender?.name?.charAt(0)?.toUpperCase() || "?"}
           </AvatarFallback>
         </Avatar>
       )}
-
       {/* Message content */}
       <div
         className={cn(
@@ -55,11 +45,11 @@ export const MessageItem = ({
         )}
       >
         {/* Sender name for received messages */}
-        {!isOwnMessage && (
+        {/* {!isOwnMessage && (
           <p className="text-xs text-muted-foreground font-medium">
-            {senderName}
+            {message.sender?.name}
           </p>
-        )}
+        )} */}
 
         {/* Message bubble */}
         <div
@@ -68,7 +58,9 @@ export const MessageItem = ({
             isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted",
           )}
         >
-          {message.content}
+          {message.content !== ""
+            ? message.content
+            : "Tin nhắn chưa được hỗ trợ hiển thị."}
         </div>
 
         {/* Timestamp */}
@@ -95,13 +87,13 @@ export const MessageItem = ({
           </div>
         )}
       </div>
-
       {/* Right avatar for sent messages */}
       {isOwnMessage && (
         <Avatar className="h-8 w-8 mt-1 flex-shrink-0">
-          <AvatarImage src={senderAvatar ?? defaultAvatar} />
+          <AvatarImage src={message.sender?.avatar ?? defaultAvatar} />
           <AvatarFallback>
-            {senderName?.charAt(0)?.toUpperCase() || t("dashboard.chat.you")}
+            {message.sender?.name?.charAt(0)?.toUpperCase() ||
+              t("dashboard.chat.you")}
           </AvatarFallback>
         </Avatar>
       )}

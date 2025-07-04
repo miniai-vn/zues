@@ -2,7 +2,6 @@
 import { axiosInstance } from "@/configs";
 import { ApiResponse } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { DateRange } from "react-day-picker";
 import { useToast } from "../../use-toast";
@@ -68,6 +67,7 @@ export type Conversation = {
   id: number;
   name: string;
   channelId?: number;
+  isBot?: boolean;
   avatar: string;
   channelType?: string;
   isGroup?: boolean;
@@ -132,7 +132,6 @@ const useCS = ({
   conversationId?: number;
   initialFilters?: Partial<ConversationQueryParams>;
 } = {}) => {
-  const router = useRouter();
   const { toast } = useToast();
 
   // Store actions and state
@@ -269,7 +268,7 @@ const useCS = ({
           `/api/conversations/${conversationId}/messages`,
         );
         const data = response.data;
-        if (data?.messages) {
+        if (data) {
           setMessages(conversationId, data.messages);
         }
         return data;
@@ -280,6 +279,7 @@ const useCS = ({
       }
     },
     retry: false,
+    refetchOnWindowFocus: false,
     enabled: !!conversationId,
   });
 
@@ -316,6 +316,28 @@ const useCS = ({
       toast({
         title: "Đánh dấu đã đọc thất bại",
         description: "Không thể đánh dấu cuộc trò chuyện là đã đọc",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  const { mutate: updateConversationStatusBot } = useMutation({
+    mutationFn: async (conversationId: number) => {
+      return await axiosInstance.patch("/api/conversations/status-bot", {
+        conversationId,
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cập nhật thành công",
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating conversation status bot:", error);
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Không thể cập nhật trạng thái bot cho cuộc trò chuyện",
         variant: "destructive",
         duration: 3000,
       });
@@ -360,6 +382,7 @@ const useCS = ({
     selectedConversationId,
 
     sendMessage,
+    updateConversationStatusBot,
   };
 };
 

@@ -40,7 +40,8 @@ export const MessageList = ({
   return (
     <div className="p-4 space-y-4 h-[72vh] overflow-y-auto">
       {messages.map((message, index) => {
-        const isOwnMessage = message.senderId === user?.id;
+        const isOwnMessage =
+          message.senderId === user?.id || message.senderType === "channel";
 
         const previousMessage = index > 0 ? messages[index - 1] : null;
         const showSenderName =

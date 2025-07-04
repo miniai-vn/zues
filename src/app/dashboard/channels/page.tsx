@@ -192,6 +192,7 @@ export default function ChannelsManagementPage() {
     updateShopId,
     updateStatus,
     syncConversations,
+    syncConversationsFacebook,
   } = useChannels({
     limit: 100, // Get all channels
   });
@@ -238,7 +239,8 @@ export default function ChannelsManagementPage() {
           ? appIdParam.split(",")
           : [appIdParam];
         appIds.forEach((id) => updateShopId({ appId: id }));
-      }
+        syncConversationsFacebook(appIds);
+      } 
     }
   }, []);
 

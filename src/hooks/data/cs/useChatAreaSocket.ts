@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useCsStore } from "./useCsStore";
 import { useAuth, useUserStore } from "../useAuth";
+import { set } from "date-fns";
 
 interface UseChatAreaProps {
   conversationId?: number;
@@ -54,19 +55,43 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     if (!socketChatIo) return;
 
     const handleReceiveMessage = (data: Message) => {
-      console.log("Received message:", data);
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
         markReadConversation(data.conversationId as number);
-      } else {
-        const existingConversation = conversations.find(
-          (conv) => conv.id === data.conversationId
+      }
+      const existingConversation = conversations.find(
+        (conv) => conv.id === data.conversationId
+      );
+
+      if (existingConversation) {
+        // Create a new array with updated conversations
+        const updatedConversations = conversations.map((conv) =>
+          conv.id === data.conversationId
+            ? {
+                ...conv,
+                unreadMessagesCount: conv.unreadMessagesCount + 1,
+                lastestMessage: data.content,
+                updatedAt: new Date().toISOString(), // Update timestamp for sorting
+              }
+            : {
+                ...conv,
+              }
         );
-        if (existingConversation) {
-          existingConversation.unreadMessagesCount += 1;
-          existingConversation.lastestMessage = data.content;
-          setConversations(conversations);
-        }
+
+        // Sort conversations to bring the updated one to the top
+        const sortedConversations = [
+          // First get the updated conversation
+          ...updatedConversations.filter(
+            (conv) => conv.id === data.conversationId
+          ),
+          // Then get all other conversations
+          ...updatedConversations.filter(
+            (conv) => conv.id !== data.conversationId
+          ),
+        ];
+
+        // Update state with the new sorted array
+        setConversations(sortedConversations);
       }
     };
 

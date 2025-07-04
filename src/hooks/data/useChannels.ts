@@ -131,9 +131,21 @@ const useChannels = ({
   const { mutate: syncConversations } = useMutation({
     mutationFn: async (appId: string) => {
       const response = await axiosInstance.post(
-        `/api/integration/zalo/sync-conversations/${appId}`
+        `/api/integration/zalo/sync-conversations/${appId}`,
       );
       return response.data;
+    },
+  });
+
+  const { mutateAsync: syncConversationsFacebook } = useMutation({
+    mutationFn: async (pageIds: string[]) => {
+      const results = await Promise.all(
+        pageIds.map((pageId) =>
+          axiosInstance.post(`/api/facebook/sync-conversations/${pageId}`),
+        ),
+      );
+      // results là mảng AxiosResponse, mỗi cái là 1 pageId
+      return results.map((res) => res.data);
     },
   });
 
@@ -149,7 +161,7 @@ const useChannels = ({
         `/api/channels/${channelId}/status`,
         {
           status,
-        }
+        },
       );
       return response.data;
     },
@@ -183,6 +195,7 @@ const useChannels = ({
     isDeletingChannel,
     deleteChannelError,
     syncConversations,
+    syncConversationsFacebook,
   };
 };
 

@@ -48,47 +48,42 @@ const AgentConfigurationUI = () => {
   const agentId = params?.id ? parseInt(params.id as string) : null;
   const isEditMode = Boolean(agentId);
 
-  // Valid models for each provider
-  const validModels = {
-    [ModelProvider.OPENAI]: [
-      "gpt-4",
-      "gpt-4-turbo",
-      "gpt-3.5-turbo",
-      "gpt-4o",
-      "gpt-4o-mini",
-    ],
-    [ModelProvider.ANTHROPIC]: [
-      "claude-3-opus",
-      "claude-3-sonnet",
-      "claude-3-haiku",
-      "claude-3-5-sonnet",
-    ],
-    [ModelProvider.DEEPSEEK]: [
-      "deepseek-chat",
-      "deepseek-coder",
-      "deepseek-v3",
-      "deepseek-v2",
-    ],
+  // Updated to only include Google/Gemini models
+  const validModels: Partial<Record<ModelProvider, string[]>> = {
     [ModelProvider.GOOGLE]: [
       "gemini-pro",
       "gemini-pro-vision",
       "gemini-1.5-pro",
       "gemini-1.5-flash",
     ],
-    [ModelProvider.LOCAL]: [], // Allow any model name for local
   };
 
   const [formData, setFormData] = useState<CreateAgentDto>({
     name: "",
-    modelProvider: ModelProvider.DEEPSEEK,
-    modelName: "deepseek-v3",
-    prompt: `# Vai trò: Trợ lý tạo trang AI
-
-## Hồ sơ
-- ngôn ngữ: Đa ngôn ngữ (phù hợp với ngôn ngữ của người dùng)
-- mô tả: Trợ lý truy vấn cơ sở tri thức chuyên nghiệp, tập trung vào việc trích xuất thông tin từ cơ sở tri thức được chỉ định và cung cấp câu trả lời chính xác
-- bối cảnh: Hệ thống AI chuyên dụng được phát triển bởi doanh nghiệp, được đào tạo chuyên biệt về nội dung cơ sở tri thức
-- tính cách: Nghiêm túc, chuyên nghiệp, thân thiện nhưng không quá nhiệt tình`,
+    modelProvider: ModelProvider.GOOGLE, // Set default to Google
+    modelName: "gemini-1.5-pro", // Set default to a Gemini model
+    prompt: `[BẮT BUỘC] VAI TRÒ:
+Bạn là một trợ lý AI chuyên nghiệp, [chèn chuyên môn cụ thể, ví dụ: chuyên gia phân tích tài chính, nhà văn sáng tạo, cố vấn pháp lý].
+[BẮT BUỘC] MỤC TIÊU CHÍNH:
+Nhiệm vụ của bạn là [chèn mục tiêu, ví dụ: trả lời câu hỏi, tóm tắt, phân tích, tạo nội dung mới] dựa trên các thông tin được cung cấp một cách chính xác, logic và hữu ích nhất cho người dùng.
+[TÙY CHỌN] CHẾ ĐỘ LÀM VIỆC (Chọn một):
+Chế độ 1 - Truy vấn Chính xác: Chỉ sử dụng thông tin từ Bối cảnh tài liệu. Tuyệt đối không suy diễn hoặc dùng kiến thức bên ngoài. Nếu thông tin không có, hãy trả lời: "Tôi không tìm thấy thông tin này trong tài liệu được cung cấp."
+Chế độ 2 - Tổng hợp & Diễn giải: Sử dụng thông tin từ Bối cảnh tài liệu làm nguồn chính, nhưng có thể diễn giải, sắp xếp lại và tóm tắt bằng lời văn của bạn để dễ hiểu hơn. Không thêm thông tin mới không có trong tài liệu.
+Chế độ 3 - Sáng tạo & Mở rộng: Sử dụng Bối cảnh tài liệu làm nền tảng hoặc nguồn cảm hứng. Được phép kết hợp với kiến thức chung của bạn để tạo ra nội dung mới, đề xuất ý tưởng, hoặc đưa ra các phân tích sâu hơn.
+[TÙY CHỌN] ĐỊNH DẠNG ĐẦU RA:
+Vui lòng trình bày câu trả lời dưới dạng [chèn định dạng, ví dụ: đoạn văn, gạch đầu dòng, bảng, email, JSON, bài đăng mạng xã hội]. Giọng văn cần [chèn giọng văn, ví dụ: chuyên nghiệp, thân thiện, học thuật, thuyết phục].
+QUY TẮC CHUNG:
+Luôn sử dụng Lịch sử trò chuyện để hiểu ngữ cảnh của các câu hỏi nối tiếp.
+Luôn trả lời bằng ngôn ngữ của câu hỏi.
+Trích dẫn nguồn (nếu có thể) khi sử dụng Chế độ 1 hoặc 2.
+[NGUỒN THÔNG TIN]
+Lịch sử trò chuyện:
+{history}
+Bối cảnh tài liệu:
+{context}
+[YÊU CẦU CỤ THỂ]
+Câu hỏi:
+{question}`,
     description: "",
     status: AgentStatus.INACTIVE,
   });

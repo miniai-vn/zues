@@ -2,18 +2,26 @@
 import ActionPopover from "@/components/dashboard/popever";
 import { DataTable } from "@/components/dashboard/tables/data-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import useTranslations from "@/hooks/useTranslations";
 import { convertBytesToMB } from "@/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { File, FileText, Image, Search } from "lucide-react";
+import { File, FileText, Image, FolderOpen } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
+import { ResourceFilters } from "./components/ResourceFilters";
 
 const DepartmentDetailComponent = () => {
   const { t } = useTranslations();
@@ -22,6 +30,18 @@ const DepartmentDetailComponent = () => {
   const departmentId = params.id as string;
 
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [columnVisibility, setColumnVisibility] = useState({
+    index: true,
+    name: true,
+    type: true,
+    size: false,
+    description: true,
+    createdAt: true,
+    status: true,
+    actions: true,
+  });
   useDebouncedValue(search, 500);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -58,6 +78,7 @@ const DepartmentDetailComponent = () => {
     isPendingDeleteResource,
     isPendingFetchingItem,
     isPendingSyncResource,
+    reEtl,
   } = useResource({
     departmentId: departmentId,
     page,
@@ -101,6 +122,35 @@ const DepartmentDetailComponent = () => {
     setPage(1);
   };
 
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setPage(1);
+  };
+
+  const handleTypeFilter = (type: string) => {
+    setTypeFilter(type);
+    setPage(1);
+  };
+
+  // Filter the data based on search, status, and type
+  const filteredData = useMemo(() => {
+    if (!materialItems?.items) return [];
+
+    return materialItems.items.filter((item: Resource) => {
+      const matchesSearch =
+        search === "" ||
+        item.name?.toLowerCase().includes(search.toLowerCase()) ||
+        item.description?.toLowerCase().includes(search.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
+      const matchesType = typeFilter === "all" || item.type === typeFilter;
+
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [materialItems?.items, search, statusFilter, typeFilter]);
+
   const columns: ColumnDef<Resource>[] = [
     {
       id: "index",
@@ -108,60 +158,66 @@ const DepartmentDetailComponent = () => {
       cell: ({ row }) => (
         <div className="flex items-center justify-center">{row.index + 1}</div>
       ),
-      size: 60,
     },
     {
       accessorKey: "name",
       header: t("dashboard.departments.detail.fileName"),
       cell: (row) => {
+        const fileName = row.row.original.name;
         return (
-          <div className="break-all flex items-center gap-2 line-clamp-2">
-            <span>
+          <div className="flex items-center gap-2 max-w-[200px]">
+            <span className="flex-shrink-0">
               {getFileIcon(row.row.original.extra.extension as string)}
             </span>
-            <span>{row.row.original.name}</span>
+            <span className="truncate" title={fileName}>
+              {fileName}
+            </span>
           </div>
         );
       },
-      size: 250,
     },
     {
       accessorKey: "type",
       header: t("dashboard.departments.detail.documentType"),
       cell: (row) => (
-        <div className="break-all line-clamp-1">{row.row.original?.type}</div>
+        <div className="max-w-[100px]">
+          <span className="truncate block" title={row.row.original?.type}>
+            {row.row.original?.type}
+          </span>
+        </div>
       ),
-      size: 100,
     },
     {
       accessorKey: "size",
       header: t("dashboard.departments.detail.fileSize"),
       cell: (row) => (
-        <div className="break-all line-clamp-1">
+        <div className="whitespace-nowrap">
           {convertBytesToMB(row.row.original.extra.size as number)}
         </div>
       ),
-      size: 100,
     },
     {
       accessorKey: "description",
       header: t("dashboard.departments.detail.description"),
-      cell: (row) => (
-        <div className="break-all line-clamp-1">
-          {row.row.original.description}
-        </div>
-      ),
-      size: 100,
+      cell: (row) => {
+        const description = row.row.original.description;
+        return (
+          <div className="max-w-[250px]">
+            <span className="line-clamp-2 text-sm" title={description}>
+              {description}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdAt",
       header: t("dashboard.departments.detail.uploadTime"),
       cell: (row) => (
-        <div className="whitespace-nowrap">
+        <div className="whitespace-nowrap text-sm">
           {dayjs(row.row.original.createdAt).format("DD/MM/YYYY HH:mm")}
         </div>
       ),
-      size: 150,
     },
     {
       accessorKey: "status",
@@ -204,6 +260,10 @@ const DepartmentDetailComponent = () => {
             statusText = t("dashboard.departments.detail.statusValues.active");
             statusClass = "bg-green-100 text-green-800";
             break;
+          case "error":
+            statusText = t("dashboard.resources.error");
+            statusClass = "bg-red-100 text-red-800";
+            break;
           default:
             break;
         }
@@ -211,14 +271,13 @@ const DepartmentDetailComponent = () => {
         return (
           <div className="flex items-center justify-center w-full">
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${statusClass}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass}`}
             >
               {statusText}
             </span>
           </div>
         );
       },
-      size: 120,
     },
     {
       id: "actions",
@@ -234,23 +293,17 @@ const DepartmentDetailComponent = () => {
                 id={`status-switch-${documentId}`}
                 checked={isActive}
                 onCheckedChange={(checked) => {
-                  createChunks(documentId);
-                  console.log(
-                    `Document ${documentId} status changed to ${
-                      checked ? "active" : "inactive"
-                    }`
-                  );
+                  if (checked) {
+                    createChunks(documentId);
+                  } else {
+                    syncResource(documentId);
+                  }
                 }}
               />
             </div>
             <ActionPopover
-              onArchive={() => syncResource(documentId)}
+              onArchive={() => reEtl(documentId)}
               onDelete={() => deleteResource(documentId)}
-              onConfigure={() => {
-                router.push(
-                  `/dashboard/departments/${departmentId}/documents/${documentId}`
-                );
-              }}
               deleteDescription={t(
                 "dashboard.departments.detail.confirmDeleteDocument"
               )}
@@ -259,53 +312,76 @@ const DepartmentDetailComponent = () => {
           </div>
         );
       },
-      size: 140,
     },
   ];
 
-  return (
-    <div className="flex flex-1 flex-col px-4 space-y-2">
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder={t(
-            "dashboard.departments.detail.searchDocumentPlaceholder"
-          )}
-          className="mr-4 w-full flex-1"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={() => refetchMaterialItems()}
-            className="font-medium px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <Search />
-            {t("common.search")}
-          </Button>
+  // Filter visible columns based on columnVisibility state
+  const visibleColumns = columns.filter((column) => {
+    const columnId = column.id || (column as any).accessorKey;
+    return columnVisibility[columnId as keyof typeof columnVisibility];
+  });
 
-          <CreateOrUpdateResource
-            type="document"
-            onHandleUploadFile={onHandleUploadFile}
-            resource={undefined}
-          />
-        </div>
-      </div>
-      <DataTable
-        columns={columns}
-        data={materialItems?.items || []}
-        pagination={{
-          page: page,
-          limit: pageSize,
-          total: materialItems?.totalCount || 0,
-        }}
-        onPaginationChange={handlePaginationChange}
-        onPageSizeChange={handlePageSizeChange}
-        isLoading={
-          isPendingFetchingItem ||
-          isPendingCreateResource ||
-          isPendingDeleteResource
-        }
-      />
+  return (
+    <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
+      <Card className="flex flex-col flex-1 overflow-hidden">
+        <CardHeader className="px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <FolderOpen className="h-5 w-5" />
+                {t("dashboard.departments.detail.documentManagement")}
+              </CardTitle>
+              <CardDescription>
+                {t("dashboard.departments.detail.documents")}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <CreateOrUpdateResource
+                type="document"
+                onHandleUploadFile={onHandleUploadFile}
+                resource={undefined}
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
+          <div className="flex-shrink-0">
+            <ResourceFilters
+              search={search}
+              setSearch={setSearch}
+              statusFilter={statusFilter}
+              handleStatusFilter={handleStatusFilter}
+              typeFilter={typeFilter}
+              handleTypeFilter={handleTypeFilter}
+              onRefetch={refetchMaterialItems}
+              columnVisibility={columnVisibility}
+              setColumnVisibility={setColumnVisibility}
+              onCreateResource={() => {}}
+            />
+            <Separator className="mt-4" />
+          </div>
+
+          {/* Data Table */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <DataTable
+              columns={visibleColumns}
+              data={filteredData || []}
+              pagination={{
+                page: page,
+                limit: pageSize,
+                total: materialItems?.totalCount || 0,
+              }}
+              onPaginationChange={handlePaginationChange}
+              onPageSizeChange={handlePageSizeChange}
+              isLoading={
+                isPendingFetchingItem ||
+                isPendingCreateResource ||
+                isPendingDeleteResource
+              }
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

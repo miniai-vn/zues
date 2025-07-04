@@ -326,14 +326,32 @@
       }
     },
     "departments": {
-      "title": "Quản lý nhóm tài liệu",
+      "title": "Quản lý phòng ban",
+      "description": "Quản lý và tổ chức các phòng ban một cách hiệu quả",
       "management": "Quản lý",
       "documentGroupManagement": "Quản lý nhóm tài liệu",
       "search": "Tìm kiếm",
-      "searchPlaceholder": "Tìm kiếm theo tên nhóm tài liệu",
+      "searchPlaceholder": "Tìm kiếm phòng ban...",
+      "refresh": "Làm mới",
+      "status": "Trạng thái",
+      "selectStatus": "Chọn trạng thái",
+      "allStatuses": "Tất cả trạng thái",
+      "public": "Công khai",
+      "private": "Riêng tư",
+      "addDepartment": "Thêm phòng ban",
+      "confirmDelete": "Bạn có chắc chắn muốn xóa phòng ban này?",
+      "columns": {
+        "name": "Tên",
+        "description": "Mô tả",
+        "users": "Người dùng",
+        "visibility": "Hiển thị",
+        "createdAt": "Ngày tạo",
+        "actions": "Hành động"
+      },
       "emptyState": {
-        "title": "Bạn chưa có nhóm tài liệu nào.",
-        "alt": "Không có nhóm tài liệu"
+        "title": "Không tìm thấy phòng ban",
+        "description": "Tạo phòng ban đầu tiên để bắt đầu",
+        "alt": "Không có phòng ban"
       },
       "breadcrumbs": {
         "management": "Quản lý",
@@ -355,8 +373,8 @@
         "status": "Trạng thái",
         "statusValues": {
           "new": "Mới",
-          "processing": "Đã phân đoạn",
-          "finished": "Đã train",
+          "processing": "Đang xử lý",
+          "finished": "Xử lý xong",
           "active": "Hoạt động"
         },
         "confirmDeleteDocument": "Bạn có chắc chắn muốn xóa tài liệu này không?",
@@ -386,6 +404,28 @@
           "editFaq": "Chỉnh sửa FAQ",
           "createFaq": "+ Tạo"
         }
+      }
+    },
+    "resources": {
+      "selectStatus": "Chọn trạng thái",
+      "allStatuses": "Tất cả trạng thái",
+      "selectType": "Chọn loại",
+      "allTypes": "Tất cả loại",
+      "document": "Tài liệu",
+      "video": "Video",
+      "image": "Hình ảnh",
+      "audio": "Âm thanh",
+      "other": "Khác",
+      "error": "Lỗi",
+      "columns": {
+        "index": "STT",
+        "name": "Tên",
+        "type": "Loại",
+        "size": "Dung lượng",
+        "description": "Mô tả",
+        "createdAt": "Ngày tạo",
+        "status": "Trạng thái",
+        "actions": "Hành động"
       }
     }
   },
@@ -470,6 +510,9 @@
     "role": "VAI TRÒ",
     "permission": "Quyền",
     "actions": "Thao tác",
+    "view": "Xem",
+    "columns": "Cột",
+    "toggleColumns": "Chuyển đổi cột",
     "index": "STT",
     "create": "Tạo",
     "confirmDelete": "Bạn có chắc chắn muốn xóa mục này không?",
