@@ -262,7 +262,7 @@ const useCS = ({
           `/api/conversations/${conversationId}/messages`
         );
         const data = response.data;
-        if (data?.messages) {
+        if (data) {
           setMessages(conversationId, data.messages);
         }
         return data;
