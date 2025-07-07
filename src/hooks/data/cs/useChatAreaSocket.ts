@@ -2,15 +2,18 @@
 import { Message, useCS } from "@/hooks/data/cs/useCS";
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { useAuth } from "../useAuth";
 import { useCsStore } from "./useCsStore";
-import { useAuth, useUserStore } from "../useAuth";
-import { set } from "date-fns";
 
 interface UseChatAreaProps {
   conversationId?: number;
 }
 
 export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
+  console.log(
+    "useChatAreaSocket initialized with conversationId:",
+    conversationId
+  );
   const [isChatConnected, setIsChatConnected] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
@@ -56,6 +59,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
 
     const handleReceiveMessage = (data: Message) => {
       if (data.conversationId === conversationId) {
+        console.log("Received message:", data);
         setMessages((prevMessages) => [...prevMessages, data]);
         markReadConversation(data.conversationId as number);
         return;
@@ -104,6 +108,35 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       refetchConversations();
     };
 
+    const handleMarkAsRead = (data: {
+      conversationId: number;
+      userId: string;
+      readBy: {
+        id: string;
+        name: string;
+        avatar?: string;
+      };
+    }) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((message) => {
+          if (message.conversationId === data.conversationId) {
+            return {
+              ...message,
+              readBy: [
+                ...(message.readBy || []),
+                {
+                  id: data.readBy.id,
+                  name: data.readBy.name,
+                  avatar: data.readBy.avatar,
+                },
+              ],
+            };
+          }
+          return message;
+        })
+      );
+    };
+    socketChatIo.on("messageRead", handleMarkAsRead);
     socketChatIo.on("receiveMessage", handleReceiveMessage);
     socketChatIo.on("newConversation", handleNewConversation);
 
@@ -161,6 +194,15 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     [socketChatIo]
   );
 
+  const readConversations = useCallback(
+    (conversationId: number) => {
+      if (socketChatIo) {
+        socketChatIo.emit("markAsRead", { conversationId, userId: user?.id });
+      }
+    },
+    [socketChatIo]
+  );
+
   useEffect(() => {
     if (socketChatIo && isChatConnected) {
       joinAllConversationWithUserId();
@@ -183,5 +225,6 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     sendMessage: sendMessageToChannels,
     toggleContactInfo,
     setShowContactInfo,
+    readConversations,
   };
 };

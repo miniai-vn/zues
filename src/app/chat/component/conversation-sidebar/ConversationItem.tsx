@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import useConversations from "@/hooks/data/cs/useConversations";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
@@ -26,13 +27,18 @@ export const ConversationItem = ({
   onTagDialog,
 }: ConversationItemProps) => {
   const { updateConversationStatusBot } = useConversations();
+  const { readConversations } = useChatAreaSocket({});
+
   return (
     <div
       className={cn(
         "flex items-center w-full gap-3 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors border-l-2 group",
         isSelected ? "bg-accent border-l-primary" : "border-l-transparent"
       )}
-      onClick={onClick}
+      onClick={() => {
+        onClick();
+        readConversations(conversation.id);
+      }}
     >
       <div className="relative">
         <Avatar className="h-10 w-10">
