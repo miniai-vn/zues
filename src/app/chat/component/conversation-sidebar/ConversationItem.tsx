@@ -7,7 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Conversation, useCS } from "@/hooks/data/cs/useCS";
+import useConversations from "@/hooks/data/cs/useConversations";
+import { Conversation } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, Tag } from "lucide-react";
 
@@ -24,7 +25,7 @@ export const ConversationItem = ({
   onClick,
   onTagDialog,
 }: ConversationItemProps) => {
-  // const { updateConversationStatusBot } = useCS();
+  const { updateConversationStatusBot } = useConversations();
   return (
     <div
       className={cn(
@@ -93,6 +94,13 @@ export const ConversationItem = ({
               )}
             </>
           )}
+          <Badge
+            onClick={() => updateConversationStatusBot(conversation.id)}
+            variant="secondary"
+            className="ml-2"
+          >
+            {conversation.isBot ? "Auto reply" : "Manual reply"}
+          </Badge>
         </div>
       </div>
       <DropdownMenu>
@@ -112,9 +120,7 @@ export const ConversationItem = ({
             <Tag className="h-4 w-4 mr-2" />
             Manage Tags
           </DropdownMenuItem>
-          <DropdownMenuItem
-          // onClick={() => updateConversationStatusBot(conversation.id)}
-          >
+          <DropdownMenuItem>
             <Tag className="h-4 w-4 mr-2" />
             Toggle Bot
           </DropdownMenuItem>

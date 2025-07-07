@@ -26,7 +26,7 @@ export function LoginForm({
         username: email,
         password,
       });
-      if (res) {
+      if (res.data.user) {
         router.push("/dashboard/channels");
       }
     } catch (error) {

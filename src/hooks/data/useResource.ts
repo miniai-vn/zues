@@ -110,6 +110,7 @@ const useResource = ({
             path: data.url,
             name: data.name,
             s3Key: data.key,
+            ext: data.ext,
             type: type,
             description: description,
           },

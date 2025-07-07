@@ -137,6 +137,15 @@ const useChannels = ({
     },
   });
 
+  const { mutate: syncFaceBookConversations } = useMutation({
+    mutationFn: async (appId: string) => {
+      const response = await axiosInstance.post(
+        `/api/facebook/sync-conversations/${appId}`
+      );
+      return response.data;
+    },
+  });
+
   const { mutate: updateStatus } = useMutation({
     mutationFn: async ({
       channelId,
@@ -183,6 +192,7 @@ const useChannels = ({
     isDeletingChannel,
     deleteChannelError,
     syncConversations,
+    syncFaceBookConversations,
   };
 };
 

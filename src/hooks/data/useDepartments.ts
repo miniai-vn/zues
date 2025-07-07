@@ -20,6 +20,7 @@ export type Department = {
   isPublic?: boolean;
   users?: User[];
   role?: string;
+  syncStatus?: boolean;
   username?: string;
 };
 

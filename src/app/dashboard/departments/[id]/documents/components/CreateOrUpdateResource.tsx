@@ -35,7 +35,7 @@ const uploadFormSchema = z.object({
       (file) => {
         if (!file) return false;
         const extension = file.split(".").pop()?.toLowerCase();
-        return ["pdf", "txt", "docx", "doc","xlsx"].includes(extension || "");
+        return ["pdf", "txt", "docx", "doc", "xlsx"].includes(extension || "");
       },
       {
         message: "Chỉ hỗ trợ tệp PDF, TXT, DOC, DOCX, XLS, XLSX và CSV",
@@ -111,19 +111,17 @@ export function CreateOrUpdateResource({
           >
             <Pencil className="h-4 w-4 text-gray-500" />
           </Button>
+        ) : type === "faqs" ? (
+          <Button>{t("dashboard.departments.detail.faqs.uploadFaq")}</Button>
         ) : (
-          type === "faqs" ? (
-            <Button>{t("dashboard.departments.detail.faqs.uploadFaq")}</Button>
-          ) : (
-            <Button>{t("dashboard.departments.detail.uploadNewDocument")}</Button>
-          )
+          <Button>{t("dashboard.departments.detail.uploadNewDocument")}</Button>
         )}
       </DialogTrigger>
       <DialogContent className="w-[800px] max-w-[90vw]">
         <DialogHeader>
           <DialogTitle>
-            {resource 
-              ? t("dashboard.departments.detail.editDocument") 
+            {resource
+              ? t("dashboard.departments.detail.editDocument")
               : t("dashboard.departments.detail.createNewDocument")}
           </DialogTitle>
         </DialogHeader>
@@ -135,7 +133,9 @@ export function CreateOrUpdateResource({
               render={({ field }) => (
                 <FormItem>
                   <Input
-                    placeholder={t("dashboard.departments.detail.uploadFilePlaceholder")}
+                    placeholder={t(
+                      "dashboard.departments.detail.uploadFilePlaceholder"
+                    )}
                     type="file"
                     onChange={(e) => {
                       field.onChange(e);
@@ -149,7 +149,8 @@ export function CreateOrUpdateResource({
                   </FormDescription>
                   {selectedFile && (
                     <div className="mt-2 text-sm text-gray-500">
-                      {t("dashboard.departments.detail.selectedFile")}: {selectedFile.name} (
+                      {t("dashboard.departments.detail.selectedFile")}:{" "}
+                      {selectedFile.name} (
                       {Math.round(selectedFile.size / 1024)} KB)
                     </div>
                   )}
@@ -164,7 +165,9 @@ export function CreateOrUpdateResource({
                 <FormItem>
                   <Textarea
                     {...field}
-                    placeholder={t("dashboard.departments.detail.descriptionPlaceholder")}
+                    placeholder={t(
+                      "dashboard.departments.detail.descriptionPlaceholder"
+                    )}
                     className="w-full h-40"
                     aria-invalid={fieldState.invalid}
                   />

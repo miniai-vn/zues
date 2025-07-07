@@ -169,6 +169,7 @@ export default function ChannelsManagementPage() {
     updateShopId,
     updateStatus,
     syncConversations,
+    syncFaceBookConversations,
   } = useChannels({
     limit: 100, // Get all channels
   });
@@ -213,7 +214,10 @@ export default function ChannelsManagementPage() {
       const appIds = appIdParam.includes(",")
         ? appIdParam.split(",")
         : [appIdParam];
-      appIds.forEach((id) => updateShopId({ appId: id }));
+      appIds.forEach((id) => {
+        updateShopId({ appId: id });
+        syncFaceBookConversations(appIdParam);
+      });
     }
   }, []);
 
@@ -233,6 +237,7 @@ export default function ChannelsManagementPage() {
     if (platformType === "facebook") {
       // Redirect to Facebook Auth URL
       window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
+
       return;
     }
   };
