@@ -53,9 +53,6 @@ export const MessageList = ({
             key={message.id}
             message={message}
             isOwnMessage={isOwnMessage}
-            showSenderName={showSenderName}
-            senderName={message?.sender?.name}
-            senderAvatar={message?.sender?.avatar}
           />
         );
       })}

@@ -19,25 +19,32 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { useTranslations } from "@/hooks/useTranslations";
 import useAgents, {
-  ModelProvider,
   AgentStatus,
   CreateAgentDto,
+  ModelProvider,
 } from "@/hooks/data/useAgents";
 import useDepartments from "@/hooks/data/useDepartments";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/hooks/useTranslations";
 import {
+  ArrowLeft,
   Bot,
   ChevronDown,
+  HelpCircle,
+  Loader2,
   Save,
   Send,
   User,
-  Loader2,
-  ArrowLeft,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const AgentConfigurationUI = () => {
   const { t } = useTranslations();
@@ -48,7 +55,6 @@ const AgentConfigurationUI = () => {
   const agentId = params?.id ? parseInt(params.id as string) : null;
   const isEditMode = Boolean(agentId);
 
-  // Updated to only include Google/Gemini models
   const validModels: Partial<Record<ModelProvider, string[]>> = {
     [ModelProvider.GOOGLE]: [
       "gemini-pro",
@@ -318,7 +324,7 @@ Câu hỏi:
                           : `Created: ${new Date().toLocaleString()}`}
                       </span>
                       {isEditMode && existingAgent?.shop && (
-                        <span className="text-sm px-2 py-1 bg-blue-100 text-blue-700 rounded-md">
+                        <span className="text-sm px-2 py-1 bg-blue-100 rounded-md">
                           {existingAgent.shop.name}
                         </span>
                       )}
@@ -394,12 +400,6 @@ Câu hỏi:
                             <SelectItem value={AgentStatus.INACTIVE}>
                               Inactive
                             </SelectItem>
-                            <SelectItem value={AgentStatus.TRAINING}>
-                              Training
-                            </SelectItem>
-                            <SelectItem value={AgentStatus.MAINTENANCE}>
-                              Maintenance
-                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -428,7 +428,7 @@ Câu hỏi:
                             <SelectValue placeholder="Select provider" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={ModelProvider.DEEPSEEK}>
+                            {/* <SelectItem value={ModelProvider.DEEPSEEK}>
                               DeepSeek
                             </SelectItem>
                             <SelectItem value={ModelProvider.OPENAI}>
@@ -436,12 +436,9 @@ Câu hỏi:
                             </SelectItem>
                             <SelectItem value={ModelProvider.ANTHROPIC}>
                               Anthropic
-                            </SelectItem>
+                            </SelectItem> */}
                             <SelectItem value={ModelProvider.GOOGLE}>
                               Google
-                            </SelectItem>
-                            <SelectItem value={ModelProvider.LOCAL}>
-                              Local
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -522,7 +519,10 @@ Câu hỏi:
                                   key={department.id}
                                   value={department.id!}
                                 >
-                                  {department.name}
+                                  {department.name}{" "}
+                                  {department.syncStatus
+                                    ? " (Synced)"
+                                    : " (Syncing)"}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -532,7 +532,69 @@ Câu hỏi:
 
                       {/* Agent Prompt */}
                       <div className="space-y-2">
-                        <Label htmlFor="prompt">Agent Prompt *</Label>
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="prompt">Agent Prompt *</Label>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="cursor-help">
+                                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-md p-4 text-sm">
+                                <p className="font-medium mb-2">
+                                  Prompt Structure Guide
+                                </p>
+                                <div className="space-y-2">
+                                  <p>
+                                    <strong>[BẮT BUỘC] VAI TRÒ:</strong> Define
+                                    the AI assistant's professional role and
+                                    expertise
+                                  </p>
+                                  <p>
+                                    <strong>[BẮT BUỘC] MỤC TIÊU CHÍNH:</strong>{" "}
+                                    Set the primary task/goal for the AI
+                                  </p>
+                                  <p>
+                                    <strong>[TÙY CHỌN] CHẾ ĐỘ LÀM VIỆC:</strong>{" "}
+                                    Choose between 3 working modes:
+                                  </p>
+                                  <ul className="list-disc pl-6 space-y-1">
+                                    <li>
+                                      <strong>Chế độ 1:</strong> Use only
+                                      context information
+                                    </li>
+                                    <li>
+                                      <strong>Chế độ 2:</strong> Use context
+                                      with interpretation
+                                    </li>
+                                    <li>
+                                      <strong>Chế độ 3:</strong> Creative mode
+                                      with context as foundation
+                                    </li>
+                                  </ul>
+                                  <p>
+                                    <strong>Variables:</strong>
+                                  </p>
+                                  <ul className="list-disc pl-6 space-y-1">
+                                    <li>
+                                      <code>{"{history}"}</code>: Previous
+                                      conversation history
+                                    </li>
+                                    <li>
+                                      <code>{"{context}"}</code>: Retrieved
+                                      document context
+                                    </li>
+                                    <li>
+                                      <code>{"{question}"}</code>: User's
+                                      current question
+                                    </li>
+                                  </ul>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           Used to set the agent's identity, skills, personality,
                           and response limitations

@@ -192,7 +192,7 @@ export default function ChannelsManagementPage() {
     updateShopId,
     updateStatus,
     syncConversations,
-    syncConversationsFacebook,
+    syncFaceBookConversations,
   } = useChannels({
     limit: 100, // Get all channels
   });
@@ -230,17 +230,17 @@ export default function ChannelsManagementPage() {
       return;
     }
 
-    if (appIdParam) {
-      if (appType === "zalo") {
-        updateShopId({ appId: appIdParam });
-        syncConversations(appIdParam);
-      } else {
-        const appIds = appIdParam.includes(",")
-          ? appIdParam.split(",")
-          : [appIdParam];
-        appIds.forEach((id) => updateShopId({ appId: id }));
-        syncConversationsFacebook(appIds);
-      } 
+    if (appType === "zalo") {
+      updateShopId({ appId: appIdParam });
+      syncConversations(appIdParam);
+    } else {
+      const appIds = appIdParam.includes(",")
+        ? appIdParam.split(",")
+        : [appIdParam];
+      appIds.forEach((id) => {
+        updateShopId({ appId: id });
+        syncFaceBookConversations(appIdParam);
+      });
     }
   }, []);
 
@@ -263,7 +263,9 @@ export default function ChannelsManagementPage() {
       return;
     }
     if (platformType === "facebook") {
-      window.open(authUrl, "_blank");
+      // Redirect to Facebook Auth URL
+      window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
+
       return;
     }
   };

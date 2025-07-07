@@ -34,6 +34,10 @@ export type Message = {
   senderType: string;
   channelId?: number;
   messageType: string;
+  contentType?: string;
+  url: string;
+  links?: string[];
+  thumb?: string;
   readBy?: ReadByUser[];
   sender?: {
     id: string;
@@ -322,28 +326,6 @@ const useCS = ({
     },
   });
 
-  const { mutate: updateConversationStatusBot } = useMutation({
-    mutationFn: async (conversationId: number) => {
-      return await axiosInstance.patch("/api/conversations/status-bot", {
-        conversationId,
-      });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Cập nhật thành công",
-      });
-    },
-    onError: (error) => {
-      console.error("Error updating conversation status bot:", error);
-      toast({
-        title: "Cập nhật thất bại",
-        description: "Không thể cập nhật trạng thái bot cho cuộc trò chuyện",
-        variant: "destructive",
-        duration: 3000,
-      });
-    },
-  });
-
   // Helper to get messages for current conversation
   const currentMessages = conversationId
     ? getMessagesByConversationId(conversationId)
@@ -382,7 +364,6 @@ const useCS = ({
     selectedConversationId,
 
     sendMessage,
-    updateConversationStatusBot,
   };
 };
 

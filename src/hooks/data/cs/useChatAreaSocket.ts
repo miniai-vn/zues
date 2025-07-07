@@ -58,6 +58,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
         markReadConversation(data.conversationId as number);
+        return;
       }
       const existingConversation = conversations.find(
         (conv) => conv.id === data.conversationId
