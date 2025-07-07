@@ -43,11 +43,6 @@ export const MessageList = ({
         const isOwnMessage =
           message.senderId === user?.id || message.senderType === "channel";
 
-        const previousMessage = index > 0 ? messages[index - 1] : null;
-        const showSenderName =
-          !isOwnMessage &&
-          (!previousMessage || previousMessage.senderId !== message.senderId);
-
         return (
           <MessageItem
             key={message.id}
