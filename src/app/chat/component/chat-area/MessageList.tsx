@@ -40,21 +40,14 @@ export const MessageList = ({
   return (
     <div className="p-4 space-y-4 h-[72vh] overflow-y-auto">
       {messages.map((message, index) => {
-        const isOwnMessage = message.senderId === user?.id;
-
-        const previousMessage = index > 0 ? messages[index - 1] : null;
-        const showSenderName =
-          !isOwnMessage &&
-          (!previousMessage || previousMessage.senderId !== message.senderId);
+        const isOwnMessage =
+          message.senderId === user?.id || message.senderType === "channel";
 
         return (
           <MessageItem
             key={message.id}
             message={message}
             isOwnMessage={isOwnMessage}
-            showSenderName={showSenderName}
-            senderName={message?.sender?.name}
-            senderAvatar={message?.sender?.avatar}
           />
         );
       })}
