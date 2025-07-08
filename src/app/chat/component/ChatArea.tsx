@@ -28,7 +28,6 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     toggleContactInfo,
     joinAllConversationWithUserId,
   } = useChatAreaSocket({ ...(conversationId ? { conversationId } : {}) });
-
   useEffect(() => {
     joinAllConversationWithUserId();
   }, []);

@@ -110,7 +110,6 @@ Câu hỏi:
 
   // Get departments
   const { departments, isFetchingDepartments } = useDepartments({});
-  console.log("Departments:", departments);
   const {
     data: existingAgent,
     isLoading: isLoadingAgent,

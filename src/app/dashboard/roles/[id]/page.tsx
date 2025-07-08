@@ -113,7 +113,6 @@ const PermissionsRoles = () => {
       permissions: newPermissions,
     });
 
-    console.log("Updated role permissions:", newPermissions);
     setHasChanges(true);
   };
 

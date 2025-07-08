@@ -38,7 +38,11 @@ export type Message = {
   url: string;
   links?: string[];
   thumb?: string;
-  readBy?: ReadByUser[];
+  readBy?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  }[];
   sender?: {
     id: string;
     name: string;
