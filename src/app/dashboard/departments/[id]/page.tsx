@@ -1,37 +1,32 @@
 "use client";
-import ActionPopover from "@/components/dashboard/popever";
-import { DataTable } from "@/components/dashboard/tables/data-table";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  flattenTreeData,
+  transformToTreeDataByStatus,
+  TreeNode,
+} from "@/components/dashboard/tables/tree-helpers";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import useTranslations from "@/hooks/useTranslations";
-import { convertBytesToMB } from "@/utils";
-import { ColumnDef } from "@tanstack/react-table";
-import dayjs from "dayjs";
-import { File, FileText, Image, FolderOpen } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
-import { CreateOrUpdateResource } from "./documents/components/CreateOrUpdateResource";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { ResourceFilters } from "./components/ResourceFilters";
+import { DepartmentHeader } from "./components/DepartmentHeader";
+import { ResourceTableView } from "./components/ResourceTableView";
 
 const DepartmentDetailComponent = () => {
-  const { t } = useTranslations();
   const params = useParams();
-  const router = useRouter();
   const departmentId = params.id as string;
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"table" | "tree">("tree");
+  const [treeData, setTreeData] = useState<TreeNode[]>([]);
+  const [expandedNodes, setExpandedNodes] = useState<Set<string | number>>(
+    new Set()
+  );
+
   const [columnVisibility, setColumnVisibility] = useState({
     index: true,
     name: true,
@@ -42,30 +37,11 @@ const DepartmentDetailComponent = () => {
     status: true,
     actions: true,
   });
+  
   useDebouncedValue(search, 500);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case "pdf":
-        return <FileText className="h-6 w-6 text-red-500" />;
-      case "csv":
-      case "xlsx":
-      case "xls":
-        return <FileText className="h-6 w-6 text-green-500" />;
-      case "doc":
-      case "docx":
-      case "txt":
-        return <FileText className="h-6 w-6 text-blue-500" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return <Image className="h-6 w-6 text-purple-500" />;
-      default:
-        return <File className="h-6 w-6 text-gray-500" />;
-    }
-  };
+
   const {
     materialItems,
     createResource,
@@ -85,7 +61,6 @@ const DepartmentDetailComponent = () => {
     limit: pageSize,
     search,
   });
-  // FAQ state
 
   useEffect(() => {
     if (materialItems) {
@@ -151,199 +126,66 @@ const DepartmentDetailComponent = () => {
     });
   }, [materialItems?.items, search, statusFilter, typeFilter]);
 
-  const columns: ColumnDef<Resource>[] = [
-    {
-      id: "index",
-      header: () => <div className="text-center">{t("common.index")}</div>,
-      cell: ({ row }) => (
-        <div className="flex items-center justify-center">{row.index + 1}</div>
-      ),
-    },
-    {
-      accessorKey: "name",
-      header: t("dashboard.departments.detail.fileName"),
-      cell: (row) => {
-        const fileName = row.row.original.name;
-        return (
-          <div className="flex items-center gap-2 max-w-[200px]">
-            <span className="flex-shrink-0">
-              {getFileIcon(row.row.original.extra.extension as string)}
-            </span>
-            <span className="truncate" title={fileName}>
-              {fileName}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "type",
-      header: t("dashboard.departments.detail.documentType"),
-      cell: (row) => (
-        <div className="max-w-[100px]">
-          <span className="truncate block" title={row.row.original?.type}>
-            {row.row.original?.type}
-          </span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "size",
-      header: t("dashboard.departments.detail.fileSize"),
-      cell: (row) => (
-        <div className="whitespace-nowrap">
-          {convertBytesToMB(row.row.original.extra.size as number)}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "description",
-      header: t("dashboard.departments.detail.description"),
-      cell: (row) => {
-        const description = row.row.original.description;
-        return (
-          <div className="max-w-[250px]">
-            <span className="line-clamp-2 text-sm" title={description}>
-              {description}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "createdAt",
-      header: t("dashboard.departments.detail.uploadTime"),
-      cell: (row) => (
-        <div className="whitespace-nowrap text-sm">
-          {dayjs(row.row.original.createdAt).format("DD/MM/YYYY HH:mm")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: () => (
-        <div className="text-center">
-          {t("dashboard.departments.detail.status")}
-        </div>
-      ),
-      cell: (row) => {
-        const status = row.row.original.status;
-        let statusText = status;
-        let statusClass = "bg-gray-100 text-gray-800";
+  // Transform filtered data to tree structure
+  const processedTreeData = useMemo(() => {
+    if (!filteredData.length) return [];
 
-        if (isPendingCreateChunks || isPendingSyncResource) {
-          return (
-            <div className="flex items-center justify-center z-10">
-              <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full"></div>
-            </div>
-          );
-        }
+    return transformToTreeDataByStatus(filteredData, expandedNodes);
+  }, [filteredData, expandedNodes]);
 
-        switch (status) {
-          case "new":
-            statusText = t("dashboard.departments.detail.statusValues.new");
-            statusClass = "bg-blue-100 text-blue-800";
-            break;
-          case "processing":
-            statusText = t(
-              "dashboard.departments.detail.statusValues.processing"
-            );
-            statusClass = "bg-yellow-100 text-yellow-800";
-            break;
-          case "finished":
-            statusText = t(
-              "dashboard.departments.detail.statusValues.finished"
-            );
-            statusClass = "bg-green-100 text-green-800";
-            break;
-          case "active":
-            statusText = t("dashboard.departments.detail.statusValues.active");
-            statusClass = "bg-green-100 text-green-800";
-            break;
-          case "error":
-            statusText = t("dashboard.resources.error");
-            statusClass = "bg-red-100 text-red-800";
-            break;
-          default:
-            break;
-        }
+  // Update tree data when processed data changes
+  useEffect(() => {
+    setTreeData(processedTreeData);
+  }, [processedTreeData]);
 
-        return (
-          <div className="flex items-center justify-center w-full">
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass}`}
-            >
-              {statusText}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      header: () => <div className="text-center">{t("common.actions")}</div>,
-      cell: (row) => {
-        const documentId = row.row.original.id as unknown as string;
-        const isActive = row.row.original.isActive === true;
+  // Handle tree node expansion
+  const handleToggleExpansion = (nodeId: string | number) => {
+    setExpandedNodes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(nodeId)) {
+        newSet.delete(nodeId);
+      } else {
+        newSet.add(nodeId);
+      }
+      return newSet;
+    });
+  };
 
-        return (
-          <div className="flex items-center justify-center w-full gap-2">
-            <div className="flex items-center">
-              <Switch
-                id={`status-switch-${documentId}`}
-                checked={isActive}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    createChunks(documentId);
-                  } else {
-                    syncResource(documentId);
-                  }
-                }}
-              />
-            </div>
-            <ActionPopover
-              onArchive={() => reEtl(documentId)}
-              onDelete={() => deleteResource(documentId)}
-              deleteDescription={t(
-                "dashboard.departments.detail.confirmDeleteDocument"
-              )}
-              deleteTitle={t("dashboard.departments.detail.deleteDocument")}
-            />
-          </div>
-        );
-      },
-    },
-  ];
+  // Get flattened tree data for display
+  const flattenedTreeData = useMemo(() => {
+    return flattenTreeData(treeData);
+  }, [treeData]);
 
-  // Filter visible columns based on columnVisibility state
-  const visibleColumns = columns.filter((column) => {
-    const columnId = column.id || (column as any).accessorKey;
-    return columnVisibility[columnId as keyof typeof columnVisibility];
-  });
+  // Handle view resource
+  const handleViewResource = (resource: Resource) => {
+    console.log("View resource:", resource);
+  };
+
+  // Handle enable/disable resource
+  const handleToggleResourceStatus = async (resource: Resource) => {
+    try {
+      const newStatus = resource.status === "active" ? "inactive" : "active";
+      console.log("Toggle resource status:", resource.id, newStatus);
+      refetchMaterialItems();
+    } catch (error) {
+      console.error("Error toggling resource status:", error);
+    }
+  };
+
+  // Handle upload new document for specific resource
+  const handleUploadForResource = (resource: Resource) => {
+    // This can be used to trigger upload dialog for specific resource
+    console.log("Upload for resource:", resource);
+  };
 
   return (
     <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
       <Card className="flex flex-col flex-1 overflow-hidden">
-        <CardHeader className="px-6 py-4 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <FolderOpen className="h-5 w-5" />
-                {t("dashboard.departments.detail.documentManagement")}
-              </CardTitle>
-              <CardDescription>
-                {t("dashboard.departments.detail.documents")}
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <CreateOrUpdateResource
-                type="document"
-                onHandleUploadFile={onHandleUploadFile}
-                resource={undefined}
-              />
-            </div>
-          </div>
-        </CardHeader>
+        <DepartmentHeader
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          onHandleUploadFile={onHandleUploadFile}
+        />
         <CardContent className="flex flex-col flex-1 min-h-0 space-y-4">
           <div className="flex-shrink-0">
             <ResourceFilters
@@ -361,16 +203,16 @@ const DepartmentDetailComponent = () => {
             <Separator className="mt-4" />
           </div>
 
-          {/* Data Table */}
+          {/* Resource Table View */}
           <div className="flex-1 min-h-0 overflow-hidden">
-            <DataTable
-              columns={visibleColumns}
-              data={filteredData || []}
-              pagination={{
-                page: page,
-                limit: pageSize,
-                total: materialItems?.totalCount || 0,
-              }}
+            <ResourceTableView
+              viewMode={viewMode}
+              flattenedTreeData={flattenedTreeData}
+              onToggleExpansion={handleToggleExpansion}
+              filteredData={filteredData}
+              page={page}
+              pageSize={pageSize}
+              totalCount={materialItems?.totalCount || 0}
               onPaginationChange={handlePaginationChange}
               onPageSizeChange={handlePageSizeChange}
               isLoading={
@@ -378,6 +220,17 @@ const DepartmentDetailComponent = () => {
                 isPendingCreateResource ||
                 isPendingDeleteResource
               }
+              columnVisibility={columnVisibility}
+              onCreateChunks={createChunks}
+              onSyncResource={syncResource}
+              onDeleteResource={deleteResource}
+              onReEtl={reEtl}
+              onUploadForResource={handleUploadForResource}
+              onViewResource={handleViewResource}
+              onToggleResourceStatus={handleToggleResourceStatus}
+              onHandleUploadFile={onHandleUploadFile}
+              isPendingCreateChunks={isPendingCreateChunks}
+              isPendingSyncResource={isPendingSyncResource}
             />
           </div>
         </CardContent>
