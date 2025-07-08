@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import HumanoidSection from "@/components/HumanoidSection";
 import ImageShowcaseSection from "@/components/ImageShowcaseSection";
-import MadeByHumans from "@/components/MadeByHumans";
 import Navbar from "@/components/Navbar";
 import Newsletter from "@/components/Newsletter";
 import SpecsSection from "@/components/SpecsSection";

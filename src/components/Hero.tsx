@@ -1,13 +1,11 @@
 import { useTranslations } from "@/hooks/useTranslations";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import LottieAnimation from "./LottieAnimation";
 
 const Hero = () => {
   const { t } = useTranslations("landingpage");
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [lottieData, setLottieData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -22,14 +20,7 @@ const Hero = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    fetch("/loop-header.lottie")
-      .then((response) => response.json())
-      .then((data) => setLottieData(data))
-      .catch((error) =>
-        console.error("Error loading Lottie animation:", error)
-      );
-  }, []);
+
 
   useEffect(() => {
     // Skip effect on mobile
@@ -152,20 +143,7 @@ const Hero = () => {
           </div>
 
           <div className="w-full lg:w-1/2 relative mt-6 lg:mt-0">
-            {lottieData ? (
-              <div
-                className="relative z-10 animate-fade-in"
-                style={{ animationDelay: "0.9s" }}
-              >
-                <LottieAnimation
-                  animationPath={lottieData}
-                  className="w-full h-auto max-w-lg mx-auto"
-                  loop={true}
-                  autoplay={true}
-                />
-              </div>
-            ) : (
-              <>
+             <>
                 <div className="absolute inset-0 bg-dark-900 rounded-2xl sm:rounded-3xl -z-10 shadow-xl"></div>
                 <div className="relative transition-all duration-500 ease-out overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
                   <img
@@ -187,7 +165,6 @@ const Hero = () => {
                   ></div>
                 </div>
               </>
-            )}
           </div>
         </div>
       </div>

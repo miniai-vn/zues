@@ -42,7 +42,7 @@ export const ConversationItem = ({
     >
       <div className="relative">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversation.avatar} alt={conversation.avatar} />
+          <AvatarImage src={conversation.avatar ?? undefined} alt={conversation.avatar} />
           <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
             {conversation.name?.charAt(0) || "?"}
           </AvatarFallback>

@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
-import { useCsStore } from "./data/cs/useCsStore";
 import { Message } from "./data/cs/useCS";
 
 interface UserJoinedEvent {
@@ -10,11 +9,7 @@ interface UserJoinedEvent {
   conversationId: number;
 }
 
-interface TypingEvent {
-  userId: string;
-  conversationId: number;
-  isTyping: boolean;
-}
+
 
 export function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);

@@ -10,21 +10,16 @@ interface UseChatAreaProps {
 }
 
 export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
-  console.log(
-    "useChatAreaSocket initialized with conversationId:",
-    conversationId
-  );
   const [isChatConnected, setIsChatConnected] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [socketChatIo, setSocketChatIo] = useState<Socket | null>(null);
-
   const {
     messages: chatMessages,
     setConversations,
     conversations,
   } = useCsStore();
-  const { refetchConversations, markReadConversation, sendMessage } = useCS();
+  const { refetchConversations, sendMessage } = useCS();
   const { user } = useAuth({});
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -59,9 +54,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
 
     const handleReceiveMessage = (data: Message) => {
       if (data.conversationId === conversationId) {
-        console.log("Received message:", data);
         setMessages((prevMessages) => [...prevMessages, data]);
-        markReadConversation(data.conversationId as number);
         return;
       }
       const existingConversation = conversations.find(
@@ -155,7 +148,10 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   const joinConversation = useCallback(
     (conversationId: number, userId?: string) => {
       if (socketChatIo) {
-        socketChatIo.emit("joinConversation", { conversationId, userId });
+        socketChatIo.emit("joinConversation", {
+          conversationId,
+          userId,
+        });
       }
     },
     [socketChatIo]

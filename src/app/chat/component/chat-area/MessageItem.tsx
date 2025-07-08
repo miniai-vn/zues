@@ -79,7 +79,7 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Avatar className="h-4 w-4 border border-background">
-                          <AvatarImage src={reader.avatar} />
+                          <AvatarImage src={reader.avatar ?? defaultAvatar} />
                           <AvatarFallback className="text-[8px]">
                             {reader.name?.charAt(0)?.toUpperCase() || "?"}
                           </AvatarFallback>

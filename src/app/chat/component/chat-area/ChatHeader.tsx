@@ -32,11 +32,12 @@ export const ChatHeader = ({
     <div className="border-b p-4 flex items-center justify-between bg-background sticky top-0 z-10">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversationAvatar} />
+          <AvatarImage src={conversationAvatar ?? undefined} />
           <AvatarFallback>
             {conversationName?.charAt(0)?.toUpperCase() || "?"}
           </AvatarFallback>
-        </Avatar>        <div>
+        </Avatar>{" "}
+        <div>
           <h3 className="font-medium">
             {conversationName || t("dashboard.chat.unknownConversation")}
           </h3>
@@ -46,7 +47,9 @@ export const ChatHeader = ({
             </p>
           )}
           {!isGroup && (
-            <p className="text-sm text-muted-foreground">{t("dashboard.chat.activeNow")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("dashboard.chat.activeNow")}
+            </p>
           )}
         </div>
       </div>
@@ -68,7 +71,8 @@ export const ChatHeader = ({
           onClick={() => setShowTagManagement(true)}
         >
           <Tag className="h-4 w-4" />
-        </Button>        <Button
+        </Button>{" "}
+        <Button
           size="sm"
           variant="ghost"
           onClick={onMoreOptions}
@@ -81,7 +85,11 @@ export const ChatHeader = ({
           variant="ghost"
           onClick={onToggleContactInfo}
           className={cn(showContactInfo && "bg-accent")}
-          title={showContactInfo ? t("dashboard.chat.hideContactInfo") : t("dashboard.chat.showContactInfo")}
+          title={
+            showContactInfo
+              ? t("dashboard.chat.hideContactInfo")
+              : t("dashboard.chat.showContactInfo")
+          }
         >
           <Info className="h-4 w-4" />
         </Button>

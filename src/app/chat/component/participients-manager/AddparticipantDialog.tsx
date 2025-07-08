@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -7,12 +8,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useUsersWithCs } from "@/hooks/data/cs/useUser";
-import { useTranslations } from "@/hooks/useTranslations";
 import { User } from "@/hooks/data/useAuth";
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AddParticipantDialogProps {
   open: boolean;
@@ -28,7 +27,6 @@ const AddParticipantDialog = ({
   onAddParticipants,
   existingParticipantIds = [],
 }: AddParticipantDialogProps) => {
-  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const { users, isFetchingUsersWithCs } = useUsersWithCs({
