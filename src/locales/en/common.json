@@ -257,6 +257,133 @@
       "emptyState": {
         "title": "No agents found",
         "description": "Create your first AI agent to get started"
+      },
+      "form": {
+        "create": "Create Agent",
+        "edit": "Edit Agent",
+        "update": "Update",
+        "save": "Save",
+        "back": "Back",
+        "lastUpdated": "Last updated: {{date}}",
+        "created": "Created: {{date}}",
+        "basicInformation": "Basic Information",
+        "aiSettings": "AI Settings",
+        "previewAndDebugging": "Preview and debugging",
+        "validation": {
+          "nameRequired": "Agent name is required",
+          "modelRequired": "Model name is required",
+          "promptRequired": "Agent prompt is required",
+          "fillRequired": "Please fill in all required fields",
+          "error": "Validation Error"
+        },
+        "fields": {
+          "name": {
+            "label": "Agent Name",
+            "placeholder": "Enter agent name",
+            "required": true
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enter agent description"
+          },
+          "status": {
+            "label": "Status",
+            "placeholder": "Select status",
+            "active": "Active",
+            "inactive": "Inactive"
+          },
+          "modelProvider": {
+            "label": "Model Provider",
+            "placeholder": "Select provider",
+            "required": true
+          },
+          "model": {
+            "label": "Model",
+            "placeholder": "Select model",
+            "localPlaceholder": "Enter local model name",
+            "required": true
+          },
+          "departments": {
+            "label": "Departments",
+            "placeholder": "Select departments",
+            "description": "Select the departments this agent belongs to",
+            "loading": "Loading departments...",
+            "none": "No Department",
+            "synced": "(Synced)",
+            "syncing": "(Syncing)"
+          },
+          "prompt": {
+            "label": "Agent Prompt",
+            "placeholder": "Enter agent prompt...",
+            "description": "Used to set the agent's identity, skills, personality, and response limitations",
+            "required": true,
+            "tooltip": {
+              "title": "Prompt Structure Guide",
+              "role": "Define the AI assistant's professional role and expertise",
+              "goal": "Set the primary task/goal for the AI", 
+              "workingMode": "Choose between 3 working modes:",
+              "mode1": "Use only context information",
+              "mode2": "Use context with interpretation", 
+              "mode3": "Creative mode with context as foundation",
+              "variables": "Variables:",
+              "history": "Previous conversation history",
+              "context": "Retrieved document context",
+              "question": "User's current question"
+            }
+          },
+          "outputLanguage": {
+            "label": "Output language preferences",
+            "description": "Language preferences for agent output, automatically match according to user problems by default",
+            "placeholder": "Select language",
+            "auto": "Auto Match",
+            "en": "English",
+            "zh": "Chinese", 
+            "vi": "Vietnamese",
+            "ja": "Japanese"
+          },
+          "parameters": {
+            "label": "LLM Parameters",
+            "description": "Configure model behavior and output settings",
+            "temperature": {
+              "label": "Temperature",
+              "description": "Controls randomness vs stability (0 = deterministic, 1 = creative)"
+            },
+            "topP": {
+              "label": "Top P",
+              "description": "Controls focus of token sampling (0.1 = very focused, 1.0 = consider all)"
+            },
+            "maxTokens": {
+              "label": "Max Tokens",
+              "description": "Maximum length of output (50-4000+ depending on task)"
+            },
+            "topK": {
+              "label": "Top K",
+              "description": "Number of top tokens to consider (10-100)"
+            },
+            "frequencyPenalty": {
+              "label": "Frequency Penalty",
+              "description": "Reduces repetition of words (-2.0 to 2.0)"
+            },
+            "presencePenalty": {
+              "label": "Presence Penalty", 
+              "description": "Encourages new topics (-2.0 to 2.0)"
+            },
+            "stopSequences": {
+              "label": "Stop Sequences",
+              "description": "Text sequences that stop generation",
+              "placeholder": "Enter stop sequences (comma separated)"
+            }
+          }
+        },
+        "chat": {
+          "placeholder": "Please enter a message",
+          "send": "Send"
+        },
+        "errors": {
+          "notFound": "Agent not found",
+          "notFoundDescription": "The agent you're trying to edit doesn't exist or you don't have permission to access it.",
+          "loading": "Loading agent..."
+        }
       }
     },
     "roles": {

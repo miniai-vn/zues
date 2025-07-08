@@ -257,6 +257,133 @@
       "emptyState": {
         "title": "Không tìm thấy agent nào",
         "description": "Tạo agent AI đầu tiên để bắt đầu"
+      },
+      "form": {
+        "create": "Tạo Agent",
+        "edit": "Chỉnh sửa Agent",
+        "update": "Cập nhật",
+        "save": "Lưu",
+        "back": "Quay lại",
+        "lastUpdated": "Cập nhật lần cuối: {{date}}",
+        "created": "Tạo lúc: {{date}}",
+        "basicInformation": "Thông tin cơ bản",
+        "aiSettings": "Cài đặt AI",
+        "previewAndDebugging": "Xem trước và gỡ lỗi",
+        "validation": {
+          "nameRequired": "Tên agent là bắt buộc",
+          "modelRequired": "Tên model là bắt buộc",
+          "promptRequired": "Prompt agent là bắt buộc",
+          "fillRequired": "Vui lòng điền đầy đủ các trường bắt buộc",
+          "error": "Lỗi xác thực"
+        },
+        "fields": {
+          "name": {
+            "label": "Tên Agent",
+            "placeholder": "Nhập tên agent",
+            "required": true
+          },
+          "description": {
+            "label": "Mô tả",
+            "placeholder": "Nhập mô tả agent"
+          },
+          "status": {
+            "label": "Trạng thái",
+            "placeholder": "Chọn trạng thái",
+            "active": "Hoạt động",
+            "inactive": "Không hoạt động"
+          },
+          "modelProvider": {
+            "label": "Nhà cung cấp Model",
+            "placeholder": "Chọn nhà cung cấp",
+            "required": true
+          },
+          "model": {
+            "label": "Model",
+            "placeholder": "Chọn model",
+            "localPlaceholder": "Nhập tên model local",
+            "required": true
+          },
+          "departments": {
+            "label": "Phòng ban",
+            "placeholder": "Chọn phòng ban",
+            "description": "Chọn các phòng ban mà agent này thuộc về",
+            "loading": "Đang tải phòng ban...",
+            "none": "Không có phòng ban",
+            "synced": "(Đã đồng bộ)",
+            "syncing": "(Đang đồng bộ)"
+          },
+          "prompt": {
+            "label": "Prompt Agent",
+            "placeholder": "Nhập prompt agent...",
+            "description": "Dùng để thiết lập bản sắc, kỹ năng, tính cách và giới hạn phản hồi của agent",
+            "required": true,
+            "tooltip": {
+              "title": "Hướng dẫn cấu trúc Prompt",
+              "role": "Xác định vai trò chuyên môn và chuyên môn của trợ lý AI",
+              "goal": "Đặt nhiệm vụ/mục tiêu chính cho AI",
+              "workingMode": "Chọn giữa 3 chế độ làm việc:",
+              "mode1": "Chỉ sử dụng thông tin ngữ cảnh",
+              "mode2": "Sử dụng ngữ cảnh với diễn giải",
+              "mode3": "Chế độ sáng tạo với ngữ cảnh làm nền tảng",
+              "variables": "Biến:",
+              "history": "Lịch sử cuộc trò chuyện trước",
+              "context": "Ngữ cảnh tài liệu được truy xuất",
+              "question": "Câu hỏi hiện tại của người dùng"
+            }
+          },
+          "outputLanguage": {
+            "label": "Tùy chọn ngôn ngữ đầu ra",
+            "description": "Tùy chọn ngôn ngữ cho đầu ra của agent, tự động khớp theo vấn đề của người dùng theo mặc định",
+            "placeholder": "Chọn ngôn ngữ",
+            "auto": "Tự động khớp",
+            "en": "Tiếng Anh",
+            "zh": "Tiếng Trung",
+            "vi": "Tiếng Việt",
+            "ja": "Tiếng Nhật"
+          },
+          "parameters": {
+            "label": "Tham số LLM",
+            "description": "Cấu hình hành vi model và cài đặt đầu ra",
+            "temperature": {
+              "label": "Temperature",
+              "description": "Kiểm soát độ ngẫu nhiên vs ổn định (0 = xác định, 1 = sáng tạo)"
+            },
+            "topP": {
+              "label": "Top P",
+              "description": "Kiểm soát độ tập trung của tập token (0.1 = rất tập trung, 1.0 = xem xét tất cả)"
+            },
+            "maxTokens": {
+              "label": "Max Tokens",
+              "description": "Độ dài tối đa của đầu ra (50-4000+ tùy theo task)"
+            },
+            "topK": {
+              "label": "Top K",
+              "description": "Số lượng token hàng đầu để xem xét (10-100)"
+            },
+            "frequencyPenalty": {
+              "label": "Frequency Penalty",
+              "description": "Giảm việc lặp lại từ (-2.0 đến 2.0)"
+            },
+            "presencePenalty": {
+              "label": "Presence Penalty",
+              "description": "Khuyến khích chủ đề mới (-2.0 đến 2.0)"
+            },
+            "stopSequences": {
+              "label": "Stop Sequences",
+              "description": "Chuỗi văn bản dừng quá trình sinh",
+              "placeholder": "Nhập stop sequences (phân cách bằng dấu phẩy)"
+            }
+          }
+        },
+        "chat": {
+          "placeholder": "Vui lòng nhập tin nhắn",
+          "send": "Gửi"
+        },
+        "errors": {
+          "notFound": "Không tìm thấy agent",
+          "notFoundDescription": "Agent bạn đang cố gắng chỉnh sửa không tồn tại hoặc bạn không có quyền truy cập.",
+          "loading": "Đang tải agent..."
+        }
       }
     },
     "roles": {
