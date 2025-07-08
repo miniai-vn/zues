@@ -21,7 +21,6 @@ type Conversation = {
 
 const useChat = ({ id }: { id?: string }) => {
   const [input, setInput] = useState("");
-  const router = useRouter();
   const { toast } = useToast();
   const {
     data: fetchedMessages,
@@ -31,14 +30,7 @@ const useChat = ({ id }: { id?: string }) => {
   } = useQuery({
     queryKey: ["load_messages", id],
     queryFn: async () => {
-      try {
-        const response = await chatApiInstance.get(`/api/conversations/${id}`);
-        // console.log(response.data);
-        return [];
-      } catch (error) {
-        router.push("/dashboard/chat");
-        throw new Error("Failed to fetch messages");
-      }
+      return [];
     },
     enabled: !!id,
   });
@@ -96,7 +88,6 @@ const useChat = ({ id }: { id?: string }) => {
   } = useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
-      const res = await chatApiInstance.get(`/api/conversations`);
       return [];
     },
     enabled: !id,

@@ -70,7 +70,7 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
           </p>
 
           {/* Read receipts - only show for own messages */}
-          {isOwnMessage && message.readBy && message.readBy.length > 0 && (
+          {message.readBy && message.readBy.length > 0 && (
             <div className="flex -space-x-1">
               {message.readBy.length <= 3 ? (
                 // Display avatars if 3 or fewer readers

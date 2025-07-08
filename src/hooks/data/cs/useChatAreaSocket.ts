@@ -51,45 +51,59 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
 
   useEffect(() => {
     if (!socketChatIo) return;
-
     const handleReceiveMessage = (data: Message) => {
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
+        readConversations(data.conversationId as number);
         return;
       }
+
       const existingConversation = conversations.find(
         (conv) => conv.id === data.conversationId
       );
 
       if (existingConversation) {
-        // Create a new array with updated conversations
-        const updatedConversations = conversations.map((conv) =>
-          conv.id === data.conversationId
-            ? {
-                ...conv,
-                unreadMessagesCount: conv.unreadMessagesCount + 1,
-                lastestMessage: data.content,
-                updatedAt: new Date().toISOString(), // Update timestamp for sorting
-              }
-            : {
-                ...conv,
-              }
-        );
+        // Check if the conversation is already at the top
+        const isAlreadyAtTop = conversations[0]?.id === data.conversationId;
 
-        // Sort conversations to bring the updated one to the top
-        const sortedConversations = [
-          // First get the updated conversation
-          ...updatedConversations.filter(
-            (conv) => conv.id === data.conversationId
-          ),
-          // Then get all other conversations
-          ...updatedConversations.filter(
-            (conv) => conv.id !== data.conversationId
-          ),
-        ];
+        if (isAlreadyAtTop) {
+          // Just update the conversation without sorting
+          const updatedConversations = conversations.map((conv) =>
+            conv.id === data.conversationId
+              ? {
+                  ...conv,
+                  unreadMessagesCount: conv.unreadMessagesCount + 1,
+                  lastestMessage: data.content,
+                  updatedAt: new Date().toISOString(),
+                }
+              : conv
+          );
+          setConversations(updatedConversations);
+        } else {
+          // Update and sort to bring to top
+          const updatedConversations = conversations.map((conv) =>
+            conv.id === data.conversationId
+              ? {
+                  ...conv,
+                  unreadMessagesCount: conv.unreadMessagesCount + 1,
+                  lastestMessage: data.content,
+                  updatedAt: new Date().toISOString(),
+                }
+              : conv
+          );
 
-        // Update state with the new sorted array
-        setConversations(sortedConversations);
+          // Sort conversations to bring the updated one to the top
+          const sortedConversations = [
+            ...updatedConversations.filter(
+              (conv) => conv.id === data.conversationId
+            ),
+            ...updatedConversations.filter(
+              (conv) => conv.id !== data.conversationId
+            ),
+          ];
+
+          setConversations(sortedConversations);
+        }
       }
     };
 
@@ -103,6 +117,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
 
     const handleMarkAsRead = (data: {
       conversationId: number;
+      messageId: number;
       userId: string;
       readBy: {
         id: string;
@@ -110,9 +125,12 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
         avatar?: string;
       };
     }) => {
+      
+
+      // Update the message to include the readBy information
       setMessages((prevMessages) =>
         prevMessages.map((message) => {
-          if (message.conversationId === data.conversationId) {
+          if (message.id === data.messageId) {
             return {
               ...message,
               readBy: [

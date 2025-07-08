@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import useConversations from "@/hooks/data/cs/useConversations";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
@@ -27,7 +26,6 @@ export const ConversationItem = ({
   onTagDialog,
 }: ConversationItemProps) => {
   const { updateConversationStatusBot } = useConversations();
-  const { readConversations } = useChatAreaSocket({});
 
   return (
     <div
@@ -37,12 +35,14 @@ export const ConversationItem = ({
       )}
       onClick={() => {
         onClick();
-        readConversations(conversation.id);
       }}
     >
       <div className="relative">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversation.avatar ?? undefined} alt={conversation.avatar} />
+          <AvatarImage
+            src={conversation.avatar ?? undefined}
+            alt={conversation.avatar}
+          />
           <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
             {conversation.name?.charAt(0) || "?"}
           </AvatarFallback>
