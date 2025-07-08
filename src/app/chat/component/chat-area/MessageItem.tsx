@@ -2,6 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Message } from "@/hooks/data/cs/useCS";
 import useTranslations from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MessageItemProps {
   message: Message;
@@ -45,13 +51,6 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
           isOwnMessage ? "items-end" : "items-start"
         )}
       >
-        {/* Sender name for received messages */}
-        {/* {!isOwnMessage && (
-          <p className="text-xs text-muted-foreground font-medium">
-            {message.sender?.name}
-          </p>
-        )} */}
-
         {/* Message bubble */}
         <div
           className={cn(
@@ -65,9 +64,63 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
         </div>
 
         {/* Timestamp */}
-        <p className="text-xs text-muted-foreground">
-          {formatMessageTime(message.createdAt)}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-xs text-muted-foreground">
+            {formatMessageTime(message.createdAt)}
+          </p>
+
+          {/* Read receipts - only show for own messages */}
+          {message.readBy && message.readBy.length > 0 && (
+            <div className="flex -space-x-1">
+              {message.readBy.length <= 3 ? (
+                // Display avatars if 3 or fewer readers
+                message.readBy.map((reader) => (
+                  <TooltipProvider key={reader.id}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Avatar className="h-4 w-4 border border-background">
+                          <AvatarImage src={reader.avatar ?? defaultAvatar} />
+                          <AvatarFallback className="text-[8px]">
+                            {reader.name?.charAt(0)?.toUpperCase() || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="bottom"
+                        align="end"
+                        className="text-xs p-2"
+                      >
+                        {t("dashboard.chat.readBy", { name: reader.name })}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))
+              ) : (
+                // Show count if more than 3 readers
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <span className="text-[10px]">
+                          {t("dashboard.chat.readCount", {
+                            count: message.readBy.length,
+                          })}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="bottom"
+                      align="end"
+                      className="text-xs p-2"
+                    >
+                      {message.readBy.map((reader) => reader.name).join(", ")}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Right avatar for sent messages */}

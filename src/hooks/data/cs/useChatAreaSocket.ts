@@ -2,9 +2,8 @@
 import { Message, useCS } from "@/hooks/data/cs/useCS";
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { useAuth } from "../useAuth";
 import { useCsStore } from "./useCsStore";
-import { useAuth, useUserStore } from "../useAuth";
-import { set } from "date-fns";
 
 interface UseChatAreaProps {
   conversationId?: number;
@@ -15,13 +14,12 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [socketChatIo, setSocketChatIo] = useState<Socket | null>(null);
-
   const {
     messages: chatMessages,
     setConversations,
     conversations,
   } = useCsStore();
-  const { refetchConversations, markReadConversation, sendMessage } = useCS();
+  const { refetchConversations, sendMessage } = useCS();
   const { user } = useAuth({});
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -53,46 +51,59 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
 
   useEffect(() => {
     if (!socketChatIo) return;
-
     const handleReceiveMessage = (data: Message) => {
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
-        markReadConversation(data.conversationId as number);
+        readConversations(data.conversationId as number);
         return;
       }
+
       const existingConversation = conversations.find(
         (conv) => conv.id === data.conversationId
       );
 
       if (existingConversation) {
-        // Create a new array with updated conversations
-        const updatedConversations = conversations.map((conv) =>
-          conv.id === data.conversationId
-            ? {
-                ...conv,
-                unreadMessagesCount: conv.unreadMessagesCount + 1,
-                lastestMessage: data.content,
-                updatedAt: new Date().toISOString(), // Update timestamp for sorting
-              }
-            : {
-                ...conv,
-              }
-        );
+        // Check if the conversation is already at the top
+        const isAlreadyAtTop = conversations[0]?.id === data.conversationId;
 
-        // Sort conversations to bring the updated one to the top
-        const sortedConversations = [
-          // First get the updated conversation
-          ...updatedConversations.filter(
-            (conv) => conv.id === data.conversationId
-          ),
-          // Then get all other conversations
-          ...updatedConversations.filter(
-            (conv) => conv.id !== data.conversationId
-          ),
-        ];
+        if (isAlreadyAtTop) {
+          // Just update the conversation without sorting
+          const updatedConversations = conversations.map((conv) =>
+            conv.id === data.conversationId
+              ? {
+                  ...conv,
+                  unreadMessagesCount: conv.unreadMessagesCount + 1,
+                  lastestMessage: data.content,
+                  updatedAt: new Date().toISOString(),
+                }
+              : conv
+          );
+          setConversations(updatedConversations);
+        } else {
+          // Update and sort to bring to top
+          const updatedConversations = conversations.map((conv) =>
+            conv.id === data.conversationId
+              ? {
+                  ...conv,
+                  unreadMessagesCount: conv.unreadMessagesCount + 1,
+                  lastestMessage: data.content,
+                  updatedAt: new Date().toISOString(),
+                }
+              : conv
+          );
 
-        // Update state with the new sorted array
-        setConversations(sortedConversations);
+          // Sort conversations to bring the updated one to the top
+          const sortedConversations = [
+            ...updatedConversations.filter(
+              (conv) => conv.id === data.conversationId
+            ),
+            ...updatedConversations.filter(
+              (conv) => conv.id !== data.conversationId
+            ),
+          ];
+
+          setConversations(sortedConversations);
+        }
       }
     };
 
@@ -104,6 +115,39 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       refetchConversations();
     };
 
+    const handleMarkAsRead = (data: {
+      conversationId: number;
+      messageId: number;
+      userId: string;
+      readBy: {
+        id: string;
+        name: string;
+        avatar?: string;
+      };
+    }) => {
+      
+
+      // Update the message to include the readBy information
+      setMessages((prevMessages) =>
+        prevMessages.map((message) => {
+          if (message.id === data.messageId) {
+            return {
+              ...message,
+              readBy: [
+                ...(message.readBy || []),
+                {
+                  id: data.readBy.id,
+                  name: data.readBy.name,
+                  avatar: data.readBy.avatar,
+                },
+              ],
+            };
+          }
+          return message;
+        })
+      );
+    };
+    socketChatIo.on("messageRead", handleMarkAsRead);
     socketChatIo.on("receiveMessage", handleReceiveMessage);
     socketChatIo.on("newConversation", handleNewConversation);
 
@@ -122,7 +166,10 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   const joinConversation = useCallback(
     (conversationId: number, userId?: string) => {
       if (socketChatIo) {
-        socketChatIo.emit("joinConversation", { conversationId, userId });
+        socketChatIo.emit("joinConversation", {
+          conversationId,
+          userId,
+        });
       }
     },
     [socketChatIo]
@@ -161,6 +208,15 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     [socketChatIo]
   );
 
+  const readConversations = useCallback(
+    (conversationId: number) => {
+      if (socketChatIo) {
+        socketChatIo.emit("markAsRead", { conversationId, userId: user?.id });
+      }
+    },
+    [socketChatIo]
+  );
+
   useEffect(() => {
     if (socketChatIo && isChatConnected) {
       joinAllConversationWithUserId();
@@ -183,5 +239,6 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     sendMessage: sendMessageToChannels,
     toggleContactInfo,
     setShowContactInfo,
+    readConversations,
   };
 };

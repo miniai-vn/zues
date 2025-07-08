@@ -12,7 +12,6 @@ interface MessageListProps {
 
 export const MessageList = ({
   messages,
-  currentUserId,
   autoScroll = true,
 }: MessageListProps) => {
   const { t } = useTranslations();
@@ -39,7 +38,7 @@ export const MessageList = ({
 
   return (
     <div className="p-4 space-y-4 h-[72vh] overflow-y-auto">
-      {messages.map((message, index) => {
+      {messages.map((message) => {
         const isOwnMessage =
           message.senderId === user?.id || message.senderType === "channel";
 

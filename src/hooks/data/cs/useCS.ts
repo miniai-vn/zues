@@ -24,6 +24,11 @@ export type Message = {
   senderType: string;
   channelId?: number;
   messageType: string;
+  readBy?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  }[];
   sender?: {
     id: string;
     name: string;

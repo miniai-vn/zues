@@ -38,11 +38,11 @@ export const MessageInput = ({
   };
 
   return (
-    <div className="border-t p-4 bg-background fixed bottom-0  w-full">
+    <div className="border-t p-4 bg-background w-full">
       <div className="flex items-center gap-2">
-        {/* Attachment button */}        <Button 
-          size="sm" 
-          variant="ghost" 
+        <Button
+          size="sm"
+          variant="ghost"
           onClick={onAttachFile}
           title={t("dashboard.chat.attachFile")}
           disabled={disabled}
@@ -50,7 +50,6 @@ export const MessageInput = ({
           <Paperclip className="h-4 w-4" />
         </Button>
 
-        {/* Message input */}
         <div className="flex-1 relative">
           <Input
             placeholder={displayPlaceholder}
@@ -60,7 +59,7 @@ export const MessageInput = ({
             className="pr-10"
             disabled={disabled}
           />
-          
+
           {/* Emoji button */}
           <Button
             size="sm"
