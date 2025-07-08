@@ -12,6 +12,7 @@ interface MessageItemProps {
 }
 
 export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
+  console.log(` message:: `, message);
   const { t } = useTranslations();
 
   const formatMessageTime = (timestamp: string) => {
@@ -26,54 +27,55 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
 
   const renderMessageContent = () => {
     switch (message.contentType) {
-      case "image":
-        const imageUrl = message.url || message.thumb;
+      case "image": {
+        if (message.links && message.links.length > 1) {
+          return (
+            <div className="grid grid-cols-2 gap-2 max-w-lg">
+              {message.links.map((imgUrl, idx) => (
+                <img
+                  key={idx}
+                  src={imgUrl}
+                  alt={`Shared image ${idx + 1}`}
+                  className="max-w-full h-auto cursor-pointer rounded-lg"
+                  onClick={() => window.open(imgUrl, "_blank")}
+                />
+              ))}
+            </div>
+          );
+        }
+        const imageUrl =
+          message.links && message.links.length === 1
+            ? message.links[0]
+            : message.url || message.content;
         return (
           <div className="max-w-xs">
             <img
               src={imageUrl}
               alt="Shared image"
-              className="max-w-full h-auto cursor-pointer"
+              className="max-w-full h-auto cursor-pointer rounded-lg"
+              onClick={() => window.open(imageUrl, "_blank")}
             />
           </div>
         );
+      }
 
-      case "file":
-        if (message.links && message.links.length > 0) {
+      case "file": {
+        if (message.links && message.links.length > 1) {
           return (
             <div className="space-y-2">
-              {message.links.map((fileUrl, index) => {
+              {message.links.map((fileUrl, idx) => {
                 const getFileName = (url: string) => {
-                  if ("fileName" in message && message.fileName) {
-                    return `${message.fileName}_${index + 1}`;
-                  }
-                  try {                    
-                    const cleanUrl = url.split("?")[0];
-                    const urlParts = cleanUrl.split("/");
-                    let fileName = urlParts[urlParts.length - 1];
-                    if (fileName && fileName.includes(".")) {
-                      return fileName;
-                    }
-                    for (let i = urlParts.length - 1; i >= 0; i--) {
-                      if (urlParts[i] && urlParts[i].includes(".")) {
-                        return urlParts[i];
-                      }
-                    }
-                    return `File_${index + 1}`;
-                  } catch (error) {
-                    return `File_${index + 1}`;
-                  }
+                  const cleanUrl = url.split("?")[0];
+                  const urlParts = cleanUrl.split("/");
+                  return urlParts[urlParts.length - 1] || `File_${idx + 1}`;
                 };
                 const fileName = getFileName(fileUrl);
                 return (
                   <div
-                    key={index}
+                    key={idx}
                     className="flex items-center gap-2 p-2 border rounded-lg bg-background"
                   >
                     <div className="flex-shrink-0">📎</div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{fileName}</p>
-                    </div>
                     <a
                       href={fileUrl}
                       download={fileName}
@@ -81,7 +83,9 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Tải xuống
+                      <span className="text-sm font-medium truncate">
+                        {fileName}
+                      </span>
                     </a>
                   </div>
                 );
@@ -89,7 +93,31 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
             </div>
           );
         }
-        return <div>No files available</div>;
+        const fileUrl =
+          message.links && message.links.length === 1
+            ? message.links[0]
+            : message.url || message.content;
+        const getFileName = (url: string) => {
+          const cleanUrl = url.split("?")[0];
+          const urlParts = cleanUrl.split("/");
+          return urlParts[urlParts.length - 1] || "File";
+        };
+        const fileName = getFileName(fileUrl);
+        return (
+          <div className="flex items-center gap-2 p-2 border rounded-lg bg-background">
+            <div className="flex-shrink-0">📎</div>
+            <a
+              href={fileUrl}
+              download={fileName}
+              className="text-xs text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="text-sm font-medium truncate">{fileName}</span>
+            </a>
+          </div>
+        );
+      }
 
       default:
         return message.content !== ""
