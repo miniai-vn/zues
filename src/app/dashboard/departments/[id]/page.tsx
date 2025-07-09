@@ -246,6 +246,7 @@ const DepartmentDetailComponent = () => {
               isPendingSyncResource={isPendingSyncResource}
               resourceDetail={resourceDetail}
               selectedResourceId={selectedResourceId}
+              departmentId={departmentId}
               // onUploadForResource={onHandleUploadFile}
             />
           </div>

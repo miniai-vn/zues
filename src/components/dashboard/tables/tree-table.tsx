@@ -19,16 +19,19 @@ import {
   File,
   FileText,
   ImageIcon,
+  Layers,
   MoreHorizontal,
   Power,
   Trash2,
   Upload,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { TreeNode } from "./tree-helpers";
 
 interface TreeTableProps {
   data: TreeNode[];
+  departmentId?: string;
   onToggleExpansion: (nodeId: string | number) => void;
   onCreateChunks: (id: string) => void;
   onSyncResource: (id: string) => void;
@@ -51,6 +54,7 @@ interface TreeTableProps {
 
 const TreeTable: React.FC<TreeTableProps> = ({
   data,
+  departmentId,
   onToggleExpansion,
   onCreateChunks,
   onSyncResource,
@@ -65,6 +69,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
   columnVisibility,
 }) => {
   const { t } = useTranslations();
+  const router = useRouter();
   const [selectedResourceForUpload, setSelectedResourceForUpload] =
     useState<TreeNode | null>(null);
   const [selectedResourceForView, setSelectedResourceForView] =
@@ -282,6 +287,13 @@ const TreeTable: React.FC<TreeTableProps> = ({
                         {t("dashboard.departments.detail.viewResource")}
                       </DropdownMenuItem>
                     )}
+                    <DropdownMenuItem
+                      onClick={() => handleViewChunk(node)}
+                      className="flex items-center gap-2"
+                    >
+                      <Layers className="h-4 w-4" />
+                      View Chunk
+                    </DropdownMenuItem>
                     {onEditResource && (
                       <DropdownMenuItem
                         onClick={() => handleEditDocument(node)}
@@ -371,6 +383,19 @@ const TreeTable: React.FC<TreeTableProps> = ({
     await handleViewDocument(node);
   };
 
+  // Function to handle viewing chunks (navigate to document detail page)
+  const handleViewChunk = (node: TreeNode) => {
+    if (departmentId && node.id) {
+      // Navigate to the document detail page with department context
+      router.push(`/dashboard/departments/${departmentId}/documents/${node.id}`);
+    } else if (node.id) {
+      // Fallback to the simple documents route if departmentId is not available
+      router.push(`/dashboard/documents/${node.id}`);
+    } else {
+      console.warn('Document ID is missing, cannot navigate to detail page');
+    }
+  };
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -432,7 +457,16 @@ const TreeTable: React.FC<TreeTableProps> = ({
         isOpen={isDocumentViewerOpen}
         onOpenChange={setIsDocumentViewerOpen}
         document={selectedResourceForView}
-        documentContent={documentContent}
+        resourceDetail={selectedResourceForView ? {
+          id: selectedResourceForView.id || 0,
+          name: selectedResourceForView.name || '',
+          type: selectedResourceForView.type || '',
+          description: selectedResourceForView.description || '',
+          content: documentContent,
+          status: selectedResourceForView.status || '',
+          isActive: selectedResourceForView.isActive || false,
+          createdAt: selectedResourceForView.createdAt || '',
+        } as Resource : null}
         onSave={(document, content) => {
           if (onEditResource) {
             // Create an updated resource with the new content
