@@ -28,7 +28,7 @@ const AgentConfigurationUI = () => {
     errors,
     messages,
     newMessage,
-    
+
     // Computed
     isEditMode,
     existingAgent,
@@ -39,7 +39,7 @@ const AgentConfigurationUI = () => {
     departments,
     isFetchingDepartments,
     validModels,
-    
+
     // Handlers
     handleInputChange,
     handleModelProviderChange,

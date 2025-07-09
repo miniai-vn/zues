@@ -86,6 +86,8 @@
       "chatCS": "Customer Service"
     },
     "chat": {
+      "readBy": "Read by {{name}}",
+      "readCount": "{{count}} read",
       "title": "AI Chat",
       "placeholder": "Enter your message...",
       "send": "Send",

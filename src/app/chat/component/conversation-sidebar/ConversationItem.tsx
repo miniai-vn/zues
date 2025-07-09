@@ -26,17 +26,23 @@ export const ConversationItem = ({
   onTagDialog,
 }: ConversationItemProps) => {
   const { updateConversationStatusBot } = useConversations();
+
   return (
     <div
       className={cn(
         "flex items-center w-full gap-3 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors border-l-2 group",
         isSelected ? "bg-accent border-l-primary" : "border-l-transparent"
       )}
-      onClick={onClick}
+      onClick={() => {
+        onClick();
+      }}
     >
       <div className="relative">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversation.avatar} alt={conversation.avatar} />
+          <AvatarImage
+            src={conversation.avatar ?? undefined}
+            alt={conversation.avatar}
+          />
           <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
             {conversation.name?.charAt(0) || "?"}
           </AvatarFallback>
