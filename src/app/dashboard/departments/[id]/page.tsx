@@ -26,6 +26,7 @@ const DepartmentDetailComponent = () => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string | number>>(
     new Set()
   );
+  const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null);
 
   const [columnVisibility, setColumnVisibility] = useState({
     index: true,
@@ -45,6 +46,7 @@ const DepartmentDetailComponent = () => {
   const {
     materialItems,
     createResource,
+    updateResource,
     refetchMaterialItems,
     deleteResource,
     createChunks,
@@ -54,8 +56,10 @@ const DepartmentDetailComponent = () => {
     isPendingDeleteResource,
     isPendingFetchingItem,
     isPendingSyncResource,
+    resourceDetail,
     reEtl,
   } = useResource({
+    id: selectedResourceId || undefined,
     departmentId: departmentId,
     page,
     limit: pageSize,
@@ -156,11 +160,24 @@ const DepartmentDetailComponent = () => {
   // Get flattened tree data for display
   const flattenedTreeData = useMemo(() => {
     return flattenTreeData(treeData, expandedNodes);
-  }, [treeData]);
+  }, [treeData, expandedNodes]);
 
   // Handle view resource
   const handleViewResource = (resource: Resource) => {
     console.log("View resource:", resource);
+    // Set the selected resource ID to fetch its details
+    setSelectedResourceId(String(resource.id));
+  };
+
+  // Handle edit resource
+  const handleEditResource = (resource: Resource, content?: string) => {
+    if (resource.id && updateResource) {
+      updateResource({
+        id: String(resource.id),
+        description: resource.description,
+        content: content,
+      });
+    }
   };
 
   // Handle enable/disable resource
@@ -222,10 +239,13 @@ const DepartmentDetailComponent = () => {
               onDeleteResource={deleteResource}
               onReEtl={reEtl}
               onViewResource={handleViewResource}
+              onEditResource={handleEditResource}
               onToggleResourceStatus={handleToggleResourceStatus}
               onHandleUploadFile={onHandleUploadFile}
               isPendingCreateChunks={isPendingCreateChunks}
               isPendingSyncResource={isPendingSyncResource}
+              resourceDetail={resourceDetail}
+              selectedResourceId={selectedResourceId}
               // onUploadForResource={onHandleUploadFile}
             />
           </div>

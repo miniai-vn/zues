@@ -1,4 +1,5 @@
 import { CreateOrUpdateResource } from "@/app/dashboard/departments/[id]/documents/components/CreateOrUpdateResource";
+import { DocumentViewerDialog } from "@/components/dashboard/documents/DocumentViewerDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,10 +14,10 @@ import dayjs from "dayjs";
 import {
   ChevronDown,
   ChevronRight,
+  Edit,
   Eye,
   File,
   FileText,
-  Folder,
   ImageIcon,
   MoreHorizontal,
   Power,
@@ -35,6 +36,7 @@ interface TreeTableProps {
   onReEtl: (id: string) => void;
   onUploadForResource?: (resource: TreeNode) => void;
   onViewResource?: (resource: TreeNode) => void;
+  onEditResource?: (resource: TreeNode) => void;
   onToggleResourceStatus?: (resource: TreeNode) => void;
   onHandleUploadFile?: (
     file: File,
@@ -55,6 +57,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
   onDeleteResource,
   onReEtl,
   onViewResource,
+  onEditResource,
   onToggleResourceStatus,
   onHandleUploadFile,
   isPendingCreateChunks = false,
@@ -64,6 +67,10 @@ const TreeTable: React.FC<TreeTableProps> = ({
   const { t } = useTranslations();
   const [selectedResourceForUpload, setSelectedResourceForUpload] =
     useState<TreeNode | null>(null);
+  const [selectedResourceForView, setSelectedResourceForView] =
+    useState<TreeNode | null>(null);
+  const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
+  const [documentContent, setDocumentContent] = useState<string>('');
 
   const getFileIcon = (type: string) => {
     // if (hasChildren) {
@@ -268,11 +275,20 @@ const TreeTable: React.FC<TreeTableProps> = ({
                     )}
                     {onViewResource && (
                       <DropdownMenuItem
-                        onClick={() => onViewResource(node)}
+                        onClick={() => handleViewDocument(node)}
                         className="flex items-center gap-2"
                       >
                         <Eye className="h-4 w-4" />
                         {t("dashboard.departments.detail.viewResource")}
+                      </DropdownMenuItem>
+                    )}
+                    {onEditResource && (
+                      <DropdownMenuItem
+                        onClick={() => handleEditDocument(node)}
+                        className="flex items-center gap-2"
+                      >
+                        <Edit className="h-4 w-4" />
+                        {t("dashboard.departments.detail.editResource")}
                       </DropdownMenuItem>
                     )}
                     {onToggleResourceStatus && (
@@ -316,6 +332,45 @@ const TreeTable: React.FC<TreeTableProps> = ({
       </React.Fragment>
     );
   };
+
+  // Function to handle viewing a document
+  const handleViewDocument = async (node: TreeNode) => {
+    setSelectedResourceForView(node);
+    setIsDocumentViewerOpen(true);
+    
+    // Simulate fetching document content based on the document type and id
+    // In a real application, this would be an API call
+    let content = '';
+    try {
+      switch (node.type?.toLowerCase()) {
+        case 'pdf':
+          content = `<h1>${node.name}</h1><p>This is a PDF document content. In a real application, you would extract and display the actual PDF content here.</p><p><strong>Document ID:</strong> ${node.id}</p><p><strong>Description:</strong> ${node.description || 'No description available'}</p>`;
+          break;
+        case 'txt':
+        case 'doc':
+        case 'docx':
+          content = `<h1>${node.name}</h1><p>This is the text content of the document. The actual content would be fetched from your backend API.</p><p><strong>Description:</strong> ${node.description || 'No description available'}</p><p>You can edit this content using the rich text editor above. Use the formatting tools to style your text, add lists, change alignment, and more.</p><p>Sample content:</p><ul><li>First item in list</li><li>Second item in list</li><li>Third item in list</li></ul><p>This is some <strong>bold text</strong> and some <em>italic text</em>.</p>`;
+          break;
+        case 'csv':
+        case 'xlsx':
+        case 'xls':
+          content = `<h1>${node.name}</h1><p>This is a spreadsheet document. In a real application, you would display the spreadsheet data here.</p><p><strong>Document ID:</strong> ${node.id}</p><p><strong>Type:</strong> ${node.type}</p><p><strong>Description:</strong> ${node.description || 'No description available'}</p>`;
+          break;
+        default:
+          content = `<h1>${node.name}</h1><p>Document preview is available for this file type (${node.type}).</p><p><strong>File details:</strong></p><ul><li><strong>Type:</strong> ${node.type}</li><li><strong>Status:</strong> ${node.status}</li><li><strong>Created:</strong> ${node.createdAt ? new Date(node.createdAt).toLocaleDateString() : 'Unknown'}</li></ul><p>You can edit the document content and add your own text, formatting, and structure.</p>`;
+      }
+    } catch {
+      content = `<h1>Error</h1><p>Failed to load document content for ${node.name}</p>`;
+    }
+    
+    setDocumentContent(content);
+  };
+
+  const handleEditDocument = async (node: TreeNode) => {
+    // Use the same view dialog but it now has editing capabilities
+    await handleViewDocument(node);
+  };
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -371,6 +426,33 @@ const TreeTable: React.FC<TreeTableProps> = ({
           </tbody>
         </table>
       </div>
+      
+      {/* Document Viewer Dialog */}
+      <DocumentViewerDialog
+        isOpen={isDocumentViewerOpen}
+        onOpenChange={setIsDocumentViewerOpen}
+        document={selectedResourceForView}
+        documentContent={documentContent}
+        onSave={(document, content) => {
+          if (onEditResource) {
+            // Create an updated resource with the new content
+            const updatedResource = {
+              ...document,
+              lastModified: new Date().toISOString(),
+              // In a real application, you might want to store the content separately
+              // or update a specific content field
+            };
+            onEditResource(updatedResource);
+          }
+          
+          // Update the local content state
+          setDocumentContent(content);
+          
+          // Log for debugging - in a real app, this would be an API call
+          console.log('Saving document:', document.name, 'with updated content');
+          console.log('Content length:', content.length, 'characters');
+        }}
+      />
     </>
   );
 };

@@ -13,6 +13,7 @@ export type Resource = {
   parentId?: number;
   createdAt?: string;
   description: string;
+  content?: string;
   resources: Resource[];
 };
 
@@ -212,6 +213,38 @@ const useResource = ({
       });
     },
   });
+
+  const { mutate: updateResource } = useMutation({
+    mutationFn: async ({
+      id,
+      description,
+      content,
+    }: {
+      id: string;
+      description?: string;
+      content?: string;
+    }) => {
+      const response = await axiosInstance.patch(`/api/resources/${id}`, {
+        description,
+        content,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cập nhật thành công",
+        description: "Cập nhật tài liệu thành công",
+      });
+      refetchResource();
+    },
+    onError: () => {
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Cập nhật tài liệu thất bại",
+      });
+    },
+  });
+
   return {
     deleteResource,
     createResource,
@@ -226,6 +259,7 @@ const useResource = ({
     resourceDetail,
     refetchMaterialItems: refetchResource,
     reEtl,
+    updateResource,
   };
 };
 

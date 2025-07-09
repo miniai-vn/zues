@@ -27,6 +27,7 @@ interface ResourceTableViewProps {
   onReEtl: (id: string) => void;
   onUploadForResource?: (resource: Resource) => void;
   onViewResource: (resource: Resource) => void;
+  onEditResource?: (resource: Resource, content?: string) => void;
   onToggleResourceStatus: (resource: Resource) => void;
   onHandleUploadFile: (
     file: File,
@@ -36,6 +37,8 @@ interface ResourceTableViewProps {
   ) => Promise<void>;
   isPendingCreateChunks: boolean;
   isPendingSyncResource: boolean;
+  resourceDetail?: Resource;
+  selectedResourceId?: string | null;
 }
 
 export const ResourceTableView = ({
