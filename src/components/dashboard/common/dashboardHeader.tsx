@@ -1,105 +1,77 @@
-import { Bell, Settings, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar } from "@radix-ui/react-avatar";
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
 import { PageHeader } from "./page-header";
-import { useTranslations } from "@/hooks/useTranslations";
-import { useEffect, useState } from "react";
+import { NotificationDropdown } from "./NotificationDropdown";
+import { UserProfileDropdown } from "./UserProfileDropdown";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
 
 interface DashboardHeaderProps {
   title?: string;
+  userName?: string;
+  userEmail?: string;
+  avatarSrc?: string;
+  avatarFallback?: string;
+  onProfileClick?: () => void;
+  onSettingsClick?: () => void;
+  onLogoutClick?: () => void;
+  onViewAllNotifications?: () => void;
 }
 
-const DashboardHeader = ({ title = "" }: DashboardHeaderProps) => {
-  const { t } = useTranslations();
-  const [breadcrumbs, setBreadcrumbs] = useState<
-    {
-      label: string;
-      href?: string;
-      isCurrentPage?: boolean;
-    }[]
-  >([]);
-  useEffect(() => {
-    if (title === "employees") {
-      setBreadcrumbs([
-        {
-          label: t("dashboard.users.breadcrumbs.management"),
-          href: "/dashboard/users",
-        },
-        {
-          label: t("dashboard.users.breadcrumbs.userManagement"),
-          isCurrentPage: true,
-        },
-      ]);
-    }
-    if (title.toLowerCase() === "permissions") {
-      setBreadcrumbs([
-        {
-          label: t("dashboard.roles.breadcrumbs.management"),
-          href: "/dashboard/roles",
-        },
-        {
-          label: t("dashboard.roles.breadcrumbs.roleManagement"),
-          isCurrentPage: true,
-        },
-      ]);
-    }
+const DashboardHeader = ({ 
+  title = "",
+  userName,
+  userEmail,
+  avatarSrc,
+  avatarFallback,
+  onProfileClick,
+  onSettingsClick,
+  onLogoutClick,
+  onViewAllNotifications,
+}: DashboardHeaderProps) => {
+  const breadcrumbs = useBreadcrumbs(title);
+  const {
+    notifications,
+    markAsRead,
+    markAllAsRead,
+  } = useNotifications();
 
-    if (title.toLowerCase() === "roles") {
-      setBreadcrumbs([
-        {
-          label: t("dashboard.roles.breadcrumbs.management"),
-          href: "/dashboard/roles",
-        },
-        {
-          label: t("dashboard.roles.breadcrumbs.roleManagement"),
-          isCurrentPage: true,
-        },
-      ]);
-    }
-  }, [title]);
+  const handleSettingsClick = () => {
+    onSettingsClick?.();
+  };
   return (
     <header className="sticky border-b mb-2 top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">
       <div className="flex items-center justify-between">
         <div>
           <PageHeader
-            // title="Quản lý nhân viên"
             backButtonHref="/dashboard"
-            breadcrumbs={breadcrumbs.length > 0 ? breadcrumbs : []}
+            breadcrumbs={breadcrumbs}
           />
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <Button variant="ghost" size="sm">
-            <Bell className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
+          
+          <NotificationDropdown
+            notifications={notifications}
+            onMarkAsRead={markAsRead}
+            onMarkAllAsRead={markAllAsRead}
+            onViewAll={onViewAllNotifications}
+          />
+          
+          <Button variant="ghost" size="sm" onClick={handleSettingsClick}>
             <Settings className="h-4 w-4" />
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-full">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>{"M"}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          
+          <UserProfileDropdown
+            userName={userName}
+            userEmail={userEmail}
+            avatarSrc={avatarSrc}
+            avatarFallback={avatarFallback}
+            onProfileClick={onProfileClick}
+            onSettingsClick={onSettingsClick}
+            onLogoutClick={onLogoutClick}
+          />
         </div>
       </div>
     </header>
