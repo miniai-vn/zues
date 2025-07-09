@@ -37,15 +37,17 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
         if (message.links && message.links.length > 1) {
           return (
             <div className="grid grid-cols-2 gap-2 max-w-lg">
-              {message.links.map((imgUrl, idx) => (
-                <img
-                  key={idx}
-                  src={imgUrl}
-                  alt={`Shared image ${idx + 1}`}
-                  className="max-w-full h-auto cursor-pointer rounded-lg"
-                  onClick={() => window.open(imgUrl, "_blank")}
-                />
-              ))}
+              {message.links.map((imgUrl, idx) => {
+                return (
+                  <img
+                    key={imgUrl + "-" + idx}
+                    src={imgUrl}
+                    alt={`Shared image ${idx + 1}`}
+                    className="max-w-full h-auto cursor-pointer rounded-lg"
+                    onClick={() => window.open(imgUrl, "_blank")}
+                  />
+                );
+              })}
             </div>
           );
         }
@@ -78,7 +80,7 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
                 const fileName = getFileName(fileUrl);
                 return (
                   <div
-                    key={idx}
+                    key={fileUrl + "-" + idx}
                     className="flex items-center gap-2 p-2 border rounded-lg bg-background"
                   >
                     <div className="flex-shrink-0">📎</div>
@@ -164,20 +166,14 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
         {/* Message bubble */}
         <div
           className={cn(
-            "rounded-lg text-sm break-words",
-            // Chỉ thêm background và padding cho text message
-            message.contentType === "text" && [
-              "px-3 py-2",
-              isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted",
-            ],
-            // Cho image/file/sticker: không có background, chỉ có minimal styling
-            (message.contentType === "image" ||
-              message.contentType === "file" ||
-              message.contentType === "sticker") &&
-              "p-0",
+            "rounded-lg px-3 py-2 text-sm break-words",
+            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted",
           )}
         >
           {renderMessageContent()}
+          {message.content !== ""
+            ? message.content
+            : "Tin nhắn chưa được hỗ trợ hiển thị."}
         </div>
 
         {/* Timestamp */}

@@ -38,13 +38,13 @@ export const MessageList = ({
 
   return (
     <div className="p-4 space-y-4 h-[72vh] overflow-y-auto">
-      {messages.map((message) => {
+      {messages.map((message, index) => {
         const isOwnMessage =
           message.senderId === user?.id || message.senderType === "channel";
 
         return (
           <MessageItem
-            key={message.id}
+            key={message.id + "-" + index}
             message={message}
             isOwnMessage={isOwnMessage}
           />

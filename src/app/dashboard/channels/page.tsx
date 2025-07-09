@@ -28,29 +28,6 @@ interface ChannelItem {
   avatar?: string;
   type: string;
 }
-
-type PlatformType = "zalo" | "facebook";
-
-const OAUTH_URLS: Record<PlatformType, string | undefined> = {
-  zalo: process.env.NEXT_PUBLIC_OAUTH_ZALO,
-  facebook: process.env.NEXT_PUBLIC_OAUTH_FACEBOOK,
-};
-
-const openCenteredPopup = (
-  url: string,
-  title = "oauthPopup",
-  w = 600,
-  h = 600,
-) => {
-  const left = (window.innerWidth - w) / 2;
-  const top = (window.innerHeight - h) / 2;
-  return window.open(
-    url,
-    title,
-    `width=${w},height=${h},top=${top},left=${left}`,
-  );
-};
-
 // Utility functions
 const mapChannelStatus = (
   status: ChannelStatus,
@@ -251,21 +228,13 @@ export default function ChannelsManagementPage() {
     }));
   };
 
-  const handleAddChannel = (platformType: PlatformType) => {
-    const authUrl = OAUTH_URLS[platformType];
-
-    if (!authUrl) {
-      return;
-    }
-
+  const handleAddChannel = (platformType: string) => {
     if (platformType === "zalo") {
-      window.open(authUrl, "_blank");
+      window.open(process.env.NEXT_PUBLIC_OAUTH_ZALO, "_blank");
       return;
     }
     if (platformType === "facebook") {
-      // Redirect to Facebook Auth URL
       window.open(process.env.NEXT_PUBLIC_OAUTH_FACEBOOK, "_blank");
-
       return;
     }
   };
@@ -321,9 +290,7 @@ export default function ChannelsManagementPage() {
                       channels={channelsByPlatform[platform.type] || []}
                       isExpanded={expandedPlatforms[platform.type] || false}
                       onToggle={() => togglePlatform(platform.type)}
-                      onAddChannel={() =>
-                        handleAddChannel(platform.type as PlatformType)
-                      }
+                      onAddChannel={() => handleAddChannel(platform.type)}
                       onDeleteChannel={handleDeleteChannel}
                       onToggleChannelStatus={handleToggleChannelStatus}
                       isLoading={isDeletingChannel}
