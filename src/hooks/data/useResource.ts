@@ -13,6 +13,7 @@ export type Resource = {
   parentId?: number;
   createdAt?: string;
   description: string;
+  resources: Resource[];
 };
 
 export type LinkKnowLedge = {

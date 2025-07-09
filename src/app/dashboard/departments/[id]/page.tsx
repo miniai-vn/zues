@@ -1,7 +1,7 @@
 "use client";
 import {
   flattenTreeData,
-  transformToTreeDataByStatus,
+  transformToTreeData,
   TreeNode,
 } from "@/components/dashboard/tables/tree-helpers";
 import { Card, CardContent } from "@/components/ui/card";
@@ -132,7 +132,7 @@ const DepartmentDetailComponent = () => {
   const processedTreeData = useMemo(() => {
     if (!filteredData.length) return [];
 
-    return transformToTreeDataByStatus(filteredData, expandedNodes);
+    return transformToTreeData(filteredData, expandedNodes);
   }, [filteredData, expandedNodes]);
 
   // Update tree data when processed data changes
@@ -155,7 +155,7 @@ const DepartmentDetailComponent = () => {
 
   // Get flattened tree data for display
   const flattenedTreeData = useMemo(() => {
-    return flattenTreeData(treeData);
+    return flattenTreeData(treeData, expandedNodes);
   }, [treeData]);
 
   // Handle view resource

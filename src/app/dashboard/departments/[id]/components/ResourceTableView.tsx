@@ -60,7 +60,6 @@ export const ResourceTableView = ({
   isPendingCreateChunks,
   isPendingSyncResource,
 }: ResourceTableViewProps) => {
-  console.log("ResourceTableView rendered");
   const columns = useResourceColumns({
     isPendingCreateChunks,
     isPendingSyncResource,

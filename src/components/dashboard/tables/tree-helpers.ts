@@ -12,158 +12,97 @@ export interface TreeState {
 }
 
 /**
- * Transforms flat resource data into a hierarchical tree structure
- * This is a basic implementation - you can enhance it based on your specific needs
+ * Alternative transformation: Group by status
  */
 export const transformToTreeData = (
   resources: Resource[],
   expandedNodes: Set<string | number>
 ): TreeNode[] => {
-  // For now, we'll create a simple grouping by file type
-  // You can modify this logic based on your specific tree structure needs
-
-  const typeGroups: { [key: string]: TreeNode[] } = {};
-
-  // Group resources by type
-  resources.forEach((resource) => {
-    const type = resource.type || "unknown";
-    if (!typeGroups[type]) {
-      typeGroups[type] = [];
-    }
-
-    typeGroups[type].push({
+  // Recursive function to process resources and their nested resources
+  const processResourceRecursively = (
+    resource: Resource,
+    level: number = 1,
+    parentId?: string | number
+  ): TreeNode => {
+    const treeNode: TreeNode = {
       ...resource,
-      level: 1,
-      isExpanded: false,
-      parentId: type,
-    });
-  });
-
-  // Create parent nodes for each type
-  const treeData: TreeNode[] = [];
-
-  Object.keys(typeGroups).forEach((type) => {
-    const parentId = `type-${type}`;
-    const parentNode: TreeNode = {
-      id: parentId,
-      name: `${type.toUpperCase()} Files (${typeGroups[type].length})`,
-      type: type,
-      description: `All ${type} files`,
-      level: 0,
-      isExpanded: expandedNodes.has(parentId),
-      children: typeGroups[type],
+      level,
+      isExpanded: expandedNodes.has(resource.id || 0),
+      parentId,
+      children: [],
     };
 
-    treeData.push(parentNode);
+    // Recursively process nested resources if they exist
+    if (resource.resources && resource.resources.length > 0) {
+      treeNode.children = resource.resources.map((childResource) =>
+        processResourceRecursively(childResource, level + 1, resource.id)
+      );
+    }
+    console.log("Processing resource:", resource.id, "Level:", level);
+    return treeNode;
+  };
+
+  // Group top-level resources by status
+  const newR = resources.map((resource) => {
+    // Process the resource and all its nested resources recursively
+    const childrens = processResourceRecursively(resource, 1);
+    return {
+      childrens,
+      id: resource.id,
+      name: resource.name,
+      type: resource.type,
+    };
   });
+  console.log("New resources structure:", newR);
+  // Convert newR to TreeNode[] format
+  const treeData: TreeNode[] = newR.map((item) => item.childrens);
 
   return treeData;
 };
 
 /**
- * Alternative transformation: Group by status
+ * Flat recursive transformation (no grouping)
  */
-export const transformToTreeDataByStatus = (
+export const transformToTreeDataFlat = (
   resources: Resource[],
   expandedNodes: Set<string | number>
 ): TreeNode[] => {
-  const statusGroups: { [key: string]: TreeNode[] } = {};
-
-  resources.forEach((resource) => {
-    const status = resource.status || "unknown";
-    if (!statusGroups[status]) {
-      statusGroups[status] = [];
-    }
-
-    statusGroups[status].push({
+  // Recursive function to process resources and their nested resources
+  const processResourceRecursively = (
+    resource: Resource,
+    level: number = 0,
+    parentId?: string | number
+  ): TreeNode => {
+    const treeNode: TreeNode = {
       ...resource,
-      level: 1,
-      isExpanded: false,
-      parentId: status,
-    });
-  });
-
-  const treeData: TreeNode[] = [];
-
-  Object.keys(statusGroups).forEach((status) => {
-    const parentId = `status-${status}`;
-    const parentNode: TreeNode = {
-      id: parentId,
-      name: `${status.toUpperCase()} (${statusGroups[status].length})`,
-      type: "folder",
-      description: `All ${status} files`,
-      level: 0,
-      isExpanded: expandedNodes.has(parentId),
-      children: statusGroups[status],
+      level,
+      isExpanded: expandedNodes.has(resource.id || 0),
+      parentId,
+      children: [],
     };
 
-    treeData.push(parentNode);
-  });
-
-  return treeData;
-};
-
-/**
- * Alternative transformation: Group by date (year/month)
- */
-export const transformToTreeDataByDate = (
-  resources: Resource[],
-  expandedNodes: Set<string | number>
-): TreeNode[] => {
-  const dateGroups: { [key: string]: TreeNode[] } = {};
-
-  resources.forEach((resource) => {
-    if (resource.createdAt) {
-      const date = new Date(resource.createdAt);
-      const yearMonth = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}`;
-
-      if (!dateGroups[yearMonth]) {
-        dateGroups[yearMonth] = [];
-      }
-
-      dateGroups[yearMonth].push({
-        ...resource,
-        level: 1,
-        isExpanded: false,
-        parentId: yearMonth,
-      });
+    // Recursively process nested resources if they exist
+    if (resource.resources && resource.resources.length > 0) {
+      treeNode.children = resource.resources.map((childResource) =>
+        processResourceRecursively(childResource, level + 1, resource.id)
+      );
     }
-  });
 
-  const treeData: TreeNode[] = [];
+    return treeNode;
+  };
 
-  Object.keys(dateGroups)
-    .sort()
-    .forEach((yearMonth) => {
-      const parentId = `date-${yearMonth}`;
-      const [year, month] = yearMonth.split("-");
-      const monthName = new Date(
-        parseInt(year),
-        parseInt(month) - 1
-      ).toLocaleDateString("en-US", { month: "long" });
-
-      const parentNode: TreeNode = {
-        id: parentId,
-        name: `${monthName} ${year} (${dateGroups[yearMonth].length})`,
-        type: "folder",
-        description: `Files from ${monthName} ${year}`,
-        level: 0,
-        isExpanded: expandedNodes.has(parentId),
-        children: dateGroups[yearMonth],
-      };
-
-      treeData.push(parentNode);
-    });
-
-  return treeData;
+  // Process all top-level resources
+  return resources.map((resource) => processResourceRecursively(resource));
 };
 
 /**
  * Flattens tree data for rendering (shows only visible nodes)
  */
-export const flattenTreeData = (nodes: TreeNode[]): TreeNode[] => {
+export const flattenTreeData = (
+  nodes: TreeNode[],
+  expandedNodes: Set<string | number>
+): TreeNode[] => {
+  console.log("Flattening tree data with expanded nodes:", expandedNodes);
   const result: TreeNode[] = [];
 
   const traverse = (nodeList: TreeNode[]) => {
@@ -176,6 +115,11 @@ export const flattenTreeData = (nodes: TreeNode[]): TreeNode[] => {
   };
 
   traverse(nodes);
+
+  if (expandedNodes.size > 0) {
+    return result.filter((node) => expandedNodes.has(node.id as number));
+  }
+  console.log("Flattened tree data:", result);
   return result;
 };
 

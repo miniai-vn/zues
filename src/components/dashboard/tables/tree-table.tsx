@@ -65,10 +65,10 @@ const TreeTable: React.FC<TreeTableProps> = ({
   const [selectedResourceForUpload, setSelectedResourceForUpload] =
     useState<TreeNode | null>(null);
 
-  const getFileIcon = (type: string, hasChildren: boolean = false) => {
-    if (hasChildren) {
-      return <Folder className="h-4 w-4 text-blue-500" />;
-    }
+  const getFileIcon = (type: string) => {
+    // if (hasChildren) {
+    //   return <Folder className="h-4 w-4 text-blue-500" />;
+    // }
 
     switch (type) {
       case "pdf":
@@ -161,7 +161,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                 )}
                 {!hasChildren && <div className="w-6" />}
                 <span className="flex-shrink-0">
-                  {getFileIcon(node.type as string, hasChildren)}
+                  {getFileIcon(node.type as string)}
                 </span>
 
                 <span className="truncate max-w-[200px]" title={node.name}>
@@ -316,7 +316,6 @@ const TreeTable: React.FC<TreeTableProps> = ({
       </React.Fragment>
     );
   };
-
   return (
     <>
       <div className="overflow-x-auto">
