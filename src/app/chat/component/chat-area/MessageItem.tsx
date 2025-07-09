@@ -47,20 +47,6 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
             </div>
           );
         }
-        const imageUrl =
-          message.links && message.links.length === 1
-            ? message.links[0]
-            : message.url || message.content;
-        return (
-          <div className="max-w-xs">
-            <img
-              src={imageUrl}
-              alt="Shared image"
-              className="max-w-full h-auto cursor-pointer rounded-lg"
-              onClick={() => window.open(imageUrl, "_blank")}
-            />
-          </div>
-        );
       }
 
       case "file": {
@@ -97,30 +83,6 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
             </div>
           );
         }
-        const fileUrl =
-          message.links && message.links.length === 1
-            ? message.links[0]
-            : message.url || message.content;
-        const getFileName = (url: string) => {
-          const cleanUrl = url.split("?")[0];
-          const urlParts = cleanUrl.split("/");
-          return urlParts[urlParts.length - 1] || "File";
-        };
-        const fileName = getFileName(fileUrl);
-        return (
-          <div className="flex items-center gap-2 p-2 border rounded-lg bg-background">
-            <div className="flex-shrink-0">📎</div>
-            <a
-              href={fileUrl}
-              download={fileName}
-              className="text-xs text-primary hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="text-sm font-medium truncate">{fileName}</span>
-            </a>
-          </div>
-        );
       }
 
       default:
