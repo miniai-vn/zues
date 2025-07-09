@@ -1,11 +1,10 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
 import { Resource } from "@/hooks/data/useResource";
-import { File, FileText, ImageIcon } from "lucide-react";
-import { convertBytesToMB } from "@/utils";
-import dayjs from "dayjs";
 import useTranslations from "@/hooks/useTranslations";
+import { ColumnDef } from "@tanstack/react-table";
+import dayjs from "dayjs";
+import { File, FileText, ImageIcon } from "lucide-react";
 import { ResourceActions } from "./ResourceActions";
 
 interface ResourceColumnsProps {
@@ -71,7 +70,7 @@ export const useResourceColumns = ({
         return (
           <div className="flex items-center gap-2 max-w-[200px]">
             <span className="flex-shrink-0">
-              {getFileIcon(row.row.original.extra.extension as string)}
+              {getFileIcon(row.row.original.type as string)}
             </span>
             <span className="truncate" title={fileName}>
               {fileName}
@@ -96,7 +95,7 @@ export const useResourceColumns = ({
       header: t("dashboard.departments.detail.fileSize"),
       cell: (row) => (
         <div className="whitespace-nowrap">
-          {convertBytesToMB(row.row.original.extra.size as number)}
+          {/* {convertBytesToMB(row.row.original.extra.size as number)} */}
         </div>
       ),
     },

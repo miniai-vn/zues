@@ -73,14 +73,14 @@ const DepartmentDetailComponent = () => {
     file: File,
     description: string,
     type: string,
-    parentId?: string
+    parentId?: number
   ) => {
     try {
       await createResource({
         file,
         departmentId,
         description,
-        parentId,
+        parentId: parentId !== undefined ? String(parentId) : undefined,
         type: type,
       });
     } catch (error) {
@@ -174,12 +174,6 @@ const DepartmentDetailComponent = () => {
     }
   };
 
-  // Handle upload new document for specific resource
-  const handleUploadForResource = (resource: Resource) => {
-    // This can be used to trigger upload dialog for specific resource
-    console.log("Upload for resource:", resource);
-  };
-
   return (
     <div className="flex flex-1 flex-col p-4 pt-0 h-screen">
       <Card className="flex flex-col flex-1 overflow-hidden">
@@ -227,12 +221,12 @@ const DepartmentDetailComponent = () => {
               onSyncResource={syncResource}
               onDeleteResource={deleteResource}
               onReEtl={reEtl}
-              onUploadForResource={handleUploadForResource}
               onViewResource={handleViewResource}
               onToggleResourceStatus={handleToggleResourceStatus}
               onHandleUploadFile={onHandleUploadFile}
               isPendingCreateChunks={isPendingCreateChunks}
               isPendingSyncResource={isPendingSyncResource}
+              // onUploadForResource={onHandleUploadFile}
             />
           </div>
         </CardContent>

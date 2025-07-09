@@ -1,10 +1,9 @@
 "use client";
 
 import { DataTable } from "@/components/dashboard/tables/data-table";
+import { TreeNode } from "@/components/dashboard/tables/tree-helpers";
 import TreeTable from "@/components/dashboard/tables/tree-table";
 import { Resource } from "@/hooks/data/useResource";
-import { TreeNode } from "@/components/dashboard/tables/tree-helpers";
-import { CreateOrUpdateResource } from "../documents/components/CreateOrUpdateResource";
 import { useResourceColumns } from "./ResourceColumns";
 
 interface ResourceTableViewProps {
@@ -26,10 +25,15 @@ interface ResourceTableViewProps {
   onSyncResource: (id: string) => void;
   onDeleteResource: (id: string) => void;
   onReEtl: (id: string) => void;
-  onUploadForResource: (resource: Resource) => void;
+  onUploadForResource?: (resource: Resource) => void;
   onViewResource: (resource: Resource) => void;
   onToggleResourceStatus: (resource: Resource) => void;
-  onHandleUploadFile: (file: File, description: string, type: string) => Promise<void>;
+  onHandleUploadFile: (
+    file: File,
+    description: string,
+    type: string,
+    parentId?: number
+  ) => Promise<void>;
   isPendingCreateChunks: boolean;
   isPendingSyncResource: boolean;
 }
@@ -50,13 +54,13 @@ export const ResourceTableView = ({
   onSyncResource,
   onDeleteResource,
   onReEtl,
-  onUploadForResource,
   onViewResource,
   onToggleResourceStatus,
   onHandleUploadFile,
   isPendingCreateChunks,
   isPendingSyncResource,
 }: ResourceTableViewProps) => {
+  console.log("ResourceTableView rendered");
   const columns = useResourceColumns({
     isPendingCreateChunks,
     isPendingSyncResource,
@@ -83,11 +87,14 @@ export const ResourceTableView = ({
         onSyncResource={onSyncResource}
         onDeleteResource={onDeleteResource}
         onReEtl={onReEtl}
-        onUploadForResource={onUploadForResource}
-        onViewResource={onViewResource}
-        onToggleResourceStatus={onToggleResourceStatus}
+        onUploadForResource={() => {}}
+        onViewResource={(treeNode) => {
+          onViewResource(treeNode as unknown as Resource);
+        }}
+        onToggleResourceStatus={(treeNode) => {
+          onToggleResourceStatus(treeNode as unknown as Resource);
+        }}
         onHandleUploadFile={onHandleUploadFile}
-        CreateOrUpdateResourceComponent={CreateOrUpdateResource}
         isPendingCreateChunks={isPendingCreateChunks}
         isPendingSyncResource={isPendingSyncResource}
         columnVisibility={columnVisibility}

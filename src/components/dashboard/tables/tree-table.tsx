@@ -1,17 +1,4 @@
-import React, { useState } from "react";
-import {
-  ChevronDown,
-  ChevronRight,
-  File,
-  FileText,
-  ImageIcon,
-  Folder,
-  MoreHorizontal,
-  Upload,
-  Eye,
-  Power,
-  Trash2,
-} from "lucide-react";
+import { CreateOrUpdateResource } from "@/app/dashboard/departments/[id]/documents/components/CreateOrUpdateResource";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,9 +7,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
-import { convertBytesToMB } from "@/utils";
-import dayjs from "dayjs";
+import { Resource } from "@/hooks/data/useResource";
 import useTranslations from "@/hooks/useTranslations";
+import dayjs from "dayjs";
+import {
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  File,
+  FileText,
+  Folder,
+  ImageIcon,
+  MoreHorizontal,
+  Power,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import React, { useState } from "react";
 import { TreeNode } from "./tree-helpers";
 
 interface TreeTableProps {
@@ -40,16 +41,7 @@ interface TreeTableProps {
     description: string,
     type: string
   ) => Promise<void>;
-  CreateOrUpdateResourceComponent?: React.ComponentType<{
-    type: string;
-    onHandleUploadFile: (
-      file: File,
-      description: string,
-      type: string
-    ) => Promise<void>;
-    resource: TreeNode | undefined;
-    trigger?: React.ReactNode;
-  }>;
+
   isPendingCreateChunks?: boolean;
   isPendingSyncResource?: boolean;
   columnVisibility: Record<string, boolean>;
@@ -62,11 +54,9 @@ const TreeTable: React.FC<TreeTableProps> = ({
   onSyncResource,
   onDeleteResource,
   onReEtl,
-  onUploadForResource,
   onViewResource,
   onToggleResourceStatus,
   onHandleUploadFile,
-  CreateOrUpdateResourceComponent,
   isPendingCreateChunks = false,
   isPendingSyncResource = false,
   columnVisibility,
@@ -171,8 +161,9 @@ const TreeTable: React.FC<TreeTableProps> = ({
                 )}
                 {!hasChildren && <div className="w-6" />}
                 <span className="flex-shrink-0">
-                  {getFileIcon(node.extra?.extension as string, hasChildren)}
+                  {getFileIcon(node.type as string, hasChildren)}
                 </span>
+
                 <span className="truncate max-w-[200px]" title={node.name}>
                   {node.name}
                 </span>
@@ -190,13 +181,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
             </td>
           )}
 
-          {columnVisibility.size && (
-            <td className="p-2 align-middle">
-              <div className="whitespace-nowrap">
-                {node.extra?.size ? convertBytesToMB(node.extra.size) : "-"}
-              </div>
-            </td>
-          )}
+          {columnVisibility.size && <td className="p-2 align-middle"></td>}
 
           {columnVisibility.description && (
             <td className="p-2 align-middle">
@@ -257,19 +242,19 @@ const TreeTable: React.FC<TreeTableProps> = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    {CreateOrUpdateResourceComponent && onHandleUploadFile && (
-                      <CreateOrUpdateResourceComponent
+                    {onHandleUploadFile && (
+                      <CreateOrUpdateResource
                         type="document"
                         onHandleUploadFile={onHandleUploadFile}
-                        resource={selectedResourceForUpload || undefined}
+                        resource={
+                          (selectedResourceForUpload as Resource) || undefined
+                        }
                         trigger={
                           <DropdownMenuItem
-                            onClick={() => {
-                              if (onUploadForResource) {
-                                onUploadForResource(node);
-                              } else {
-                                setSelectedResourceForUpload(node);
-                              }
+                            onSelect={(e) => {
+                              setSelectedResourceForUpload(node);
+                              e.preventDefault();
+                              e.stopPropagation();
                             }}
                             className="flex items-center gap-2"
                           >
@@ -387,17 +372,6 @@ const TreeTable: React.FC<TreeTableProps> = ({
           </tbody>
         </table>
       </div>
-
-      {/* Upload Dialog for specific resource */}
-      {selectedResourceForUpload &&
-        CreateOrUpdateResourceComponent &&
-        onHandleUploadFile && (
-          <CreateOrUpdateResourceComponent
-            type="document"
-            onHandleUploadFile={onHandleUploadFile}
-            resource={selectedResourceForUpload}
-          />
-        )}
     </>
   );
 };
