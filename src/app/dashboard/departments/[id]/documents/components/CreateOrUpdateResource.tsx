@@ -50,7 +50,12 @@ type UploadFormValues = z.infer<typeof uploadFormSchema>;
 interface CreateOrUpdateResourceProps {
   type?: string;
   resource?: Resource;
-  onHandleUploadFile: (file: File, description: string, type: string) => void;
+  onHandleUploadFile: (
+    file: File,
+    description: string,
+    type: string,
+    parentId?: number
+  ) => void;
   trigger?: React.ReactNode;
 }
 
@@ -80,7 +85,12 @@ export function CreateOrUpdateResource({
 
   const onSubmit = (values: UploadFormValues) => {
     if (selectedFile) {
-      onHandleUploadFile(selectedFile, values.description, type || "document");
+      onHandleUploadFile(
+        selectedFile,
+        values.description,
+        type || "document",
+        resource?.id
+      );
       form.reset();
       setSelectedFile(null);
       setIsOpen(false);
@@ -115,8 +125,6 @@ export function CreateOrUpdateResource({
             >
               <Pencil className="h-4 w-4 text-gray-500" />
             </Button>
-          ) : type === "faqs" ? (
-            <Button>{t("dashboard.departments.detail.faqs.uploadFaq")}</Button>
           ) : (
             <Button>
               {t("dashboard.departments.detail.uploadNewDocument")}

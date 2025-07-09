@@ -37,7 +37,7 @@ const DepartmentDetailComponent = () => {
     status: true,
     actions: true,
   });
-  
+
   useDebouncedValue(search, 500);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -72,13 +72,15 @@ const DepartmentDetailComponent = () => {
   const onHandleUploadFile = async (
     file: File,
     description: string,
-    type: string
+    type: string,
+    parentId?: string
   ) => {
     try {
       await createResource({
         file,
         departmentId,
         description,
+        parentId,
         type: type,
       });
     } catch (error) {
