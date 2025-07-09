@@ -27,11 +27,114 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
   const defaultAvatar =
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
 
+  const renderMessageContent = () => {
+    switch (message.contentType) {
+      case "image": {
+        if (message.links && message.links.length > 1) {
+          return (
+            <div className="grid grid-cols-2 gap-2 max-w-lg">
+              {message.links.map((imgUrl, idx) => {
+                return (
+                  <img
+                    key={imgUrl + "-" + idx}
+                    src={imgUrl}
+                    alt={`Shared image ${idx + 1}`}
+                    className="max-w-full h-auto cursor-pointer rounded-lg"
+                    onClick={() => window.open(imgUrl, "_blank")}
+                  />
+                );
+              })}
+            </div>
+          );
+        }
+        const imageUrl =
+          message.links && message.links.length === 1
+            ? message.links[0]
+            : message.url || message.content;
+        return (
+          <div className="max-w-xs">
+            <img
+              src={imageUrl}
+              alt="Shared image"
+              className="max-w-full h-auto cursor-pointer rounded-lg"
+              onClick={() => window.open(imageUrl, "_blank")}
+            />
+          </div>
+        );
+      }
+
+      case "file": {
+        if (message.links && message.links.length > 1) {
+          return (
+            <div className="space-y-2">
+              {message.links.map((fileUrl, idx) => {
+                const getFileName = (url: string) => {
+                  const cleanUrl = url.split("?")[0];
+                  const urlParts = cleanUrl.split("/");
+                  return urlParts[urlParts.length - 1] || `File_${idx + 1}`;
+                };
+                const fileName = getFileName(fileUrl);
+                return (
+                  <div
+                    key={fileUrl + "-" + idx}
+                    className="flex items-center gap-2 p-2 border rounded-lg bg-background"
+                  >
+                    <div className="flex-shrink-0">📎</div>
+                    <a
+                      href={fileUrl}
+                      download={fileName}
+                      className="text-xs text-primary hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="text-sm font-medium truncate">
+                        {fileName}
+                      </span>
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
+        const fileUrl =
+          message.links && message.links.length === 1
+            ? message.links[0]
+            : message.url || message.content;
+        const getFileName = (url: string) => {
+          const cleanUrl = url.split("?")[0];
+          const urlParts = cleanUrl.split("/");
+          return urlParts[urlParts.length - 1] || "File";
+        };
+        const fileName = getFileName(fileUrl);
+        return (
+          <div className="flex items-center gap-2 p-2 border rounded-lg bg-background">
+            <div className="flex-shrink-0">📎</div>
+            <a
+              href={fileUrl}
+              download={fileName}
+              className="text-xs text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="text-sm font-medium truncate">{fileName}</span>
+            </a>
+          </div>
+        );
+      }
+
+      default:
+        return message.content !== ""
+          ? message.content
+          : "Tin nhắn chưa được hỗ trợ hiển thị.";
+    }
+  };
+
   return (
     <div
       className={cn(
         "flex gap-3",
-        isOwnMessage ? "justify-end" : "justify-start"
+        isOwnMessage ? "justify-end" : "justify-start",
       )}
     >
       {/* Left avatar for received messages */}
@@ -48,19 +151,17 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
       <div
         className={cn(
           "max-w-[70%] space-y-1 flex flex-col",
-          isOwnMessage ? "items-end" : "items-start"
+          isOwnMessage ? "items-end" : "items-start",
         )}
       >
         {/* Message bubble */}
         <div
           className={cn(
             "rounded-lg px-3 py-2 text-sm break-words",
-            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted"
+            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted",
           )}
         >
-          {message.content !== ""
-            ? message.content
-            : "Tin nhắn chưa được hỗ trợ hiển thị."}
+          {renderMessageContent()}
         </div>
 
         {/* Timestamp */}

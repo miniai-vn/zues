@@ -24,6 +24,10 @@ export type Message = {
   senderType: string;
   channelId?: number;
   messageType: string;
+  links?: string[];
+  url?: string;
+  thumb?: string;
+  contentType?: string;
   readBy?: {
     id: string;
     name: string;
@@ -159,7 +163,7 @@ const useCS = ({
     (newFilters: Partial<ConversationQueryParams>) => {
       setConversationFilters(newFilters);
     },
-    [setConversationFilters]
+    [setConversationFilters],
   );
 
   const resetFilters = useCallback(() => {
@@ -264,7 +268,7 @@ const useCS = ({
       setLoadingMessages(true);
       try {
         const response = await axiosInstance.get(
-          `/api/conversations/${conversationId}/messages`
+          `/api/conversations/${conversationId}/messages`,
         );
         const data = response.data;
         if (data) {
@@ -301,7 +305,7 @@ const useCS = ({
   const { mutateAsync: markReadConversation } = useMutation({
     mutationFn: async (id: number) => {
       const response = await axiosInstance.put<ApiResponse<Conversation>>(
-        `/api/conversations/${id}/mark-read`
+        `/api/conversations/${id}/mark-read`,
       );
       return response.data;
     },
