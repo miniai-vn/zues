@@ -4,7 +4,8 @@ export interface TreeNode extends Resource {
   children?: TreeNode[];
   level: number;
   isExpanded?: boolean;
-  parentId?: string | number;
+  // parentId is not inherited from Resource, so we define it here as a separate property
+  parentId?: number;
 }
 
 export interface TreeState {
@@ -22,7 +23,7 @@ export const transformToTreeData = (
   const processResourceRecursively = (
     resource: Resource,
     level: number = 1,
-    parentId?: string | number
+    parentId?: number
   ): TreeNode => {
     const treeNode: TreeNode = {
       ...resource,
@@ -71,7 +72,7 @@ export const transformToTreeDataFlat = (
   const processResourceRecursively = (
     resource: Resource,
     level: number = 0,
-    parentId?: string | number
+    parentId?: number
   ): TreeNode => {
     const treeNode: TreeNode = {
       ...resource,

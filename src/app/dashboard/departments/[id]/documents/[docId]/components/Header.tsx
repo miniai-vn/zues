@@ -39,7 +39,7 @@ const ResourceHeader = ({ resource }: ResourceHeaderProps) => {
       <div className="flex items-center">
 
         <div className="flex items-center">
-          {getFileIcon(resource?.extra?.extension)}
+          {/* {getFileIcon(resource?.extra?.extension)} */}
           <span className="font-medium ml-2 text-sm">{resource.name}</span>
         </div>
       </div>

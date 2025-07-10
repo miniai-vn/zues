@@ -132,6 +132,20 @@ const TreeTable: React.FC<TreeTableProps> = ({
         break;
     }
 
+    // Show loading spinner for processing status
+    if (status === "processing") {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="animate-spin w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full"></div>
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass}`}
+          >
+            {statusText}
+          </span>
+        </div>
+      );
+    }
+
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass}`}
@@ -145,10 +159,11 @@ const TreeTable: React.FC<TreeTableProps> = ({
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = node.isExpanded || false;
     const indentLevel = node.level * 20;
+    const isProcessing = node.status === "processing";
 
     return (
       <React.Fragment key={node.id || index}>
-        <tr className="border-b transition-colors hover:bg-muted/50">
+        <tr className={`border-b transition-colors hover:bg-muted/50 ${isProcessing ? 'bg-yellow-50/30' : ''}`}>
           {columnVisibility.index && (
             <td className="p-2 align-middle text-center">{index + 1}</td>
           )}
@@ -163,6 +178,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                   <button
                     onClick={() => onToggleExpansion(node.id!)}
                     className="flex-shrink-0 p-1 hover:bg-muted rounded"
+                    disabled={isProcessing}
                   >
                     {isExpanded ? (
                       <ChevronDown className="h-4 w-4" />
@@ -172,11 +188,18 @@ const TreeTable: React.FC<TreeTableProps> = ({
                   </button>
                 )}
                 {!hasChildren && <div className="w-6" />}
-                <span className="flex-shrink-0">
-                  {getFileIcon(node.type as string)}
-                </span>
+                
+                {/* Show loading spinner next to file icon if processing */}
+                <div className="flex items-center gap-1">
+                  {isProcessing && (
+                    <div className="animate-spin w-3 h-3 border-2 border-yellow-600 border-t-transparent rounded-full"></div>
+                  )}
+                  <span className="flex-shrink-0">
+                    {getFileIcon(node.type as string)}
+                  </span>
+                </div>
 
-                <span className="truncate max-w-[200px]" title={node.name}>
+                <span className={`truncate max-w-[200px] ${isProcessing ? 'opacity-60' : ''}`} title={node.name}>
                   {node.name}
                 </span>
               </div>
@@ -186,7 +209,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
           {columnVisibility.type && (
             <td className="p-2 align-middle">
               <div className="max-w-[100px]">
-                <span className="truncate block" title={node.type}>
+                <span className={`truncate block ${isProcessing ? 'opacity-60' : ''}`} title={node.type}>
                   {node.type}
                 </span>
               </div>
@@ -198,7 +221,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
           {columnVisibility.description && (
             <td className="p-2 align-middle">
               <div className="max-w-[250px]">
-                <span className="line-clamp-2 text-sm" title={node.description}>
+                <span className={`line-clamp-2 text-sm ${isProcessing ? 'opacity-60' : ''}`} title={node.description}>
                   {node.description}
                 </span>
               </div>
@@ -207,7 +230,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
 
           {columnVisibility.createdAt && (
             <td className="p-2 align-middle">
-              <div className="whitespace-nowrap text-sm">
+              <div className={`whitespace-nowrap text-sm ${isProcessing ? 'opacity-60' : ''}`}>
                 {node.createdAt
                   ? dayjs(node.createdAt).format("DD/MM/YYYY HH:mm")
                   : "-"}
@@ -234,6 +257,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                   <Switch
                     id={`status-switch-${node.id}`}
                     checked={node.isActive === true}
+                    disabled={isProcessing} // Disable switch when processing
                     onCheckedChange={(checked) => {
                       if (checked) {
                         onCreateChunks(String(node.id));
@@ -249,6 +273,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                       variant="ghost"
                       className="h-8 w-8 p-0"
                       aria-label={t("common.actions")}
+                      disabled={isProcessing} // Disable actions when processing
                     >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
@@ -269,6 +294,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                               e.stopPropagation();
                             }}
                             className="flex items-center gap-2"
+                            disabled={isProcessing}
                           >
                             <Upload className="h-4 w-4" />
                             {t(
@@ -282,6 +308,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                       <DropdownMenuItem
                         onClick={() => handleViewDocument(node)}
                         className="flex items-center gap-2"
+                        disabled={isProcessing}
                       >
                         <Eye className="h-4 w-4" />
                         {t("dashboard.departments.detail.viewResource")}
@@ -290,6 +317,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                     <DropdownMenuItem
                       onClick={() => handleViewChunk(node)}
                       className="flex items-center gap-2"
+                      disabled={isProcessing}
                     >
                       <Layers className="h-4 w-4" />
                       View Chunk
@@ -298,6 +326,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                       <DropdownMenuItem
                         onClick={() => handleEditDocument(node)}
                         className="flex items-center gap-2"
+                        disabled={isProcessing}
                       >
                         <Edit className="h-4 w-4" />
                         {t("dashboard.departments.detail.editResource")}
@@ -307,6 +336,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                       <DropdownMenuItem
                         onClick={() => onToggleResourceStatus(node)}
                         className="flex items-center gap-2"
+                        disabled={isProcessing}
                       >
                         <Power className="h-4 w-4" />
                         {node.status === "active"
@@ -317,6 +347,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                     <DropdownMenuItem
                       onClick={() => onReEtl(String(node.id))}
                       className="flex items-center gap-2"
+                      disabled={isProcessing}
                     >
                       <FileText className="h-4 w-4" />
                       {t("dashboard.departments.detail.reprocessDocument")}
@@ -324,6 +355,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                     <DropdownMenuItem
                       onClick={() => onDeleteResource(String(node.id))}
                       className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                      disabled={isProcessing}
                     >
                       <Trash2 className="h-4 w-4" />
                       {t("dashboard.departments.detail.deleteDocument")}
