@@ -37,9 +37,8 @@ const ResourceHeader = ({ resource }: ResourceHeaderProps) => {
   return (
     <div className="flex items-center px-2 border-b  w-full">
       <div className="flex items-center">
-
         <div className="flex items-center">
-          {getFileIcon(resource?.extra?.extension)}
+          {getFileIcon(resource?.type || "unknown")}
           <span className="font-medium ml-2 text-sm">{resource.name}</span>
         </div>
       </div>
