@@ -10,9 +10,11 @@ export type Resource = {
   type?: string;
   size?: string;
   status?: string;
+  parentId?: number;
   createdAt?: string;
   description: string;
-  extra?: any;
+  content?: string;
+  resources: Resource[];
 };
 
 export type LinkKnowLedge = {
@@ -72,54 +74,34 @@ const useResource = ({
     enabled: !!departmentId,
   });
 
-  /*
-   * upload file
-   */
-
-  const handleUploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    const response = await axiosInstance.post(`/api/uploads`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    return response.data;
-  };
-
   const { mutate: createResource, isPending: isPendingCreateResource } =
     useMutation({
       mutationFn: async ({
         file,
         departmentId,
         description,
+        parentId,
         type,
       }: {
         file: File;
         departmentId: string;
+        parentId?: string;
         description: string;
         type: string;
       }) => {
-        const data = await handleUploadFile(file);
-        const response = await axiosInstance.post(
-          `/api/resources/`,
-          {
-            departmentId: departmentId,
-            extra: data.extra,
-            path: data.url,
-            name: data.name,
-            s3Key: data.key,
-            ext: data.ext,
-            type: type,
-            description: description,
+        const formData = new FormData();
+        formData.append("departmentId", departmentId);
+        if (parentId !== undefined) {
+          formData.append("parentId", parentId);
+        }
+        formData.append("description", description);
+        formData.append("file", file, file.name);
+        formData.append("type", type);
+        const response = await axiosInstance.post(`/api/resources`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        });
         return response.data;
       },
       onSuccess: () => {
@@ -231,6 +213,38 @@ const useResource = ({
       });
     },
   });
+
+  const { mutate: updateResource } = useMutation({
+    mutationFn: async ({
+      id,
+      description,
+      content,
+    }: {
+      id: string;
+      description?: string;
+      content?: string;
+    }) => {
+      const response = await axiosInstance.patch(`/api/resources/${id}`, {
+        description,
+        content,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cập nhật thành công",
+        description: "Cập nhật tài liệu thành công",
+      });
+      refetchResource();
+    },
+    onError: () => {
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Cập nhật tài liệu thất bại",
+      });
+    },
+  });
+
   return {
     deleteResource,
     createResource,
@@ -243,9 +257,9 @@ const useResource = ({
     isPendingSyncResource,
     materialItems,
     resourceDetail,
-    handleUploadFile,
     refetchMaterialItems: refetchResource,
     reEtl,
+    updateResource,
   };
 };
 

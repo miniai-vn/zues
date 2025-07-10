@@ -53,11 +53,6 @@ export default function NavMain({
   const router = useRouter();
   const { t } = useTranslations();
 
-  // if (!user) return null;
-  // const filteredItems = items?.filter((item) => {
-  //   const userRolesSet = new Set(user.roles.map((role) => role.name));
-  //   return item.role.some((role) => userRolesSet.has(role));
-  // });
   const renderSubItems = (subItems?: SubMenuItem[]) => {
     if (!subItems?.length) return null;
     return subItems.map((subItem) => (

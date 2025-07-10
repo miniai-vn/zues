@@ -10,7 +10,6 @@ import {
 import { Role } from "@/configs/protect-route";
 import { useTranslations } from "@/hooks/useTranslations";
 import {
-  BarChart3,
   BotIcon,
   FolderOpen,
   Link,
@@ -22,7 +21,6 @@ import {
 } from "lucide-react";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
-import { title } from "process";
 export function AppSidebar({
   setActiveSection,
   ...props

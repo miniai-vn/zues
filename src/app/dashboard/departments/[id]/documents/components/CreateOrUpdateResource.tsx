@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Resource } from "@/hooks/data/useResource";
 import useTranslations from "@/hooks/useTranslations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
@@ -48,14 +49,21 @@ type UploadFormValues = z.infer<typeof uploadFormSchema>;
 
 interface CreateOrUpdateResourceProps {
   type?: string;
-  resource?: any; // Use specific resource type if available
-  onHandleUploadFile: (file: File, description: string, type: string) => void;
+  resource?: Resource;
+  onHandleUploadFile: (
+    file: File,
+    description: string,
+    type: string,
+    parentId?: number
+  ) => void;
+  trigger?: React.ReactNode;
 }
 
 export function CreateOrUpdateResource({
   resource,
   type,
   onHandleUploadFile,
+  trigger,
 }: CreateOrUpdateResourceProps) {
   const { t } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -65,7 +73,7 @@ export function CreateOrUpdateResource({
     resolver: zodResolver(uploadFormSchema),
     defaultValues: {
       file: undefined,
-      description: resource?.descriptions || "",
+      description: resource?.description || "",
     },
   });
 
@@ -77,7 +85,12 @@ export function CreateOrUpdateResource({
 
   const onSubmit = (values: UploadFormValues) => {
     if (selectedFile) {
-      onHandleUploadFile(selectedFile, values.description, type || "document");
+      onHandleUploadFile(
+        selectedFile,
+        values.description,
+        type || "document",
+        resource?.id
+      );
       form.reset();
       setSelectedFile(null);
       setIsOpen(false);
@@ -102,20 +115,21 @@ export function CreateOrUpdateResource({
       }}
     >
       <DialogTrigger asChild>
-        {resource ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8"
-            aria-label={t("dashboard.departments.detail.editResource")}
-          >
-            <Pencil className="h-4 w-4 text-gray-500" />
-          </Button>
-        ) : type === "faqs" ? (
-          <Button>{t("dashboard.departments.detail.faqs.uploadFaq")}</Button>
-        ) : (
-          <Button>{t("dashboard.departments.detail.uploadNewDocument")}</Button>
-        )}
+        {trigger ||
+          (resource ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8"
+              aria-label={t("dashboard.departments.detail.editResource")}
+            >
+              <Pencil className="h-4 w-4 text-gray-500" />
+            </Button>
+          ) : (
+            <Button>
+              {t("dashboard.departments.detail.uploadNewDocument")}
+            </Button>
+          ))}
       </DialogTrigger>
       <DialogContent className="w-[800px] max-w-[90vw]">
         <DialogHeader>

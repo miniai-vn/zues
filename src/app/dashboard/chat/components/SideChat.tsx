@@ -86,11 +86,11 @@ export function SideChat() {
                   Đổi tên
                 </button>
                 <AlertDialogComponent
-                  children={
-                    <button className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-gray-100 rounded">
-                      Xóa
-                    </button>
-                  }
+                  // children={
+                  //   <button className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-gray-100 rounded">
+                  //     Xóa
+                  //   </button>
+                  // }
                   description="
                         Bạn có chắc chắn muốn xóa hội thoại này không? Tất cả tin nhắn trong hội thoại này sẽ bị xóa vĩnh viễn"
                   title="

@@ -1,7 +1,6 @@
 import { axiosInstance } from "@/configs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
-import { PaginatedResponse } from "@/types/api";
 
 export enum AgentStatus {
   ACTIVE = "active",
@@ -57,7 +56,7 @@ export interface CreateAgentDto {
   departmentIds?: number[];
 }
 
-export interface UpdateAgentDto extends Partial<CreateAgentDto> {}
+// Removed UpdateAgentDto interface as it was equivalent to Partial<CreateAgentDto>
 
 export interface QueryAgentDto {
   page?: number;
@@ -163,17 +162,23 @@ const useAgents = ({
     isPending: isUpdatingAgent,
     error: updateAgentError,
   } = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: UpdateAgentDto }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: Partial<CreateAgentDto>;
+    }) => {
       const response = await axiosInstance.patch(`/api/agents/${id}`, data);
       return response.data as Agent;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "Agent has been successfully updated.",
       });
       queryClient.invalidateQueries({ queryKey: ["agents"] });
-      queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
+      // queryClient.invalidateQueries({ queryKey: ["agent", data.id] });
     },
     onError: () => {
       toast({
@@ -191,10 +196,9 @@ const useAgents = ({
     error: deleteAgentError,
   } = useMutation({
     mutationFn: async (id: number) => {
-      const response = await axiosInstance.delete(`/api/agents/${id}`);
-      return response.data;
+      await axiosInstance.delete(`/api/agents/${id}`);
     },
-    onSuccess: (_, id) => {
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "Agent has been successfully deleted.",

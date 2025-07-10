@@ -28,8 +28,7 @@ const CardDepartmentSkeleton = () => (
 );
 
 const CardDepartmentList = ({ departments }: CardDepartmentListProps) => {
-  const { isFetchingDepartments, isPendingCreateDept, isPendingDeleteDepartment } =
-    useDepartments({});
+  const { isFetchingDepartments } = useDepartments({});
   if (isFetchingDepartments) {
     return (
       <div className="flex flex-wrap gap-4">
@@ -43,7 +42,7 @@ const CardDepartmentList = ({ departments }: CardDepartmentListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {departments.map((department) => (
         <div key={department.id}>
           <CardDepartment department={department} />
