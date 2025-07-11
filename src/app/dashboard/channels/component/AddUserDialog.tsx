@@ -33,14 +33,14 @@ const AddUserDialog = ({
   const debouncedInputValue = useDebouncedValue(inputValue, 300);
   const queryClient = useQueryClient();
 
-  const { addUsersToChannel, removeUsersFromChannel, channelById } =
+  const { addUsersToChannel, removeUsersFromChannel, channelDetail } =
     useChannels({
       id: channelId,
     });
 
   const existingUserIds = useMemo(() => {
-    return channelById?.users.map((user) => user.id) || [];
-  }, [channelById?.users]);
+    return channelDetail?.users.map((user) => user.id) || [];
+  }, [channelDetail?.users]);
 
   const { users, isFetchingUsersWithCs } = useUsersWithCs({
     search: debouncedInputValue,
@@ -63,10 +63,6 @@ const AddUserDialog = ({
       userIds: newlySelectedUsers,
     });
 
-    queryClient.invalidateQueries({
-      queryKey: ["channelById", channelId],
-    });
-
     setSelectedUsers([]);
     setInputValue("");
     onOpenChange(false);
@@ -80,10 +76,6 @@ const AddUserDialog = ({
     await removeUsersFromChannel({
       channelId: channelId,
       userIds: removedCount,
-    });
-
-    queryClient.invalidateQueries({
-      queryKey: ["channelById", channelId],
     });
 
     setSelectedUsers([]);

@@ -152,6 +152,7 @@ export function CreateOrUpdateUserDialog({
         phone: data.phone!,
         roleIds: data.roles,
         departmentIds: data.departments,
+        
       });
 
       userId = resp.data?.id;
@@ -184,11 +185,11 @@ export function CreateOrUpdateUserDialog({
     onChange?.({
       ...data,
       id: user?.id,
-      channels: selectedChannelIds,
+      channelIds: selectedChannelIds,
     });
 
-    // setIsOpen(false);
-    // form.reset();
+    setIsOpen(false);
+    form.reset();
   };
 
   return (

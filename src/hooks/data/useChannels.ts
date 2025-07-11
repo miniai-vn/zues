@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/configs";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 export enum ChannelStatus {
   ACTIVE = "active",
@@ -30,7 +30,7 @@ export interface Channel {
   };
   users: {
     id: string;
-  }[]; // Assuming this is an array of user IDs
+  }[];
 }
 
 interface ZaloOAConfig {
@@ -57,6 +57,7 @@ const useChannels = ({
   id?: number;
 } = {}) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const {
     data: channels,
@@ -88,12 +89,13 @@ const useChannels = ({
   });
 
   const {
-    data: channelById,
-    isLoading: isLoadingChannelById,
-    error: fetchChannelByIdError,
+    data: channelDetail,
+    isLoading: isLoadingChannelDetail,
+    error: fetchChannelDetailError,
+    refetch: refetchChannelDetail,
   } = useQuery<Channel, Error>({
-    queryKey: ["channelById", id],
-    enabled: !!id, // chỉ fetch nếu có id và enabled = true
+    queryKey: ["channelDetail", id],
+    enabled: !!id,
     queryFn: async () => {
       const response = await axiosInstance.get(`/api/channels/${id}`);
       return response.data as Channel;
@@ -213,13 +215,16 @@ const useChannels = ({
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Users added to channel",
         description:
           "The selected users have been successfully added to the channel.",
       });
-      refetchChannels();
+      queryClient.invalidateQueries({
+        queryKey: ["channelDetail", id],
+      });
+      await refetchChannels();
     },
     onError: (error: Error) => {
       toast({
@@ -245,13 +250,16 @@ const useChannels = ({
       );
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
-        title: "Users added to channel",
+        title: "Users removed from channel",
         description:
-          "The selected users have been successfully added to the channel.",
+          "The selected users have been successfully removed from the channel.",
       });
-      refetchChannels();
+      queryClient.invalidateQueries({
+        queryKey: ["channelDetail", id],
+      });
+      await refetchChannels();
     },
     onError: (error: Error) => {
       toast({
@@ -262,9 +270,9 @@ const useChannels = ({
   });
 
   return {
-    channelById,
-    isLoadingChannelById,
-    fetchChannelByIdError,
+    channelDetail,
+    isLoadingChannelDetail,
+    fetchChannelDetailError,
     updateStatus,
     filteredChannels,
     isLoadingFilteredChannels,

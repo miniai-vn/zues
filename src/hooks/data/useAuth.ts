@@ -19,12 +19,12 @@ export type UserData = {
   avatar?: string;
   departments: number[];
   position?: string;
-  channels?: number[];
+  channelIds?: number[];
 };
 
 export type UserUpdateData = {
   id: string | undefined;
-  channels?: number[];
+  channelIds?: number[];
 } & UserUpdateFormValues;
 
 export type User = {
