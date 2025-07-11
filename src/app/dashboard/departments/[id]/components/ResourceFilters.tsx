@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "@/hooks/useTranslations";
-import { Columns, Plus, RefreshCw, Search } from "lucide-react";
+import { Columns, RefreshCw, Search } from "lucide-react";
 
 interface ResourceFiltersProps {
   search: string;
@@ -63,7 +63,6 @@ export const ResourceFilters: React.FC<ResourceFiltersProps> = ({
   onRefetch,
   columnVisibility,
   setColumnVisibility,
-  onCreateResource,
 }) => {
   const { t } = useTranslations();
 

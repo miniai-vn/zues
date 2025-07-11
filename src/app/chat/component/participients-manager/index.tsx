@@ -63,7 +63,9 @@ const ParticipantManagementSheet = ({
 
   return (
     <>
-      <Sheet open={open} onOpenChange={onOpenChange}>        <SheetContent className="w-[400px] sm:w-[540px]">
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        {" "}
+        <SheetContent className="w-[400px] sm:w-[540px]">
           <SheetHeader>
             <SheetTitle>{t("dashboard.chat.participantManagement")}</SheetTitle>
           </SheetHeader>

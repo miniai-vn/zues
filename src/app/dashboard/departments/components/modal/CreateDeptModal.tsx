@@ -22,7 +22,7 @@ interface CreateDeptModalProps {
   }) => void;
 }
 
-export default function CreateOrUpdateDeptModal({
+export default function CreateOrUpdateDeptDialog({
   department,
   onChange,
 }: CreateDeptModalProps) {
@@ -37,8 +37,8 @@ export default function CreateOrUpdateDeptModal({
     >
       <DialogTrigger asChild>
         {department ? (
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Pencil className="h-4 w-4 text-gray-500" />
+          <Button variant="ghost" size="sm">
+            <Pencil className=" h-4 w-4" /> Edit
           </Button>
         ) : (
           <Button>+ Tạo nhóm tài liệu mới</Button>

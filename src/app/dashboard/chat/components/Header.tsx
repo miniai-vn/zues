@@ -1,8 +1,13 @@
-import { Selector } from "@/components/dashboard/selector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import useDepartments from "@/hooks/data/useDepartments";
 import React from "react";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface ChatHeaderProps {
   modelName?: string;
@@ -28,11 +33,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       {/* Model selector with dropdown */}
       <Select
         value={selectedDepartmentId ? String(selectedDepartmentId) : ""}
-        onValueChange={(value) => 
-        {
-          changeDepartment(value)
-        }
-        }
+        onValueChange={(value) => {
+          changeDepartment(value);
+        }}
       >
         <SelectTrigger className="w-[200px] border-0 hover:bg-gray-100 transition-colors">
           <SelectValue placeholder="Chọn nhóm tài liệu" />
