@@ -75,7 +75,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
   const [selectedResourceForView, setSelectedResourceForView] =
     useState<TreeNode | null>(null);
   const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
-  const [documentContent, setDocumentContent] = useState<string>('');
+  const [documentContent, setDocumentContent] = useState<string>("");
 
   const getFileIcon = (type: string) => {
     // if (hasChildren) {
@@ -130,6 +130,18 @@ const TreeTable: React.FC<TreeTableProps> = ({
         break;
       default:
         break;
+    }
+
+    // Show loading spinner for processing status
+    if (status === "processing") {
+      return (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass} flex items-center gap-2`}
+        >
+          <div className="animate-spin w-3 h-3 border border-yellow-600 border-t-transparent rounded-full"></div>
+          {statusText}
+        </span>
+      );
     }
 
     return (
@@ -349,32 +361,62 @@ const TreeTable: React.FC<TreeTableProps> = ({
   const handleViewDocument = async (node: TreeNode) => {
     setSelectedResourceForView(node);
     setIsDocumentViewerOpen(true);
-    
+
     // Simulate fetching document content based on the document type and id
     // In a real application, this would be an API call
-    let content = '';
+    let content = "";
     try {
       switch (node.type?.toLowerCase()) {
-        case 'pdf':
-          content = `<h1>${node.name}</h1><p>This is a PDF document content. In a real application, you would extract and display the actual PDF content here.</p><p><strong>Document ID:</strong> ${node.id}</p><p><strong>Description:</strong> ${node.description || 'No description available'}</p>`;
+        case "pdf":
+          content = `<h1>${
+            node.name
+          }</h1><p>This is a PDF document content. In a real application, you would extract and display the actual PDF content here.</p><p><strong>Document ID:</strong> ${
+            node.id
+          }</p><p><strong>Description:</strong> ${
+            node.description || "No description available"
+          }</p>`;
           break;
-        case 'txt':
-        case 'doc':
-        case 'docx':
-          content = `<h1>${node.name}</h1><p>This is the text content of the document. The actual content would be fetched from your backend API.</p><p><strong>Description:</strong> ${node.description || 'No description available'}</p><p>You can edit this content using the rich text editor above. Use the formatting tools to style your text, add lists, change alignment, and more.</p><p>Sample content:</p><ul><li>First item in list</li><li>Second item in list</li><li>Third item in list</li></ul><p>This is some <strong>bold text</strong> and some <em>italic text</em>.</p>`;
+        case "txt":
+        case "doc":
+        case "docx":
+          content = `<h1>${
+            node.name
+          }</h1><p>This is the text content of the document. The actual content would be fetched from your backend API.</p><p><strong>Description:</strong> ${
+            node.description || "No description available"
+          }</p><p>You can edit this content using the rich text editor above. Use the formatting tools to style your text, add lists, change alignment, and more.</p><p>Sample content:</p><ul><li>First item in list</li><li>Second item in list</li><li>Third item in list</li></ul><p>This is some <strong>bold text</strong> and some <em>italic text</em>.</p>`;
           break;
-        case 'csv':
-        case 'xlsx':
-        case 'xls':
-          content = `<h1>${node.name}</h1><p>This is a spreadsheet document. In a real application, you would display the spreadsheet data here.</p><p><strong>Document ID:</strong> ${node.id}</p><p><strong>Type:</strong> ${node.type}</p><p><strong>Description:</strong> ${node.description || 'No description available'}</p>`;
+        case "csv":
+        case "xlsx":
+        case "xls":
+          content = `<h1>${
+            node.name
+          }</h1><p>This is a spreadsheet document. In a real application, you would display the spreadsheet data here.</p><p><strong>Document ID:</strong> ${
+            node.id
+          }</p><p><strong>Type:</strong> ${
+            node.type
+          }</p><p><strong>Description:</strong> ${
+            node.description || "No description available"
+          }</p>`;
           break;
         default:
-          content = `<h1>${node.name}</h1><p>Document preview is available for this file type (${node.type}).</p><p><strong>File details:</strong></p><ul><li><strong>Type:</strong> ${node.type}</li><li><strong>Status:</strong> ${node.status}</li><li><strong>Created:</strong> ${node.createdAt ? new Date(node.createdAt).toLocaleDateString() : 'Unknown'}</li></ul><p>You can edit the document content and add your own text, formatting, and structure.</p>`;
+          content = `<h1>${
+            node.name
+          }</h1><p>Document preview is available for this file type (${
+            node.type
+          }).</p><p><strong>File details:</strong></p><ul><li><strong>Type:</strong> ${
+            node.type
+          }</li><li><strong>Status:</strong> ${
+            node.status
+          }</li><li><strong>Created:</strong> ${
+            node.createdAt
+              ? new Date(node.createdAt).toLocaleDateString()
+              : "Unknown"
+          }</li></ul><p>You can edit the document content and add your own text, formatting, and structure.</p>`;
       }
     } catch {
       content = `<h1>Error</h1><p>Failed to load document content for ${node.name}</p>`;
     }
-    
+
     setDocumentContent(content);
   };
 
@@ -387,12 +429,14 @@ const TreeTable: React.FC<TreeTableProps> = ({
   const handleViewChunk = (node: TreeNode) => {
     if (departmentId && node.id) {
       // Navigate to the document detail page with department context
-      router.push(`/dashboard/departments/${departmentId}/documents/${node.id}`);
+      router.push(
+        `/dashboard/departments/${departmentId}/documents/${node.id}`
+      );
     } else if (node.id) {
       // Fallback to the simple documents route if departmentId is not available
       router.push(`/dashboard/documents/${node.id}`);
     } else {
-      console.warn('Document ID is missing, cannot navigate to detail page');
+      console.warn("Document ID is missing, cannot navigate to detail page");
     }
   };
 
@@ -451,22 +495,26 @@ const TreeTable: React.FC<TreeTableProps> = ({
           </tbody>
         </table>
       </div>
-      
+
       {/* Document Viewer Dialog */}
       <DocumentViewerDialog
         isOpen={isDocumentViewerOpen}
         onOpenChange={setIsDocumentViewerOpen}
         document={selectedResourceForView}
-        resourceDetail={selectedResourceForView ? {
-          id: selectedResourceForView.id || 0,
-          name: selectedResourceForView.name || '',
-          type: selectedResourceForView.type || '',
-          description: selectedResourceForView.description || '',
-          content: documentContent,
-          status: selectedResourceForView.status || '',
-          isActive: selectedResourceForView.isActive || false,
-          createdAt: selectedResourceForView.createdAt || '',
-        } as Resource : null}
+        resourceDetail={
+          selectedResourceForView
+            ? ({
+                id: selectedResourceForView.id || 0,
+                name: selectedResourceForView.name || "",
+                type: selectedResourceForView.type || "",
+                description: selectedResourceForView.description || "",
+                content: documentContent,
+                status: selectedResourceForView.status || "",
+                isActive: selectedResourceForView.isActive || false,
+                createdAt: selectedResourceForView.createdAt || "",
+              } as Resource)
+            : null
+        }
         onSave={(document, content) => {
           if (onEditResource) {
             // Create an updated resource with the new content
@@ -478,13 +526,17 @@ const TreeTable: React.FC<TreeTableProps> = ({
             };
             onEditResource(updatedResource);
           }
-          
+
           // Update the local content state
           setDocumentContent(content);
-          
+
           // Log for debugging - in a real app, this would be an API call
-          console.log('Saving document:', document.name, 'with updated content');
-          console.log('Content length:', content.length, 'characters');
+          console.log(
+            "Saving document:",
+            document.name,
+            "with updated content"
+          );
+          console.log("Content length:", content.length, "characters");
         }}
       />
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import { getPlatforms } from "@/app/chat/component/conversation-sidebar";
-import { PageHeader } from "@/components/dashboard/common/page-header";
+import { Platform } from "@/app/chat/component/conversation-sidebar/PlatformList";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,12 +11,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useChannels, { Channel, ChannelStatus } from "@/hooks/data/useChannels";
+import { useTranslations } from "@/hooks/useTranslations";
 import { Eye, EyeOff, Link, Loader2, Settings } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "@/hooks/useTranslations";
 import ChannelTable from "./component/Table";
-import { Platform } from "@/app/chat/component/conversation-sidebar/PlatformList";
 
 // Types
 interface ChannelItem {
@@ -214,9 +213,10 @@ export default function ChannelsManagementPage() {
       const appIds = appIdParam.includes(",")
         ? appIdParam.split(",")
         : [appIdParam];
+
       appIds.forEach((id) => {
         updateShopId({ appId: id });
-        syncFaceBookConversations(appIdParam);
+        syncFaceBookConversations(id);
       });
     }
   }, []);

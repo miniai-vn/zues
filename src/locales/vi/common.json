@@ -798,5 +798,9 @@
       "update": "Cập nhật kênh",
       "delete": "Xoá kênh"
     }
-  }
+  },
+  "notifications": "Thông báo",
+  "markAllAsRead": "Đánh dấu tất cả đã đọc",
+  "noNotifications": "Không có thông báo",
+  "viewAllNotifications": "Xem tất cả thông báo"
 }

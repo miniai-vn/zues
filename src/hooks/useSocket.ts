@@ -9,15 +9,19 @@ interface UserJoinedEvent {
   conversationId: number;
 }
 
-
-
 export function useSocket() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [socketChat, setSocketChat] = useState<Socket | null>(null);
   const [isChatConnected, setIsChatConnected] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   useEffect(() => {
-    const socketIo = io(process.env.NEXT_PUBLIC_SOCKET_URL as string);
+    const token = localStorage.getItem("token");
+
+    const socketIo = io(process.env.NEXT_PUBLIC_API_URL as string, {
+      auth: {
+        token,
+      },
+    });
     const socketChatIo = io(process.env.NEXT_PUBLIC_API_URL as string);
     // Regular socket connection
     socketIo.on("connect", () => {
