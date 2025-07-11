@@ -140,17 +140,13 @@ const useNotifications = ({
   } = useQuery({
     queryKey: ["notifications", userId, initialFilters],
     queryFn: async () => {
-      try {
-        const response = await axiosInstance.get("/api/notifications", {
-          params: apiFilters(),
-        });
+      const response = await axiosInstance.get("/api/notifications", {
+        params: apiFilters(),
+      });
 
-        // Transform API response to client format
+      // Transform API response to client format
 
-        return response.data;
-      } catch (error) {
-        throw new Error("Failed to fetch notifications");
-      }
+      return response.data;
     },
     refetchOnWindowFocus: false,
     enabled: !!userId,
@@ -285,7 +281,7 @@ const useNotifications = ({
 
   // Computed values
   const notifications = notificationsData || [];
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = notifications.filter((n: any) => !n.isRead).length;
   const isLoading = isFetchingNotifications;
 
   return {
