@@ -5,18 +5,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTranslations } from "@/hooks/useTranslations";
+import { Notification } from "@/hooks/data/useNotifications";
 import { Bell } from "lucide-react";
-
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  read: boolean;
-}
 
 interface NotificationDropdownProps {
   notifications?: Notification[];
+  unreadCount?: number;
   onMarkAsRead?: (id: string) => void;
   onMarkAllAsRead?: () => void;
   onViewAll?: () => void;
@@ -24,12 +18,30 @@ interface NotificationDropdownProps {
 
 export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   notifications = [],
+  unreadCount: propUnreadCount,
   onMarkAsRead,
   onMarkAllAsRead,
   onViewAll,
 }) => {
   const { t } = useTranslations();
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = propUnreadCount ?? notifications.filter(n => !n.isRead).length;
+
+  const formatTimeAgo = (date: Date): string => {
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays === 1) return "Yesterday";
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    
+    return date.toLocaleDateString();
+  };
 
   const handleMarkAsRead = (id: string) => {
     onMarkAsRead?.(id);
@@ -76,23 +88,23 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
               <div
                 key={notification.id}
                 className={`p-3 border-b last:border-0 hover:bg-muted/50 cursor-pointer ${
-                  !notification.read ? "bg-muted/20" : ""
+                  !notification.isRead ? "bg-muted/20" : ""
                 }`}
                 onClick={() => handleMarkAsRead(notification.id)}
               >
                 <div className="flex gap-3">
                   <div
                     className={`w-2 h-2 rounded-full mt-2 ${
-                      notification.read ? "bg-transparent" : "bg-blue-500"
+                      notification.isRead ? "bg-transparent" : "bg-blue-500"
                     }`}
                   />
                   <div className="flex-1">
                     <div className="font-medium text-sm">{notification.title}</div>
                     <p className="text-xs text-muted-foreground line-clamp-2">
-                      {notification.message}
+                      {notification.body}
                     </p>
                     <div className="text-[10px] text-muted-foreground mt-1">
-                      {notification.time}
+                      {formatTimeAgo(notification.createdAt)}
                     </div>
                   </div>
                 </div>

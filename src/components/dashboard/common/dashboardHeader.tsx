@@ -4,7 +4,7 @@ import { Settings } from "lucide-react";
 import { PageHeader } from "./page-header";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { UserProfileDropdown } from "./UserProfileDropdown";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/hooks/data/useNotifications";
 import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
 
 interface DashboardHeaderProps {
@@ -19,7 +19,7 @@ interface DashboardHeaderProps {
   onViewAllNotifications?: () => void;
 }
 
-const DashboardHeader = ({ 
+const DashboardHeader = ({
   title = "",
   userName,
   userEmail,
@@ -31,11 +31,8 @@ const DashboardHeader = ({
   onViewAllNotifications,
 }: DashboardHeaderProps) => {
   const breadcrumbs = useBreadcrumbs(title);
-  const {
-    notifications,
-    markAsRead,
-    markAllAsRead,
-  } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+    useNotifications();
 
   const handleSettingsClick = () => {
     onSettingsClick?.();
@@ -44,25 +41,23 @@ const DashboardHeader = ({
     <header className="sticky border-b mb-2 top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 px-4 py-1">
       <div className="flex items-center justify-between">
         <div>
-          <PageHeader
-            backButtonHref="/dashboard"
-            breadcrumbs={breadcrumbs}
-          />
+          <PageHeader backButtonHref="/dashboard" breadcrumbs={breadcrumbs} />
         </div>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          
+
           <NotificationDropdown
             notifications={notifications}
+            unreadCount={unreadCount}
             onMarkAsRead={markAsRead}
             onMarkAllAsRead={markAllAsRead}
             onViewAll={onViewAllNotifications}
           />
-          
+
           <Button variant="ghost" size="sm" onClick={handleSettingsClick}>
             <Settings className="h-4 w-4" />
           </Button>
-          
+
           <UserProfileDropdown
             userName={userName}
             userEmail={userEmail}
