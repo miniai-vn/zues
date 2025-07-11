@@ -8,16 +8,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import useResource, { Resource } from "@/hooks/data/useResource";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useSocket } from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ResourceFilters } from "./components/ResourceFilters";
 import { DepartmentHeader } from "./components/DepartmentHeader";
+import { ResourceFilters } from "./components/ResourceFilters";
 import { ResourceTableView } from "./components/ResourceTableView";
 
 const DepartmentDetailComponent = () => {
   const params = useParams();
   const departmentId = params.id as string;
-
+  const { socket } = useSocket();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -26,7 +27,9 @@ const DepartmentDetailComponent = () => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string | number>>(
     new Set()
   );
-  const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null);
+  const [selectedResourceId, setSelectedResourceId] = useState<string | null>(
+    null
+  );
 
   const [columnVisibility, setColumnVisibility] = useState({
     index: true,
@@ -65,6 +68,21 @@ const DepartmentDetailComponent = () => {
     limit: pageSize,
     search,
   });
+
+  useEffect(() => {
+    if (socket) {
+      console.log("Setting up socket listener for resource updates");
+      socket.on("resourceStatusUpdated", (data: Resource) => {
+        console.log("Resource updated:", data);
+        refetchMaterialItems();
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off("resourceStatusUpdated");
+      }
+    };
+  }, [socket, refetchMaterialItems]);
 
   useEffect(() => {
     if (materialItems) {

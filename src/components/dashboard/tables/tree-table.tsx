@@ -132,6 +132,18 @@ const TreeTable: React.FC<TreeTableProps> = ({
         break;
     }
 
+    // Show loading spinner for processing status
+    if (status === "processing") {
+      return (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass} flex items-center gap-2`}
+        >
+          <div className="animate-spin w-3 h-3 border border-yellow-600 border-t-transparent rounded-full"></div>
+          {statusText}
+        </span>
+      );
+    }
+
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass}`}
