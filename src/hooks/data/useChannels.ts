@@ -28,6 +28,9 @@ export interface Channel {
     id: number;
     name: string;
   };
+  users: {
+    id: string;
+  }[]; // Assuming this is an array of user IDs
 }
 
 interface ZaloOAConfig {
@@ -45,11 +48,13 @@ const useChannels = ({
   limit = 10,
   search = "",
   departmentId,
+  id,
 }: {
   page?: number;
   limit?: number;
   search?: string;
   departmentId?: number;
+  id?: number;
 } = {}) => {
   const { toast } = useToast();
 
@@ -80,6 +85,21 @@ const useChannels = ({
       });
       return response.data as Channel[];
     },
+  });
+
+  const {
+    data: channelById,
+    isLoading: isLoadingChannelById,
+    error: fetchChannelByIdError,
+  } = useQuery<Channel, Error>({
+    queryKey: ["channelById", id],
+    enabled: !!id, // chỉ fetch nếu có id và enabled = true
+    queryFn: async () => {
+      const response = await axiosInstance.get(`/api/channels/${id}`);
+      return response.data as Channel;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const {
@@ -131,7 +151,7 @@ const useChannels = ({
   const { mutate: syncConversations } = useMutation({
     mutationFn: async (appId: string) => {
       const response = await axiosInstance.post(
-        `/api/integration/zalo/sync-conversations/${appId}`
+        `/api/integration/zalo/sync-conversations/${appId}`,
       );
       return response.data;
     },
@@ -140,7 +160,7 @@ const useChannels = ({
   const { mutate: syncFaceBookConversations } = useMutation({
     mutationFn: async (appId: string) => {
       const response = await axiosInstance.post(
-        `/api/facebook/sync-conversations/${appId}`
+        `/api/facebook/sync-conversations/${appId}`,
       );
       return response.data;
     },
@@ -158,7 +178,7 @@ const useChannels = ({
         `/api/channels/${channelId}/status`,
         {
           status,
-        }
+        },
       );
       return response.data;
     },
@@ -177,9 +197,75 @@ const useChannels = ({
     },
   });
 
-  return {
-    updateStatus,
+  const { mutateAsync: addUsersToChannel } = useMutation({
+    mutationFn: async ({
+      channelId,
+      userIds,
+    }: {
+      channelId: number;
+      userIds: string[];
+    }) => {
+      const response = await axiosInstance.post(
+        `/api/channels/${channelId}/add-users`,
+        {
+          userIds,
+        },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Users added to channel",
+        description:
+          "The selected users have been successfully added to the channel.",
+      });
+      refetchChannels();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error adding users to channel",
+        description: error.message,
+      });
+    },
+  });
 
+  const { mutateAsync: removeUsersFromChannel } = useMutation({
+    mutationFn: async ({
+      channelId,
+      userIds,
+    }: {
+      channelId: number;
+      userIds: string[];
+    }) => {
+      const response = await axiosInstance.post(
+        `/api/channels/${channelId}/remove-users`,
+        {
+          userIds,
+        },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Users added to channel",
+        description:
+          "The selected users have been successfully added to the channel.",
+      });
+      refetchChannels();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error adding users to channel",
+        description: error.message,
+      });
+    },
+  });
+
+  return {
+    channelById,
+    isLoadingChannelById,
+    fetchChannelByIdError,
+    updateStatus,
     filteredChannels,
     isLoadingFilteredChannels,
     fetchFilteredChannelsError,
@@ -193,6 +279,8 @@ const useChannels = ({
     deleteChannelError,
     syncConversations,
     syncFaceBookConversations,
+    addUsersToChannel,
+    removeUsersFromChannel,
   };
 };
 
