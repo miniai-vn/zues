@@ -6,6 +6,7 @@ import { useToast } from "../use-toast";
 import { Department } from "./useDepartments";
 import { Role } from "./useRoles";
 import { useEffect } from "react";
+import { Channel } from "./useChannels";
 
 export type UserData = {
   id?: string;
@@ -18,10 +19,12 @@ export type UserData = {
   avatar?: string;
   departments: number[];
   position?: string;
+  channelIds?: number[];
 };
 
 export type UserUpdateData = {
   id: string | undefined;
+  channelIds?: number[];
 } & UserUpdateFormValues;
 
 export type User = {
@@ -35,6 +38,7 @@ export type User = {
   phone?: string;
   avatar?: string;
   departments?: Department[];
+  channels?: Channel[];
   position?: string;
 };
 
@@ -145,7 +149,7 @@ const useAuth = ({
       const { id, ..._ } = data;
       const response = await axiosInstance.post(
         `/api/auth/users/${data?.id}`,
-        data
+        data,
       );
       return response;
     },

@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUsers } from "@/hooks/useUser";
+import useChannels from "@/hooks/data/useChannels";
 
 // Hàm tạo schema động dựa trên props user và translation
 const getFormSchema = (user?: User, t?: any) =>
@@ -37,7 +38,7 @@ const getFormSchema = (user?: User, t?: any) =>
       .string()
       .nonempty(
         t?.("dashboard.users.modal.validation.usernameRequired") ||
-          "Vui lòng nhập tài khoản."
+          "Vui lòng nhập tài khoản.",
       ),
     password: user
       ? z.string().optional()
@@ -46,17 +47,17 @@ const getFormSchema = (user?: User, t?: any) =>
           .min(
             8,
             t?.("dashboard.users.modal.validation.passwordMin") ||
-              "Mật khẩu phải có ít nhất 8 ký tự."
+              "Mật khẩu phải có ít nhất 8 ký tự.",
           )
           .nonempty(
             t?.("dashboard.users.modal.validation.passwordRequired") ||
-              "Vui lòng nhập mật khẩu."
+              "Vui lòng nhập mật khẩu.",
           ),
     name: z
       .string()
       .nonempty(
         t?.("dashboard.users.modal.validation.nameRequired") ||
-          "Vui lòng nhập họ và tên."
+          "Vui lòng nhập họ và tên.",
       )
       .default(""),
     phone: z
@@ -64,7 +65,7 @@ const getFormSchema = (user?: User, t?: any) =>
       .regex(
         /^\d+$/,
         t?.("dashboard.users.modal.validation.phoneInvalid") ||
-          "Số điện thoại phải là số"
+          "Số điện thoại phải là số",
       )
       .optional(),
     roles: z
@@ -76,6 +77,7 @@ const getFormSchema = (user?: User, t?: any) =>
       })
       .default([]),
     departments: z.array(z.number()).default([]),
+    channels: z.array(z.number()).default([]),
   });
 
 interface AddUserProps {
@@ -104,10 +106,16 @@ export function CreateOrUpdateUserDialog({
       phone: user?.phone || "",
       roles: user?.roles?.map((role) => role.id) || [],
       departments: user?.departments?.map((dept) => Number(dept.id)) || [],
+      channels: user?.channels?.map((channel) => Number(channel.id)) || [],
     },
   });
   const { departments } = useDepartments({});
   // const {} = useRoles({});
+  const {
+    addUsersToChannel,
+    removeUsersFromChannel,
+    channels = [],
+  } = useChannels();
 
   const onSubmit = async (data: z.infer<ReturnType<typeof getFormSchema>>) => {
     onChange?.({
@@ -122,30 +130,64 @@ export function CreateOrUpdateUserDialog({
         : {}),
     });
 
+    let userId: string | undefined = user?.id;
     if (user) {
       await updateUser({
         id: user.id,
         data: {
           username: data.username,
-        password: data.password as string,
-        name: data.name,
-        phone: data.phone as string,
-
-        roleIds: data.roles,
-        departmentIds: data.departments,
-        }
+          password: data.password as string,
+          name: data.name,
+          phone: data.phone as string,
+          roleIds: data.roles,
+          departmentIds: data.departments,
+        },
       });
+      userId = user.id;
     } else {
-      // Tạo người dùng mới
-      await createUser({
+      const resp = await createUser({
         username: data.username,
-        password: data.password as string,
+        password: data.password!,
         name: data.name,
-        phone: data.phone as string,
+        phone: data.phone!,
         roleIds: data.roles,
         departmentIds: data.departments,
+        
+      });
+
+      userId = resp.data?.id;
+    }
+
+    const selectedChannelIds = data.channels.map((s) => Number(s));
+    const prevChannelIds = user?.channels?.map((c) => c.id) || [];
+
+    const toAdd = selectedChannelIds.filter(
+      (id) => !prevChannelIds.includes(id),
+    );
+    const toRemove = prevChannelIds.filter(
+      (id) => !selectedChannelIds.includes(id),
+    );
+
+    for (const channelId of toAdd) {
+      await addUsersToChannel({
+        channelId,
+        userIds: userId ? [userId] : [],
       });
     }
+
+    for (const channelId of toRemove) {
+      await removeUsersFromChannel({
+        channelId,
+        userIds: userId ? [userId] : [],
+      });
+    }
+
+    onChange?.({
+      ...data,
+      id: user?.id,
+      channelIds: selectedChannelIds,
+    });
+
     setIsOpen(false);
     form.reset();
   };
@@ -327,7 +369,7 @@ export function CreateOrUpdateUserDialog({
                         className="w-full"
                         multiple={true}
                         placeholder={t(
-                          "dashboard.users.modal.selectDepartments"
+                          "dashboard.users.modal.selectDepartments",
                         )}
                         items={(departments || [])
                           .filter((department) => department.id !== undefined)
@@ -347,6 +389,39 @@ export function CreateOrUpdateUserDialog({
                   )}
                 />
               </div>
+
+              <div>
+                <FormField
+                  control={form.control}
+                  name="channels"
+                  render={({ field, fieldState }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        {t("dashboard.users.channels")}{" "}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Selector
+                        className="w-full"
+                        items={channels.map((channel: any) => ({
+                          value: channel.id,
+                          label:
+                            RoleVietnameseNames[channel.name] || channel.name,
+                        }))}
+                        multiple={true}
+                        placeholder={t("dashboard.users.modal.selectChannels")}
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value);
+                        }}
+                      />
+                      {fieldState.error && (
+                        <FormMessage>{fieldState.error.message}</FormMessage>
+                      )}
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <div className="w-full flex justify-end">
                 <Button type="submit">
                   {user ? t("common.edit") : t("dashboard.users.add")}

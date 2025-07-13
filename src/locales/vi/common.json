@@ -177,7 +177,19 @@
       "deactivate": "Vô hiệu hóa kênh",
       "management": "Quản lý",
       "noChannels": "Chưa có kênh nào được kết nối",
-      "addFirst": "Thêm kênh đầu tiên"
+      "addFirst": "Thêm kênh đầu tiên",
+      "addUserToChannel": "Thêm người dùng vào kênh",
+      "modal": {
+        "addUserToChannel": "Thêm người dùng vào kênh",
+        "loadingUsers": "Đang tải người dùng...",
+        "searchPlaceholder": "Tìm kiếm tên, số điện thoại hoặc danh sách số điện thoại",
+        "allUsers": "Tất cả người dùng",
+        "buttonCancel": "Hủy",
+        "buttonConfirm": "Xác nhận",
+        "buttonRemoveUser": "Xóa người dùng khỏi kênh",
+        "noUsersFound": "Không tìm thấy người dùng nào",
+        "added" : "Đã được thêm"
+      }
     },
     "users": {
       "title": "Quản lý người dùng",
@@ -221,6 +233,7 @@
       "admin": "Quản trị viên",
       "user": "Người dùng",
       "moderator": "Điều hành viên",
+      "channels": "Kênh truyền thông",
       "refresh": "Làm mới",
       "toggleColumns": "Chuyển đổi cột",
       "addUser": "Thêm người dùng",
@@ -238,6 +251,7 @@
         "changePassword": "Đổi mật khẩu",
         "selectRoles": "Chọn vai trò",
         "selectDepartments": "Chọn phòng ban",
+        "selectChannels": "Chọn kênh truyền thông",
         "validation": {
           "usernameRequired": "Vui lòng nhập tài khoản.",
           "passwordRequired": "Vui lòng nhập mật khẩu.",

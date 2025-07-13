@@ -56,11 +56,11 @@ export const useUsers = ({
       filters,
       sort,
     }),
-    [page, pageSize, filters, sort]
+    [page, pageSize, filters, sort],
   );
 
   const createUser = async (
-    data: CreateUserData
+    data: CreateUserData,
   ): Promise<MutationResponse<User>> => {
     return await axiosInstance.post("/api/users", data);
   };
@@ -93,14 +93,14 @@ export const useUsers = ({
     });
 
     const response: PaginatedResponse<User> = await axiosInstance.get(
-      `/api/users?${params.toString()}`
+      `/api/users?${params.toString()}`,
     );
 
     return response;
   };
 
   // Mutation hooks for create, update, delete
-  const { mutate: createUserMutation } = useMutation({
+  const { mutateAsync: createUserMutation } = useMutation({
     mutationFn: createUser,
     onSuccess: () => {
       toast({
@@ -110,7 +110,7 @@ export const useUsers = ({
       query.refetch(); // Refetch users after creation
     },
   });
-  const { mutate: updateUserMutation } = useMutation({
+  const { mutateAsync: updateUserMutation } = useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
       toast({
@@ -205,7 +205,7 @@ export const useUsers = ({
       setSort({ field, direction });
       setPage(1); // Reset to first page when sort changes
     },
-    []
+    [],
   );
 
   const clearSort = useCallback(() => {
@@ -262,7 +262,7 @@ export const useUsers = ({
       isFirstPage: page === 1,
       isLastPage: page === (query.data?.totalPages ?? 1),
     }),
-    [page, pageSize, query.data]
+    [page, pageSize, query.data],
   );
 
   return {

@@ -179,7 +179,19 @@
       "deactivate": "Deactivate channel",
       "management": "Management",
       "noChannels": "No channels connected yet",
-      "addFirst": "Add first channel"
+      "addFirst": "Add first channel",
+      "addUserToChannel": "Add User to Channel",
+      "modal": {
+        "addUserToChannel": "Add User to Channel",
+        "loadingUsers": "Loading users...",
+        "searchPlaceholder": "Search name, phone number, or list of phone numbers",
+        "allUsers": "All Users",
+        "buttonCancel": "Cancel",
+        "buttonConfirm": "Confirm",
+        "buttonRemoveUser": "Remove User from Channel",
+        "noUsersFound": "No users found",
+        "added": "Added"
+      }
     },
     "users": {
       "title": "User Management",
@@ -226,6 +238,7 @@
       "refresh": "Refresh",
       "toggleColumns": "Toggle columns",
       "addUser": "Add User",
+      "channels": "Channels",
       "breadcrumbs": {
         "management": "Management",
         "userManagement": "User Management"
@@ -240,6 +253,7 @@
         "changePassword": "Change Password",
         "selectRoles": "Select Roles",
         "selectDepartments": "Select Departments",
+        "selectChannels": "Select Channels",
         "validation": {
           "usernameRequired": "Please enter username.",
           "passwordRequired": "Please enter password.",
