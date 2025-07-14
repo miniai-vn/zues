@@ -502,6 +502,7 @@
           "new": "Mới",
           "processing": "Đang xử lý",
           "finished": "Xử lý xong",
+          "completed": "Hoàn thành",
           "active": "Hoạt động"
         },
         "confirmDeleteDocument": "Bạn có chắc chắn muốn xóa tài liệu này không?",

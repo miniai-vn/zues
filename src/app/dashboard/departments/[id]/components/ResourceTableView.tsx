@@ -29,6 +29,7 @@ interface ResourceTableViewProps {
   onViewResource: (resource: Resource) => void;
   onEditResource?: (resource: Resource, content?: string) => void;
   onToggleResourceStatus: (resource: Resource) => void;
+  handleViewChunk: (resource: Resource) => void;
   onHandleUploadFile: (
     file: File,
     description: string,
@@ -64,6 +65,7 @@ export const ResourceTableView = ({
   isPendingCreateChunks,
   isPendingSyncResource,
   departmentId,
+  handleViewChunk,
 }: ResourceTableViewProps) => {
   const columns = useResourceColumns({
     isPendingCreateChunks,
@@ -85,6 +87,7 @@ export const ResourceTableView = ({
   if (viewMode === "tree") {
     return (
       <TreeTable
+        handleViewChunk={handleViewChunk}
         data={flattenedTreeData}
         departmentId={departmentId}
         onToggleExpansion={onToggleExpansion}

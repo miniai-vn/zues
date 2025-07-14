@@ -1,8 +1,6 @@
 import { Chunk } from "@/hooks/data/useChunk";
 import ChunkCard from "./ChunkCard";
 
-// Define item structure
-
 // Define props for the component
 interface DocumentCartListProps {
   chunks: Chunk[];
@@ -16,10 +14,10 @@ export default function DocumentCartList({
   updateChunk,
 }: DocumentCartListProps) {
   return (
-    <div >
+    <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {chunks.map((chunk) => (
-          <div key={chunk.id} className="relative">
+        {chunks.map((chunk, index) => (
+          <div key={chunk.pk || `chunk-${index}`} className="relative">
             <ChunkCard
               deleteChunk={deleteChunk}
               updateChunk={updateChunk}

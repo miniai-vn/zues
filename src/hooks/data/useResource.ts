@@ -10,6 +10,7 @@ export type Resource = {
   type?: string;
   size?: string;
   status?: string;
+  code: string;
   parentId?: number;
   createdAt?: string;
   description: string;

@@ -64,7 +64,6 @@ export function useSocket() {
     // Listen for force disconnect
     socketChatIo.on("forceDisconnect", (data) => {
       console.log("Force disconnect:", data);
-      alert(`You have been disconnected: ${data.reason}`);
     });
 
     // Listen for joining conversation confirmation

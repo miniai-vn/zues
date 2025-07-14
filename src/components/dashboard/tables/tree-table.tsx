@@ -25,7 +25,6 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { TreeNode } from "./tree-helpers";
 
@@ -39,6 +38,7 @@ interface TreeTableProps {
   onReEtl: (id: string) => void;
   onUploadForResource?: (resource: TreeNode) => void;
   onViewResource?: (resource: TreeNode) => void;
+  handleViewChunk: (resource: TreeNode) => void;
   onEditResource?: (resource: TreeNode) => void;
   onToggleResourceStatus?: (resource: TreeNode) => void;
   onHandleUploadFile?: (
@@ -54,10 +54,8 @@ interface TreeTableProps {
 
 const TreeTable: React.FC<TreeTableProps> = ({
   data,
-  departmentId,
+  handleViewChunk,
   onToggleExpansion,
-  onCreateChunks,
-  onSyncResource,
   onDeleteResource,
   onReEtl,
   onViewResource,
@@ -69,7 +67,6 @@ const TreeTable: React.FC<TreeTableProps> = ({
   columnVisibility,
 }) => {
   const { t } = useTranslations();
-  const router = useRouter();
   const [selectedResourceForUpload, setSelectedResourceForUpload] =
     useState<TreeNode | null>(null);
   const [selectedResourceForView, setSelectedResourceForView] =
@@ -120,8 +117,8 @@ const TreeTable: React.FC<TreeTableProps> = ({
         statusText = t("dashboard.departments.detail.statusValues.finished");
         statusClass = "bg-green-100 text-green-800";
         break;
-      case "active":
-        statusText = t("dashboard.departments.detail.statusValues.active");
+      case "completed":
+        statusText = t("dashboard.departments.detail.statusValues.completed");
         statusClass = "bg-green-100 text-green-800";
         break;
       case "error":
@@ -242,19 +239,6 @@ const TreeTable: React.FC<TreeTableProps> = ({
           {columnVisibility.actions && (
             <td className="p-2 align-middle">
               <div className="flex items-center justify-center w-full gap-2">
-                <div className="flex items-center">
-                  <Switch
-                    id={`status-switch-${node.id}`}
-                    checked={node.isActive === true}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        onCreateChunks(String(node.id));
-                      } else {
-                        onSyncResource(String(node.id));
-                      }
-                    }}
-                  />
-                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -292,7 +276,7 @@ const TreeTable: React.FC<TreeTableProps> = ({
                     )}
                     {onViewResource && (
                       <DropdownMenuItem
-                        onClick={() => handleViewDocument(node)}
+                        onClick={() => onViewResource(node)}
                         className="flex items-center gap-2"
                       >
                         <Eye className="h-4 w-4" />
@@ -426,19 +410,6 @@ const TreeTable: React.FC<TreeTableProps> = ({
   };
 
   // Function to handle viewing chunks (navigate to document detail page)
-  const handleViewChunk = (node: TreeNode) => {
-    if (departmentId && node.id) {
-      // Navigate to the document detail page with department context
-      router.push(
-        `/dashboard/departments/${departmentId}/documents/${node.id}`
-      );
-    } else if (node.id) {
-      // Fallback to the simple documents route if departmentId is not available
-      router.push(`/dashboard/documents/${node.id}`);
-    } else {
-      console.warn("Document ID is missing, cannot navigate to detail page");
-    }
-  };
 
   return (
     <>

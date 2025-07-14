@@ -322,10 +322,10 @@
             "tooltip": {
               "title": "Prompt Structure Guide",
               "role": "Define the AI assistant's professional role and expertise",
-              "goal": "Set the primary task/goal for the AI", 
+              "goal": "Set the primary task/goal for the AI",
               "workingMode": "Choose between 3 working modes:",
               "mode1": "Use only context information",
-              "mode2": "Use context with interpretation", 
+              "mode2": "Use context with interpretation",
               "mode3": "Creative mode with context as foundation",
               "variables": "Variables:",
               "history": "Previous conversation history",
@@ -339,7 +339,7 @@
             "placeholder": "Select language",
             "auto": "Auto Match",
             "en": "English",
-            "zh": "Chinese", 
+            "zh": "Chinese",
             "vi": "Vietnamese",
             "ja": "Japanese"
           },
@@ -367,7 +367,7 @@
               "description": "Reduces repetition of words (-2.0 to 2.0)"
             },
             "presencePenalty": {
-              "label": "Presence Penalty", 
+              "label": "Presence Penalty",
               "description": "Encourages new topics (-2.0 to 2.0)"
             },
             "stopSequences": {
@@ -503,6 +503,7 @@
         "statusValues": {
           "new": "New",
           "processing": "Processed",
+          "completed": "Completed",
           "finished": "Trained",
           "active": "Active"
         },

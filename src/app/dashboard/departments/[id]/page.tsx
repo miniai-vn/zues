@@ -14,10 +14,11 @@ import { useEffect, useMemo, useState } from "react";
 import { DepartmentHeader } from "./components/DepartmentHeader";
 import { ResourceFilters } from "./components/ResourceFilters";
 import { ResourceTableView } from "./components/ResourceTableView";
-
+import { useRouter } from "next/navigation";
 const DepartmentDetailComponent = () => {
   const params = useParams();
   const departmentId = params.id as string;
+  const router = useRouter();
   const { socket } = useSocket();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -182,8 +183,15 @@ const DepartmentDetailComponent = () => {
 
   // Handle view resource
   const handleViewResource = (resource: Resource) => {
-    console.log("View resource:", resource);
+    debugger;
     // Set the selected resource ID to fetch its details
+    console.log("Viewing resource:", resource);
+    if (resource.id)
+      router.push(
+        `/dashboard/departments/${departmentId}/documents/${resource.id}`
+      );
+    else router.push(`/dashboard/departments/${departmentId}/documents`);
+
     setSelectedResourceId(String(resource.id));
   };
 
@@ -206,6 +214,16 @@ const DepartmentDetailComponent = () => {
       refetchMaterialItems();
     } catch (error) {
       console.error("Error toggling resource status:", error);
+    }
+  };
+
+  const handleViewChunk = (resource: Resource) => {
+    debugger;
+    if (departmentId && resource.code) {
+      // Navigate to the document detail page with department context
+      router.push(
+        `/dashboard/departments/${departmentId}/documents/${resource.code}`
+      );
     }
   };
 
@@ -237,6 +255,7 @@ const DepartmentDetailComponent = () => {
           {/* Resource Table View */}
           <div className="flex-1 min-h-0 overflow-hidden">
             <ResourceTableView
+              handleViewChunk={handleViewChunk}
               viewMode={viewMode}
               flattenedTreeData={flattenedTreeData}
               onToggleExpansion={handleToggleExpansion}
@@ -265,7 +284,6 @@ const DepartmentDetailComponent = () => {
               resourceDetail={resourceDetail}
               selectedResourceId={selectedResourceId}
               departmentId={departmentId}
-              // onUploadForResource={onHandleUploadFile}
             />
           </div>
         </CardContent>

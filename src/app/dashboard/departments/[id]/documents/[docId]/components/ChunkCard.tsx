@@ -1,24 +1,21 @@
 // DocumentCard.jsx
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+import { Chunk } from "@/hooks/data/useChunk";
 import dayjs from "dayjs";
-import { Calendar, Calendar1, Trash2 } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { CreateOrUpdateChunkModal } from "./CreateOrderUpdateChunk";
-import useChunk, { Chunk } from "@/hooks/data/useChunk";
-import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
-import { Badge } from "@/components/ui/badge";
 interface DocumentCardProps {
   chunk: Chunk;
   updateChunk: (chunk: Chunk) => void;
   deleteChunk: (id: string) => void;
 }
-const ChunkCard = ({ chunk, updateChunk, deleteChunk }: DocumentCardProps) => {
+const ChunkCard = ({ chunk, updateChunk }: DocumentCardProps) => {
   return (
     <Card
       className={`w-full max-w-md border shadow-sm transition-all bg-[#F9FAFB] px-2 py-1 text-base
@@ -45,7 +42,7 @@ const ChunkCard = ({ chunk, updateChunk, deleteChunk }: DocumentCardProps) => {
           </div>
         </div>
 
-        <div onClick={(e) => e.stopPropagation()}>
+        {/* <div onClick={(e) => e.stopPropagation()}>
           <AlertDialogComponent
             description="Bạn có chắc chắn muốn xóa đoạn văn này không?"
             title="Xóa đoạn văn"
@@ -58,7 +55,7 @@ const ChunkCard = ({ chunk, updateChunk, deleteChunk }: DocumentCardProps) => {
               </Button>
             }
           ></AlertDialogComponent>
-        </div>
+        </div> */}
       </CardFooter>
     </Card>
   );

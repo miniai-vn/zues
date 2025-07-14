@@ -197,14 +197,6 @@ const ChannelTable = ({
               {t("dashboard.channels.total")}:{" "}
               {t("dashboard.channels.channelCount", { count: channels.length })}
             </p>
-            <Button
-              onClick={onAddChannel}
-              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
-              size="sm"
-            >
-              <Plus size={16} />
-              <span>{t("dashboard.channels.add")}</span>
-            </Button>
           </div>
         </>
       )}

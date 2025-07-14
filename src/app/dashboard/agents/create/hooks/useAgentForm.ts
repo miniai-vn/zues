@@ -61,11 +61,6 @@ const DEFAULT_MESSAGES: Message[] = [
       "Xin lỗi, tôi chưa thể trả lời câu hỏi của bạn ngay bây giờ, nhóm của chúng tôi sẽ phản hồi tin nhắn của bạn sớm nhất có thể",
     time: "2025-06-26 13:53",
   },
-  {
-    type: "bot",
-    content: "不好意思，您的问题我暂时无法解答，我们团队将尽快回复您的消息",
-    time: "2025-06-26 13:53",
-  },
 ];
 
 export const useAgentForm = () => {

@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { TextEditor } from "@/components/ui/text-editor";
 import { Chunk } from "@/hooks/data/useChunk";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
@@ -53,7 +53,7 @@ export function CreateOrUpdateChunkModal({
 
   const onSubmit = (data: ChunkFormValues) => {
     onChange({
-      id: chunk?.id as string,
+      pk: chunk?.pk as string,
       text: data.text,
       isPublic: false,
       createdAt: "",
@@ -111,13 +111,13 @@ export function CreateOrUpdateChunkModal({
             <FormField
               control={form.control}
               name="text"
-              render={({ field, fieldState }) => (
+              render={({ field }) => (
                 <FormItem>
-                  <Textarea
-                    {...field}
+                  <TextEditor
+                    value={field.value}
+                    onChange={field.onChange}
                     placeholder="Nhập nội dung phân đoạn..."
-                    className="w-full h-80"
-                    aria-invalid={fieldState.invalid}
+                    className="w-full min-h-[320px]"
                   />
                   <FormMessage />
                 </FormItem>
