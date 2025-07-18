@@ -167,7 +167,7 @@ export const TextEditor = ({
   return (
     <div className={cn("border border-gray-200 rounded-lg overflow-hidden", className)}>
       <MenuBar />
-      <div className="min-h-[300px]">
+      <div className="min-h-[300px] max-h-[400px] overflow-auto">
         <EditorContent
           editor={editor}
           placeholder={placeholder}

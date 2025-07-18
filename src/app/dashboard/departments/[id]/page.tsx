@@ -183,9 +183,6 @@ const DepartmentDetailComponent = () => {
 
   // Handle view resource
   const handleViewResource = (resource: Resource) => {
-    debugger;
-    // Set the selected resource ID to fetch its details
-    console.log("Viewing resource:", resource);
     if (resource.id)
       router.push(
         `/dashboard/departments/${departmentId}/documents/${resource.id}`
@@ -218,7 +215,6 @@ const DepartmentDetailComponent = () => {
   };
 
   const handleViewChunk = (resource: Resource) => {
-    debugger;
     if (departmentId && resource.code) {
       // Navigate to the document detail page with department context
       router.push(

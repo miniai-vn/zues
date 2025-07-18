@@ -3,8 +3,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 
 export interface Chunk {
-  pk: string;
-  text: string;
+  id: string;
+  original_content: string;
   createdAt?: string;
   isPublic?: boolean;
   updatedAt?: string;
@@ -45,7 +45,7 @@ const createChunk = async (chunk: Chunk) => {
 
 const updateChunk = async (chunk: Chunk) => {
   const response = await axiosInstance.put(
-    `/api/agent-service/chunks/${chunk.pk}`,
+    `/api/agent-service/chunks/${chunk.id}`,
     chunk
   );
   return response.data;

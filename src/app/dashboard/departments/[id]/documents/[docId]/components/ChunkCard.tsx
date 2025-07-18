@@ -22,15 +22,19 @@ const ChunkCard = ({ chunk, updateChunk }: DocumentCardProps) => {
       `}
     >
       <CardHeader className="space-y-0 flex flex-row w-full items-center justify-between p-0">
-        <div className="flex flex-col">
-          <Badge variant="default">{chunk.code}</Badge>
+        <div className="flex flex-col ">
+          <Badge variant="default" className="truncate max-w-[120px]">
+            {chunk.id}
+          </Badge>
         </div>
         <div className="popover-trigger">
           <CreateOrUpdateChunkModal onChange={updateChunk} chunk={chunk} />
         </div>
       </CardHeader>
       <CardContent className="p-0 h-24 mt-4">
-        <p className="text-gray-800 text-xs line-clamp-4">{chunk.text}</p>
+        <p className="text-gray-800 text-xs line-clamp-4">
+          {chunk.original_content}
+        </p>
       </CardContent>
       <CardFooter className="p-0  border-t border-gray-100 flex items-center justify-between">
         <div className="flex items-center">

@@ -17,7 +17,7 @@ export default function DocumentCartList({
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {chunks.map((chunk, index) => (
-          <div key={chunk.pk || `chunk-${index}`} className="relative">
+          <div key={chunk.id || `chunk-${index}`} className="relative">
             <ChunkCard
               deleteChunk={deleteChunk}
               updateChunk={updateChunk}

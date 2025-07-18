@@ -22,20 +22,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import useDepartments, { Department } from "@/hooks/data/useDepartments";
-
-import { Calendar, Eye, Folder, MoreVertical, Trash2 } from "lucide-react";
+import { Calendar, Eye, Folder, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+import CreateOrUpdateDeptDialog from "./modal/CreateDeptModal";
 
 interface CardDepartmentProps {
   department: Department;
 }
 
-import { AlertDialogComponent } from "@/components/dashboard/alert-modal";
-import dayjs from "dayjs";
-import CreateOrUpdateDeptDialog from "./modal/CreateDeptModal";
-
 export function CardDepartment({ department }: CardDepartmentProps) {
-  const { deleteDepartment, updateDepartment } = useDepartments({});
+  const { updateDepartment } = useDepartments({});
   const router = useRouter();
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -58,7 +55,7 @@ export function CardDepartment({ department }: CardDepartmentProps) {
   return (
     <TooltipProvider>
       <Card
-        className="w-full max-w-md max-h-80 border-2 border-dashed border-muted hover:border-primary/50 rounded-lg cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] group flex flex-col"
+        className="w-full max-w-md max-h-80 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.01] group flex flex-col"
         onClick={handleCardClick}
       >
         <CardHeader className="p-0 flex-shrink-0">
@@ -77,9 +74,6 @@ export function CardDepartment({ department }: CardDepartmentProps) {
                   <p>{department.name}</p>
                 </TooltipContent>
               </Tooltip>
-              <Badge variant="secondary" className="mt-1 text-xs">
-                Department
-              </Badge>
             </div>
             <div
               className="flex items-center"
@@ -90,39 +84,20 @@ export function CardDepartment({ department }: CardDepartmentProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-8 w-8 p-0 opacity-0 transition-opacity"
                   >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={handleViewDepartment}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Department
-                  </DropdownMenuItem>
+                <DropdownMenuContent align="end">
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem>
                     <CreateOrUpdateDeptDialog
                       onChange={updateDepartment}
                       department={department}
                     />
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <AlertDialogComponent
-                      description="This action cannot be undone. This will permanently delete the department and all its associated data."
-                      title="Delete Department"
-                      onConfirm={() =>
-                        deleteDepartment(department.id as string)
-                      }
-                      onCancel={() => {}}
-                    >
-                      <div className="flex items-center w-full cursor-pointer text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete Department
-                      </div>
-                    </AlertDialogComponent>
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -160,7 +135,7 @@ export function CardDepartment({ department }: CardDepartmentProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-full w-full p-0 opacity-0 transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleViewDepartment();
