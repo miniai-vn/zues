@@ -500,6 +500,7 @@
         "description": "Description",
         "uploadTime": "Upload Time",
         "status": "Status",
+        "availability": "Availability",
         "statusValues": {
           "new": "New",
           "processing": "Processed",
@@ -662,7 +663,13 @@
     "enterMemberEmail": "Enter member's email",
     "selectPermission": "Select permission",
     "noResults": "No results.",
-    "rowsPerPage": "Rows per page"
+    "rowsPerPage": "Rows per page",
+    "uploadFiles": "Upload Files",
+    "dragDropOrClick": "Drag and drop files here, or click to select files",
+    "selectFiles": "Select Files",
+    "selectedFiles": "Selected Files ({{count}})",
+    "uploadAll": "Upload All",
+    "clearAll": "Clear All"
   },
   "validation": {
     "required": "This field is required",

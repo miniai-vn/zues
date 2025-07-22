@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
 import { Resource } from "@/hooks/data/useResource";
 import useTranslations from "@/hooks/useTranslations";
 import dayjs from "dayjs";
@@ -236,6 +235,22 @@ const TreeTable: React.FC<TreeTableProps> = ({
             </td>
           )}
 
+          {columnVisibility.isActive && (
+            <td className="p-2 align-middle">
+              <div className="flex items-center justify-center">
+                {node.isActive ? (
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Khả dụng
+                  </span>
+                ) : (
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    Không khả dụng
+                  </span>
+                )}
+              </div>
+            </td>
+          )}
+
           {columnVisibility.actions && (
             <td className="p-2 align-middle">
               <div className="flex items-center justify-center w-full gap-2">
@@ -451,6 +466,13 @@ const TreeTable: React.FC<TreeTableProps> = ({
                 <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">
                   <div className="text-center">
                     {t("dashboard.departments.detail.status")}
+                  </div>
+                </th>
+              )}
+              {columnVisibility.isActive && (
+                <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground">
+                  <div className="text-center">
+                    {t("dashboard.departments.detail.availability")}
                   </div>
                 </th>
               )}

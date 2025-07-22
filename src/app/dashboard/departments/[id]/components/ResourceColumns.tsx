@@ -152,6 +152,22 @@ export const useResourceColumns = ({
               "dashboard.departments.detail.statusValues.processing"
             );
             statusClass = "bg-yellow-100 text-yellow-800";
+            return (
+              <div className="flex items-center justify-center w-full">
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusClass} flex items-center gap-2`}
+                >
+                  <div className="animate-spin w-3 h-3 border border-yellow-600 border-t-transparent rounded-full"></div>
+                  {statusText}
+                </span>
+              </div>
+            );
+
+          case "completed":
+            statusText = t(
+              "dashboard.departments.detail.statusValues.completed"
+            );
+            statusClass = "bg-green-100 text-green-800";
             break;
           case "finished":
             statusText = t(

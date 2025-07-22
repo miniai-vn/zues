@@ -75,7 +75,7 @@ const useChunk = ({
   const { toast } = useToast();
 
   // Get all chunks with pagination and filtering
-  const {
+  const { 
     data: chunksResponse,
     isLoading: isFetchingChunks,
     refetch: refetchChunks,

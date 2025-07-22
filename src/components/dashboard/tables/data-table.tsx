@@ -248,7 +248,7 @@ export function DataTable<TData, TValue>({
       </CardContent>
     </Card>
   );
-
+  console.log(currentPage, totalPages, pageSize, totalItems);
   return (
     <div className="rounded-md border flex flex-col h-full">
       <div className="relative flex-1 min-h-0 overflow-auto">

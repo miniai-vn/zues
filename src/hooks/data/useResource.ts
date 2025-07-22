@@ -63,10 +63,9 @@ const useResource = ({
           departmentId: departmentId,
         },
       });
-
       return {
         items: res.data.items || res.data || [],
-        totalCount: res.data.totalCount || res.data?.length || 0,
+        total: res.total || res.data?.length || 0,
         page: page,
         limit: limit,
       };
@@ -104,19 +103,6 @@ const useResource = ({
           },
         });
         return response.data;
-      },
-      onSuccess: () => {
-        toast({
-          title: "Tải lên thành công",
-          description: "Tải lên tài liệu thành công",
-        });
-        refetchResource();
-      },
-      onError: () => {
-        toast({
-          title: "Tải lên thất bại",
-          description: "Tải lên tài liệu thất bại",
-        });
       },
     });
 

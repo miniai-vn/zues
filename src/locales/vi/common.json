@@ -498,6 +498,7 @@
         "description": "Mô tả",
         "uploadTime": "Thời gian tải lên",
         "status": "Trạng thái",
+        "availability": "Khả dụng",
         "statusValues": {
           "new": "Mới",
           "processing": "Đang xử lý",
@@ -660,7 +661,13 @@
     "enterMemberEmail": "Nhập email của thành viên",
     "selectPermission": "Chọn quyền",
     "noResults": "Không có kết quả.",
-    "rowsPerPage": "Dòng mỗi trang"
+    "rowsPerPage": "Dòng mỗi trang",
+    "uploadFiles": "Tải lên tệp",
+    "dragDropOrClick": "Kéo thả tệp vào đây hoặc bấm để chọn tệp",
+    "selectFiles": "Chọn tệp",
+    "selectedFiles": "Đã chọn {{count}} tệp",
+    "uploadAll": "Tải lên tất cả",
+    "clearAll": "Xóa tất cả"
   },
   "validation": {
     "required": "Trường này là bắt buộc",

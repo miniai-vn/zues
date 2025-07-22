@@ -33,6 +33,7 @@ interface ResourceFiltersProps {
     name: boolean;
     type: boolean;
     size: boolean;
+    isActive: boolean;
     description: boolean;
     createdAt: boolean;
     status: boolean;
@@ -44,6 +45,7 @@ interface ResourceFiltersProps {
       name: boolean;
       type: boolean;
       size: boolean;
+      isActive: boolean;
       description: boolean;
       createdAt: boolean;
       status: boolean;

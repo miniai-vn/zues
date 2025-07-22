@@ -26,11 +26,17 @@ export default function DocumentDetailsPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 500);
 
-  const { chunks, createChunk, deleteChunk, updateChunk, refetchChunks } =
-    useChunk({
-      code: docId,
-      search: debouncedSearch,
-    });
+  const {
+    chunks,
+    isFetchingChunks,
+    createChunk,
+    deleteChunk,
+    updateChunk,
+    refetchChunks,
+  } = useChunk({
+    code: docId,
+    search: debouncedSearch,
+  });
   const { resourceDetail } = useResource({
     id: docId,
   });
@@ -85,7 +91,12 @@ export default function DocumentDetailsPage() {
 
           {/* Chunks Content */}
           <div className="flex-1 min-h-0 overflow-auto">
-            {chunks?.length === 0 ? (
+            {isFetchingChunks ? (
+              <div className="flex flex-1 flex-col items-center justify-center min-h-[300px] gap-2">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent" />
+                <span className="text-muted-foreground">Đang tải phân đoạn...</span>
+              </div>
+            ) : chunks?.length === 0 ? (
               <div className="flex flex-1 flex-col gap-4 p-4 pt-0 items-center justify-center min-h-[400px]">
                 <FileText className="h-16 w-16 text-gray-400" />
                 <span className="text-lg text-muted-foreground">

@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useState, useRef, useCallback } from "react";
+import useTranslations from "@/hooks/useTranslations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -35,7 +36,10 @@ const formatFileSize = (bytes: number) => {
   );
 };
 
-export default function MultipleFileUpload() {
+export default function MultipleFileUpload(props: {
+  handleFileChange: (files: File) => void;
+}) {
+  const { t } = useTranslations();
   const [files, setFiles] = useState<FileWithProgress[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -110,6 +114,16 @@ export default function MultipleFileUpload() {
   const uploadAll = async () => {
     const pendingFiles = files.filter((f) => f.status === "pending");
 
+    // upload all files concurrently
+    if (pendingFiles.length === 0) {
+      return;
+    }
+
+    files.map((file) => {
+      props.handleFileChange(file.file);
+    });
+
+    
     // Upload files concurrently
     await Promise.all(pendingFiles.map((file) => simulateUpload(file)));
   };
@@ -119,12 +133,12 @@ export default function MultipleFileUpload() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-4">
+    <div className="w-full max-w-2xl mx-auto space-y-4" >
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <div
             className={cn(
-              "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
+              "border-2 border-dashed rounded-lg p-4 text-center transition-colors",
               isDragOver
                 ? "border-primary bg-primary/5"
                 : "border-muted-foreground/25 hover:border-muted-foreground/50"
@@ -134,15 +148,15 @@ export default function MultipleFileUpload() {
             onDrop={handleDrop}
           >
             <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Upload Files</h3>
+            <h3 className="text-lg font-semibold mb-2">{t("common.uploadFiles")}</h3>
             <p className="text-muted-foreground mb-4">
-              Drag and drop files here, or click to select files
+              {t("common.dragDropOrClick")}
             </p>
             <Button
               onClick={() => fileInputRef.current?.click()}
               variant="outline"
             >
-              Select Files
+              {t("common.selectFiles")}
             </Button>
             <input
               ref={fileInputRef}
@@ -150,7 +164,7 @@ export default function MultipleFileUpload() {
               multiple
               className="hidden"
               onChange={handleFileInput}
-              accept="*/*"
+              accept=".pdf,.doc,.docx,.xlsx,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
             />
           </div>
         </CardContent>
@@ -158,10 +172,10 @@ export default function MultipleFileUpload() {
 
       {files.length > 0 && (
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-6 overflow-y-auto max-h-[400px]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">
-                Selected Files ({files.length})
+                {t("common.selectedFiles", { count: files.length })}
               </h3>
               <div className="space-x-2">
                 <Button
@@ -169,10 +183,10 @@ export default function MultipleFileUpload() {
                   disabled={files.every((f) => f.status !== "pending")}
                   size="sm"
                 >
-                  Upload All
+                  {t("common.uploadAll")}
                 </Button>
                 <Button onClick={clearAll} variant="outline" size="sm">
-                  Clear All
+                {t("common.clearAll")}
                 </Button>
               </div>
             </div>

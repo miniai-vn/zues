@@ -23,7 +23,7 @@ const DepartmentDetailComponent = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [viewMode, setViewMode] = useState<"table" | "tree">("tree");
+  const [viewMode, setViewMode] = useState<"table" | "tree">("table");
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Set<string | number>>(
     new Set()
@@ -37,6 +37,7 @@ const DepartmentDetailComponent = () => {
     name: true,
     type: true,
     size: false,
+    isActive: true,
     description: true,
     createdAt: true,
     status: true,
@@ -69,7 +70,6 @@ const DepartmentDetailComponent = () => {
     limit: pageSize,
     search,
   });
-
   useEffect(() => {
     if (socket) {
       console.log("Setting up socket listener for resource updates");
@@ -181,16 +181,6 @@ const DepartmentDetailComponent = () => {
     return flattenTreeData(treeData, expandedNodes);
   }, [treeData, expandedNodes]);
 
-  // Handle view resource
-  const handleViewResource = (resource: Resource) => {
-    if (resource.id)
-      router.push(
-        `/dashboard/departments/${departmentId}/documents/${resource.id}`
-      );
-    else router.push(`/dashboard/departments/${departmentId}/documents`);
-
-    setSelectedResourceId(String(resource.id));
-  };
 
   // Handle edit resource
   const handleEditResource = (resource: Resource, content?: string) => {
@@ -258,7 +248,7 @@ const DepartmentDetailComponent = () => {
               filteredData={filteredData}
               page={page}
               pageSize={pageSize}
-              totalCount={materialItems?.totalCount || 0}
+              totalCount={materialItems?.total || 0}
               onPaginationChange={handlePaginationChange}
               onPageSizeChange={handlePageSizeChange}
               isLoading={
@@ -271,7 +261,7 @@ const DepartmentDetailComponent = () => {
               onSyncResource={syncResource}
               onDeleteResource={deleteResource}
               onReEtl={reEtl}
-              onViewResource={handleViewResource}
+              onViewResource={handleViewChunk}
               onEditResource={handleEditResource}
               onToggleResourceStatus={handleToggleResourceStatus}
               onHandleUploadFile={onHandleUploadFile}

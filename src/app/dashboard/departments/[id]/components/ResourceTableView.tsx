@@ -109,7 +109,6 @@ export const ResourceTableView = ({
       />
     );
   }
-
   return (
     <DataTable
       columns={visibleColumns}
