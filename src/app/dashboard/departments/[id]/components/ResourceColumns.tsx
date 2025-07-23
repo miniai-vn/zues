@@ -99,6 +99,7 @@ export const useResourceColumns = ({
         </div>
       ),
     },
+
     {
       accessorKey: "description",
       header: t("dashboard.departments.detail.description"),
@@ -109,6 +110,26 @@ export const useResourceColumns = ({
             <span className="line-clamp-2 text-sm" title={description}>
               {description}
             </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "isActive",
+      header: t("dashboard.departments.detail.isActive"),
+      cell: (row) => {
+        const isActive = row.row.original.isActive;
+        return (
+          <div className="flex items-center justify-center">
+            {isActive ? (
+              <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Khả dụng
+              </span>
+            ) : (
+              <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                Không khả dụng
+              </span>
+            )}
           </div>
         );
       },

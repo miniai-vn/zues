@@ -181,7 +181,6 @@ const DepartmentDetailComponent = () => {
     return flattenTreeData(treeData, expandedNodes);
   }, [treeData, expandedNodes]);
 
-
   // Handle edit resource
   const handleEditResource = (resource: Resource, content?: string) => {
     if (resource.id && updateResource) {

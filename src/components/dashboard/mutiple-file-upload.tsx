@@ -119,13 +119,11 @@ export default function MultipleFileUpload(props: {
       return;
     }
 
+    // Upload files concurrently
+    await Promise.all(pendingFiles.map((file) => simulateUpload(file)));
     files.map((file) => {
       props.handleFileChange(file.file);
     });
-
-    
-    // Upload files concurrently
-    await Promise.all(pendingFiles.map((file) => simulateUpload(file)));
   };
 
   const clearAll = () => {
@@ -133,7 +131,7 @@ export default function MultipleFileUpload(props: {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-4" >
+    <div className="w-full max-w-2xl mx-auto space-y-4">
       <Card>
         <CardContent className="p-4">
           <div
@@ -148,7 +146,9 @@ export default function MultipleFileUpload(props: {
             onDrop={handleDrop}
           >
             <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">{t("common.uploadFiles")}</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {t("common.uploadFiles")}
+            </h3>
             <p className="text-muted-foreground mb-4">
               {t("common.dragDropOrClick")}
             </p>
@@ -186,7 +186,7 @@ export default function MultipleFileUpload(props: {
                   {t("common.uploadAll")}
                 </Button>
                 <Button onClick={clearAll} variant="outline" size="sm">
-                {t("common.clearAll")}
+                  {t("common.clearAll")}
                 </Button>
               </div>
             </div>

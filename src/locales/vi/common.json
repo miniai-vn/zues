@@ -435,6 +435,7 @@
         "subtitle": "Quản lý vai trò người dùng và quyền hạn tương ứng.",
         "permissionsColumn": "Quyền hạn",
         "saveChanges": "Lưu thay đổi",
+        "isActive": "Hoạt động",
         "breadcrumbs": {
           "permissions": "Phân quyền"
         }
@@ -506,6 +507,7 @@
           "completed": "Hoàn thành",
           "active": "Hoạt động"
         },
+        "isActive": "Hoạt động",
         "confirmDeleteDocument": "Bạn có chắc chắn muốn xóa tài liệu này không?",
         "deleteDocument": "Xóa tài liệu",
         "viewResource": "Xem tài liệu",

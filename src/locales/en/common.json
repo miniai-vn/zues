@@ -437,6 +437,7 @@
         "subtitle": "Manage user roles and corresponding permissions.",
         "permissionsColumn": "Permissions",
         "saveChanges": "Save Changes",
+        "isActive": "Active",
         "breadcrumbs": {
           "permissions": "Permissions"
         }
