@@ -52,58 +52,54 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   useEffect(() => {
     if (!socketChatIo) return;
     const handleReceiveMessage = (data: Message) => {
+      // Nếu là cuộc trò chuyện hiện tại
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
         readConversations(data.conversationId as number);
+
+        // Đưa conversation hiện tại lên đầu nếu chưa ở top
+        const currentIndex = conversations.findIndex(
+          (conv) => conv.id === data.conversationId
+        );
+        if (currentIndex > 0) {
+          const updatedConversations = [
+            conversations[currentIndex],
+
+            ...conversations.slice(0, currentIndex),
+            ...conversations.slice(currentIndex + 1),
+          ];
+          setConversations(updatedConversations);
+        }
         return;
       }
 
+      // Tìm cuộc trò chuyện tương ứng
       const existingConversation = conversations.find(
         (conv) => conv.id === data.conversationId
       );
+      if (!existingConversation) return;
 
-      if (existingConversation) {
-        // Check if the conversation is already at the top
-        const isAlreadyAtTop = conversations[0]?.id === data.conversationId;
-
-        if (isAlreadyAtTop) {
-          // Just update the conversation without sorting
-          const updatedConversations = conversations.map((conv) =>
-            conv.id === data.conversationId
-              ? {
-                  ...conv,
-                  unreadMessagesCount: conv.unreadMessagesCount + 1,
-                  lastestMessage: data.content,
-                  updatedAt: new Date().toISOString(),
-                }
-              : conv
-          );
-          setConversations(updatedConversations);
-        } else {
-          // Update and sort to bring to top
-          const updatedConversations = conversations.map((conv) =>
-            conv.id === data.conversationId
-              ? {
-                  ...conv,
-                  unreadMessagesCount: conv.unreadMessagesCount + 1,
-                  lastestMessage: data.content,
-                  updatedAt: new Date().toISOString(),
-                }
-              : conv
-          );
-
-          // Sort conversations to bring the updated one to the top
-          const sortedConversations = [
-            ...updatedConversations.filter(
-              (conv) => conv.id === data.conversationId
-            ),
-            ...updatedConversations.filter(
-              (conv) => conv.id !== data.conversationId
-            ),
-          ];
-
-          setConversations(sortedConversations);
-        }
+      // Tạo bản ghi mới cho cuộc trò chuyện vừa nhận tin nhắn
+      const updatedConversation = {
+        ...existingConversation,
+        unreadMessagesCount: existingConversation?.unreadMessagesCount + 1,
+        lastestMessage: data.content,
+        updatedAt: new Date().toISOString(),
+      };
+      // Nếu đã ở đầu danh sách, chỉ cần cập nhật
+      const isAlreadyAtTop = conversations[0]?.id === data.conversationId;
+      if (isAlreadyAtTop) {
+        setConversations(
+          conversations.map((conv) =>
+            conv.id === data.conversationId ? updatedConversation : conv
+          )
+        );
+      } else {
+        // Đưa cuộc trò chuyện vừa nhận lên đầu danh sách
+        const otherConversations = conversations.filter(
+          (conv) => conv.id !== data.conversationId
+        );
+        setConversations([updatedConversation, ...otherConversations]);
       }
     };
 
@@ -125,8 +121,6 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
         avatar?: string;
       };
     }) => {
-      
-
       // Update the message to include the readBy information
       setMessages((prevMessages) =>
         prevMessages.map((message) => {

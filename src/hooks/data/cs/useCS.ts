@@ -210,6 +210,7 @@ const useCS = ({
     if (conversationFilters.channelId) {
       params.channelId = conversationFilters.channelId;
     }
+    params.channelType = "zalo"
     return params;
   }, [conversationFilters]);
 

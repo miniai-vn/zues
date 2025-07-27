@@ -123,7 +123,7 @@ export const getPlatforms = (t: (key: string) => string): Platform[] => [
 
 interface PlatformListProps {
   selectedChannel?: string;
-  onSelectChannel: (platformId: string) => void;
+  onSelectChannel?: (platformId: string) => void;
 }
 
 export const PlatformList = ({
@@ -174,9 +174,9 @@ export const PlatformList = ({
   const visiblePlatforms = getVisiblePlatforms();
 
   return (
-    <div className="w-16 border-r h-full bg-gray-50/50  ">
-      <div className="p-2 border-b">
-        <div className="space-y-2 h-[72vh] overflow-y-auto flex-shrink-0">
+    <div className=" border-r h-full bg-gray-50/50  ">
+      <div className="p-2 ">
+        <div className="space-y-2  ">
           {visiblePlatforms.map((platform: Platform) => {
             const isSelected = selectedChannel === platform.id;
             const unreadCount = getUnreadCount(platform.id);

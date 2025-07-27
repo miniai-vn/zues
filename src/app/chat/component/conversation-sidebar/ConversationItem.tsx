@@ -100,13 +100,13 @@ export const ConversationItem = ({
               )}
             </>
           )}
-          <Badge
+          {/* <Badge
             onClick={() => updateConversationStatusBot(conversation.id)}
             variant="secondary"
             className="ml-2"
           >
             {conversation.isBot ? "Auto reply" : "Manual reply"}
-          </Badge>
+          </Badge> */}
         </div>
       </div>
       <DropdownMenu>

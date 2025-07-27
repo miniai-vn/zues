@@ -60,18 +60,6 @@ const useAuth = ({
     loadUserFromLocalStorage();
   }, []);
   const { toast } = useToast();
-  const { data: users, isFetching } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const response = await axiosInstance.get("/api/auth/users", {
-        params: { search },
-      });
-      return (response.data as User[]) ?? [];
-    },
-    enabled: !!user,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
 
   const { data: usersWithCs, isFetching: isFetchingUsersWithCs } = useQuery({
     queryKey: ["user", "withCs"],
@@ -200,6 +188,7 @@ const useAuth = ({
   } = useQuery({
     queryKey: ["user", { page, limit, search }],
     queryFn: async () => {
+      debugger
       const response = await axiosInstance.get("/api/auth/users", {
         params: { page, limit, search },
       });
@@ -214,10 +203,8 @@ const useAuth = ({
   });
 
   return {
-    users,
     usersWithCs,
     isFetchingUsersWithCs,
-    isFetching,
     user,
     isPendingCreateUser,
     isPendingUpdateUser,

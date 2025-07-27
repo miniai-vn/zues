@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { ChatHeader, EmptyState, MessageInput, MessageList } from "./chat-area";
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "./participients-manager";
-import TagManagementSheet from "./tag-manager";
+import TagManagementSheet from "@/components/tag-manager";
 
 interface ChatAreaProps {
   conversationId?: number;
