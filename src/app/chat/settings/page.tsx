@@ -1,24 +1,8 @@
 "use client";
-import { useState } from "react";
-import {
-  Download,
-  FileText,
-  Eye,
-  EyeOff,
-  Phone,
-  MessageSquare,
-  Key,
-  Plus,
-  Search,
-  Upload,
-  Smile,
-  Image as ImageIcon,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -26,20 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
+import { Download, FileText, MessageSquare } from "lucide-react";
+import { useState } from "react";
 import { TagManagement } from "./TagManagement";
+import { TemplateManagement } from "./TemplateManagement";
+import { UserManagement } from "./UserManagement";
 
 export default function Settings() {
   const [settings, setSettings] = useState({
@@ -63,52 +41,6 @@ export default function Settings() {
     },
   });
 
-  const [tags] = useState([
-    {
-      id: 1,
-      name: "VIP",
-      conversations: 15,
-      date: "2024-01-15",
-      color: "blue",
-    },
-    {
-      id: 2,
-      name: "Hot Lead",
-      conversations: 23,
-      date: "2024-01-10",
-      color: "red",
-    },
-    {
-      id: 3,
-      name: "Follow Up",
-      conversations: 8,
-      date: "2024-01-08",
-      color: "green",
-    },
-  ]);
-
-  const [staff] = useState([
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      conversations: 25,
-      date: "2024-01-01",
-      role: "Admin",
-    },
-    {
-      id: 2,
-      name: "Trần Thị B",
-      conversations: 18,
-      date: "2024-01-05",
-      role: "Staff",
-    },
-  ]);
-
-  const [templates] = useState([
-    { id: "WELCOME", content: "Chào mừng bạn đến với cửa hàng của chúng tôi!" },
-    { id: "THANK", content: "Cảm ơn bạn đã quan tâm đến sản phẩm!" },
-  ]);
-
   const handleSave = () => {
     toast({
       title: "Đã lưu cài đặt",
@@ -116,7 +48,11 @@ export default function Settings() {
     });
   };
 
-  const updateSetting = (category: string, key: string, value: any) => {
+  const updateSetting = (
+    category: string,
+    key: string,
+    value: boolean | string
+  ) => {
     setSettings((prev) => ({
       ...prev,
       [category]: {
@@ -127,7 +63,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex-1 bg-background">
+    <div className="flex-1 bg-background w-full max-h-screen overflow-y-auto max-w-screen">
       {/* Top Navigation */}
       <div className="border-b border-border bg-card">
         <div className="px-6 py-4">
@@ -431,73 +367,7 @@ export default function Settings() {
 
               {/* Staff Management Tab */}
               <TabsContent value="staff" className="space-y-6 mt-0">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold text-foreground">
-                      Quản lý nhân viên
-                    </h1>
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input
-                          placeholder="Tìm kiếm thẻ..."
-                          className="pl-10 w-64"
-                        />
-                      </div>
-                      <Button className="bg-primary hover:bg-primary/90">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Tạo thẻ mới
-                      </Button>
-                      <Button variant="outline">
-                        <Download className="h-4 w-4 mr-2" />
-                        Sắp xếp
-                      </Button>
-                    </div>
-                  </div>
-
-                  <Card>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Tên nhân viên</TableHead>
-                          <TableHead>Số hội thoại đã gán</TableHead>
-                          <TableHead>Ngày tạo</TableHead>
-                          <TableHead>Vai trò</TableHead>
-                          <TableHead>Hành động</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {staff.map((member) => (
-                          <TableRow key={member.id}>
-                            <TableCell className="font-medium">
-                              {member.name}
-                            </TableCell>
-                            <TableCell>{member.conversations}</TableCell>
-                            <TableCell>{member.date}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary">{member.role}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <EyeOff className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </Card>
-
-                  <div className="text-sm text-muted-foreground">
-                    Tổng: {staff.length} &nbsp;&nbsp;&nbsp; Số nhân viên đã gán
-                    thẻ: {staff.length}
-                  </div>
-                </div>
+                <UserManagement />
               </TabsContent>
 
               {/* Tag Management Tab */}
@@ -507,176 +377,7 @@ export default function Settings() {
 
               {/* Message Templates Tab */}
               <TabsContent value="messages" className="space-y-6 mt-0">
-                <div className="space-y-6">
-                  <h1 className="text-2xl font-semibold text-foreground">
-                    Tin nhắn mẫu
-                  </h1>
-
-                  <div className="grid grid-cols-3 gap-6">
-                    {/* Left Column - Template Creation */}
-                    <div className="space-y-4">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg">
-                            Tin nhắn mẫu
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start"
-                          >
-                            <Upload className="h-4 w-4 mr-2" />
-                            Nhập từ file Excel
-                          </Button>
-
-                          <div className="space-y-2">
-                            <Label>Tất cả các kênh</Label>
-                            <Select defaultValue="all">
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="all">
-                                  Tất cả các kênh
-                                </SelectItem>
-                                <SelectItem value="facebook">
-                                  Facebook
-                                </SelectItem>
-                                <SelectItem value="zalo">Zalo</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Chọn cửa hàng</Label>
-                            <Select defaultValue="all">
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="all">
-                                  Tất cả cửa hàng
-                                </SelectItem>
-                                <SelectItem value="store1">
-                                  Cửa hàng 1
-                                </SelectItem>
-                                <SelectItem value="store2">
-                                  Cửa hàng 2
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Mã</Label>
-                            <Input placeholder="/" />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label>Nội dung tin nhắn</Label>
-                            <Textarea
-                              placeholder="Nội dung tin nhắn"
-                              className="min-h-[100px]"
-                            />
-                          </div>
-
-                          <div className="flex items-center gap-2 text-sm text-blue-600">
-                            <ImageIcon className="h-4 w-4" />
-                            <Smile className="h-4 w-4" />
-                            <span>Chọn nội dung có sẵn</span>
-                          </div>
-
-                          <Button className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300">
-                            Tạo
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    {/* Right Columns - Template List */}
-                    <div className="col-span-2 space-y-4">
-                      <Card>
-                        <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">
-                              Danh sách tin nhắn mẫu
-                            </CardTitle>
-                            <Button variant="outline" size="sm">
-                              <Upload className="h-4 w-4 mr-2" />
-                              Xuất file Excel
-                            </Button>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div className="space-y-2">
-                              <Label>Chọn kênh</Label>
-                              <Select defaultValue="all">
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="all">
-                                    Tất cả các kênh
-                                  </SelectItem>
-                                  <SelectItem value="facebook">
-                                    Facebook
-                                  </SelectItem>
-                                  <SelectItem value="zalo">Zalo</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label>Chọn cửa hàng</Label>
-                              <Select defaultValue="all">
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="all">
-                                    Tất cả các cửa hàng
-                                  </SelectItem>
-                                  <SelectItem value="store1">
-                                    Cửa hàng 1
-                                  </SelectItem>
-                                  <SelectItem value="store2">
-                                    Cửa hàng 2
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-
-                          <div className="relative mb-4">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                            <Input placeholder="Tìm kiếm" className="pl-10" />
-                          </div>
-
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Mã</TableHead>
-                                <TableHead>Tin nhắn</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {templates.map((template) => (
-                                <TableRow key={template.id}>
-                                  <TableCell className="font-medium">
-                                    {template.id}
-                                  </TableCell>
-                                  <TableCell>{template.content}</TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-                </div>
+                <TemplateManagement />
               </TabsContent>
 
               <TabsContent value="mail" className="space-y-6 mt-0">

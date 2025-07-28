@@ -4,23 +4,12 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { BarChart2, Settings } from "lucide-react";
 
-interface ChatSidebarProps {
-  selectedChannel?: string;
-  onSelectChannel?: (platformId: string) => void;
-}
-
-export const ChatSidebar = ({
-  selectedChannel,
-  onSelectChannel,
-}: ChatSidebarProps) => {
+export const ChatSidebar = () => {
   const router = useRouter();
 
   return (
     <aside className="border-r flex flex-col justify-vertical h-full bg-gray-50/50 ">
-      <PlatformList
-        selectedChannel={selectedChannel}
-        onSelectChannel={onSelectChannel}
-      />
+      <PlatformList />
       <div className="p-2 border-b">
         <div className="flex flex-col gap-2 mt-4">
           <Button

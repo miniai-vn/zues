@@ -4,7 +4,6 @@ import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "@/hooks/useTranslations";
-
 export interface Platform {
   id: string;
   type: string;
@@ -121,17 +120,13 @@ export const getPlatforms = (t: (key: string) => string): Platform[] => [
   },
 ];
 
-interface PlatformListProps {
-  selectedChannel?: string;
-  onSelectChannel?: (platformId: string) => void;
-}
-
-export const PlatformList = ({
-  selectedChannel,
-  onSelectChannel,
-}: PlatformListProps) => {
+export const PlatformList = () => {
   const { t } = useTranslations();
-  const { channelsUnreadCount: channelsWithUnreadMessage } = useCsStore();
+  const {
+    channelsUnreadCount: channelsWithUnreadMessage,
+    selectedChannelId,
+    setSelectedChannelId,
+  } = useCsStore();
   const router = useRouter();
 
   const platforms = getPlatforms(t);
@@ -178,7 +173,7 @@ export const PlatformList = ({
       <div className="p-2 ">
         <div className="space-y-2  ">
           {visiblePlatforms.map((platform: Platform) => {
-            const isSelected = selectedChannel === platform.id;
+            const isSelected = selectedChannelId === platform.id;
             const unreadCount = getUnreadCount(platform.id);
 
             return (
@@ -190,7 +185,10 @@ export const PlatformList = ({
                     ? `${platform.bgColor} ${platform.borderColor} shadow-sm`
                     : "hover:bg-white border-transparent hover:border-gray-200"
                 )}
-                onClick={() => onSelectChannel(platform.id)}
+                onClick={() => {
+                  setSelectedChannelId(platform.id);
+                  router.push("/chat");
+                }}
                 title={`${platform.name} - ${platform.description}`}
               >
                 <div

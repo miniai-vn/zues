@@ -28,11 +28,13 @@ export const ChatHeader = ({
   setShowParticipantManagement, // <-- Destructure here
 }: ChatHeaderProps) => {
   const { t } = useTranslations();
+  const defaultAvatar =
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
   return (
     <div className="border-b p-4 flex items-center justify-between bg-background sticky top-0 z-10">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversationAvatar ?? undefined} />
+          <AvatarImage src={conversationAvatar ?? defaultAvatar} />
           <AvatarFallback>
             {conversationName?.charAt(0)?.toUpperCase() || "?"}
           </AvatarFallback>

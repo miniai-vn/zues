@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
+import MessageSuggestions from "./MessageSugestion";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -21,7 +22,8 @@ export const MessageInput = ({
 }: MessageInputProps) => {
   const { t } = useTranslations();
   const [message, setMessage] = useState("");
-
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const displayPlaceholder = placeholder || t("dashboard.chat.typeMessage");
 
   const handleSend = () => {
@@ -35,10 +37,45 @@ export const MessageInput = ({
       e.preventDefault();
       handleSend();
     }
+    if (e.key === "/" || (e.key.startsWith("/") && e.key.length > 1)) {
+      setShowSuggestions(true);
+    } else if (e.key === "Backspace") {
+      // Nếu không còn dấu / trong message thì ẩn suggestions
+      if (!message.includes("/")) {
+        setShowSuggestions(false);
+      }
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionSelect = (suggestion: string) => {
+    // Create a synthetic event to update the input
+    const syntheticEvent = {
+      target: { value: suggestion },
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    setMessage(syntheticEvent.target.value);
+    setShowSuggestions(false);
+    setSearchQuery("");
+    // inputRef.current?.focus();
+  };
+
+  const handleSuggestionsClose = () => {
+    setShowSuggestions(false);
+    setSearchQuery("");
+    // inputRef.current?.focus();
   };
 
   return (
-    <div className="border-t p-4 bg-background w-full">
+    <div className="border-t relative p-4 bg-background w-full">
+      {showSuggestions && (
+        <MessageSuggestions
+          onSelect={handleSuggestionSelect}
+          onClose={handleSuggestionsClose}
+          searchQuery={searchQuery}
+        />
+      )}
       <div className="flex items-center gap-2">
         <Button
           size="sm"

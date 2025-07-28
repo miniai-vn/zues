@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useConversations from "@/hooks/data/cs/useConversations";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, Tag } from "lucide-react";
@@ -25,7 +24,8 @@ export const ConversationItem = ({
   onClick,
   onTagDialog,
 }: ConversationItemProps) => {
-  const { updateConversationStatusBot } = useConversations();
+  const defaultAvatar =
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
 
   return (
     <div
@@ -40,7 +40,7 @@ export const ConversationItem = ({
       <div className="relative">
         <Avatar className="h-10 w-10">
           <AvatarImage
-            src={conversation.avatar ?? undefined}
+            src={conversation.avatar ?? defaultAvatar}
             alt={conversation.avatar}
           />
           <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">

@@ -150,6 +150,8 @@ const useCS = ({
     setSelectedConversationId,
     selectedConversationId,
     getMessagesByConversationId,
+    selectedChannelId,
+    setSelectedChannelId,
   } = useCsStore();
 
   // Initialize filters on mount
@@ -163,7 +165,7 @@ const useCS = ({
     (newFilters: Partial<ConversationQueryParams>) => {
       setConversationFilters(newFilters);
     },
-    [setConversationFilters],
+    [setConversationFilters]
   );
 
   const resetFilters = useCallback(() => {
@@ -207,17 +209,18 @@ const useCS = ({
       params.phoneFilter = conversationFilters.phoneFilter === "has-phone";
     }
 
-    if (conversationFilters.channelId) {
-      params.channelId = conversationFilters.channelId;
+
+    if (conversationFilters.channelId || selectedChannelId) {
+      params.channelId = selectedChannelId;
     }
-    params.channelType = "zalo"
+    params.channelType = "zalo";
     return params;
   }, [conversationFilters]);
 
   // Get conversations with filters
   const { isFetching: isFetchingConversations, refetch: refetchConversations } =
     useQuery({
-      queryKey: ["conversation-query", conversationFilters],
+      queryKey: ["conversation-query", conversationFilters, selectedChannelId],
       queryFn: async () => {
         setLoadingConversations(true);
         try {
@@ -237,7 +240,7 @@ const useCS = ({
       enabled: !id,
     });
 
-  const { mutate: sendMessage, isPending: isSendingMessage } = useMutation({
+  const { mutate: sendMessage } = useMutation({
     mutationFn: async (message: Message) => {
       if (!message) {
         throw new Error("No conversation selected");
@@ -269,7 +272,7 @@ const useCS = ({
       setLoadingMessages(true);
       try {
         const response = await axiosInstance.get(
-          `/api/conversations/${conversationId}/messages`,
+          `/api/conversations/${conversationId}/messages`
         );
         const data = response.data;
         if (data) {
@@ -306,11 +309,11 @@ const useCS = ({
   const { mutateAsync: markReadConversation } = useMutation({
     mutationFn: async (id: number) => {
       const response = await axiosInstance.put<ApiResponse<Conversation>>(
-        `/api/conversations/${id}/mark-read`,
+        `/api/conversations/${id}/mark-read`
       );
       return response.data;
     },
-    onSuccess: (_, conversationId) => {
+    onSuccess: () => {
       refetchMessages();
       refetchChannelsWithUnreadMessages();
       refetchConversations();
@@ -368,3 +371,4 @@ const useCS = ({
 };
 
 export { useCS };
+

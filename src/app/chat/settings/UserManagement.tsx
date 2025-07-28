@@ -26,7 +26,7 @@ export const UserManagement = () => {
     totalItems,
   } = useUsers({ initialPage: 1, initialPageSize: 10 });
 
-  const handleCreateOrUpdate = async (formData) => {
+  const handleCreateOrUpdate = async (formData: any) => {
     if (selectedUser) {
       await updateUser({ id: selectedUser.id, data: formData });
     } else {

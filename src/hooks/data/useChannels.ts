@@ -66,6 +66,7 @@ const useChannels = ({
       });
       return response.data.items as Channel[];
     },
+    refetchOnWindowFocus: false,
   });
 
   const {

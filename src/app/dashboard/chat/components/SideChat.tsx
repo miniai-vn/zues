@@ -46,7 +46,7 @@ export function SideChat() {
   }
 
   return (
-    <div className="">
+    <div >
       {conversations?.map((conversation: any) => {
         return (
           <div

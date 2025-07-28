@@ -8,11 +8,13 @@ interface ContactProfileProps {
 
 export const ContactProfile = ({ contactUser }: ContactProfileProps) => {
   if (!contactUser) return null;
+  const defaultAvatar =
+    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
 
   return (
     <div className="text-center">
       <Avatar className="h-20 w-20 mx-auto mb-3">
-        <AvatarImage src={contactUser.avatar} />
+        <AvatarImage src={contactUser.avatar || defaultAvatar} />
         <AvatarFallback className="text-lg">
           {contactUser.name?.charAt(0)}
         </AvatarFallback>

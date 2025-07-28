@@ -65,7 +65,7 @@ const useResource = ({
       });
       return {
         items: res.data.items || res.data || [],
-        total: res.total || res.data?.length || 0,
+        total: res.data.total || res.data?.length || 0,
         page: page,
         limit: limit,
       };

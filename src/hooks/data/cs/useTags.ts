@@ -7,12 +7,14 @@ export enum TagType {
   CUSTOMER = "customer",
   CONVERSATION = "conversation",
 }
+
 export interface Tag {
   id?: number;
   name: string;
   shopId?: string;
   color?: string;
   type: TagType;
+  conversationCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -25,10 +27,6 @@ export interface TagQueryParamsDto {
   limit?: number;
 }
 
-export interface TagBulkDeleteDto {
-  ids: number[];
-}
-
 export type TagsListResponse = Tag[];
 
 interface UseTagsProps {
@@ -36,7 +34,16 @@ interface UseTagsProps {
   tagId?: number;
 }
 
-const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
+const useTags = (
+  { queryParams = {}, tagId }: UseTagsProps = {
+    queryParams: {
+      type: TagType.CUSTOMER,
+      page: 1,
+      limit: 100,
+    },
+    tagId: undefined,
+  }
+) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -55,8 +62,9 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
       const response = await axiosInstance.get("/api/tags", {
         params: queryParams,
       });
-      return response.data as Tag[];
+      return response.data.data as Tag[];
     },
+    refetchOnWindowFocus: false,
   });
 
   // Get single tag by ID
@@ -87,7 +95,7 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
       const response = await axiosInstance.post("/api/tags", data);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Tag Created",
         description: `Tag  has been successfully created.`,
@@ -216,10 +224,10 @@ const useTags = ({ queryParams = {}, tagId }: UseTagsProps = {}) => {
         description: `Tags have been successfully added to the customer.`,
       });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         title: "Error Adding Tags",
-        description: error.message || "Could not add tags to the customer.",
+        description: "Could not add tags to the customer.",
         variant: "destructive",
       });
     },
