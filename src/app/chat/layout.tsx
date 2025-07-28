@@ -8,10 +8,8 @@ export default function ChatLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex h-full w-full">
-        <ChatSidebar />
-        <div className="flex-1">{children}</div>
-      </div>
+      <ChatSidebar />
+      <div className="flex-1">{children}</div>
     </SidebarProvider>
   );
 }

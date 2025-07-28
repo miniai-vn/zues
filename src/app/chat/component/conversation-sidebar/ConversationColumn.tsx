@@ -1,10 +1,9 @@
-import { Conversation, useCS } from "@/hooks/data/cs/useCS";
-import { useState } from "react";
-import { ConversationList } from "./ConversationList";
-import { ConversationFilter } from "./ConversationFilter";
-import { PlatformList } from "./PlatformList";
-import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import TagManagementDialog from "@/components/tag-manager/DialogTag";
+import { Conversation, useCS } from "@/hooks/data/cs/useCS";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
+import { useState } from "react";
+import { ConversationFilter } from "./ConversationFilter";
+import { ConversationList } from "./ConversationList";
 
 interface ConversationColumnProps {
   selectedConversationId?: number;
@@ -27,13 +26,7 @@ export const ConversationColumn = ({
   };
 
   return (
-    <div className="flex  border-r">
-      {/* <PlatformList
-        selectedChannel={filters.channelType}
-        onSelectChannel={(channelType: string) =>
-          updateFilters({ channelType })
-        }
-      /> */}
+    <div className="flex border-r">
       <div className="flex flex-col items-center justify-center max-w-[24vw] flex-shrink-0">
         <ConversationFilter filters={filters} onFiltersChange={updateFilters} />
         <ConversationList
