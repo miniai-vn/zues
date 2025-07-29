@@ -8,20 +8,48 @@ interface MessageListProps {
   messages: Message[];
   currentUserId: string;
   autoScroll?: boolean;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
 }
 
 export const MessageList = ({
   messages,
   autoScroll = true,
+  onLoadMore,
+  hasMore,
 }: MessageListProps) => {
   const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesTopRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth({});
+
+  // Auto scroll xuống cuối khi có tin nhắn mới
   useEffect(() => {
     if (autoScroll) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, autoScroll]);
+
+  // Infinite scroll lên trên
+  useEffect(() => {
+    if (!hasMore || !onLoadMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          onLoadMore();
+        }
+      },
+      { threshold: 1 }
+    );
+    if (messagesTopRef.current) {
+      observer.observe(messagesTopRef.current);
+    }
+    return () => {
+      if (messagesTopRef.current) {
+        observer.unobserve(messagesTopRef.current);
+      }
+    };
+  }, [hasMore, onLoadMore]);
 
   if (messages.length === 0) {
     return (
@@ -37,11 +65,11 @@ export const MessageList = ({
   }
 
   return (
-    <div className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto">
+    <div className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto flex flex-col-reverse">
+      <div ref={messagesEndRef} />
       {messages.map((message) => {
         const isOwnMessage =
           message.senderId === user?.id || message.senderType === "channel";
-
         return (
           <MessageItem
             key={message.id}
@@ -50,7 +78,12 @@ export const MessageList = ({
           />
         );
       })}
-      <div ref={messagesEndRef} />
+      <div ref={messagesTopRef} />
+      {hasMore && (
+        <div className="py-2 text-center text-xs text-muted-foreground">
+          Đang tải thêm...
+        </div>
+      )}
     </div>
   );
 };

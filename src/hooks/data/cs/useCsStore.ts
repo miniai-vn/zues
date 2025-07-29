@@ -17,6 +17,8 @@ interface CsStore {
   conversations: Conversation[];
   selectedConversationId: number | null;
   selectedConversation: Conversation | null;
+  setSelectedConversation: (conv: Conversation | null) => void;
+
   isLoadingConversations: boolean;
   conversationFilters: ConversationQueryParams;
   socketChatIo: Socket | null;
@@ -86,6 +88,12 @@ export const useCsStore = create<CsStore>()(
         conversations: [],
         selectedConversationId: null,
         selectedConversation: null,
+
+        setSelectedConversation: (conv: Conversation | null) =>
+          set(() => ({
+            selectedConversation: conv,
+          })),
+
         isLoadingConversations: false,
         conversationFilters: defaultFilters,
 
@@ -393,7 +401,6 @@ export const useCsStore = create<CsStore>()(
         name: "cs-store",
         partialize: (state) => ({
           // Only persist certain parts of the state
-          conversations: state.conversations,
           selectedConversationId: state.selectedConversationId,
           conversationFilters: state.conversationFilters,
           channelsUnreadCount: state.channelsUnreadCount,

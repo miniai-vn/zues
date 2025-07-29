@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Conversation } from "@/hooks/data/cs/useCS";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, Tag } from "lucide-react";
 
@@ -24,6 +25,7 @@ export const ConversationItem = ({
   onClick,
   onTagDialog,
 }: ConversationItemProps) => {
+  const { setSelectedConversation } = useCsStore();
   const defaultAvatar =
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
 
@@ -34,6 +36,7 @@ export const ConversationItem = ({
         isSelected ? "bg-accent border-l-primary" : "border-l-transparent"
       )}
       onClick={() => {
+        setSelectedConversation(conversation);
         onClick();
       }}
     >

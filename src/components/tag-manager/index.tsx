@@ -41,7 +41,6 @@ const TagManagementSheet = ({
   const { customer } = useCustomers({
     id: customerId,
   });
-  console.log("Customer Tags:", customerId);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [showCreateTagDialog, setShowCreateTagDialog] = useState(false);
 

@@ -217,10 +217,6 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     }
   }, [socketChatIo, isChatConnected, joinAllConversationWithUserId]);
 
-  const toggleContactInfo = () => {
-    setShowContactInfo((prev) => !prev);
-  };
-
   return {
     // Data
     messages,
@@ -231,7 +227,6 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     // Actions
     joinAllConversationWithUserId,
     sendMessage: sendMessageToChannels,
-    toggleContactInfo,
     setShowContactInfo,
     readConversations,
   };

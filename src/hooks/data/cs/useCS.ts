@@ -4,7 +4,6 @@ import { ApiResponse } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { DateRange } from "react-day-picker";
-import { useToast } from "../../use-toast";
 import { User } from "../useAuth";
 import { Channel } from "../useChannels";
 import { useCsStore } from "./useCsStore";
@@ -94,6 +93,8 @@ export interface ConversationQueryParams {
   phoneFilter?: string;
   dateRange?: DateRange;
   readStatus?: "all" | "read" | "unread";
+  page?: number;
+  limit?: number;
 }
 
 export type CreateConversationDto = {
@@ -125,13 +126,27 @@ const useCS = ({
   id,
   conversationId,
   initialFilters = {},
+  queryParams = {
+    page: 1,
+    limit: 20,
+  },
+  queryMessageParams = {
+    page: 1,
+    limit: 20,
+  },
 }: {
   id?: number;
   conversationId?: number;
   initialFilters?: Partial<ConversationQueryParams>;
+  queryParams?: {
+    page?: number;
+    limit?: number;
+  };
+  queryMessageParams?: {
+    page?: number;
+    limit?: number;
+  };
 } = {}) => {
-  const { toast } = useToast();
-
   // Store actions and state
   const {
     conversations,
@@ -145,13 +160,9 @@ const useCS = ({
     setLoadingMessages,
     isLoadingMessages,
     channelsUnreadCount,
-    setChannelsUnreadCount,
-    addMessage,
     setSelectedConversationId,
     selectedConversationId,
     getMessagesByConversationId,
-    selectedChannelId,
-    setSelectedChannelId,
   } = useCsStore();
 
   // Initialize filters on mount
@@ -174,7 +185,7 @@ const useCS = ({
 
   // Transform filters for API call
   const apiFilters = useCallback(() => {
-    const params: any = {};
+    const params: Record<string, any> = {};
 
     if (conversationFilters.search) {
       params.search = conversationFilters.search;
@@ -209,51 +220,64 @@ const useCS = ({
       params.phoneFilter = conversationFilters.phoneFilter === "has-phone";
     }
 
+    if (conversationFilters.channelId) {
+      params.channelId = conversationFilters.channelId;
+    }
+    if (conversationFilters.page) {
+      params.page = conversationFilters.page;
+    }
 
-    if (conversationFilters.channelId || selectedChannelId) {
-      params.channelId = selectedChannelId;
+    if (conversationFilters.limit) {
+      params.limit = conversationFilters.limit;
     }
     params.channelType = "zalo";
     return params;
   }, [conversationFilters]);
 
   // Get conversations with filters
-  const { isFetching: isFetchingConversations, refetch: refetchConversations } =
-    useQuery({
-      queryKey: ["conversation-query", conversationFilters, selectedChannelId],
-      queryFn: async () => {
-        setLoadingConversations(true);
-        try {
-          const response = await axiosInstance.get("/api/conversations", {
-            params: apiFilters(),
-          });
-          const data = (response?.data || []) as Conversation[];
-          setConversations(data);
-          return data;
-        } catch (error) {
-          throw new Error("Failed to fetch conversations");
-        } finally {
-          setLoadingConversations(false);
-        }
-      },
-      refetchOnWindowFocus: false,
-      enabled: !id,
-    });
+  const {
+    data: stateConversations,
+    isFetching: isFetchingConversations,
+    refetch: refetchConversations,
+  } = useQuery({
+    queryKey: ["conversation-query", conversationFilters, queryParams],
+    queryFn: async () => {
+      setLoadingConversations(true);
+      try {
+        const response = await axiosInstance.get("/api/conversations", {
+          params: {
+            ...apiFilters(),
+            ...queryParams,
+          },
+        });
+        const data = (response?.data || []) as Conversation[];
+        const newConversations = conversations.concat(data);
+        const set = new Set();
+        const uniqueConversations = newConversations.filter((item) => {
+          if (set.has(item.id)) {
+            return false;
+          }
+          set.add(item.id);
+          return true;
+        });
+        setConversations(uniqueConversations);
+        return {
+          conversations: uniqueConversations,
+          ...response,
+        };
+      } catch {
+        throw new Error("Failed to fetch conversations");
+      } finally {
+        setLoadingConversations(false);
+      }
+    },
+    refetchOnWindowFocus: false,
+    enabled: !id,
+  });
 
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (message: Message) => {
-      if (!message) {
-        throw new Error("No conversation selected");
-      }
       const response = await axiosInstance.post(`/api/chat/sms`, message);
-      if (response.data.status == "BOT_IS_ACTIVE") {
-        toast({
-          title: "Bot is active",
-          description: "Please wait for the bot to respond.",
-
-          duration: 3000,
-        });
-      }
       return response.data;
     },
   });
@@ -263,23 +287,36 @@ const useCS = ({
     data: messagesData,
     isFetching: isFetchingMessages,
     refetch: refetchMessages,
-    error: fetchMessagesError,
   } = useQuery({
-    queryKey: ["conversation-messages", conversationId],
+    queryKey: ["conversation-messages", conversationId, queryMessageParams],
     queryFn: async () => {
       if (!conversationId) return null;
-
       setLoadingMessages(true);
       try {
         const response = await axiosInstance.get(
-          `/api/conversations/${conversationId}/messages`
+          `/api/conversations/${conversationId}/messages`,
+          {
+            params: {
+              ...queryMessageParams,
+            },
+          }
         );
         const data = response.data;
         if (data) {
-          setMessages(conversationId, data.messages);
+          const currentMessages = getMessagesByConversationId(conversationId);
+          const allMessages = currentMessages.concat(data.messages);
+          const uniqueMessage = new Set();
+          const filteredMessages = allMessages.filter((item) => {
+            if (uniqueMessage.has(item.id)) {
+              return false;
+            }
+            uniqueMessage.add(item.id);
+            return true;
+          });
+          setMessages(conversationId, filteredMessages);
         }
         return data;
-      } catch (error) {
+      } catch {
         throw new Error("Failed to fetch messages");
       } finally {
         setLoadingMessages(false);
@@ -290,22 +327,6 @@ const useCS = ({
     enabled: !!conversationId,
   });
 
-  // Get channels with unread messages
-  const { refetch: refetchChannelsWithUnreadMessages } = useQuery({
-    queryKey: ["channels", "unread"],
-    queryFn: async () => {
-      const res = await axiosInstance.get(`/api/channels/unread-count`);
-      const data = res.data as {
-        type: string;
-        totalUnreadMessages: number;
-      }[];
-      setChannelsUnreadCount(data);
-      return data;
-    },
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
-
   const { mutateAsync: markReadConversation } = useMutation({
     mutationFn: async (id: number) => {
       const response = await axiosInstance.put<ApiResponse<Conversation>>(
@@ -313,42 +334,18 @@ const useCS = ({
       );
       return response.data;
     },
-    onSuccess: () => {
-      refetchMessages();
-      refetchChannelsWithUnreadMessages();
-      refetchConversations();
-    },
-    onError: (error) => {
-      console.error("Error marking conversation as read:", error);
-      toast({
-        title: "Đánh dấu đã đọc thất bại",
-        description: "Không thể đánh dấu cuộc trò chuyện là đã đọc",
-        variant: "destructive",
-        duration: 3000,
-      });
-    },
   });
-
-  // Helper to get messages for current conversation
-  const currentMessages = conversationId
-    ? getMessagesByConversationId(conversationId)
-    : [];
 
   return {
     // Data from store
-    conversations,
     channelsWithUnreadMessage: channelsUnreadCount,
     fullInfoConversationWithMessages: messagesData,
-    currentMessages,
+    stateConversations,
 
     // Loading states
     isLoadingMessages: isLoadingMessages || isFetchingMessages,
     isLoadingConversations: isLoadingConversations || isFetchingConversations,
     // ...other loading states...
-
-    // Errors
-    fetchMessagesError,
-    // ...other errors...
 
     // Actions
     markReadConversation,
@@ -361,8 +358,6 @@ const useCS = ({
     updateFilters,
     resetFilters,
 
-    // Store actions
-    addMessageToStore: addMessage,
     setSelectedConversation: setSelectedConversationId,
     selectedConversationId,
 
@@ -371,4 +366,3 @@ const useCS = ({
 };
 
 export { useCS };
-

@@ -14,15 +14,44 @@ export const ConversationColumn = ({
   selectedConversationId,
   onSelectConversation,
 }: ConversationColumnProps) => {
-  const { filters, updateFilters, markReadConversation } = useCS({});
+  const [page, setPage] = useState(1);
+
+  const {
+    filters,
+    updateFilters,
+    isLoadingConversations,
+    markReadConversation,
+    stateConversations,
+  } = useCS({
+    queryParams: {
+      page,
+      limit: 10,
+    },
+  });
   const { conversations } = useCsStore();
   const [tagDialogOpen, setTagDialogOpen] = useState(false);
   const [selectedConversationForDialog, setSelectedConversationForDialog] =
     useState<Conversation | null>(null);
+  const [hasMoreConversations, setHasMoreConversations] = useState(true);
 
   const handleOpenTagDialog = (conversation: Conversation) => {
     setSelectedConversationForDialog(conversation);
     setTagDialogOpen(true);
+  };
+
+  const handleLoadMoreConversations = () => {
+    if (
+      hasMoreConversations &&
+      stateConversations?.hasNext &&
+      !isLoadingConversations
+    ) {
+      setPage((prev) => prev + 1);
+      setHasMoreConversations(stateConversations?.hasNext);
+    }
+
+    if (!stateConversations?.hasNext) {
+      setHasMoreConversations(false);
+    }
   };
 
   return (
@@ -39,6 +68,8 @@ export const ConversationColumn = ({
             }
           }}
           onTagDialog={handleOpenTagDialog}
+          onLoadMore={handleLoadMoreConversations}
+          hasMore={hasMoreConversations}
         />
 
         <TagManagementDialog

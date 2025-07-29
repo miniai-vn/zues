@@ -1,12 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { useTranslations } from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 import { Info, MoreVertical, Tag, Users } from "lucide-react";
 
 interface ChatHeaderProps {
-  conversationName?: string;
-  conversationAvatar?: string;
   showContactInfo: boolean;
   onToggleContactInfo: () => void;
   onMoreOptions?: () => void;
@@ -17,8 +16,6 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeader = ({
-  conversationName,
-  conversationAvatar,
   showContactInfo,
   onToggleContactInfo,
   onMoreOptions,
@@ -28,20 +25,23 @@ export const ChatHeader = ({
   setShowParticipantManagement, // <-- Destructure here
 }: ChatHeaderProps) => {
   const { t } = useTranslations();
+  const { selectedConversation } = useCsStore();
   const defaultAvatar =
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
+
   return (
     <div className="border-b p-4 flex items-center justify-between bg-background sticky top-0 z-10">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
-          <AvatarImage src={conversationAvatar ?? defaultAvatar} />
+          <AvatarImage src={selectedConversation?.avatar ?? defaultAvatar} />
           <AvatarFallback>
-            {conversationName?.charAt(0)?.toUpperCase() || "?"}
+            {selectedConversation?.name?.charAt(0)?.toUpperCase() || "?"}
           </AvatarFallback>
         </Avatar>{" "}
         <div>
           <h3 className="font-medium">
-            {conversationName || t("dashboard.chat.unknownConversation")}
+            {selectedConversation?.name ||
+              t("dashboard.chat.unknownConversation")}
           </h3>
           {isGroup && (
             <p className="text-sm text-muted-foreground">

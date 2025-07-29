@@ -38,7 +38,6 @@ export const transformToTreeData = (
         processResourceRecursively(childResource, level + 1, resource.id)
       );
     }
-    console.log("Processing resource:", resource.id, "Level:", level);
     return treeNode;
   };
 
@@ -53,7 +52,6 @@ export const transformToTreeData = (
       type: resource.type,
     };
   });
-  console.log("New resources structure:", newR);
   // Convert newR to TreeNode[] format
   const treeData: TreeNode[] = newR.map((item) => item.childrens);
 
@@ -102,7 +100,6 @@ export const flattenTreeData = (
   nodes: TreeNode[],
   expandedNodes: Set<string | number>
 ): TreeNode[] => {
-  console.log("Flattening tree data with expanded nodes:", expandedNodes);
   const result: TreeNode[] = [];
 
   const traverse = (nodeList: TreeNode[]) => {
@@ -119,7 +116,6 @@ export const flattenTreeData = (
   if (expandedNodes.size > 0) {
     return result.filter((node) => expandedNodes.has(node.id as number));
   }
-  console.log("Flattened tree data:", result);
   return result;
 };
 

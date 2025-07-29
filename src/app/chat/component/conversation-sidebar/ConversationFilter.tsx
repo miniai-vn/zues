@@ -138,7 +138,7 @@ export const ConversationFilter = ({
 
       {/* Filters Section */}
       <div className="px-4 pb-3">
-        <div className="flex-wrap items-center gap-2 mb-3">
+        <div className="flex items-center gap-x-2 mb-3">
           {/* Phone Filter */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -289,34 +289,6 @@ export const ConversationFilter = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          {/* Date Range Filter */}
-          {/* <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "h-7 text-xs gap-1",
-                  filters.dateRange &&
-                    (filters.dateRange.from || filters.dateRange.to) &&
-                    "bg-primary/10 border-primary text-primary"
-                )}
-              >
-                <Clock className="h-3 w-3" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={filters.dateRange?.from}
-                selected={filters.dateRange}
-                onSelect={handleDateRangeChange}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover> */}
 
           {/* Employee Filter */}
           <DropdownMenu>

@@ -1,3 +1,4 @@
+import TagManagementSheet from "@/components/tag-manager";
 import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import { useCS } from "@/hooks/data/cs/useCS";
 import { useTranslations } from "@/hooks/useTranslations";
@@ -6,7 +7,6 @@ import { useEffect, useState } from "react";
 import { ChatHeader, EmptyState, MessageInput, MessageList } from "./chat-area";
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "./participients-manager";
-import TagManagementSheet from "@/components/tag-manager";
 
 interface ChatAreaProps {
   conversationId?: number;
@@ -14,27 +14,56 @@ interface ChatAreaProps {
 
 const ChatArea = ({ conversationId }: ChatAreaProps) => {
   const { t } = useTranslations();
-  const { fullInfoConversationWithMessages: conversation } = useCS({
-    conversationId,
-  });
-  const conversationName = conversation?.name || "";
-  const conversationAvatar = conversation?.avatar || "";
-  const customerId = conversation?.senderId;
-  const {
-    messages: chatMessages,
-    currentUserId: userId,
-    showContactInfo,
-    sendMessage,
-    toggleContactInfo,
-    joinAllConversationWithUserId,
-  } = useChatAreaSocket({ ...(conversationId ? { conversationId } : {}) });
-  useEffect(() => {
-    joinAllConversationWithUserId();
-  }, []);
 
   const [showParticipantManagement, setShowParticipantManagement] =
     useState(false);
   const [showTagManagement, setShowTagManagement] = useState(false);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [page, setPage] = useState(1);
+  const [showContactInfo, setShowContactInfo] = useState(false);
+
+  const toggleContactInfo = () => {
+    setShowContactInfo((prev) => !prev);
+  };
+
+  const { fullInfoConversationWithMessages: conversation, isLoadingMessages } =
+    useCS({
+      conversationId,
+      queryMessageParams: {
+        page,
+        limit: 20,
+      },
+    });
+
+  const {
+    messages: chatMessages,
+    currentUserId: userId,
+    sendMessage,
+    joinAllConversationWithUserId,
+  } = useChatAreaSocket({ ...(conversationId ? { conversationId } : {}) });
+
+  useEffect(() => {
+    joinAllConversationWithUserId();
+  }, []);
+
+  useEffect(() => {
+    if (conversationId) {
+      setHasMoreMessages(chatMessages.length >= 20);
+    }
+  }, [conversationId, chatMessages]);
+
+  useEffect(() => {
+    if (conversationId) {
+      setPage(1);
+    }
+  }, [conversationId]);
+
+  const handleLoadMoreMessages = async () => {
+    if (conversationId && hasMoreMessages && !isLoadingMessages) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
   if (!conversationId) {
     return (
       <EmptyState
@@ -49,15 +78,19 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     <div className="flex-1 flex">
       <div className="flex-1 flex flex-col">
         <ChatHeader
-          conversationName={conversationName}
-          conversationAvatar={conversationAvatar}
           showContactInfo={showContactInfo}
           onToggleContactInfo={toggleContactInfo}
           setShowParticipantManagement={setShowParticipantManagement}
           setShowTagManagement={setShowTagManagement}
         />
 
-        <MessageList messages={chatMessages} currentUserId={userId} />
+        <MessageList
+          messages={chatMessages}
+          currentUserId={userId}
+          onLoadMore={handleLoadMoreMessages}
+          hasMore={hasMoreMessages}
+          autoScroll={page === 1}
+        />
         <MessageInput
           onSendMessage={(content) => {
             sendMessage({
@@ -72,7 +105,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
 
       <ContactInfoSidebar
         onClose={toggleContactInfo}
-        customerId={customerId}
+        customerId={conversation?.senderId}
         isOpen={showContactInfo}
       />
 
@@ -85,7 +118,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
       <TagManagementSheet
         open={showTagManagement}
         onOpenChange={setShowTagManagement}
-        customerId={customerId}
+        customerId={conversation?.senderId}
         onUpdateTags={() => {}}
       />
     </div>
