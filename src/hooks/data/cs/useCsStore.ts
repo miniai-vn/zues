@@ -10,6 +10,9 @@ interface ChannelUnreadCount {
 }
 
 interface CsStore {
+  // selected message state
+  selectedMessageId: number | null;
+  setSelectedMessageId: (id: number | null) => void;
   // channel state
   selectedChannelId?: string | null;
   setSelectedChannelId: (id: string | null) => void;
@@ -81,6 +84,9 @@ export const useCsStore = create<CsStore>()(
   devtools(
     persist(
       (set, get) => ({
+        // selected message state
+        selectedMessageId: null,
+        setSelectedMessageId: (id) => set({ selectedMessageId: id }),
         // Channel state
         selectedChannelId: null,
         setSelectedChannelId: (id) => set({ selectedChannelId: id }),

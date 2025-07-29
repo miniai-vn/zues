@@ -75,6 +75,7 @@ export type Conversation = {
   participants?: Participant[];
   members?: Participant[];
   senderId?: string;
+  content?: string;
   messages?: Message[];
   tags?: Tag[];
   channel: Channel;
@@ -134,6 +135,8 @@ const useCS = ({
   queryMessageParams = {
     page: 1,
     limit: 20,
+    nextBeforeMessageId: null,
+    nextAfterMessageId: null,
   },
 }: {
   id?: number;
@@ -146,6 +149,8 @@ const useCS = ({
   queryMessageParams?: {
     page?: number;
     limit?: number;
+    nextBeforeMessageId?: number | null;
+    nextAfterMessageId?: number | null;
   };
 } = {}) => {
   // Store actions and state
@@ -253,6 +258,13 @@ const useCS = ({
             },
           });
         const data = response?.data;
+        if (queryParams.page === 1) {
+          setConversations(data);
+          return {
+            conversations: data,
+            ...response,
+          };
+        }
         const newConversations = conversations.concat(data);
         const set = new Set();
         const uniqueConversations = newConversations.filter((item) => {

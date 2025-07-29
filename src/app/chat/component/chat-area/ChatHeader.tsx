@@ -4,6 +4,7 @@ import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { useTranslations } from "@/hooks/useTranslations";
 import { cn } from "@/lib/utils";
 import { Info, MoreVertical, Tag, Users } from "lucide-react";
+import SearchMessageSheet from "./SeachMessageSheet";
 
 interface ChatHeaderProps {
   showContactInfo: boolean;
@@ -22,7 +23,7 @@ export const ChatHeader = ({
   isGroup = false,
   participantCount = 0,
   setShowTagManagement,
-  setShowParticipantManagement, // <-- Destructure here
+  setShowParticipantManagement,
 }: ChatHeaderProps) => {
   const { t } = useTranslations();
   const { selectedConversation } = useCsStore();
@@ -58,6 +59,7 @@ export const ChatHeader = ({
 
       {/* Right side - Action buttons */}
       <div className="flex items-center gap-2">
+        <SearchMessageSheet />
         {setShowParticipantManagement && (
           <Button
             size="sm"

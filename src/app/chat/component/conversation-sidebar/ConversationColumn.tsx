@@ -1,7 +1,7 @@
 import TagManagementDialog from "@/components/tag-manager/DialogTag";
 import { Conversation, useCS } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConversationFilter } from "./ConversationFilter";
 import { ConversationList } from "./ConversationList";
 
@@ -38,6 +38,12 @@ export const ConversationColumn = ({
     setSelectedConversationForDialog(conversation);
     setTagDialogOpen(true);
   };
+  useEffect(() => {
+    if (filters) {
+      setPage(1);
+      setHasMoreConversations(true);
+    }
+  }, [filters]);
 
   const handleLoadMoreConversations = () => {
     if (

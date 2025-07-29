@@ -7,6 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
@@ -59,7 +65,7 @@ export const ConversationItem = ({
 
         <div className="flex items-center justify-between mb-1">
           <p className="text-sm text-muted-foreground truncate">
-            {conversation.lastestMessage}
+            {conversation.content}
           </p>
           {conversation.unreadMessagesCount > 0 && (
             <Badge
@@ -76,9 +82,18 @@ export const ConversationItem = ({
         {/* Channel and Tags in one line */}
         <div className="flex items-center gap-1">
           {conversation.channel && (
-            <span className="truncate flex items-center px-2 rounded-full text-xs max-w-20 text-slate-700 border border-slate-200 dark:text-slate-300">
-              {conversation.channel.name}
-            </span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="truncate flex items-center px-2 rounded-full text-xs max-w-20 text-slate-700 border border-slate-200 dark:text-slate-300">
+                    {conversation.channel.name}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span>Kênh: {conversation.channel.name}</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           {conversation.tags && conversation.tags.length > 0 && (
             <>

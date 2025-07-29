@@ -1,6 +1,6 @@
 import { Message } from "@/hooks/data/cs/useCS";
 import useTranslations from "@/hooks/useTranslations";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageItem } from "./MessageItem";
 import { useAuth } from "@/hooks/data/useAuth";
 
@@ -8,7 +8,7 @@ interface MessageListProps {
   messages: Message[];
   currentUserId: string;
   autoScroll?: boolean;
-  onLoadMore?: () => void;
+  onLoadMore?: (scrollState: string) => void;
   hasMore?: boolean;
 }
 
@@ -22,6 +22,7 @@ export const MessageList = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesTopRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth({});
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto scroll xuống cuối khi có tin nhắn mới
   useEffect(() => {
@@ -36,7 +37,7 @@ export const MessageList = ({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          onLoadMore();
+          onLoadMore("top");
         }
       },
       { threshold: 1 }
@@ -50,6 +51,18 @@ export const MessageList = ({
       }
     };
   }, [hasMore, onLoadMore]);
+
+  // Infinite scroll xuống dưới (check reach bottom)
+  // const handleScroll = () => {
+  //   if (containerRef.current) {
+  //     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+  //     if (scrollTop + clientHeight >= scrollHeight - 5) {
+  //       // Adding a small threshold
+  //       console.log("Reached bottom of the scrollable div!");
+  //       // Perform actions like loading more data
+  //     }
+  //   }
+  // };
 
   if (messages.length === 0) {
     return (
@@ -65,7 +78,11 @@ export const MessageList = ({
   }
 
   return (
-    <div className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto flex flex-col-reverse">
+    <div
+      ref={containerRef}
+      // onScroll={handleScroll}
+      className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto flex flex-col-reverse"
+    >
       <div ref={messagesEndRef} />
       {messages.map((message) => {
         const isOwnMessage =

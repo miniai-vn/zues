@@ -17,7 +17,7 @@ export const ChatSidebar = () => {
               variant="ghost"
               size="icon"
               title="Chat Report"
-              onClick={() => router.push("/chat/report")}
+              onClick={() => router.push("/chat/reports")}
               className="w-full"
             >
               <BarChart2 className="h-5 w-5" />

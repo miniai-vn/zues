@@ -216,7 +216,7 @@ export const PlatformList = () => {
                     variant="destructive"
                     className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs min-w-4"
                   >
-                    {unreadCount > 99 ? "99+" : unreadCount}
+                    {unreadCount > 5 ? "5+" : unreadCount}
                   </Badge>
                 )}
 

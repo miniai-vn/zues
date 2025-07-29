@@ -99,9 +99,6 @@ export const ConversationFilter = ({
     <div className="border-b w-full sticky top-0 z-10 bg-background">
       <div className="p-4 pb-0">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold">
-            {t("dashboard.chat.messages")}
-          </h2>
           <div className="flex-wrap gap-1">
             {onNewConversation && (
               <Button

@@ -21,7 +21,12 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [page, setPage] = useState(1);
   const [showContactInfo, setShowContactInfo] = useState(false);
-
+  const [nextBeforeMessageId, setNextBeforeMessageId] = useState<number | null>(
+    null
+  );
+  const [nextAfterMessageId, setNextAfterMessageId] = useState<number | null>(
+    null
+  );
   const toggleContactInfo = () => {
     setShowContactInfo((prev) => !prev);
   };
@@ -32,6 +37,8 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
       queryMessageParams: {
         page,
         limit: 20,
+        nextBeforeMessageId,
+        nextAfterMessageId,
       },
     });
 
@@ -58,9 +65,31 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     }
   }, [conversationId]);
 
-  const handleLoadMoreMessages = async () => {
-    if (conversationId && hasMoreMessages && !isLoadingMessages) {
+  // useEffect(() => {
+  //   if (conversation) {
+  //     console.log("Setting nextBeforeMessageId and nextAfterMessageId", {
+  //       nextBeforeMessageId: conversation.nextBeforeMessageId,
+  //       nextAfterMessageId: conversation.nextAfterMessageId,
+  //     });
+  //     setNextAfterMessageId(conversation.nextAfterMessageId || null);
+  //     setNextBeforeMessageId(conversation.nextBeforeMessageId || null);
+  //   }
+  // }, [conversation]);
+
+  const handleLoadMoreMessages = async (stateScroll: string) => {
+    console.log("Loading more messages", { conversation });
+    if (
+      conversationId &&
+      hasMoreMessages &&
+      !isLoadingMessages &&
+      conversation?.hasNext
+    ) {
       setPage((prevPage) => prevPage + 1);
+      setHasMoreMessages(true);
+    }
+
+    if (!conversation?.hasNext) {
+      setHasMoreMessages(false);
     }
   };
 
@@ -87,7 +116,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
         <MessageList
           messages={chatMessages}
           currentUserId={userId}
-          onLoadMore={handleLoadMoreMessages}
+          onLoadMore={(stateScroll) => handleLoadMoreMessages(stateScroll)}
           hasMore={hasMoreMessages}
           autoScroll={page === 1}
         />
