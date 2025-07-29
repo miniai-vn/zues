@@ -8,6 +8,7 @@ import { User } from "../useAuth";
 import { Channel } from "../useChannels";
 import { useCsStore } from "./useCsStore";
 import { Tag } from "./useTags";
+import { PaginatedResponse } from "@/types/api";
 
 export enum ConversationType {
   DIRECT = "direct",
@@ -244,13 +245,14 @@ const useCS = ({
     queryFn: async () => {
       setLoadingConversations(true);
       try {
-        const response = await axiosInstance.get("/api/conversations", {
-          params: {
-            ...apiFilters(),
-            ...queryParams,
-          },
-        });
-        const data = (response?.data || []) as Conversation[];
+        const response: PaginatedResponse<Conversation> =
+          await axiosInstance.get("/api/conversations", {
+            params: {
+              ...apiFilters(),
+              ...queryParams,
+            },
+          });
+        const data = response?.data;
         const newConversations = conversations.concat(data);
         const set = new Set();
         const uniqueConversations = newConversations.filter((item) => {
