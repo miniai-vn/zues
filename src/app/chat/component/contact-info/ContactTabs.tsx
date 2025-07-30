@@ -1,31 +1,21 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Customer } from "@/hooks/data/useCustomers";
 import { useTranslations } from "@/hooks/useTranslations";
 import { ContactInfo } from "./ContactInfo";
 import { ContactNotes } from "./ContactNotes";
+import { Customer } from "@/hooks/data/cs/useCustomer";
 
 interface ContactTabsProps {
   customer?: Customer;
-  onSaveContact?: (data: {
-    id: string;
-    data: {
-      phone?: string;
-      email?: string;
-      address?: string;
-      note?: string;
-    };
-  }) => void;
+  onSaveContact?: (cus: Customer) => void;
 }
 
 export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
   const { t } = useTranslations();
-  
+
   // Handler that connects ContactInfo's onSave to updateCustomer
   const handleSaveContact = ({
-    id,
     data,
   }: {
-    id?: string;
     data: {
       phone: string;
       email: string;
@@ -34,19 +24,18 @@ export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
   }) => {
     if (onSaveContact && customer?.id) {
       onSaveContact({
-        id: customer.id,
-        data: {
-          phone: data.phone,
-          email: data.email,
-          address: data.address,
-        },
+        ...customer,
+        ...data,
       });
     }
   };
 
-  return (    <Tabs defaultValue="info" className="w-full">
+  return (
+    <Tabs defaultValue="info" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="info">{t("dashboard.chat.information")}</TabsTrigger>
+        <TabsTrigger value="info">
+          {t("dashboard.chat.information")}
+        </TabsTrigger>
         <TabsTrigger value="notes">{t("dashboard.chat.notes")}</TabsTrigger>
       </TabsList>
 
@@ -66,10 +55,8 @@ export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
           onSave={({ id, data }) => {
             if (onSaveContact && customer?.id) {
               onSaveContact({
-                id: customer.id,
-                data: {
-                  note: data.note,
-                },
+                ...customer,
+                note: data,
               });
             }
           }}

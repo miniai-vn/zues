@@ -39,13 +39,12 @@ export const MessageInput = ({
     }
     if (e.key === "/" || (e.key.startsWith("/") && e.key.length > 1)) {
       setShowSuggestions(true);
-    } else if (e.key === "Backspace") {
-      // Nếu không còn dấu / trong message thì ẩn suggestions
-      if (!message.includes("/")) {
+    }
+    if (e.key === "Backspace") {
+      // Nếu message không còn dấu / hoặc chỉ còn mỗi dấu / thì ẩn suggestions
+      if (!message.includes("/") || message === "/") {
         setShowSuggestions(false);
       }
-    } else {
-      setShowSuggestions(false);
     }
   };
 
@@ -92,7 +91,7 @@ export const MessageInput = ({
             placeholder={displayPlaceholder}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             className="pr-10"
             disabled={disabled}
           />

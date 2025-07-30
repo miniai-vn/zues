@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Check, Plus, Tag as TagIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import CreateTagDialog from "./CreateTagDialog";
-import useCustomers from "@/hooks/data/useCustomers";
+import { useCustomer } from "@/hooks/data/cs/useCustomer";
 
 interface TagManagementSheetProps {
   open: boolean;
@@ -38,7 +38,7 @@ const TagManagementSheet = ({
         type: TagType.CUSTOMER,
       },
     });
-  const { customer } = useCustomers({
+  const { customer } = useCustomer({
     id: customerId,
   });
   const [selectedTags, setSelectedTags] = useState<number[]>([]);

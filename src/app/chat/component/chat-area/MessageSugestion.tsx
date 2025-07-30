@@ -24,19 +24,7 @@ export default function MessageSuggestions({
   });
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [filteredSuggestions, setFilteredSuggestions] = useState(templates);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const filtered =
-      templates?.filter(
-        (template) =>
-          template.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          template.content?.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ?? [];
-    setFilteredSuggestions(filtered);
-    setSelectedIndex(0);
-  }, [searchQuery, templates]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -44,19 +32,19 @@ export default function MessageSuggestions({
         case "ArrowDown":
           e.preventDefault();
           setSelectedIndex((prev) =>
-            prev < filteredSuggestions.length - 1 ? prev + 1 : 0
+            prev < templates.length - 1 ? prev + 1 : 0
           );
           break;
         case "ArrowUp":
           e.preventDefault();
           setSelectedIndex((prev) =>
-            prev > 0 ? prev - 1 : filteredSuggestions.length - 1
+            prev > 0 ? prev - 1 : templates.length - 1
           );
           break;
         case "Enter":
           e.preventDefault();
-          if (filteredSuggestions[selectedIndex]) {
-            const s = filteredSuggestions[selectedIndex];
+          if (templates[selectedIndex]) {
+            const s = templates[selectedIndex];
             onSelect(s.content);
           }
           break;
@@ -69,7 +57,7 @@ export default function MessageSuggestions({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedIndex, filteredSuggestions, onSelect, onClose]);
+  }, [selectedIndex, templates, onSelect, onClose]);
 
   if (isLoadingTemplates) {
     return (
@@ -79,7 +67,7 @@ export default function MessageSuggestions({
     );
   }
 
-  if (filteredSuggestions.length === 0) {
+  if (templates.length === 0) {
     return (
       <Card className="absolute bottom-full left-0 right-0 mb-2 p-4 shadow-lg border">
         <div className="text-center text-gray-500">
@@ -100,7 +88,7 @@ export default function MessageSuggestions({
             Message Suggestions
           </span>
           <Badge variant="secondary" className="text-xs">
-            {filteredSuggestions.length}
+            {templates.length}
           </Badge>
         </div>
         <p className="text-xs text-gray-500 mt-1">
@@ -109,7 +97,7 @@ export default function MessageSuggestions({
       </div>
 
       <div ref={containerRef} className="max-h-64 overflow-y-auto">
-        {filteredSuggestions.map((template, index) => (
+        {templates.map((template, index) => (
           <div
             key={template.id}
             className={`p-3 cursor-pointer transition-colors border-b last:border-b-0 ${

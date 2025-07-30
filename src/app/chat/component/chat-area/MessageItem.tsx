@@ -1,9 +1,9 @@
-import { Message } from "@/hooks/data/cs/useCS";
 import { cn } from "@/lib/utils";
 import { MessageAvatar } from "./MessageAvatar";
 import { MessageContent } from "./MessageContent";
 import { MessageReadReceipts } from "./MessageReadReceipts";
 import { MessageTimestamp } from "./MessageTimestamp";
+import { Message } from "@/hooks/data/cs/useMessage";
 
 interface MessageItemProps {
   message: Message;
@@ -44,6 +44,7 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
             contentType={message.contentType ?? ""}
             content={message.content}
             links={message.links}
+            isOwner={isOwnMessage}
           />
         </div>
 

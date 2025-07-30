@@ -1,5 +1,4 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import useCustomers from "@/hooks/data/useCustomers";
 import { ContactProfile, ContactTabs } from ".";
 import {
   Sheet,
@@ -7,6 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useCustomer } from "@/hooks/data/cs/useCustomer";
 
 interface ContactInfoSidebarProps {
   customerId?: string;
@@ -19,7 +19,7 @@ const ContactInfoSidebar = ({
   customerId,
   onClose,
 }: ContactInfoSidebarProps) => {
-  const { customer, updateCustomer } = useCustomers({
+  const { customer, updateCustomer } = useCustomer({
     id: customerId,
   });
 
