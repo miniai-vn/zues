@@ -1,7 +1,6 @@
 "use client";
 import { chatApiInstance } from "@/configs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "../use-toast";
 export type Message = {

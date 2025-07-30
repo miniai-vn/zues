@@ -1,17 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
-import { Participant } from "./useCS";
 import axiosInstance from "@/configs";
+import { User } from "../useAuth";
 
-interface AddParticipantsData {
+export type Participant = {
+  id: number;
   conversationId: number;
-  participantIds: string[];
-}
-
-interface RemoveParticipantsData {
-  conversationId: number;
-  participantIds: number[];
-}
+  memberType: "customer" | "user";
+  customerId?: string;
+  userId?: string;
+  leftAt?: string;
+  createdAt: string;
+  systemId: string;
+  updatedAt: string;
+  name?: string; // For customer, this is the customer's name
+  avatar?: string; // For customer, this is the customer's avatar
+  user?: User;
+  role?: string; // Keep this for backward compatibility
+};
 
 const useParticipants = (conversationId?: number) => {
   const queryClient = useQueryClient();
@@ -32,12 +38,16 @@ const useParticipants = (conversationId?: number) => {
       return response.data as Participant[];
     },
     enabled: !!conversationId,
+    refetchOnWindowFocus: false,
   });
 
   // Add participants mutation
   const { mutate: addParticipants, isPending: isAddingParticipants } =
     useMutation({
-      mutationFn: async (data: AddParticipantsData) => {
+      mutationFn: async (data: {
+        conversationId: number;
+        participantIds: string[];
+      }) => {
         const response = await axiosInstance.post(
           `/api/conversations/${data.conversationId}/participants`,
           {
@@ -77,7 +87,10 @@ const useParticipants = (conversationId?: number) => {
   // Remove participants mutation
   const { mutate: removeParticipant, isPending: isRemovingParticipant } =
     useMutation({
-      mutationFn: async (data: RemoveParticipantsData) => {
+      mutationFn: async (data: {
+        conversationId: number;
+        participantIds: number[];
+      }) => {
         const response = await axiosInstance.delete(
           `/api/conversations/${data.conversationId}/participants`,
           {

@@ -55,7 +55,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
 
   useEffect(() => {
     if (conversationId) {
-      setHasMoreMessages(chatMessages.length >= 20);
+      setHasMoreMessages(conversation?.hasNext || chatMessages.length > 10);
     }
   }, [conversationId, chatMessages]);
 

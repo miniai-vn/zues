@@ -1,13 +1,37 @@
 import { axiosInstance } from "@/configs";
 import { PaginatedResponse } from "@/types/api";
-import { Message } from "./useCS";
 import { useQuery } from "@tanstack/react-query";
 import { useCsStore } from "./useCsStore";
-
+export type Message = {
+  id?: number;
+  content: string;
+  conversationId?: number;
+  createdAt: string;
+  senderId: string;
+  senderType: string;
+  channelId?: number;
+  messageType: string;
+  links?: string[];
+  url?: string;
+  thumb?: string;
+  contentType?: string;
+  readBy?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  }[];
+  sender?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+};
 export const useMessage = ({
   queryParams,
 }: {
   queryParams: {
+    senderId?: string;
+    dateRange?: string;
     conversationId: number;
     page?: number;
     limit?: number;
@@ -18,7 +42,6 @@ export const useMessage = ({
     selectedMessageId,
     setSelectedMessageId,
     setMessages,
-    getMessagesByConversationId,
     selectedConversationId,
   } = useCsStore();
   const { data: contextedMessage } = useQuery({
@@ -31,23 +54,11 @@ export const useMessage = ({
           conversationId: queryParams.conversationId,
         },
       });
-      const currentMessages = getMessagesByConversationId(
-        selectedConversationId as number
-      );
-      const allMessages = currentMessages.concat(response.data);
-      const uniqueMessage = new Set();
-      debugger
-      const filteredMessages = allMessages.filter((item) => {
-        if (uniqueMessage.has(item.id)) {
-          return false;
-        }
-        uniqueMessage.add(item.id);
-        return true;
-      });
-      setMessages(selectedConversationId as number, filteredMessages);
+      setMessages(selectedConversationId as number, response.data);
       return response.data as Message;
     },
     enabled: !!selectedMessageId,
+    refetchOnWindowFocus: false,
   });
 
   const { data: paginatedMessage, isLoading: isLoadingMessages } = useQuery({
@@ -60,6 +71,8 @@ export const useMessage = ({
 
       return response;
     },
+    enabled: !!queryParams.search && !!queryParams.conversationId,
+    refetchOnWindowFocus: false,
   });
   return {
     paginatedMessage,

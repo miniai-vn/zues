@@ -23,17 +23,25 @@ import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MessageTimestamp } from "./MessageTimestamp";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import useParticipants from "@/hooks/data/cs/useParticipants";
 
 export default function SearchMessageSheet() {
   const defaultAvatar =
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
+
   const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearch = useDebouncedValue(searchQuery, 400); // debounce 400ms
+  const debouncedSearch = useDebouncedValue(searchQuery, 400);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedParticipantId, setSelectedParticipantId] =
+    useState<string>("all");
   const { selectedConversationId, setSelectedMessageId } = useCsStore();
+  const { participants } = useParticipants(selectedConversationId as number);
   const [page, setPage] = useState(1);
   const { paginatedMessage } = useMessage({
     queryParams: {
+      senderId:
+        selectedParticipantId === "all" ? undefined : selectedParticipantId,
+      dateRange: "all",
       search: debouncedSearch,
       conversationId: selectedConversationId as number,
       page,
@@ -103,13 +111,36 @@ export default function SearchMessageSheet() {
           <div className="px-4 py-3 border-b">
             <div className="flex gap-2 text-sm">
               <span className="text-muted-foreground">Lọc theo:</span>
-              <Select defaultValue="sender">
+              <Select
+                defaultValue={selectedParticipantId || "all"}
+                onValueChange={(value) => {
+                  setSelectedParticipantId(value);
+                }}
+              >
                 <SelectTrigger className="w-auto h-6 text-xs border-0 p-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sender">👤 Người gửi</SelectItem>
                   <SelectItem value="all">Tất cả</SelectItem>
+
+                  {participants?.map((participant) => (
+                    <SelectItem
+                      key={participant.id}
+                      value={participant.systemId}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-5 w-5">
+                          <AvatarImage
+                            src={participant.avatar || defaultAvatar}
+                          />
+                          <AvatarFallback>
+                            {participant.name?.charAt(0) || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{participant.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select defaultValue="date">
@@ -129,6 +160,17 @@ export default function SearchMessageSheet() {
             <div className="px-4 py-3">
               <h3 className="font-medium text-sm mb-3">Tin nhắn</h3>
               <div className="space-y-3 h-[58vh] max-h-[58vh] overflow-y-auto">
+                {/* No Messages Section */}
+                {messages.length === 0 && (
+                  <div className="flex-1 flex items-center justify-center p-8">
+                    <div className="text-center text-muted-foreground">
+                      <p className="text-sm">Không có tin nhắn nào phù hợp</p>
+                      <p className="text-xs mt-1">
+                        Hãy thử tìm kiếm với từ khóa khác
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {messages.map((message) => (
                   <div
                     onClick={() => {
@@ -139,22 +181,22 @@ export default function SearchMessageSheet() {
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarImage
-                        src={message.sentBy.avatar || defaultAvatar}
+                        src={message?.sender?.avatar || defaultAvatar}
                       />
                       <AvatarFallback
                         className={
-                          message.initials === "HM"
+                          message?.sender?.name === "HM"
                             ? "bg-green-500 text-white"
                             : "bg-blue-500 text-white"
                         }
                       >
-                        {message.sentBy.name.charAt(0)}
+                        {message?.sender?.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium truncate">
-                          {message.sentBy.name}
+                          {message?.sender?.name}
                         </p>
                         <MessageTimestamp timestamp={message.createdAt} />
                         {/* <span className="text-xs text-muted-foreground">

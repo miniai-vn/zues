@@ -1,8 +1,8 @@
-import { Message } from "@/hooks/data/cs/useCS";
-import useTranslations from "@/hooks/useTranslations";
-import { useEffect, useRef, useState } from "react";
-import { MessageItem } from "./MessageItem";
 import { useAuth } from "@/hooks/data/useAuth";
+import useTranslations from "@/hooks/useTranslations";
+import { useEffect, useRef } from "react";
+import { MessageItem } from "./MessageItem";
+import { Message } from "@/hooks/data/cs/useMessage";
 
 interface MessageListProps {
   messages: Message[];

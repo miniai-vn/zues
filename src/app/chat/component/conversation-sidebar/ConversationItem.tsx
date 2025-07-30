@@ -1,22 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, Tag } from "lucide-react";
+import dayjs from "dayjs";
+import { Circle, MoreHorizontal } from "lucide-react";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -38,8 +27,8 @@ export const ConversationItem = ({
   return (
     <div
       className={cn(
-        "flex items-center w-full gap-3 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors border-l-2 group",
-        isSelected ? "bg-accent border-l-primary" : "border-l-transparent"
+        "flex items-center p-3 hover:bg-chat-sidebar-hover transition-colors border-l-2 border-transparent group cursor-pointer",
+        isSelected && "bg-chat-sidebar-hover border-l-chat-sidebar-active"
       )}
       onClick={() => {
         setSelectedConversation(conversation);
@@ -50,51 +39,64 @@ export const ConversationItem = ({
         <Avatar className="h-10 w-10">
           <AvatarImage
             src={conversation.avatar ?? defaultAvatar}
-            alt={conversation.avatar}
+            alt={conversation.name}
           />
-          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
-            {conversation.name?.charAt(0) || "?"}
+          <AvatarFallback>
+            {conversation.name?.substring(0, 2) || "?"}
           </AvatarFallback>
         </Avatar>
+        {true && (
+          <Circle className="absolute -bottom-0.5 -right-0.5 h-3 w-3 fill-green-500 text-green-500" />
+        )}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between w-full">
-          <h3 className="font-medium text-sm truncate">{conversation.name}</h3>
+      <div className="ml-3 flex-1 min-w-0">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-chat-sidebar-foreground truncate">
+            {conversation.name}
+          </p>
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-muted-foreground group-hover:hidden">
+              {conversation.createdAt
+                ? dayjs(conversation.createdAt).format("HH:mm")
+                : ""}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hidden group-hover:flex items-center justify-center"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <MoreHorizontal
+                onClick={() => onTagDialog(conversation)}
+                className="h-3 w-3"
+              />
+            </Button>
+            {conversation.unreadMessagesCount > 0 && (
+              <Badge
+                variant="default"
+                className="h-5 w-5 rounded-full text-xs p-0 flex items-center justify-center bg-primary"
+              >
+                {conversation.unreadMessagesCount > 5
+                  ? "5+"
+                  : conversation.unreadMessagesCount}
+              </Badge>
+            )}
+          </div>
         </div>
-
-        <div className="flex items-center justify-between mb-1">
-          <p className="text-sm text-muted-foreground truncate">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground truncate">
             {conversation.content}
           </p>
-          {conversation.unreadMessagesCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="h-5 w-5 flex items-center justify-center p-0 text-xs ml-2 min-w-5"
-            >
-              {conversation.unreadMessagesCount > 5
-                ? "5+"
-                : conversation.unreadMessagesCount}
-            </Badge>
-          )}
+          <span className="text-xs text-muted-foreground ml-2">
+            {conversation.channel?.name || "No Channel"}
+          </span>
         </div>
-
-        {/* Channel and Tags in one line */}
-        <div className="flex items-center gap-1">
-          {conversation.channel && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="truncate flex items-center px-2 rounded-full text-xs max-w-20 text-slate-700 border border-slate-200 dark:text-slate-300">
-                    {conversation.channel.name}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <span>Kênh: {conversation.channel.name}</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+        {/* Channel and Tags */}
+        <div className="flex items-center gap-1 mt-1">
           {conversation.tags && conversation.tags.length > 0 && (
             <>
               {conversation.tags.slice(0, 3).map((tag) => (
@@ -118,38 +120,8 @@ export const ConversationItem = ({
               )}
             </>
           )}
-          {/* <Badge
-            onClick={() => updateConversationStatusBot(conversation.id)}
-            variant="secondary"
-            className="ml-2"
-          >
-            {conversation.isBot ? "Auto reply" : "Manual reply"}
-          </Badge> */}
         </div>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-            tabIndex={-1}
-          >
-            <MoreHorizontal className="h-3 w-3" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={() => onTagDialog(conversation)}>
-            <Tag className="h-4 w-4 mr-2" />
-            Manage Tags
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Tag className="h-4 w-4 mr-2" />
-            Toggle Bot
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </div>
   );
 };

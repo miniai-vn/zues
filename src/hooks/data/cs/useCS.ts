@@ -1,65 +1,20 @@
 "use client";
 import { axiosInstance } from "@/configs";
+import { PaginatedResponse } from "@/types/api";
 import { ApiResponse } from "@/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { DateRange } from "react-day-picker";
-import { User } from "../useAuth";
 import { Channel } from "../useChannels";
 import { useCsStore } from "./useCsStore";
+import { Message } from "./useMessage";
+import { Participant } from "./useParticipants";
 import { Tag } from "./useTags";
-import { PaginatedResponse } from "@/types/api";
 
 export enum ConversationType {
   DIRECT = "direct",
   GROUP = "group",
 }
-
-export type Message = {
-  id?: number;
-  content: string;
-  conversationId?: number;
-  createdAt: string;
-  senderId: string;
-  senderType: string;
-  channelId?: number;
-  messageType: string;
-  links?: string[];
-  url?: string;
-  thumb?: string;
-  contentType?: string;
-  readBy?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  }[];
-  sender?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-};
-export type MemberSettings = {
-  notifications_enabled: boolean;
-  role: string;
-  isMuted: boolean;
-};
-export type Participant = {
-  id: number;
-  conversationId: number;
-  memberType: "customer" | "user";
-  customerId?: string;
-  userId?: string;
-  leftAt?: string;
-  memberSettings: MemberSettings;
-  createdAt: string;
-  systemId: string;
-  updatedAt: string;
-  name?: string; // For customer, this is the customer's name
-  avatar?: string; // For customer, this is the customer's avatar
-  user?: User;
-  role?: string; // Keep this for backward compatibility
-};
 
 export type Conversation = {
   id: number;
@@ -72,7 +27,6 @@ export type Conversation = {
   unreadCount?: number;
   lastestMessage?: string;
   unreadMessagesCount: number;
-  participants?: Participant[];
   members?: Participant[];
   senderId?: string;
   content?: string;
@@ -105,23 +59,6 @@ export type CreateConversationDto = {
   channelId?: number;
   channelType?: string;
   participantUserIds?: string[];
-};
-
-export type UpdateConversationDto = {
-  name?: string;
-  type?: string;
-};
-
-export type AddParticipantsDto = {
-  participantUserIds: string[];
-};
-
-export type PaginatedConversations = {
-  conversations: Conversation[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
 };
 
 const useCS = ({
@@ -380,3 +317,4 @@ const useCS = ({
 };
 
 export { useCS };
+
