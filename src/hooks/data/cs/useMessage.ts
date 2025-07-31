@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/configs";
 import { PaginatedResponse } from "@/types/api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCsStore } from "./useCsStore";
 export type Message = {
   id?: string;
@@ -28,8 +28,10 @@ export type Message = {
 };
 export const useMessage = ({
   queryParams,
+  onSuccess,
 }: {
-  queryParams: {
+  onSuccess?: (message?: string) => void;
+  queryParams?: {
     senderId?: string;
     dateRange?: string;
     conversationId?: string;
@@ -51,7 +53,7 @@ export const useMessage = ({
       const response = await axiosInstance.get(`/api/messages/context`, {
         params: {
           messageId: selectedMessageId,
-          conversationId: queryParams.conversationId,
+          conversationId: queryParams?.conversationId,
         },
       });
       setMessages(selectedConversationId as string, response.data);
@@ -71,10 +73,23 @@ export const useMessage = ({
 
       return response;
     },
-    enabled: !!queryParams.search && !!queryParams.conversationId,
+    enabled: !!queryParams?.search && !!queryParams?.conversationId,
     refetchOnWindowFocus: false,
   });
+
+  const { mutate: sendMessage } = useMutation({
+    mutationFn: async (message: Message & { quotedMsgId?: string }) => {
+      const response = await axiosInstance.post(`/api/chat/sms`, message);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (onSuccess) {
+        onSuccess(data.content);
+      }
+    },
+  });
   return {
+    sendMessage,
     paginatedMessage,
     isLoadingMessages,
     contextedMessage,

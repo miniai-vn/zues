@@ -227,13 +227,6 @@ const useCS = ({
     enabled: !id,
   });
 
-  const { mutate: sendMessage } = useMutation({
-    mutationFn: async (message: Message) => {
-      const response = await axiosInstance.post(`/api/chat/sms`, message);
-      return response.data;
-    },
-  });
-
   // Get messages for a specific conversation
   const {
     data: messagesData,
@@ -312,8 +305,6 @@ const useCS = ({
 
     setSelectedConversation: setSelectedConversationId,
     selectedConversationId,
-
-    sendMessage,
   };
 };
 

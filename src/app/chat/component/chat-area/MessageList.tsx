@@ -48,7 +48,7 @@ export const MessageList = ({
       (entries) => {
         if (entries[0].isIntersecting) {
           console.log("Loading more messages at the bottom");
-          onLoadMore("bottom");
+          // onLoadMore("bottom");
         }
       },
       { threshold: 1 }

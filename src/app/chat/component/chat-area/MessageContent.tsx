@@ -18,10 +18,12 @@ import {
 import { useState } from "react";
 import { ShareDialog } from "./ShareDialog";
 import { MessageActions } from "./MessageActions";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
+import { Message } from "@/hooks/data/cs/useMessage";
 
 interface MessageContentProps {
   contentType: string;
-  content?: string;
+  message?: Message;
   links?: string[];
   timestamp?: string;
   isOwner?: boolean; // Thêm prop này
@@ -29,13 +31,13 @@ interface MessageContentProps {
 
 export const MessageContent = ({
   contentType,
-  content,
+  message,
   links,
   timestamp,
   isOwner = false, // Mặc định là false
 }: MessageContentProps) => {
   const [isShareOpen, setIsShareOpen] = useState(false);
-
+  const { selectedConversationId, setSelectedQuote } = useCsStore();
   // UI for image, sticker, file, or default text
   const renderContent = () => {
     switch (contentType) {
@@ -180,11 +182,21 @@ export const MessageContent = ({
         return (
           <div className="group relative">
             <p className="text-sm text-gray-900 break-words">
-              {content !== "" ? content : "Tin nhắn chưa được hỗ trợ hiển thị."}
+              {message?.content !== ""
+                ? message?.content
+                : "Tin nhắn chưa được hỗ trợ hiển thị."}
             </p>
             <MessageActions
-              message={content || ""}
+              message={message?.content || ""}
               onShare={() => setIsShareOpen(true)}
+              onQuote={() => {
+                setSelectedQuote(selectedConversationId as string, {
+                  id: message?.id as string,
+                  content: message?.content as string,
+                  authorId: message?.sender?.id as string,
+                  createdAt: message?.createdAt as string,
+                });
+              }}
               positionClass={isOwner ? "right-full mr-2" : "left-full ml-2"}
             />
           </div>

@@ -42,7 +42,7 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
         >
           <MessageContent
             contentType={message.contentType ?? ""}
-            content={message.content}
+            message={message}
             links={message.links}
             isOwner={isOwnMessage}
           />

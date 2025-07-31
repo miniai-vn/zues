@@ -62,7 +62,7 @@ export const ConversationSidebar = ({
 
   return (
     <div className="flex border-r">
-      <div className="flex flex-col items-center justify-center max-w-64 flex-shrink-0">
+      <div className="flex flex-col items-center justify-center w-64">
         <ConversationFilter filters={filters} onFiltersChange={updateFilters} />
         <ConversationList
           conversations={conversations}

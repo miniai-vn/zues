@@ -1,21 +1,18 @@
 import TagManagementSheet from "@/components/tag-manager";
 import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import { useCS } from "@/hooks/data/cs/useCS";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { useTranslations } from "@/hooks/useTranslations";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "../participients-manager";
-import { EmptyState } from "./EmptyState";
 import { ChatHeader } from "./ChatHeader";
-import { MessageList } from "./MessageList";
+import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
+import { EmptyState } from "./EmptyState";
 import { MessageInput } from "./MessageInput";
+import { MessageList } from "./MessageList";
 
-interface ChatAreaProps {
-  conversationId?: string;
-}
-
-const ChatArea = ({ conversationId }: ChatAreaProps) => {
+const ChatArea = () => {
   const { t } = useTranslations();
 
   const [showParticipantManagement, setShowParticipantManagement] =
@@ -35,9 +32,11 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     setShowContactInfo((prev) => !prev);
   };
 
+  const { selectedConversationId: conversationId } = useCsStore();
+
   const { fullInfoConversationWithMessages: conversation, isLoadingMessages } =
     useCS({
-      conversationId,
+      conversationId: conversationId as string,
       queryMessageParams: {
         page,
         limit: 20,
@@ -52,11 +51,9 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     sendMessage,
     joinAllConversationWithUserId,
   } = useChatAreaSocket({ ...(conversationId ? { conversationId } : {}) });
-
   useEffect(() => {
     joinAllConversationWithUserId();
   }, []);
-
   useEffect(() => {
     if (conversationId) {
       setHasMoreMessages(conversation?.hasNext || chatMessages.length > 10);

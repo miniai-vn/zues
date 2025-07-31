@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "../useAuth";
 import { useCsStore } from "./useCsStore";
-import { Message } from "./useMessage";
+import { Message, useMessage } from "./useMessage";
 
 interface UseChatAreaProps {
   conversationId?: string;
@@ -19,9 +19,12 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     messages: chatMessages,
     setConversations,
     conversations,
+    getQuoteById,
+    deleteQuoteById,
   } = useCsStore();
-  const { refetchConversations, sendMessage } = useCS();
+  const { refetchConversations } = useCS();
   const { user } = useAuth({});
+  const { sendMessage } = useMessage({});
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -51,11 +54,11 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   }, []);
 
   useEffect(() => {
-    if (!socketChatIo) return;
+    if (!socketChatIo || !conversationId) return;
     const handleReceiveMessage = (data: Message) => {
       // Nếu là cuộc trò chuyện hiện tại
       if (data.conversationId === conversationId) {
-        setMessages((prevMessages) => [...prevMessages, data]);
+        setMessages((prevMessages) => [data, ...prevMessages]);
         readConversations(data.conversationId as string);
 
         // Đưa conversation hiện tại lên đầu nếu chưa ở top
@@ -143,12 +146,13 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       );
     };
     socketChatIo.on("messageRead", handleMarkAsRead);
-    socketChatIo.on("receiveMessage", handleReceiveMessage);
+    socketChatIo.on("delivered_message", handleReceiveMessage);
     socketChatIo.on("newConversation", handleNewConversation);
 
     return () => {
       socketChatIo.off("newConversation", handleNewConversation);
-      socketChatIo.off("receiveMessage", handleReceiveMessage);
+      socketChatIo.off("delivered_message", handleReceiveMessage);
+      socketChatIo.off("messageRead", handleMarkAsRead);
     };
   }, [socketChatIo, conversationId, conversations]);
 
@@ -190,15 +194,18 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       messageType: string;
       channelId: number;
     }) => {
+      const quotedMessage = getQuoteById(conversationId);
       sendMessage({
         conversationId,
         content: message,
         messageType: messageType,
         channelId,
+        quotedMsgId: quotedMessage?.id,
         createdAt: new Date().toISOString(),
         senderId: user?.id || "",
         senderType: "user", // or another appropriate value
       });
+      deleteQuoteById(conversationId);
     },
     [socketChatIo]
   );

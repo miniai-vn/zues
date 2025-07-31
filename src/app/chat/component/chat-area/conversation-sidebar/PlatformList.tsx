@@ -122,11 +122,7 @@ export const getPlatforms = (t: (key: string) => string): Platform[] => [
 
 export const PlatformList = () => {
   const { t } = useTranslations();
-  const {
-    channelsUnreadCount: channelsWithUnreadMessage,
-    selectedChannelId,
-    setSelectedChannelId,
-  } = useCsStore();
+  const { channelsUnreadCount: channelsWithUnreadMessage } = useCsStore();
   const router = useRouter();
 
   const platforms = getPlatforms(t);
@@ -173,7 +169,7 @@ export const PlatformList = () => {
       <div className="p-2 ">
         <div className="space-y-2  ">
           {visiblePlatforms.map((platform: Platform) => {
-            const isSelected = selectedChannelId === platform.id;
+            const isSelected = true;
             const unreadCount = getUnreadCount(platform.id);
 
             return (
@@ -186,7 +182,6 @@ export const PlatformList = () => {
                     : "hover:bg-white border-transparent hover:border-gray-200"
                 )}
                 onClick={() => {
-                  setSelectedChannelId(platform.id);
                   router.push("/chat");
                 }}
                 title={`${platform.name} - ${platform.description}`}

@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Quote,
+  Share2,
+  MoreHorizontal,
+  Copy,
+  Star,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,20 +15,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useCsStore } from "@/hooks/data/cs/useCsStore";
-import { Message } from "@/hooks/data/cs/useMessage";
-import {
-  Copy,
-  MoreHorizontal,
-  Quote,
-  Share2,
-  Star,
-  Trash2,
-} from "lucide-react";
 
 interface MessageActionsProps {
-  message: Message;
+  message: string;
   onShare: () => void;
+  onQuote?: () => void; // Thêm prop này
   onCopy?: () => void;
   onRate?: () => void;
   onDelete?: () => void;
@@ -30,25 +29,25 @@ interface MessageActionsProps {
 export function MessageActions({
   message,
   onShare,
+  onQuote,
   onCopy,
   onRate,
   onDelete,
   positionClass = "left-full ml-2", // mặc định bên phải
 }: MessageActionsProps) {
-  const { setSelectedQuote, selectedConversationId } = useCsStore();
   const handleCopyMessage = () => {
-    navigator.clipboard.writeText(message.content);
+    navigator.clipboard.writeText(message);
     onCopy?.();
-  };
-
-  const handleDeleteMessage = () => {
-    console.log("Deleting message:", message);
-    onDelete?.();
   };
 
   const handleRateMessage = () => {
     console.log("Rating message:", message);
     onRate?.();
+  };
+
+  const handleDeleteMessage = () => {
+    console.log("Deleting message:", message);
+    onDelete?.();
   };
 
   return (
@@ -58,20 +57,11 @@ export function MessageActions({
       <Button
         variant="ghost"
         size="sm"
+        onClick={onQuote}
+        title="Trích dẫn tin nhắn"
         className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full"
       >
-        <Quote
-          onClick={() => {
-            setSelectedQuote({
-              [selectedConversationId]: {
-                content: message.content,
-                authorId: message.sender?.id,
-                createdAt: message.createdAt,
-              },
-            });
-          }}
-          className="h-2 w-2 text-gray-600"
-        />
+        <Quote className="h-2 w-2 text-gray-600" />
       </Button>
       <Button
         variant="ghost"

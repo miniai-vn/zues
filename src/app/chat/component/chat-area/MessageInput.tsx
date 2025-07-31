@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Paperclip, Send, Smile } from "lucide-react";
-import { useState } from "react";
-import MessageSuggestions from "./MessageSugestion";
+import { useEffect, useState } from "react";
 import MessageQuote from "./MessageQuote";
+import MessageSuggestions from "./MessageSugestion";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -17,15 +18,25 @@ interface MessageInputProps {
 export const MessageInput = ({
   onSendMessage,
   disabled = false,
-  placeholder,
   onAttachFile,
   onEmojiPicker,
 }: MessageInputProps) => {
   const { t } = useTranslations();
   const [message, setMessage] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const { selectedQuote, selectedConversationId, getQuoteById } = useCsStore();
   const [searchQuery, setSearchQuery] = useState("");
-  const displayPlaceholder = placeholder || t("dashboard.chat.typeMessage");
+  const [showQuotedMessage, setShowQuotedMessage] = useState<boolean>(false);
+  const quotedMessage = selectedQuote
+    ? getQuoteById(selectedConversationId as string)
+    : undefined;
+  useEffect(() => {
+    if (quotedMessage) {
+      setShowQuotedMessage(true);
+    } else {
+      setShowQuotedMessage(false);
+    }
+  }, [quotedMessage]);
 
   const handleSend = () => {
     if (!message.trim() || disabled) return;
@@ -67,21 +78,7 @@ export const MessageInput = ({
     // inputRef.current?.focus();
   };
 
-  const [quotedMessage, setQuotedMessage] = useState<{
-    id: string;
-    author: string;
-    content: string;
-  } | null>(null);
-
-  const handleQuote = (message: {
-    id: string;
-    author: string;
-    content: string;
-  }) => {
-    setQuotedMessage(message);
-  };
-
-  const handleRemoveQuote = () => setQuotedMessage(null);
+  const handleRemoveQuote = () => setShowQuotedMessage(false);
 
   return (
     <div className="border-t relative p-4 bg-background w-full">
@@ -93,9 +90,12 @@ export const MessageInput = ({
         />
       )}
 
-      {true && (
+      {showQuotedMessage && (
         <div className="mb-2">
-          <MessageQuote onRemoveQuote={handleRemoveQuote} />
+          <MessageQuote
+            quotedMessage={quotedMessage}
+            onRemoveQuote={handleRemoveQuote}
+          />
         </div>
       )}
       <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export const MessageInput = ({
 
         <div className="flex-1 relative">
           <Input
-            placeholder={displayPlaceholder}
+            placeholder={t("dashboard.chat.typeMessage")}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyPress}

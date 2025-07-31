@@ -8,17 +8,18 @@ interface ChannelUnreadCount {
   type: string;
   totalUnreadMessages: number;
 }
-interface QuoteMessage {
+export interface QuotedMessage {
   id: string;
   content: string;
-  authorId: string;
+  authorId?: string;
   createdAt: string;
 }
 
 interface CsStore {
   //selected quote state
-  selectedQuote: Record<string, QuoteMessage> | null;
-  setSelectedQuote: (quote: Record<string, QuoteMessage> | null) => void;
+  selectedQuote: Map<string, QuotedMessage>;
+  setSelectedQuote: (conversationId: string, quote: QuotedMessage) => void;
+  deleteQuoteById: (conversationId: string) => void;
   // selected message state
   selectedMessageId: string | null;
   setSelectedMessageId: (id: string | null) => void;
@@ -72,7 +73,7 @@ interface CsStore {
   getConversationById: (id: string) => Conversation | undefined;
   getMessagesByConversationId: (conversationId: string) => Message[];
   getTotalUnreadCount: () => number;
-  getQuoteById: (id: string) => QuoteMessage | undefined;
+  getQuoteById: (id: string) => QuotedMessage | undefined;
 }
 
 const defaultFilters: ConversationQueryParams = {
@@ -90,9 +91,19 @@ export const useCsStore = create<CsStore>()(
     persist(
       (set, get) => ({
         // selected quote state
-        selectedQuote: {},
-        setSelectedQuote: (data: Record<string, QuoteMessage> | null) =>
-          set({ selectedQuote: data }),
+        selectedQuote: new Map<string, QuotedMessage>(),
+        setSelectedQuote: (conversationId: string, quote: QuotedMessage) =>
+          set((state) => {
+            const newMap = new Map(state.selectedQuote);
+            newMap.set(conversationId, quote);
+            return { selectedQuote: newMap };
+          }),
+        deleteQuoteById: (conversationId: string) =>
+          set((state) => {
+            const newMap = new Map(state.selectedQuote);
+            newMap.delete(conversationId);
+            return { selectedQuote: newMap };
+          }),
         // selected message state
         selectedMessageId: null,
         setSelectedMessageId: (id) => set({ selectedMessageId: id }),
@@ -407,7 +418,7 @@ export const useCsStore = create<CsStore>()(
 
         getQuoteById: (id) => {
           const state = get();
-          return state.selectedQuote ? state.selectedQuote[id] : undefined;
+          return state.selectedQuote.get(id);
         },
       }),
       {
