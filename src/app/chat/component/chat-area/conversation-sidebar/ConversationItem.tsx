@@ -57,8 +57,8 @@ export const ConversationItem = ({
           </p>
           <div className="flex items-center gap-1">
             <span className="text-xs text-muted-foreground group-hover:hidden">
-              {conversation.createdAt
-                ? dayjs(conversation.createdAt).format("HH:mm")
+              {conversation.lastMessageAt
+                ? dayjs(conversation.lastMessageAt).format("HH:mm")
                 : ""}
             </span>
             <Button

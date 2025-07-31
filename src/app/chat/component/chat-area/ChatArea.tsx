@@ -4,12 +4,15 @@ import { useCS } from "@/hooks/data/cs/useCS";
 import { useTranslations } from "@/hooks/useTranslations";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ChatHeader, EmptyState, MessageInput, MessageList } from ".";
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import ParticipantManagementSheet from "../participients-manager";
+import { EmptyState } from "./EmptyState";
+import { ChatHeader } from "./ChatHeader";
+import { MessageList } from "./MessageList";
+import { MessageInput } from "./MessageInput";
 
 interface ChatAreaProps {
-  conversationId?: number;
+  conversationId?: string;
 }
 
 const ChatArea = ({ conversationId }: ChatAreaProps) => {
@@ -21,10 +24,11 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [page, setPage] = useState(1);
   const [showContactInfo, setShowContactInfo] = useState(false);
-  const [nextBeforeMessageId, setNextBeforeMessageId] = useState<number | null>(
+  const [nextBeforeMessageId, setNextBeforeMessageId] = useState<string | null>(
     null
   );
-  const [nextAfterMessageId, setNextAfterMessageId] = useState<number | null>(
+
+  const [nextAfterMessageId, setNextAfterMessageId] = useState<string | null>(
     null
   );
   const toggleContactInfo = () => {
@@ -117,7 +121,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
         <MessageInput
           onSendMessage={(content) => {
             sendMessage({
-              conversationId: conversationId as number,
+              conversationId: conversationId,
               message: content,
               messageType: "text",
               channelId: conversation?.channelId,
@@ -133,7 +137,7 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
       />
 
       <ParticipantManagementSheet
-        conversationId={conversationId as number}
+        conversationId={conversationId}
         open={showParticipantManagement}
         onOpenChange={setShowParticipantManagement}
       />

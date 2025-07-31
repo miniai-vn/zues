@@ -1,7 +1,7 @@
 "use client";
 
-import ConversationCsPage from "./component";
+import ChatPage from "./component";
 
-export default function ChatPage() {
-  return <ConversationCsPage />;
+export default function Chat() {
+  return <ChatPage />;
 }

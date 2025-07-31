@@ -19,9 +19,9 @@ import { cn } from "@/lib/utils";
 interface TagManagementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  conversationId?: number;
+  conversationId?: string;
   currentTags: Tag[];
-  onUpdateTags?: (conversationId: number, tags: Tag[]) => void;
+  onUpdateTags?: (conversationId?: string, tags: Tag[]) => void;
 }
 
 const TagManagementDialog = ({

@@ -1,33 +1,37 @@
 "use client";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { Conversation, Message, ConversationQueryParams } from "./useCS";
-import { Socket } from "socket.io-client";
+import { Conversation, ConversationQueryParams } from "./useCS";
+import { Message } from "./useMessage";
 
 interface ChannelUnreadCount {
   type: string;
   totalUnreadMessages: number;
 }
+interface QuoteMessage {
+  id: string;
+  content: string;
+  authorId: string;
+  createdAt: string;
+}
 
 interface CsStore {
+  //selected quote state
+  selectedQuote: Record<string, QuoteMessage> | null;
+  setSelectedQuote: (quote: Record<string, QuoteMessage> | null) => void;
   // selected message state
-  selectedMessageId: number | null;
-  setSelectedMessageId: (id: number | null) => void;
-  // channel state
-  selectedChannelId?: string | null;
-  setSelectedChannelId: (id: string | null) => void;
+  selectedMessageId: string | null;
+  setSelectedMessageId: (id: string | null) => void;
   // Conversations state
   conversations: Conversation[];
-  selectedConversationId: number | null;
+  selectedConversationId: string | null;
   selectedConversation: Conversation | null;
   setSelectedConversation: (conv: Conversation | null) => void;
 
   isLoadingConversations: boolean;
   conversationFilters: ConversationQueryParams;
-  socketChatIo: Socket | null;
-  setSocketChatIo: (socket: Socket | null) => void;
   // Messages state
-  messages: Record<number, Message[]>; // conversationId -> messages
+  messages: Record<string, Message[]>; // conversationId -> messages
   isLoadingMessages: boolean;
 
   // Platform unread counts
@@ -37,37 +41,38 @@ interface CsStore {
   // Actions - Conversations
   setConversations: (conversations: Conversation[]) => void;
   addConversation: (conversation: Conversation) => void;
-  updateConversation: (id: number, updates: Partial<Conversation>) => void;
-  removeConversation: (id: number) => void;
-  setSelectedConversationId: (id: number | null) => void;
+  updateConversation: (id: string, updates: Partial<Conversation>) => void;
+  removeConversation: (id: string) => void;
+  setSelectedConversationId: (id: string | null) => void;
   setLoadingConversations: (loading: boolean) => void;
   setConversationFilters: (filters: Partial<ConversationQueryParams>) => void;
   resetConversationFilters: () => void;
 
   // Actions - Messages
-  setMessages: (conversationId: number, messages: Message[]) => void;
-  addMessage: (conversationId: number, message: Message) => void;
+  setMessages: (conversationId: string, messages: Message[]) => void;
+  addMessage: (conversationId: string, message: Message) => void;
   updateMessage: (
-    conversationId: number,
-    messageId: number,
+    conversationId: string,
+    messageId: string,
     updates: Partial<Message>
   ) => void;
-  removeMessage: (conversationId: number, messageId: number) => void;
+  removeMessage: (conversationId: string, messageId: string) => void;
   setLoadingMessages: (loading: boolean) => void;
-  clearMessages: (conversationId: number) => void;
+  clearMessages: (conversationId: string) => void;
 
   // Actions - Unread counts
   setChannelsUnreadCount: (channels: ChannelUnreadCount[]) => void;
   updateChannelUnreadCount: (channelType: string, count: number) => void;
   incrementUnreadCount: (channelType: string, increment?: number) => void;
   decrementUnreadCount: (channelType: string, decrement?: number) => void;
-  markConversationAsRead: (conversationId: number) => void;
+  markConversationAsRead: (conversationId: string) => void;
 
   // Utility actions
   reset: () => void;
-  getConversationById: (id: number) => Conversation | undefined;
-  getMessagesByConversationId: (conversationId: number) => Message[];
+  getConversationById: (id: string) => Conversation | undefined;
+  getMessagesByConversationId: (conversationId: string) => Message[];
   getTotalUnreadCount: () => number;
+  getQuoteById: (id: string) => QuoteMessage | undefined;
 }
 
 const defaultFilters: ConversationQueryParams = {
@@ -84,12 +89,13 @@ export const useCsStore = create<CsStore>()(
   devtools(
     persist(
       (set, get) => ({
+        // selected quote state
+        selectedQuote: {},
+        setSelectedQuote: (data: Record<string, QuoteMessage> | null) =>
+          set({ selectedQuote: data }),
         // selected message state
         selectedMessageId: null,
         setSelectedMessageId: (id) => set({ selectedMessageId: id }),
-        // Channel state
-        selectedChannelId: null,
-        setSelectedChannelId: (id) => set({ selectedChannelId: id }),
         // Initial state
         conversations: [],
         selectedConversationId: null,
@@ -108,8 +114,6 @@ export const useCsStore = create<CsStore>()(
 
         channelsUnreadCount: [],
         totalUnreadCount: 0,
-        socketChatIo: null,
-        setSocketChatIo: (socket) => set({ socketChatIo: socket }),
 
         // Conversation actions
         setConversations: (conversations) =>
@@ -160,9 +164,7 @@ export const useCsStore = create<CsStore>()(
                 ? null
                 : state.selectedConversation,
             messages: Object.fromEntries(
-              Object.entries(state.messages).filter(
-                ([key]) => parseInt(key) !== id
-              )
+              Object.entries(state.messages).filter(([key]) => key !== id)
             ),
           })),
 
@@ -402,6 +404,11 @@ export const useCsStore = create<CsStore>()(
           const state = get();
           return state.totalUnreadCount;
         },
+
+        getQuoteById: (id) => {
+          const state = get();
+          return state.selectedQuote ? state.selectedQuote[id] : undefined;
+        },
       }),
       {
         name: "cs-store",
@@ -433,5 +440,3 @@ export const useChannelsUnreadCount = () =>
   useCsStore((state) => state.channelsUnreadCount);
 export const useTotalUnreadCount = () =>
   useCsStore((state) => state.totalUnreadCount);
-export const useMessagesForConversation = (conversationId: number) =>
-  useCsStore((state) => state.messages[conversationId] || []);

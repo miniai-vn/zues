@@ -85,7 +85,7 @@ export const MessageList = ({
   }
 
   return (
-    <div className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto flex flex-col-reverse">
+    <div className="p-4 space-y-4 h-[64vh] max-h-[64vh] overflow-y-auto flex flex-col-reverse">
       <div ref={messagesEndRef} />
       {messages.map((message) => {
         const isOwnMessage =
@@ -100,9 +100,7 @@ export const MessageList = ({
       })}
       <div ref={messagesTopRef} />
       {hasMore && (
-        <div className="py-2 text-center text-xs text-muted-foreground">
-          Đang tải thêm...
-        </div>
+        <div className="py-2 text-center text-xs text-muted-foreground"></div>
       )}
     </div>
   );

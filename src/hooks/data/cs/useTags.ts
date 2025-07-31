@@ -175,7 +175,7 @@ const useTags = (
       conversationId,
       tagIds,
     }: {
-      conversationId: number;
+      conversationId?: string;
       tagIds: number[];
     }) => {
       const response = await axiosInstance.post(

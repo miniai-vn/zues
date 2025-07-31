@@ -17,7 +17,7 @@ import AddParticipantDialog from "./AddparticipantDialog";
 interface ParticipantManagementSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  conversationId: number;
+  conversationId: string;
 }
 
 const ParticipantManagementSheet = ({

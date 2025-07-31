@@ -6,7 +6,7 @@ import { Message } from "./data/cs/useCS";
 interface UserJoinedEvent {
   message: string;
   userId: string;
-  conversationId: number;
+  conversationId?: string;
 }
 
 export function useSocket() {
@@ -120,7 +120,7 @@ export function useSocket() {
 
   // Join a conversation room
   const joinConversation = useCallback(
-    (conversationId: number, userId?: string) => {
+    (conversationId?: string, userId?: string) => {
       if (socketChat) {
         socketChat.emit("joinConversation", { conversationId, userId });
       }
@@ -131,7 +131,7 @@ export function useSocket() {
   // Send a message to the conversation
   const sendMessage = useCallback(
     (
-      conversationId: number,
+      conversationId?: string,
       message: string,
       userId: string,
       messageType: string = "text"
@@ -150,7 +150,7 @@ export function useSocket() {
 
   // Send typing indicator
   const sendTypingIndicator = useCallback(
-    (conversationId: number, userId: string, isTyping: boolean) => {
+    (conversationId?: string, userId: string, isTyping: boolean) => {
       if (socketChat) {
         socketChat.emit("typing", {
           conversationId,
@@ -164,7 +164,7 @@ export function useSocket() {
 
   // Mark messages as read
   const markAsRead = useCallback(
-    (conversationId: number, userId: string, messageId?: number) => {
+    (conversationId?: string, userId: string, messageId?: number) => {
       if (socketChat) {
         socketChat.emit("markAsRead", {
           conversationId,

@@ -17,7 +17,7 @@ export enum ConversationType {
 }
 
 export type Conversation = {
-  id: number;
+  id: string;
   name: string;
   channelId?: number;
   isBot?: boolean;
@@ -33,6 +33,7 @@ export type Conversation = {
   messages?: Message[];
   tags?: Tag[];
   channel: Channel;
+  lastMessageAt?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -76,8 +77,8 @@ const useCS = ({
     nextAfterMessageId: null,
   },
 }: {
-  id?: number;
-  conversationId?: number;
+  id?: string;
+  conversationId?: string;
   initialFilters?: Partial<ConversationQueryParams>;
   queryParams?: {
     page?: number;
@@ -86,8 +87,8 @@ const useCS = ({
   queryMessageParams?: {
     page?: number;
     limit?: number;
-    nextBeforeMessageId?: number | null;
-    nextAfterMessageId?: number | null;
+    nextBeforeMessageId?: string | null;
+    nextAfterMessageId?: string | null;
   };
 } = {}) => {
   // Store actions and state
@@ -279,7 +280,7 @@ const useCS = ({
   });
 
   const { mutateAsync: markReadConversation } = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       const response = await axiosInstance.put<ApiResponse<Conversation>>(
         `/api/conversations/${id}/mark-read`
       );
@@ -317,4 +318,3 @@ const useCS = ({
 };
 
 export { useCS };
-

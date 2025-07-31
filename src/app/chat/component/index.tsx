@@ -3,17 +3,17 @@ import ChatArea from "./chat-area/ChatArea";
 import { ConversationColumn } from "./chat-area/conversation-sidebar";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 
-const ConversationCsPage = () => {
-  const [selectedConversationId, setSelectedConversation] = useState<number>();
+const ChatPage = () => {
+  const [selectedConversationId, setSelectedConversation] = useState<string>();
   const { setSelectedConversationId } = useCsStore();
   return (
     <div className="flex w-full bg-background">
       <div className="flex h-full border-r">
         <ConversationColumn
           selectedConversationId={selectedConversationId}
-          onSelectConversation={(conversationId?: number) => {
+          onSelectConversation={(conversationId?: string) => {
             setSelectedConversation(conversationId);
-            setSelectedConversationId(conversationId as number);
+            setSelectedConversationId(conversationId as string);
           }}
         />
       </div>
@@ -22,4 +22,4 @@ const ConversationCsPage = () => {
   );
 };
 
-export default ConversationCsPage;
+export default ChatPage;

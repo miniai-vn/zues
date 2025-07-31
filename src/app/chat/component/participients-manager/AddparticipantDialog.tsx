@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 interface AddParticipantDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  conversationId: number;
+  conversationId?: string;
   onAddParticipants: (participantIds: string[]) => void;
   existingParticipantIds?: string[];
 }

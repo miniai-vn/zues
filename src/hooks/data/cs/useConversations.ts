@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 const useConversations = () => {
   const { toast } = useToast();
   const { mutate: updateConversationStatusBot } = useMutation({
-    mutationFn: async (conversationId: number) => {
+    mutationFn: async (conversationId?: string) => {
       return await axiosInstance.patch("/api/conversations/status-bot", {
         conversationId,
       });

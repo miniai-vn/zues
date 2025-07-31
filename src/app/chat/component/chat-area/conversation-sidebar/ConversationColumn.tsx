@@ -6,11 +6,11 @@ import { ConversationFilter } from "./ConversationFilter";
 import { ConversationList } from "./ConversationList";
 
 interface ConversationColumnProps {
-  selectedConversationId?: number;
-  onSelectConversation: (conversationId?: number) => void;
+  selectedConversationId?: string;
+  onSelectConversation: (conversationId?: string) => void;
 }
 
-export const ConversationColumn = ({
+export const ConversationSidebar = ({
   selectedConversationId,
   onSelectConversation,
 }: ConversationColumnProps) => {
@@ -62,12 +62,12 @@ export const ConversationColumn = ({
 
   return (
     <div className="flex border-r">
-      <div className="flex flex-col items-center justify-center max-w-[24vw] flex-shrink-0">
+      <div className="flex flex-col items-center justify-center max-w-64 flex-shrink-0">
         <ConversationFilter filters={filters} onFiltersChange={updateFilters} />
         <ConversationList
           conversations={conversations}
           selectedConversationId={selectedConversationId}
-          onSelectConversationId={(conversationId?: number) => {
+          onSelectConversationId={(conversationId?: string) => {
             onSelectConversation(conversationId);
             if (conversationId) {
               markReadConversation(conversationId);

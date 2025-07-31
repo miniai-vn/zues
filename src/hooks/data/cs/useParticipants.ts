@@ -5,7 +5,7 @@ import { User } from "../useAuth";
 
 export type Participant = {
   id: number;
-  conversationId: number;
+  conversationId?: string;
   memberType: "customer" | "user";
   customerId?: string;
   userId?: string;
@@ -19,7 +19,7 @@ export type Participant = {
   role?: string; // Keep this for backward compatibility
 };
 
-const useParticipants = (conversationId?: number) => {
+const useParticipants = (conversationId?: string) => {
   const queryClient = useQueryClient();
 
   // Fetch participants for a specific conversation
@@ -45,7 +45,7 @@ const useParticipants = (conversationId?: number) => {
   const { mutate: addParticipants, isPending: isAddingParticipants } =
     useMutation({
       mutationFn: async (data: {
-        conversationId: number;
+        conversationId?: string;
         participantIds: string[];
       }) => {
         const response = await axiosInstance.post(
@@ -88,7 +88,7 @@ const useParticipants = (conversationId?: number) => {
   const { mutate: removeParticipant, isPending: isRemovingParticipant } =
     useMutation({
       mutationFn: async (data: {
-        conversationId: number;
+        conversationId?: string;
         participantIds: number[];
       }) => {
         const response = await axiosInstance.delete(
@@ -133,7 +133,7 @@ const useParticipants = (conversationId?: number) => {
   const { mutate: updateParticipantRole, isPending: isUpdatingRole } =
     useMutation({
       mutationFn: async (data: {
-        conversationId: number;
+        conversationId?: string;
         participantId: number;
         role: string;
       }) => {

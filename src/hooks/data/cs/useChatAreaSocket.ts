@@ -1,12 +1,13 @@
 "use client";
-import { Message, useCS } from "@/hooks/data/cs/useCS";
+import { useCS } from "@/hooks/data/cs/useCS";
 import { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "../useAuth";
 import { useCsStore } from "./useCsStore";
+import { Message } from "./useMessage";
 
 interface UseChatAreaProps {
-  conversationId?: number;
+  conversationId?: string;
 }
 
 export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
@@ -55,7 +56,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       // Nếu là cuộc trò chuyện hiện tại
       if (data.conversationId === conversationId) {
         setMessages((prevMessages) => [...prevMessages, data]);
-        readConversations(data.conversationId as number);
+        readConversations(data.conversationId as string);
 
         // Đưa conversation hiện tại lên đầu nếu chưa ở top
         const currentIndex = conversations.findIndex(
@@ -104,7 +105,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     };
 
     const handleNewConversation = (data: {
-      conversationId: number;
+      conversationId: string;
       userId: string;
     }) => {
       joinConversation(data.conversationId, data.userId);
@@ -112,8 +113,8 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     };
 
     const handleMarkAsRead = (data: {
-      conversationId: number;
-      messageId: number;
+      conversationId: string;
+      messageId: string;
       userId: string;
       readBy: {
         id: string;
@@ -158,7 +159,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   }, [chatMessages, conversationId]);
 
   const joinConversation = useCallback(
-    (conversationId: number, userId?: string) => {
+    (conversationId: string, userId?: string) => {
       if (socketChatIo) {
         socketChatIo.emit("joinConversation", {
           conversationId,
@@ -184,7 +185,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
       messageType = "text",
       channelId,
     }: {
-      conversationId: number;
+      conversationId: string;
       message: string;
       messageType: string;
       channelId: number;
@@ -203,7 +204,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
   );
 
   const readConversations = useCallback(
-    (conversationId: number) => {
+    (conversationId: string) => {
       if (socketChatIo) {
         socketChatIo.emit("markAsRead", { conversationId, userId: user?.id });
       }

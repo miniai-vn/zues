@@ -3,9 +3,9 @@ import { PaginatedResponse } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 import { useCsStore } from "./useCsStore";
 export type Message = {
-  id?: number;
+  id?: string;
   content: string;
-  conversationId?: number;
+  conversationId?: string;
   createdAt: string;
   senderId: string;
   senderType: string;
@@ -32,7 +32,7 @@ export const useMessage = ({
   queryParams: {
     senderId?: string;
     dateRange?: string;
-    conversationId: number;
+    conversationId?: string;
     page?: number;
     limit?: number;
     search?: string;
@@ -54,7 +54,7 @@ export const useMessage = ({
           conversationId: queryParams.conversationId,
         },
       });
-      setMessages(selectedConversationId as number, response.data);
+      setMessages(selectedConversationId as string, response.data);
       return response.data as Message;
     },
     enabled: !!selectedMessageId,

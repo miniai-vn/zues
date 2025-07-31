@@ -1,13 +1,5 @@
 "use client";
 
-import {
-  Quote,
-  Share2,
-  MoreHorizontal,
-  Copy,
-  Star,
-  Trash2,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,9 +7,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useCsStore } from "@/hooks/data/cs/useCsStore";
+import { Message } from "@/hooks/data/cs/useMessage";
+import {
+  Copy,
+  MoreHorizontal,
+  Quote,
+  Share2,
+  Star,
+  Trash2,
+} from "lucide-react";
 
 interface MessageActionsProps {
-  message: string;
+  message: Message;
   onShare: () => void;
   onCopy?: () => void;
   onRate?: () => void;
@@ -33,19 +35,20 @@ export function MessageActions({
   onDelete,
   positionClass = "left-full ml-2", // mặc định bên phải
 }: MessageActionsProps) {
+  const { setSelectedQuote, selectedConversationId } = useCsStore();
   const handleCopyMessage = () => {
-    navigator.clipboard.writeText(message);
+    navigator.clipboard.writeText(message.content);
     onCopy?.();
-  };
-
-  const handleRateMessage = () => {
-    console.log("Rating message:", message);
-    onRate?.();
   };
 
   const handleDeleteMessage = () => {
     console.log("Deleting message:", message);
     onDelete?.();
+  };
+
+  const handleRateMessage = () => {
+    console.log("Rating message:", message);
+    onRate?.();
   };
 
   return (
@@ -57,7 +60,18 @@ export function MessageActions({
         size="sm"
         className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full"
       >
-        <Quote className="h-2 w-2 text-gray-600" />
+        <Quote
+          onClick={() => {
+            setSelectedQuote({
+              [selectedConversationId]: {
+                content: message.content,
+                authorId: message.sender?.id,
+                createdAt: message.createdAt,
+              },
+            });
+          }}
+          className="h-2 w-2 text-gray-600"
+        />
       </Button>
       <Button
         variant="ghost"

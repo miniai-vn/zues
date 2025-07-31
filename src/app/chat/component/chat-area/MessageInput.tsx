@@ -4,6 +4,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 import MessageSuggestions from "./MessageSugestion";
+import MessageQuote from "./MessageQuote";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
@@ -66,6 +67,22 @@ export const MessageInput = ({
     // inputRef.current?.focus();
   };
 
+  const [quotedMessage, setQuotedMessage] = useState<{
+    id: string;
+    author: string;
+    content: string;
+  } | null>(null);
+
+  const handleQuote = (message: {
+    id: string;
+    author: string;
+    content: string;
+  }) => {
+    setQuotedMessage(message);
+  };
+
+  const handleRemoveQuote = () => setQuotedMessage(null);
+
   return (
     <div className="border-t relative p-4 bg-background w-full">
       {showSuggestions && (
@@ -74,6 +91,12 @@ export const MessageInput = ({
           onClose={handleSuggestionsClose}
           searchQuery={searchQuery}
         />
+      )}
+
+      {true && (
+        <div className="mb-2">
+          <MessageQuote onRemoveQuote={handleRemoveQuote} />
+        </div>
       )}
       <div className="flex items-center gap-2">
         <Button

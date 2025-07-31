@@ -4,8 +4,8 @@ import { ConversationItem } from "./ConversationItem";
 import { useRef, useEffect } from "react";
 
 interface ConversationListProps {
-  selectedConversationId?: number;
-  onSelectConversationId: (conversationId?: number) => void;
+  selectedConversationId?: string;
+  onSelectConversationId: (conversationId?: string) => void;
   onTagDialog: (conversation: Conversation) => void;
   conversations?: Conversation[];
 }
@@ -75,14 +75,7 @@ export const ConversationList = ({
                 onTagDialog={onTagDialog}
               />
             ))}
-            {hasMore && (
-              <div
-                ref={loadMoreRef}
-                className="py-4 text-center text-xs text-muted-foreground"
-              >
-                Đang tải thêm...
-              </div>
-            )}
+            {hasMore && <div ref={loadMoreRef}></div>}
           </>
         )}
       </div>
