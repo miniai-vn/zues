@@ -1,7 +1,7 @@
 "use client";
 
-import { getPlatforms } from "@/app/chat/component/conversation-sidebar";
-import { Platform } from "@/app/chat/component/conversation-sidebar/PlatformList";
+import { getPlatforms } from "@/app/chat/component/chat-area/conversation-sidebar";
+import { Platform } from "@/app/chat/component/chat-area/conversation-sidebar/PlatformList";
 import { Button } from "@/components/ui/button";
 import {
   Card,

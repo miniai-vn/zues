@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ChatArea from "./ChatArea";
-import { ConversationColumn } from "./conversation-sidebar";
+import ChatArea from "./chat-area/ChatArea";
+import { ConversationColumn } from "./chat-area/conversation-sidebar";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 
 const ConversationCsPage = () => {

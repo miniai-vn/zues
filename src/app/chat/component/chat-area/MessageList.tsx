@@ -22,7 +22,6 @@ export const MessageList = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesTopRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth({});
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto scroll xuống cuối khi có tin nhắn mới
   useEffect(() => {
@@ -31,38 +30,46 @@ export const MessageList = ({
     }
   }, [messages, autoScroll]);
 
-  // Infinite scroll lên trên
+  // Infinite scroll lên trên và xuống dưới
   useEffect(() => {
     if (!hasMore || !onLoadMore) return;
-    const observer = new IntersectionObserver(
+
+    const topObserver = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
+          console.log("Loading more messages at the top");
           onLoadMore("top");
         }
       },
       { threshold: 1 }
     );
+
+    const bottomObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          console.log("Loading more messages at the bottom");
+          onLoadMore("bottom");
+        }
+      },
+      { threshold: 1 }
+    );
+
     if (messagesTopRef.current) {
-      observer.observe(messagesTopRef.current);
+      topObserver.observe(messagesTopRef.current);
     }
+    if (messagesEndRef.current) {
+      bottomObserver.observe(messagesEndRef.current);
+    }
+
     return () => {
       if (messagesTopRef.current) {
-        observer.unobserve(messagesTopRef.current);
+        topObserver.unobserve(messagesTopRef.current);
+      }
+      if (messagesEndRef.current) {
+        bottomObserver.unobserve(messagesEndRef.current);
       }
     };
   }, [hasMore, onLoadMore]);
-
-  // Infinite scroll xuống dưới (check reach bottom)
-  // const handleScroll = () => {
-  //   if (containerRef.current) {
-  //     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-  //     if (scrollTop + clientHeight >= scrollHeight - 5) {
-  //       // Adding a small threshold
-  //       console.log("Reached bottom of the scrollable div!");
-  //       // Perform actions like loading more data
-  //     }
-  //   }
-  // };
 
   if (messages.length === 0) {
     return (
@@ -78,11 +85,7 @@ export const MessageList = ({
   }
 
   return (
-    <div
-      ref={containerRef}
-      // onScroll={handleScroll}
-      className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto flex flex-col-reverse"
-    >
+    <div className="p-4 space-y-4 h-[78vh] max-h-[78vh] overflow-y-auto flex flex-col-reverse">
       <div ref={messagesEndRef} />
       {messages.map((message) => {
         const isOwnMessage =

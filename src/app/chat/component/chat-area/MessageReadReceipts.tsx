@@ -43,7 +43,7 @@ export const MessageReadReceipts = ({ readBy }: MessageReadReceiptsProps) => {
                 align="end"
                 className="text-xs p-2"
               >
-                {t("dashboard.chat.readBy", { name: reader.name })}
+                {/* {t("dashboard.chat.readBy", { name: reader.name ?? '' })} */}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

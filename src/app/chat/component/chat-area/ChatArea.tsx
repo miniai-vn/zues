@@ -4,9 +4,9 @@ import { useCS } from "@/hooks/data/cs/useCS";
 import { useTranslations } from "@/hooks/useTranslations";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ChatHeader, EmptyState, MessageInput, MessageList } from "./chat-area";
+import { ChatHeader, EmptyState, MessageInput, MessageList } from ".";
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
-import ParticipantManagementSheet from "./participients-manager";
+import ParticipantManagementSheet from "../participients-manager";
 
 interface ChatAreaProps {
   conversationId?: number;
@@ -65,19 +65,13 @@ const ChatArea = ({ conversationId }: ChatAreaProps) => {
     }
   }, [conversationId]);
 
-  // useEffect(() => {
-  //   if (conversation) {
-  //     console.log("Setting nextBeforeMessageId and nextAfterMessageId", {
-  //       nextBeforeMessageId: conversation.nextBeforeMessageId,
-  //       nextAfterMessageId: conversation.nextAfterMessageId,
-  //     });
-  //     setNextAfterMessageId(conversation.nextAfterMessageId || null);
-  //     setNextBeforeMessageId(conversation.nextBeforeMessageId || null);
-  //   }
-  // }, [conversation]);
-
   const handleLoadMoreMessages = async (stateScroll: string) => {
-    console.log("Loading more messages", { conversation });
+    if (stateScroll === "bottom") {
+      setNextAfterMessageId(conversation?.nextAfterMessageId || null);
+      setPage(1);
+      return;
+    }
+
     if (
       conversationId &&
       hasMoreMessages &&

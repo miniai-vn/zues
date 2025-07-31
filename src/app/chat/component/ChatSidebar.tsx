@@ -1,5 +1,5 @@
 "use client";
-import { PlatformList } from "./conversation-sidebar/PlatformList";
+import { PlatformList } from "./chat-area/conversation-sidebar/PlatformList";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { BarChart2, Settings } from "lucide-react";
