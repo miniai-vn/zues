@@ -18,6 +18,7 @@ interface MessageInputProps {
   placeholder?: string;
   onAttachFile?: (files: FileList) => void;
   onEmojiPicker?: () => void;
+  onMessageImages: (files: File[], content: string) => void;
 }
 
 export const MessageInput = ({
@@ -28,6 +29,7 @@ export const MessageInput = ({
   showQuotedMessage = false,
   handleRemoveQuote,
   quotedMessage,
+  onMessageImages,
 }: MessageInputProps) => {
   const { t } = useTranslations();
   const [message, setMessage] = useState("");
@@ -65,6 +67,11 @@ export const MessageInput = ({
 
   const handleSend = () => {
     if (!message.trim() || disabled) return;
+    if (imageFiles.length > 0) {
+      onMessageImages(imageFiles, message.trim());
+      setImageFiles([]);
+      return;
+    }
     onSendMessage(message.trim());
     setMessage("");
   };
@@ -72,6 +79,11 @@ export const MessageInput = ({
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (imageFiles.length > 0) {
+        onMessageImages(imageFiles, message.trim());
+        setImageFiles([]);
+        return;
+      }
       handleSend();
     }
     if (e.key === "/" || (e.key.startsWith("/") && e.key.length > 1)) {
@@ -165,58 +177,57 @@ export const MessageInput = ({
         >
           <Send className="h-4 w-4" />
         </Button>
-
-        {imageFiles.length > 0 && (
-          <div className="p-3 border-t border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">
-                {imageFiles.length} ảnh
-              </span>
-              <Button
-                variant="link"
-                size="sm"
-                className="text-xs text-blue-600 h-auto p-0"
-                onClick={onRemoveAllFiles}
-              >
-                Xóa tất cả
-              </Button>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {imageFiles.map((file, index) => (
-                <div
-                  key={file.name + index}
-                  className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border border-gray-200"
-                >
-                  <Image
-                    src={getFilePreviewUrl(file) || "/placeholder.svg"}
-                    alt={file.name}
-                    width={96}
-                    height={96}
-                    className="object-cover w-full h-full"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-1 right-1 h-5 w-5 p-0 rounded-full bg-black/50 text-white hover:bg-black/70"
-                    onClick={() => onRemoveFile && onRemoveFile(index)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))}
-              {/* Add more images button */}
-              <Button
-                type="button"
-                variant="outline"
-                className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-gray-300 text-gray-400 hover:border-gray-400 hover:text-gray-500 bg-transparent"
-                onClick={handleFileClick}
-              >
-                <Plus className="h-6 w-6" />
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
+      {imageFiles.length > 0 && (
+        <div className="p-3 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">
+              {imageFiles.length} ảnh
+            </span>
+            <Button
+              variant="link"
+              size="sm"
+              className="text-xs text-blue-600 h-auto p-0"
+              onClick={onRemoveAllFiles}
+            >
+              Xóa tất cả
+            </Button>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {imageFiles.map((file, index) => (
+              <div
+                key={file.name + index}
+                className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border border-gray-200"
+              >
+                <Image
+                  src={getFilePreviewUrl(file) || "/placeholder.svg"}
+                  alt={file.name}
+                  width={96}
+                  height={96}
+                  className="object-cover w-full h-full"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-1 right-1 h-5 w-5 p-0 rounded-full bg-black/50 text-white hover:bg-black/70"
+                  onClick={() => onRemoveFile && onRemoveFile(index)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ))}
+            {/* Add more images button */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-gray-300 text-gray-400 hover:border-gray-400 hover:text-gray-500 bg-transparent"
+              onClick={handleFileClick}
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

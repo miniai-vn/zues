@@ -91,7 +91,6 @@ export const useMessage = ({
 
   const { mutate: sendAttechment } = useMutation({
     mutationFn: async (data: { file: File; conversationId: string }) => {
-      debugger;
       const formData = new FormData();
       formData.append("file", data.file);
       formData.append("conversationId", data.conversationId);
@@ -112,7 +111,34 @@ export const useMessage = ({
       }
     },
   });
+
+  const { mutate: sendMessageImages } = useMutation({
+    mutationFn: async (data: {
+      files: File[];
+      conversationId: string;
+      content: string;
+    }) => {
+      const formData = new FormData();
+      data.files.forEach((file) => {
+        formData.append("files", file);
+      });
+      formData.append("conversationId", data.conversationId);
+      formData.append("content", data.content);
+      const response = await axiosInstance.post(`/api/chat/images`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (onSuccess) {
+        onSuccess(data.content);
+      }
+    },
+  });
   return {
+    sendMessageImages,
     sendAttechment,
     sendMessage,
     paginatedMessage,

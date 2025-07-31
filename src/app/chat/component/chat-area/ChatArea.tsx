@@ -34,7 +34,7 @@ const ChatArea = () => {
   };
 
   const { selectedConversationId: conversationId } = useCsStore();
-  const { sendAttechment } = useMessage({});
+  const { sendAttechment, sendMessageImages } = useMessage({});
   const { fullInfoConversationWithMessages: conversation, isLoadingMessages } =
     useCS({
       conversationId: conversationId as string,
@@ -140,6 +140,15 @@ const ChatArea = () => {
               sendAttechment({
                 file: files[0],
                 conversationId: conversationId as string,
+              });
+            }
+          }}
+          onMessageImages={(files: File[], content: string) => {
+            if (files && files.length > 0) {
+              sendMessageImages({
+                files,
+                conversationId: conversationId as string,
+                content,
               });
             }
           }}

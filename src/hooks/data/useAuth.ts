@@ -188,7 +188,6 @@ const useAuth = ({
   } = useQuery({
     queryKey: ["user", { page, limit, search }],
     queryFn: async () => {
-      debugger
       const response = await axiosInstance.get("/api/auth/users", {
         params: { page, limit, search },
       });
