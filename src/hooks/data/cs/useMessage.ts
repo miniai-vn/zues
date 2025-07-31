@@ -88,7 +88,32 @@ export const useMessage = ({
       }
     },
   });
+
+  const { mutate: sendAttechment } = useMutation({
+    mutationFn: async (data: { file: File; conversationId: string }) => {
+      debugger;
+      const formData = new FormData();
+      formData.append("file", data.file);
+      formData.append("conversationId", data.conversationId);
+      const response = await axiosInstance.post(
+        `/api/chat/attachment`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (onSuccess) {
+        onSuccess(data.content);
+      }
+    },
+  });
   return {
+    sendAttechment,
     sendMessage,
     paginatedMessage,
     isLoadingMessages,

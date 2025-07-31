@@ -1,8 +1,8 @@
+import { Message } from "@/hooks/data/cs/useMessage";
 import { useAuth } from "@/hooks/data/useAuth";
 import useTranslations from "@/hooks/useTranslations";
 import { useEffect, useRef } from "react";
 import { MessageItem } from "./MessageItem";
-import { Message } from "@/hooks/data/cs/useMessage";
 
 interface MessageListProps {
   messages: Message[];
@@ -10,6 +10,7 @@ interface MessageListProps {
   autoScroll?: boolean;
   onLoadMore?: (scrollState: string) => void;
   hasMore?: boolean;
+  showQuotedMessage?: boolean;
 }
 
 export const MessageList = ({
@@ -17,6 +18,7 @@ export const MessageList = ({
   autoScroll = true,
   onLoadMore,
   hasMore,
+  showQuotedMessage,
 }: MessageListProps) => {
   const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -83,9 +85,12 @@ export const MessageList = ({
       </div>
     );
   }
-
   return (
-    <div className="p-4 space-y-4 h-[64vh] max-h-[64vh] overflow-y-auto flex flex-col-reverse">
+    <div
+      className={`p-4 space-y-4 ${
+        showQuotedMessage ? "h-[62vh]" : "h-[75vh]"
+      } max-h-[80vh] overflow-y-auto flex flex-col-reverse`}
+    >
       <div ref={messagesEndRef} />
       {messages.map((message) => {
         const isOwnMessage =

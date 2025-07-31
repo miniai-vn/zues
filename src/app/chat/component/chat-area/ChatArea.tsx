@@ -11,6 +11,7 @@ import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import { EmptyState } from "./EmptyState";
 import { MessageInput } from "./MessageInput";
 import { MessageList } from "./MessageList";
+import { useMessage } from "@/hooks/data/cs/useMessage";
 
 const ChatArea = () => {
   const { t } = useTranslations();
@@ -33,7 +34,7 @@ const ChatArea = () => {
   };
 
   const { selectedConversationId: conversationId } = useCsStore();
-
+  const { sendAttechment } = useMessage({});
   const { fullInfoConversationWithMessages: conversation, isLoadingMessages } =
     useCS({
       conversationId: conversationId as string,
@@ -51,9 +52,23 @@ const ChatArea = () => {
     sendMessage,
     joinAllConversationWithUserId,
   } = useChatAreaSocket({ ...(conversationId ? { conversationId } : {}) });
+
   useEffect(() => {
     joinAllConversationWithUserId();
   }, []);
+
+  const { selectedConversationId, getQuoteById } = useCsStore();
+  const [showQuotedMessage, setShowQuotedMessage] = useState<boolean>(false);
+  const quotedMessage = getQuoteById(selectedConversationId as string);
+  useEffect(() => {
+    if (quotedMessage) {
+      setShowQuotedMessage(true);
+    } else {
+      setShowQuotedMessage(false);
+    }
+  }, [quotedMessage]);
+  const handleRemoveQuote = () => setShowQuotedMessage(false);
+
   useEffect(() => {
     if (conversationId) {
       setHasMoreMessages(conversation?.hasNext || chatMessages.length > 10);
@@ -109,6 +124,7 @@ const ChatArea = () => {
         />
 
         <MessageList
+          showQuotedMessage={showQuotedMessage}
           messages={chatMessages}
           currentUserId={userId}
           onLoadMore={(stateScroll) => handleLoadMoreMessages(stateScroll)}
@@ -116,6 +132,17 @@ const ChatArea = () => {
           autoScroll={page === 1}
         />
         <MessageInput
+          showQuotedMessage={showQuotedMessage}
+          handleRemoveQuote={handleRemoveQuote}
+          quotedMessage={quotedMessage}
+          onAttachFile={(files: FileList) => {
+            if (files && files.length > 0) {
+              sendAttechment({
+                file: files[0],
+                conversationId: conversationId as string,
+              });
+            }
+          }}
           onSendMessage={(content) => {
             sendMessage({
               conversationId: conversationId,
