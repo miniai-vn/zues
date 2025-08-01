@@ -35,7 +35,7 @@ export default function SearchMessageSheet() {
   const [selectedParticipantId, setSelectedParticipantId] =
     useState<string>("all");
   const { selectedConversationId, setSelectedMessageId } = useCsStore();
-  const { participants } = useParticipants(selectedConversationId as number);
+  const { participants } = useParticipants(selectedConversationId as string);
   const [page, setPage] = useState(1);
   const { paginatedMessage } = useMessage({
     queryParams: {
@@ -43,7 +43,7 @@ export default function SearchMessageSheet() {
         selectedParticipantId === "all" ? undefined : selectedParticipantId,
       dateRange: "all",
       search: debouncedSearch,
-      conversationId: selectedConversationId as number,
+      conversationId: selectedConversationId as string,
       page,
       limit: 4,
     },
@@ -174,7 +174,7 @@ export default function SearchMessageSheet() {
                 {messages.map((message) => (
                   <div
                     onClick={() => {
-                      setSelectedMessageId(message.id as number);
+                      setSelectedMessageId(message.id as string);
                     }}
                     key={message.id}
                     className="flex items-start gap-3 p-2 hover:bg-muted/50 rounded-lg cursor-pointer"

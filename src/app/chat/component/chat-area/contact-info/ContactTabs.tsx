@@ -56,7 +56,7 @@ export const ContactTabs = ({ customer, onSaveContact }: ContactTabsProps) => {
             if (onSaveContact && customer?.id) {
               onSaveContact({
                 ...customer,
-                note: data,
+                note: data.note,
               });
             }
           }}

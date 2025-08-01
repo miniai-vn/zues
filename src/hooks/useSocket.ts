@@ -25,52 +25,13 @@ export function useSocket() {
   );
 
   // Send a message to the conversation
-  const sendMessage = useCallback(
-    (
-      conversationId?: string,
-      message: string,
-      userId: string,
-      messageType: string = "text"
-    ) => {
-      if (socketChat) {
-        socketChat.emit("sendMessageToConversation", {
-          conversationId,
-          message,
-          userId,
-          messageType,
-        });
-      }
-    },
-    [socketChat]
-  );
+  const sendMessage = () => {};
 
   // Send typing indicator
-  const sendTypingIndicator = useCallback(
-    (conversationId?: string, userId: string, isTyping: boolean) => {
-      if (socketChat) {
-        socketChat.emit("typing", {
-          conversationId,
-          userId,
-          isTyping,
-        });
-      }
-    },
-    [socketChat]
-  );
+  const sendTypingIndicator = () => {};
 
   // Mark messages as read
-  const markAsRead = useCallback(
-    (conversationId?: string, userId: string, messageId?: number) => {
-      if (socketChat) {
-        socketChat.emit("markAsRead", {
-          conversationId,
-          userId,
-          messageId,
-        });
-      }
-    },
-    [socketChat]
-  );
+  const markAsRead = () => {};
 
   // Validate client connection
   const validateClient = useCallback(() => {

@@ -1,20 +1,5 @@
-import {
-  BarChart3,
-  MessageSquare,
-  Users,
-  TrendingUp,
-  Activity,
-  Clock,
-  Shield,
-  Zap,
-  Globe,
-  UserCheck,
-  MessageCircle,
-  FileText,
-  Image,
-  Paperclip,
-  Smile,
-} from "lucide-react";
+'use client';
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -22,8 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -41,20 +24,32 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
+  Activity,
+  Clock,
+  FileText,
+  Image,
+  MessageCircle,
+  MessageSquare,
+  Paperclip,
+  Shield,
+  Smile,
+  UserCheck,
+  Users,
+  Zap
+} from "lucide-react";
+import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from "recharts";
 
 const overviewStats = [
@@ -496,7 +491,10 @@ export default function Dashboard() {
                               fill="#8884d8"
                               dataKey="value"
                               label={({ name, percent }) =>
-                                `${name} ${(percent * 100).toFixed(0)}%`
+                                `${name} ${(percent
+                                  ? percent * 100
+                                  : 0
+                                ).toFixed(0)}%`
                               }
                             >
                               {messageStats.map((entry, index) => (
@@ -613,7 +611,7 @@ export default function Dashboard() {
                               fill="#8884d8"
                               dataKey="value"
                               label={({ name, percent }) =>
-                                `${(percent * 100).toFixed(0)}%`
+                                `${(percent ? percent * 100 : 0).toFixed(0)}%`
                               }
                             >
                               {conversationData.map((entry, index) => (

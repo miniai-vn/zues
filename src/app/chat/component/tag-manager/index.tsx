@@ -49,11 +49,11 @@ const TagManagementSheet = ({
       const uniqueTagIds = Array.from(
         new Set(
           customer?.tags
-            .map((tag) => tag?.id)
-            .filter((id): id is number => id !== undefined)
+            .map((tag: Tag) => tag?.id)
+            .filter((id: number): id is number => id !== undefined)
         )
       );
-      setSelectedTags(uniqueTagIds);
+      setSelectedTags(uniqueTagIds as number[]);
     } else {
       setSelectedTags([]);
     }

@@ -1,7 +1,4 @@
-import { Message } from "@/hooks/data/cs/useCS";
-
-// Re-export Message type for convenience
-export type { Message } from "@/hooks/data/cs/useCS";
+import { Message } from "@/hooks/data/cs/useMessage";
 
 // User type for chat components
 export interface ChatUser {
