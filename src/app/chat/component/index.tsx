@@ -17,7 +17,9 @@ const ChatPage = () => {
           }}
         />
       </div>
-      <ChatArea />
+      <div className="flex-1">
+        <ChatArea />
+      </div>
     </div>
   );
 };

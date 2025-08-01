@@ -115,55 +115,62 @@ const ChatArea = () => {
   }
 
   return (
-    <div className="flex-1 flex">
-      <div className="flex-1 flex flex-col bg-gray-100">
-        <ChatHeader
-          showContactInfo={showContactInfo}
-          onToggleContactInfo={toggleContactInfo}
-          setShowParticipantManagement={setShowParticipantManagement}
-          setShowTagManagement={setShowTagManagement}
-        />
+    <>
+      <div className="flex flex-col bg-gray-100 h-screen">
+        <div className="sticky top-0 z-10">
+          <ChatHeader
+            showContactInfo={showContactInfo}
+            onToggleContactInfo={toggleContactInfo}
+            setShowParticipantManagement={setShowParticipantManagement}
+            setShowTagManagement={setShowTagManagement}
+          />
+        </div>
 
-        <MessageList
-          showImageList={showImageList}
-          showQuotedMessage={showQuotedMessage}
-          messages={chatMessages}
-          currentUserId={userId}
-          onLoadMore={(stateScroll) => handleLoadMoreMessages(stateScroll)}
-          hasMore={hasMoreMessages}
-          autoScroll={page === 1}
-        />
-        <MessageInput
-          showQuotedMessage={showQuotedMessage}
-          handleRemoveQuote={handleRemoveQuote}
-          handleImageList={(status: boolean) => setShowImageList(status)}
-          quotedMessage={quotedMessage}
-          onAttachFile={(files: FileList) => {
-            if (files && files.length > 0) {
-              sendAttechment({
-                file: files[0],
-                conversationId: conversationId as string,
+        <div className="flex-1 overflow-y-auto px-4">
+          <MessageList
+            showImageList={showImageList}
+            showQuotedMessage={showQuotedMessage}
+            messages={chatMessages}
+            currentUserId={userId}
+            onLoadMore={(stateScroll) => handleLoadMoreMessages(stateScroll)}
+            hasMore={hasMoreMessages}
+            autoScroll={page === 1}
+          />
+        </div>
+
+        <div>
+          <MessageInput
+            showQuotedMessage={showQuotedMessage}
+            handleRemoveQuote={handleRemoveQuote}
+            handleImageList={(status: boolean) => setShowImageList(status)}
+            quotedMessage={quotedMessage}
+            onAttachFile={(files: FileList) => {
+              if (files && files.length > 0) {
+                sendAttechment({
+                  file: files[0],
+                  conversationId: conversationId as string,
+                });
+              }
+            }}
+            onMessageImages={(files: File[], content: string) => {
+              if (files && files.length > 0) {
+                sendMessageImages({
+                  files,
+                  conversationId: conversationId as string,
+                  content,
+                });
+              }
+            }}
+            onSendMessage={(content) => {
+              sendMessage({
+                conversationId: conversationId,
+                message: content,
+                messageType: "text",
+                channelId: conversation?.channelId,
               });
-            }
-          }}
-          onMessageImages={(files: File[], content: string) => {
-            if (files && files.length > 0) {
-              sendMessageImages({
-                files,
-                conversationId: conversationId as string,
-                content,
-              });
-            }
-          }}
-          onSendMessage={(content) => {
-            sendMessage({
-              conversationId: conversationId,
-              message: content,
-              messageType: "text",
-              channelId: conversation?.channelId,
-            });
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
 
       <ContactInfoSidebar
@@ -184,7 +191,7 @@ const ChatArea = () => {
         customerId={conversation?.senderId}
         onUpdateTags={() => {}}
       />
-    </div>
+    </>
   );
 };
 

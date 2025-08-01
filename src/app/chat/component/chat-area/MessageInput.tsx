@@ -127,7 +127,7 @@ export const MessageInput = ({
   }, [imageFiles]);
 
   return (
-    <div className="border-t py-2 px-4 bg-background w-full">
+    <div className="border-t px-4 py-4 bg-background w-full">
       {showSuggestions && (
         <MessageSuggestions
           onSelect={handleSuggestionSelect}

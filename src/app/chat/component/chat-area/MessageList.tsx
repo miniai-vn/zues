@@ -89,15 +89,7 @@ export const MessageList = ({
   }
   return (
     <div
-      className={`p-4 space-y-4 ${
-        showQuotedMessage && showImageList
-          ? "h-[44vh]"
-          : showQuotedMessage
-          ? "h-[62vh]"
-          : showImageList
-          ? "h-[58vh]"
-          : "h-[74vh]"
-      } max-h-[80vh] overflow-y-auto flex flex-col-reverse`}
+      className={`p-4 space-y-4 flex flex-col-reverse`}
     >
       <div ref={messagesEndRef} />
       {messages.map((message) => {
