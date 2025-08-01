@@ -2,6 +2,7 @@ import TagManagementSheet from "@/components/tag-manager";
 import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import { useCS } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
+import { useMessage } from "@/hooks/data/cs/useMessage";
 import { useTranslations } from "@/hooks/useTranslations";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -11,7 +12,6 @@ import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import { EmptyState } from "./EmptyState";
 import { MessageInput } from "./MessageInput";
 import { MessageList } from "./MessageList";
-import { useMessage } from "@/hooks/data/cs/useMessage";
 
 const ChatArea = () => {
   const { t } = useTranslations();
@@ -20,8 +20,9 @@ const ChatArea = () => {
     useState(false);
   const [showTagManagement, setShowTagManagement] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
-  const [page, setPage] = useState(1);
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [showImageList, setShowImageList] = useState(false);
+  const [page, setPage] = useState(1);
   const [nextBeforeMessageId, setNextBeforeMessageId] = useState<string | null>(
     null
   );
@@ -115,7 +116,7 @@ const ChatArea = () => {
 
   return (
     <div className="flex-1 flex">
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-gray-100">
         <ChatHeader
           showContactInfo={showContactInfo}
           onToggleContactInfo={toggleContactInfo}
@@ -124,6 +125,7 @@ const ChatArea = () => {
         />
 
         <MessageList
+          showImageList={showImageList}
           showQuotedMessage={showQuotedMessage}
           messages={chatMessages}
           currentUserId={userId}
@@ -134,6 +136,7 @@ const ChatArea = () => {
         <MessageInput
           showQuotedMessage={showQuotedMessage}
           handleRemoveQuote={handleRemoveQuote}
+          handleImageList={(status: boolean) => setShowImageList(status)}
           quotedMessage={quotedMessage}
           onAttachFile={(files: FileList) => {
             if (files && files.length > 0) {

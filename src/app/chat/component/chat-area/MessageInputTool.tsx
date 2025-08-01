@@ -104,7 +104,7 @@ export function MessageInputTool({
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto ">
       {/* Toolbar */}
       <div className="flex items-center pb-2 border-gray-100">
         {/* Image Gallery Button */}

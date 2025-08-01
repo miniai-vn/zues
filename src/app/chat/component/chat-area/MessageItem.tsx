@@ -36,8 +36,8 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
         {/* Message bubble */}
         <div
           className={cn(
-            "rounded-lg px-3 py-2 text-sm break-words",
-            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-muted"
+            "rounded-lg",
+            isOwnMessage ? "bg-primary text-primary-foreground" : "bg-white"
           )}
         >
           <MessageContent

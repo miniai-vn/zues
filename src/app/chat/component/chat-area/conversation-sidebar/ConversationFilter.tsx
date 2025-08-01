@@ -96,7 +96,7 @@ export const ConversationFilter = ({
   };
 
   return (
-    <div className="border-b w-full sticky top-0 z-10 bg-background">
+    <div className="w-full absolute top-0 z-10 bg-background">
       <div className="p-4 pb-0">
         <div className="flex items-center justify-between mb-3">
           <div className="flex-wrap gap-1">
@@ -356,41 +356,43 @@ export const ConversationFilter = ({
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center border-b -mb-px">
-          {" "}
-          <button
+        <div className="flex items-center border-b ">
+          <Button
+            variant="ghost"
             className={cn(
-              "px-3 py-2 text-sm font-medium border-b-2 transition-colors",
+              "px-3 py-2 text-xs font-medium border-b-2 rounded-none shadow-none transition-colors",
               activeTab === "all"
-                ? "text-primary border-primary"
+                ? "text-primary border-primary border-b-2"
                 : "text-muted-foreground border-transparent hover:text-foreground"
             )}
             onClick={() => handleTabChange("all")}
           >
             {t("dashboard.chat.filters.all")}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             className={cn(
-              "px-3 py-2 text-sm font-medium border-b-2 transition-colors ml-4",
+              "px-3 py-2 text-xs font-medium border-b-2 rounded-none shadow-none transition-colors ml-4",
               activeTab === "unread"
-                ? "text-primary border-primary"
+                ? "text-primary border-primary border-b-2"
                 : "text-muted-foreground border-transparent hover:text-foreground"
             )}
             onClick={() => handleTabChange("unread")}
           >
             {t("dashboard.chat.filters.unread")}
-          </button>
-          <button
+          </Button>
+          {/* <Button
+            variant="ghost"
             className={cn(
-              "px-3 py-2 text-sm font-medium border-b-2 transition-colors ml-4",
+              "px-3 py-2 text-sm font-medium border-b-2 rounded-none shadow-none transition-colors ml-4",
               activeTab === "read"
-                ? "text-primary border-primary"
+                ? "text-primary border-primary border-b-2"
                 : "text-muted-foreground border-transparent hover:text-foreground"
             )}
             onClick={() => handleTabChange("read")}
           >
             {t("dashboard.chat.filters.read")}
-          </button>
+          </Button> */}
         </div>
       </div>
     </div>

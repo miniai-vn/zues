@@ -11,6 +11,7 @@ interface MessageListProps {
   onLoadMore?: (scrollState: string) => void;
   hasMore?: boolean;
   showQuotedMessage?: boolean;
+  showImageList?: boolean; // New prop to control visibility
 }
 
 export const MessageList = ({
@@ -19,6 +20,7 @@ export const MessageList = ({
   onLoadMore,
   hasMore,
   showQuotedMessage,
+  showImageList = true,
 }: MessageListProps) => {
   const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -88,7 +90,13 @@ export const MessageList = ({
   return (
     <div
       className={`p-4 space-y-4 ${
-        showQuotedMessage ? "h-[62vh]" : "h-[75vh]"
+        showQuotedMessage && showImageList
+          ? "h-[44vh]"
+          : showQuotedMessage
+          ? "h-[62vh]"
+          : showImageList
+          ? "h-[58vh]"
+          : "h-[74vh]"
       } max-h-[80vh] overflow-y-auto flex flex-col-reverse`}
     >
       <div ref={messagesEndRef} />

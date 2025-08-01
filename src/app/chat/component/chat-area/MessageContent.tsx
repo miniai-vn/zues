@@ -1,25 +1,11 @@
-import { cn } from "@/lib/utils";
-import {
-  Heart,
-  Share2,
-  MoreHorizontal,
-  Copy,
-  Star,
-  Trash2,
-  Quote,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { ShareDialog } from "./ShareDialog";
-import { MessageActions } from "./MessageActions";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { Message } from "@/hooks/data/cs/useMessage";
+import { cn } from "@/lib/utils";
+import { Heart } from "lucide-react";
+import { useState } from "react";
+import { MessageActions } from "./MessageActions";
+import { ShareDialog } from "./ShareDialog";
 
 interface MessageContentProps {
   contentType: string;
@@ -47,7 +33,8 @@ export const MessageContent = ({
             <div
               className={cn(
                 "space-y-2",
-                links.length > 1 ? "grid grid-cols-2 gap-2" : ""
+                links.length > 1 ? "grid grid-cols-2 gap-2" : "",
+                isOwner ? "justify-end flex" : ""
               )}
             >
               {links.map((imgUrl, idx) => (
@@ -55,52 +42,11 @@ export const MessageContent = ({
                   <img
                     src={imgUrl}
                     alt={`Shared image ${idx + 1}`}
-                    className="max-w-full h-auto cursor-pointer rounded-2xl max-h-64 object-cover border"
+                    width={256}
+                    height={256}
+                    className="max-w-full h-auto cursor-pointer  max-h-64 object-cover border"
                     onClick={() => window.open(imgUrl, "_blank")}
                   />
-                  {/* Action buttons on hover */}
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full"
-                    >
-                      <Quote className="h-3.5 w-3.5 text-gray-600" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full"
-                      onClick={() => setIsShareOpen(true)}
-                    >
-                      <Share2 className="h-3.5 w-3.5 text-gray-600" />
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0 hover:bg-gray-200 rounded-full"
-                        >
-                          <MoreHorizontal className="h-3.5 w-3.5 text-gray-600" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem>
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copy ảnh
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Star className="h-4 w-4 mr-2" />
-                          Đánh giá ảnh
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Xóa ảnh
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
                 </div>
               ))}
             </div>
@@ -122,15 +68,18 @@ export const MessageContent = ({
                   key={stickerUrl + "-" + idx}
                   src={stickerUrl}
                   alt={`Sticker ${idx + 1}`}
+                  width={64}
+                  height={64}
                   className="w-16 h-16 object-contain cursor-pointer rounded-2xl border"
                   onClick={() => window.open(stickerUrl, "_blank")}
+                  style={{ width: "4rem", height: "4rem" }}
                 />
               ))}
             </div>
           );
         }
         return (
-          <div className="text-muted-foreground text-sm italic">
+          <div className="text-muted-foreground p-2  text-sm italic">
             😊 Sticker not available
           </div>
         );
@@ -139,7 +88,12 @@ export const MessageContent = ({
       case "file": {
         if (links && links.length > 0) {
           return (
-            <div className="space-y-2">
+            <div
+              className={cn(
+                "space-y-2",
+                isOwner ? "flex flex-col items-end" : ""
+              )}
+            >
               {links.map((fileUrl, idx) => {
                 const getFileName = (url: string) => {
                   const cleanUrl = url.split("?")[0];
@@ -151,7 +105,7 @@ export const MessageContent = ({
                 return (
                   <div
                     key={fileUrl + "-" + idx}
-                    className="flex items-center gap-2 p-2 border rounded-2xl bg-background"
+                    className="flex items-center gap-2 p-2 border rounded-2xl"
                   >
                     <div className="flex-shrink-0">📎</div>
                     <a
@@ -172,7 +126,7 @@ export const MessageContent = ({
           );
         }
         return (
-          <div className="text-muted-foreground text-sm italic">
+          <div className="text-muted-foreground p-2 text-sm italic">
             📎 File not available
           </div>
         );
@@ -180,7 +134,7 @@ export const MessageContent = ({
 
       default:
         return (
-          <div className="group relative">
+          <div className="group relative  px-3 py-2 text-sm break-words">
             <p className="text-sm text-gray-900 break-words">
               {message?.content !== ""
                 ? message?.content
@@ -205,7 +159,12 @@ export const MessageContent = ({
   };
 
   return (
-    <div className="relative group">
+    <div
+      className={cn(
+        "relative group flex",
+        isOwner ? "justify-end" : "justify-start"
+      )}
+    >
       {/* Nội dung message hoặc media */}
       {renderContent()}
 

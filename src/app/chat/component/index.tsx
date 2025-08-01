@@ -17,7 +17,7 @@ const ChatPage = () => {
           }}
         />
       </div>
-      <ChatArea conversationId={selectedConversationId} />
+      <ChatArea />
     </div>
   );
 };

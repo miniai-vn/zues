@@ -62,6 +62,21 @@ export type CreateConversationDto = {
   participantUserIds?: string[];
 };
 
+interface useCsProps {
+  id?: string;
+  conversationId?: string;
+  initialFilters?: Partial<ConversationQueryParams>;
+  queryParams?: {
+    page?: number;
+    limit?: number;
+  };
+  queryMessageParams?: {
+    page?: number;
+    limit?: number;
+    nextBeforeMessageId?: string | null;
+    nextAfterMessageId?: string | null;
+  };
+}
 const useCS = ({
   id,
   conversationId,
@@ -76,21 +91,7 @@ const useCS = ({
     nextBeforeMessageId: null,
     nextAfterMessageId: null,
   },
-}: {
-  id?: string;
-  conversationId?: string;
-  initialFilters?: Partial<ConversationQueryParams>;
-  queryParams?: {
-    page?: number;
-    limit?: number;
-  };
-  queryMessageParams?: {
-    page?: number;
-    limit?: number;
-    nextBeforeMessageId?: string | null;
-    nextAfterMessageId?: string | null;
-  };
-} = {}) => {
+}: useCsProps = {}) => {
   // Store actions and state
   const {
     conversations,
@@ -247,19 +248,21 @@ const useCS = ({
           }
         );
         const data = response.data;
-        if (data) {
-          const currentMessages = getMessagesByConversationId(conversationId);
-          const allMessages = currentMessages.concat(data.messages);
-          const uniqueMessage = new Set();
-          const filteredMessages = allMessages.filter((item) => {
-            if (uniqueMessage.has(item.id)) {
-              return false;
-            }
-            uniqueMessage.add(item.id);
-            return true;
-          });
-          setMessages(conversationId, filteredMessages);
+        if (queryMessageParams.page === 1) {
+          setMessages(conversationId, data.messages);
+          return data;
         }
+        const currentMessages = getMessagesByConversationId(conversationId);
+        const allMessages = currentMessages.concat(data.messages);
+        const uniqueMessage = new Set();
+        const filteredMessages = allMessages.filter((item) => {
+          if (uniqueMessage.has(item.id)) {
+            return false;
+          }
+          uniqueMessage.add(item.id);
+          return true;
+        });
+        setMessages(conversationId, filteredMessages);
         return data;
       } catch {
         throw new Error("Failed to fetch messages");

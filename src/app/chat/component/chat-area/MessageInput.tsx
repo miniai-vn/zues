@@ -3,11 +3,11 @@ import { Input } from "@/components/ui/input";
 import { QuotedMessage } from "@/hooks/data/cs/useCsStore";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Plus, Send, Smile, X } from "lucide-react";
-import { useState } from "react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { MessageInputTool } from "./MessageInputTool";
 import MessageQuote from "./MessageQuote";
 import MessageSuggestions from "./MessageSugestion";
-import { MessageInputTool } from "./MessageInputTool";
 
 interface MessageInputProps {
   showQuotedMessage?: boolean;
@@ -19,6 +19,7 @@ interface MessageInputProps {
   onAttachFile?: (files: FileList) => void;
   onEmojiPicker?: () => void;
   onMessageImages: (files: File[], content: string) => void;
+  handleImageList?: (status: boolean) => void;
 }
 
 export const MessageInput = ({
@@ -30,6 +31,7 @@ export const MessageInput = ({
   handleRemoveQuote,
   quotedMessage,
   onMessageImages,
+  handleImageList,
 }: MessageInputProps) => {
   const { t } = useTranslations();
   const [message, setMessage] = useState("");
@@ -70,9 +72,9 @@ export const MessageInput = ({
     if (imageFiles.length > 0) {
       onMessageImages(imageFiles, message.trim());
       setImageFiles([]);
-      return;
+    } else {
+      onSendMessage(message.trim());
     }
-    onSendMessage(message.trim());
     setMessage("");
   };
 
@@ -82,6 +84,7 @@ export const MessageInput = ({
       if (imageFiles.length > 0) {
         onMessageImages(imageFiles, message.trim());
         setImageFiles([]);
+        setMessage("");
         return;
       }
       handleSend();
@@ -115,8 +118,16 @@ export const MessageInput = ({
     // inputRef.current?.focus();
   };
 
+  useEffect(() => {
+    if (imageFiles.length > 0) {
+      handleImageList?.(true);
+    } else {
+      handleImageList?.(false);
+    }
+  }, [imageFiles]);
+
   return (
-    <div className="border-t relative py-2 px-4 bg-background w-full">
+    <div className="border-t py-2 px-4 bg-background w-full">
       {showSuggestions && (
         <MessageSuggestions
           onSelect={handleSuggestionSelect}
@@ -145,7 +156,7 @@ export const MessageInput = ({
       )}
 
       <div className="flex items-center gap-2">
-        <div className="flex-1 relative">
+        <div className="flex-1">
           <Input
             placeholder={t("dashboard.chat.typeMessage")}
             value={message}
@@ -197,13 +208,13 @@ export const MessageInput = ({
             {imageFiles.map((file, index) => (
               <div
                 key={file.name + index}
-                className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border border-gray-200"
+                className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden border border-gray-200"
               >
                 <Image
                   src={getFilePreviewUrl(file) || "/placeholder.svg"}
                   alt={file.name}
-                  width={96}
-                  height={96}
+                  width={64}
+                  height={64}
                   className="object-cover w-full h-full"
                 />
                 <Button
@@ -220,7 +231,7 @@ export const MessageInput = ({
             <Button
               type="button"
               variant="outline"
-              className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-gray-300 text-gray-400 hover:border-gray-400 hover:text-gray-500 bg-transparent"
+              className="w-16 h-16 flex-shrink-0 rounded-md border-2 border-dashed border-gray-300 text-gray-400 hover:border-gray-400 hover:text-gray-500 bg-transparent"
               onClick={handleFileClick}
             >
               <Plus className="h-6 w-6" />

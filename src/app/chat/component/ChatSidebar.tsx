@@ -8,7 +8,7 @@ export const ChatSidebar = () => {
   const router = useRouter();
 
   return (
-    <div className="h-full  flex-col justify-evenly bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       <div className="border-r w-full justify-between  h-full bg-gray-50/50 ">
         <PlatformList />
         <div className="p-2">
