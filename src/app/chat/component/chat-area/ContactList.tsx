@@ -1,5 +1,4 @@
-"use client";
-
+import { useRef, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Customer } from "@/hooks/data/cs/useCustomer";
@@ -8,13 +7,36 @@ interface ContactListProps {
   contacts?: Customer[];
   selectedContacts: string[];
   onContactSelect: (contactId: string) => void;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
 }
 
 export function ContactList({
   contacts,
   selectedContacts,
   onContactSelect,
+  onLoadMore,
+  hasMore,
 }: ContactListProps) {
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!hasMore || !onLoadMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          onLoadMore();
+        }
+      },
+      { threshold: 1 }
+    );
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+    return () => {
+      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+    };
+  }, [hasMore, onLoadMore]);
   return (
     <div className="space-y-2 max-h-60 overflow-y-auto">
       {contacts?.map((contact) => (
@@ -40,6 +62,7 @@ export function ContactList({
           <span className="text-sm font-medium flex-1">{contact?.name}</span>
         </div>
       ))}
+      {hasMore && <div ref={loadMoreRef} className="h-4" />}
     </div>
   );
 }

@@ -6,12 +6,13 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParticipantManagementSheet from "../participients-manager";
+import TagManagementSheet from "../tag-manager";
 import { ChatHeader } from "./ChatHeader";
 import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import { EmptyState } from "./EmptyState";
 import { MessageInput } from "./MessageInput";
 import { MessageList } from "./MessageList";
-import TagManagementSheet from "../tag-manager";
+import { ShareDialog } from "./ShareDialog";
 
 const ChatArea = () => {
   const { t } = useTranslations();
@@ -21,9 +22,12 @@ const ChatArea = () => {
   const [showTagManagement, setShowTagManagement] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const { selectedConversationId, getQuoteById } = useCsStore();
-
+  const [showQuotedMessage, setShowQuotedMessage] = useState<boolean>(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
+    null
+  );
   const [nextBeforeMessageId, setNextBeforeMessageId] = useState<string | null>(
     null
   );
@@ -31,11 +35,11 @@ const ChatArea = () => {
   const [nextAfterMessageId, setNextAfterMessageId] = useState<string | null>(
     null
   );
-  const toggleContactInfo = () => {
-    setShowContactInfo((prev) => !prev);
-  };
 
-  const { sendAttechment, sendMessageImages } = useMessage({});
+  const { sendAttechment, sendMessageImages, handleForwardMessage } =
+    useMessage({});
+  const { selectedConversationId, getQuoteById } = useCsStore();
+
   const { fullInfoConversationWithMessages: conversation, isLoadingMessages } =
     useCS({
       conversationId: selectedConversationId as string,
@@ -62,7 +66,6 @@ const ChatArea = () => {
     joinAllConversationWithUserId();
   }, []);
 
-  const [showQuotedMessage, setShowQuotedMessage] = useState<boolean>(false);
   const quotedMessage = getQuoteById(selectedConversationId as string);
   useEffect(() => {
     if (quotedMessage) {
@@ -71,7 +74,6 @@ const ChatArea = () => {
       setShowQuotedMessage(false);
     }
   }, [quotedMessage]);
-  const handleRemoveQuote = () => setShowQuotedMessage(false);
 
   useEffect(() => {
     if (selectedConversationId) {
@@ -84,6 +86,11 @@ const ChatArea = () => {
       setPage(1);
     }
   }, [selectedConversationId]);
+
+  const handleRemoveQuote = () => setShowQuotedMessage(false);
+  const toggleContactInfo = () => {
+    setShowContactInfo((prev) => !prev);
+  };
 
   const handleLoadMoreMessages = async (stateScroll: string) => {
     if (stateScroll === "bottom") {
@@ -134,6 +141,13 @@ const ChatArea = () => {
             messages={chatMessages}
             currentUserId={userId}
             onLoadMore={(stateScroll) => handleLoadMoreMessages(stateScroll)}
+            onShare={(status, messageId) => {
+              console.log("Share message:", status, messageId);
+              if (status) {
+                setIsShareOpen(true);
+                setSelectedMessageId(messageId);
+              }
+            }}
             hasMore={hasMoreMessages}
             autoScroll={page === 1}
           />
@@ -172,6 +186,19 @@ const ChatArea = () => {
           />
         </div>
       </div>
+
+      <ShareDialog
+        messageId={selectedMessageId}
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        handleForward={(customerIds) => {
+          handleForwardMessage({
+            customerIds,
+            messageId: selectedMessageId as string,
+            conversationId: selectedConversationId as string,
+          });
+        }}
+      />
 
       <ContactInfoSidebar
         onClose={toggleContactInfo}

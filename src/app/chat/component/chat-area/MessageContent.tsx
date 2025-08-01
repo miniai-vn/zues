@@ -3,9 +3,7 @@ import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { Message } from "@/hooks/data/cs/useMessage";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
-import { useState } from "react";
 import { MessageActions } from "./MessageActions";
-import { ShareDialog } from "./ShareDialog";
 
 interface MessageContentProps {
   contentType: string;
@@ -13,6 +11,7 @@ interface MessageContentProps {
   links?: string[];
   timestamp?: string;
   isOwner?: boolean; // Thêm prop này
+  onShare?: (status: boolean, messageId: string) => void;
 }
 
 export const MessageContent = ({
@@ -21,8 +20,8 @@ export const MessageContent = ({
   links,
   timestamp,
   isOwner = false, // Mặc định là false
+  onShare = () => {},
 }: MessageContentProps) => {
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const { selectedConversationId, setSelectedQuote } = useCsStore();
   // UI for image, sticker, file, or default text
   const renderContent = () => {
@@ -142,7 +141,7 @@ export const MessageContent = ({
             </p>
             <MessageActions
               message={message?.content || ""}
-              onShare={() => setIsShareOpen(true)}
+              onShare={() => onShare(true, message?.id as string)}
               onQuote={() => {
                 setSelectedQuote(selectedConversationId as string, {
                   id: message?.id as string,
@@ -181,7 +180,6 @@ export const MessageContent = ({
           </Button>
         </div>
       )}
-      <ShareDialog isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
     </div>
   );
 };

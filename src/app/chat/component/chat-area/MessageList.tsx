@@ -10,8 +10,7 @@ interface MessageListProps {
   autoScroll?: boolean;
   onLoadMore?: (scrollState: string) => void;
   hasMore?: boolean;
-  showQuotedMessage?: boolean;
-  showImageList?: boolean; // New prop to control visibility
+  onShare?: (status: boolean, messageId: string) => void; // Optional prop for share action
 }
 
 export const MessageList = ({
@@ -19,10 +18,12 @@ export const MessageList = ({
   autoScroll = true,
   onLoadMore,
   hasMore,
+  onShare = () => {},
 }: MessageListProps) => {
   const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesTopRef = useRef<HTMLDivElement>(null);
+
   const { user } = useAuth({});
 
   // Auto scroll xuống cuối khi có tin nhắn mới
@@ -92,6 +93,7 @@ export const MessageList = ({
           message.senderId === user?.id || message.senderType === "channel";
         return (
           <MessageItem
+            onShare={onShare}
             key={message.id}
             message={message}
             isOwnMessage={isOwnMessage}

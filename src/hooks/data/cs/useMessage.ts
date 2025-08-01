@@ -137,11 +137,24 @@ export const useMessage = ({
       }
     },
   });
+
+  const { mutate: handleForwardMessage } = useMutation({
+    mutationFn: async (data: {
+      customerIds: string[];
+      messageId: string;
+      conversationId: string;
+    }) => {
+      const response = await axiosInstance.post(`/api/chat/forward`, data);
+      return response.data;
+    },
+  });
+
   return {
     sendMessageImages,
     sendAttechment,
     sendMessage,
     paginatedMessage,
+    handleForwardMessage,
     isLoadingMessages,
     contextedMessage,
     setSelectedMessageId,

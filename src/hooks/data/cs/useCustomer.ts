@@ -24,10 +24,12 @@ export function useCustomer({
   queryParams?: {
     channelId?: number;
     search?: string;
+    limit?: number;
+    page?: number;
   };
   id?: string;
 }) {
-  const { data: customers, isLoading: isLoadingCustomers } = useQuery({
+  const { data: customerReponse, isLoading: isLoadingCustomers } = useQuery({
     queryKey: ["customers", queryParams],
     queryFn: async () => {
       const response: PaginatedResponse<Customer> = await axiosInstance.get(
@@ -36,9 +38,10 @@ export function useCustomer({
           params: queryParams,
         }
       );
-      return (response.data as Customer[]) || [];
+      return response;
     },
     refetchOnWindowFocus: false,
+    enabled: !!queryParams && !id, // Only fetch if queryParams are provided and id is not specified
   });
 
   const { data: customer } = useQuery({
@@ -62,7 +65,7 @@ export function useCustomer({
   });
 
   return {
-    customers,
+    customerReponse,
     isLoadingCustomers,
     customer,
     updateCustomer,

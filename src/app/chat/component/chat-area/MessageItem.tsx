@@ -8,9 +8,14 @@ import { Message } from "@/hooks/data/cs/useMessage";
 interface MessageItemProps {
   message: Message;
   isOwnMessage: boolean;
+  onShare?: (status: boolean, messageId: string) => void; // Optional prop for share action
 }
 
-export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
+export const MessageItem = ({
+  message,
+  isOwnMessage,
+  onShare,
+}: MessageItemProps) => {
   return (
     <div
       className={cn(
@@ -44,6 +49,7 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
             contentType={message.contentType ?? ""}
             message={message}
             links={message.links}
+            onShare={onShare}
             isOwner={isOwnMessage}
           />
         </div>
