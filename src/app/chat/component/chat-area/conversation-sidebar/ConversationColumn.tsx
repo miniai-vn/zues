@@ -1,5 +1,4 @@
-import TagManagementDialog from "@/components/tag-manager/DialogTag";
-import { Conversation, useCS } from "@/hooks/data/cs/useCS";
+import { useCS } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { useEffect, useState } from "react";
 import { ConversationFilter } from "./ConversationFilter";
@@ -29,15 +28,8 @@ export const ConversationSidebar = ({
     },
   });
   const { conversations } = useCsStore();
-  const [tagDialogOpen, setTagDialogOpen] = useState(false);
-  const [selectedConversationForDialog, setSelectedConversationForDialog] =
-    useState<Conversation | null>(null);
   const [hasMoreConversations, setHasMoreConversations] = useState(true);
 
-  const handleOpenTagDialog = (conversation: Conversation) => {
-    setSelectedConversationForDialog(conversation);
-    setTagDialogOpen(true);
-  };
   useEffect(() => {
     if (filters) {
       setPage(1);
@@ -73,16 +65,9 @@ export const ConversationSidebar = ({
               markReadConversation(conversationId);
             }
           }}
-          onTagDialog={handleOpenTagDialog}
           onLoadMore={handleLoadMoreConversations}
           hasMore={hasMoreConversations}
-        />
-
-        <TagManagementDialog
-          currentTags={selectedConversationForDialog?.tags || []}
-          open={tagDialogOpen}
-          onOpenChange={setTagDialogOpen}
-          conversationId={selectedConversationForDialog?.id}
+          onTagDialog={() => {}}
         />
       </div>
     </div>

@@ -1,4 +1,3 @@
-import TagManagementSheet from "@/components/tag-manager";
 import { useChatAreaSocket } from "@/hooks/data/cs/useChatAreaSocket";
 import { useCS } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
@@ -12,6 +11,7 @@ import ContactInfoSidebar from "./contact-info/ContactInfoSidebar";
 import { EmptyState } from "./EmptyState";
 import { MessageInput } from "./MessageInput";
 import { MessageList } from "./MessageList";
+import TagManagementSheet from "../tag-manager";
 
 const ChatArea = () => {
   const { t } = useTranslations();
@@ -21,8 +21,9 @@ const ChatArea = () => {
   const [showTagManagement, setShowTagManagement] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [showContactInfo, setShowContactInfo] = useState(false);
-  const [showImageList, setShowImageList] = useState(false);
   const [page, setPage] = useState(1);
+  const { selectedConversationId, getQuoteById } = useCsStore();
+
   const [nextBeforeMessageId, setNextBeforeMessageId] = useState<string | null>(
     null
   );
@@ -34,11 +35,10 @@ const ChatArea = () => {
     setShowContactInfo((prev) => !prev);
   };
 
-  const { selectedConversationId: conversationId } = useCsStore();
   const { sendAttechment, sendMessageImages } = useMessage({});
   const { fullInfoConversationWithMessages: conversation, isLoadingMessages } =
     useCS({
-      conversationId: conversationId as string,
+      conversationId: selectedConversationId as string,
       queryMessageParams: {
         page,
         limit: 20,
@@ -52,13 +52,16 @@ const ChatArea = () => {
     currentUserId: userId,
     sendMessage,
     joinAllConversationWithUserId,
-  } = useChatAreaSocket({ ...(conversationId ? { conversationId } : {}) });
+  } = useChatAreaSocket({
+    ...(selectedConversationId
+      ? { conversationId: selectedConversationId }
+      : {}),
+  });
 
   useEffect(() => {
     joinAllConversationWithUserId();
   }, []);
 
-  const { selectedConversationId, getQuoteById } = useCsStore();
   const [showQuotedMessage, setShowQuotedMessage] = useState<boolean>(false);
   const quotedMessage = getQuoteById(selectedConversationId as string);
   useEffect(() => {
@@ -71,16 +74,16 @@ const ChatArea = () => {
   const handleRemoveQuote = () => setShowQuotedMessage(false);
 
   useEffect(() => {
-    if (conversationId) {
+    if (selectedConversationId) {
       setHasMoreMessages(conversation?.hasNext || chatMessages.length > 10);
     }
-  }, [conversationId, chatMessages]);
+  }, [selectedConversationId, chatMessages]);
 
   useEffect(() => {
-    if (conversationId) {
+    if (selectedConversationId) {
       setPage(1);
     }
-  }, [conversationId]);
+  }, [selectedConversationId]);
 
   const handleLoadMoreMessages = async (stateScroll: string) => {
     if (stateScroll === "bottom") {
@@ -90,7 +93,7 @@ const ChatArea = () => {
     }
 
     if (
-      conversationId &&
+      selectedConversationId &&
       hasMoreMessages &&
       !isLoadingMessages &&
       conversation?.hasNext
@@ -104,7 +107,7 @@ const ChatArea = () => {
     }
   };
 
-  if (!conversationId) {
+  if (!selectedConversationId) {
     return (
       <EmptyState
         title={t("dashboard.chat.selectConversation")}
@@ -128,8 +131,6 @@ const ChatArea = () => {
 
         <div className="flex-1 overflow-y-auto px-4">
           <MessageList
-            showImageList={showImageList}
-            showQuotedMessage={showQuotedMessage}
             messages={chatMessages}
             currentUserId={userId}
             onLoadMore={(stateScroll) => handleLoadMoreMessages(stateScroll)}
@@ -142,13 +143,12 @@ const ChatArea = () => {
           <MessageInput
             showQuotedMessage={showQuotedMessage}
             handleRemoveQuote={handleRemoveQuote}
-            handleImageList={(status: boolean) => setShowImageList(status)}
             quotedMessage={quotedMessage}
             onAttachFile={(files: FileList) => {
               if (files && files.length > 0) {
                 sendAttechment({
                   file: files[0],
-                  conversationId: conversationId as string,
+                  conversationId: selectedConversationId as string,
                 });
               }
             }}
@@ -156,14 +156,14 @@ const ChatArea = () => {
               if (files && files.length > 0) {
                 sendMessageImages({
                   files,
-                  conversationId: conversationId as string,
+                  conversationId: selectedConversationId as string,
                   content,
                 });
               }
             }}
             onSendMessage={(content) => {
               sendMessage({
-                conversationId: conversationId,
+                conversationId: selectedConversationId,
                 message: content,
                 messageType: "text",
                 channelId: conversation?.channelId,
@@ -180,7 +180,7 @@ const ChatArea = () => {
       />
 
       <ParticipantManagementSheet
-        conversationId={conversationId}
+        conversationId={selectedConversationId}
         open={showParticipantManagement}
         onOpenChange={setShowParticipantManagement}
       />

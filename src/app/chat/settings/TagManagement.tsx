@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/dashboard/tables/data-table";
-import CreateTagDialog from "@/components/tag-manager/CreateTagDialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,6 +6,7 @@ import useTags, { Tag } from "@/hooks/data/cs/useTags";
 import { ColumnDef } from "@tanstack/react-table";
 import { Download, Plus, Search } from "lucide-react";
 import { useState } from "react";
+import CreateTagDialog from "../component/tag-manager/CreateTagDialog";
 
 export const TagManagement = () => {
   const [openCreateTag, setOpenCreateTag] = useState(false);

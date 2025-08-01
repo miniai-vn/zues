@@ -1,7 +1,8 @@
 import { Conversation } from "@/hooks/data/cs/useCS";
 import { MessageCircle } from "lucide-react";
 import { ConversationItem } from "./ConversationItem";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import TagManagementDialog from "../../tag-manager/DialogTag";
 
 interface ConversationListProps {
   selectedConversationId?: string;
@@ -12,14 +13,15 @@ interface ConversationListProps {
 
 export const ConversationList = ({
   selectedConversationId,
-  onSelectConversationId,
-  onTagDialog,
   conversations = [],
   onLoadMore,
   hasMore,
 }: ConversationListProps & { onLoadMore?: () => void; hasMore?: boolean }) => {
+  const [isShowTagDialog, setIsShowTagDialog] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
-
+  const handleTagDialogOpen = () => {
+    setIsShowTagDialog((prev) => !prev);
+  };
   useEffect(() => {
     if (!hasMore || !onLoadMore) return;
     const observer = new IntersectionObserver(
@@ -70,13 +72,17 @@ export const ConversationList = ({
               key={conversation.id}
               conversation={conversation}
               isSelected={selectedConversationId === conversation.id}
-              onClick={() => onSelectConversationId(conversation.id)}
-              onTagDialog={onTagDialog}
+              handleOpenTagDialog={handleTagDialogOpen}
+             
             />
           ))}
           {hasMore && <div ref={loadMoreRef}></div>}
         </>
       )}
+      <TagManagementDialog
+        open={isShowTagDialog}
+        onOpenChange={handleTagDialogOpen}
+      />
     </div>
   );
 };

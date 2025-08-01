@@ -1,43 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { Plus, X, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Tag, TagType } from "@/hooks/data/cs/useTags";
-import useTags from "@/hooks/data/cs/useTags";
-import { useCS } from "@/hooks/data/cs/useCS";
+import useTags, { TagType } from "@/hooks/data/cs/useTags";
 import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 interface TagManagementDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  conversationId?: string;
-  currentTags: Tag[];
-  onUpdateTags?: (conversationId?: string, tags: Tag[]) => void;
 }
 
 const TagManagementDialog = ({
   open,
   onOpenChange,
-  conversationId,
-  currentTags,
-  onUpdateTags,
 }: TagManagementDialogProps) => {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>(currentTags);
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("#3b82f6");
-
-  const { fullInfoConversationWithMessages } = useCS({
-    conversationId: conversationId,
-  });
 
   const {
     tags: availableTags = [],
@@ -51,20 +37,9 @@ const TagManagementDialog = ({
     },
   });
 
-  const { addTagsToConversation } = useTags();
-
-  // Use conversation tags if available, otherwise use prop tags
-  const conversationTags =
-    fullInfoConversationWithMessages?.tags || currentTags;
-
-  useEffect(() => {
-    if (open && conversationTags.length >= 0) {
-      setSelectedTags(
-        conversationTags.filter((tag: Tag) => tag.type === TagType.CONVERSATION)
-      );
-    }
-  }, [conversationTags, open]);
-
+  const handleAddNewTag = async () => {
+    console.log("Adding new tag:", newTagName, newTagColor);
+  };
   const colorOptions = [
     "#ef4444", // red
     "#f97316", // orange
@@ -77,79 +52,10 @@ const TagManagementDialog = ({
     "#6b7280", // gray
   ];
 
-  const handleTagToggle = (tag: Tag) => {
-    setSelectedTags((prev) => {
-      const isSelected = prev.some((selectedTag) => selectedTag.id === tag.id);
-      if (isSelected) {
-        return prev.filter((selectedTag) => selectedTag.id !== tag.id);
-      } else {
-        return [...prev, tag];
-      }
-    });
-  };
-
-  const handleAddNewTag = async () => {
-    if (!newTagName.trim()) return;
-
-    // Check if tag already exists
-    const existingTag = availableTags.find(
-      (tag) => tag.name.toLowerCase() === newTagName.toLowerCase()
-    );
-
-    if (existingTag) {
-      const isAlreadySelected = selectedTags.some(
-        (tag) => tag.id === existingTag.id
-      );
-      if (!isAlreadySelected) {
-        setSelectedTags((prev) => [...prev, existingTag]);
-      }
-      setNewTagName("");
-      return;
-    }
-
-    // Create new tag
-    try {
-      await createTag(
-        {
-          name: newTagName.trim(),
-          color: newTagColor,
-          type: TagType.CONVERSATION,
-        },
-        {
-          onSuccess: (newTag: Tag) => {
-            setSelectedTags((prev) => [...prev, newTag]);
-            setNewTagName("");
-            setNewTagColor("#3b82f6");
-            refetchTags();
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Failed to create tag:", error);
-    }
-  };
-
-  const handleSave = () => {
-    if (conversationId === undefined) {
-      return;
-    }
-    addTagsToConversation({
-      conversationId,
-      tagIds: selectedTags.map((tag) => Number(tag.id)),
-    });
-
-    onOpenChange(false);
-  };
-
   const handleCancel = () => {
-    setSelectedTags(conversationTags);
     setNewTagName("");
     setNewTagColor("#3b82f6");
     onOpenChange(false);
-  };
-
-  const isTagSelected = (tag: Tag) => {
-    return selectedTags?.some((selectedTag) => selectedTag.id === tag.id);
   };
 
   return (
@@ -179,10 +85,8 @@ const TagManagementDialog = ({
                     <div key={tag.id}>
                       <div
                         className={cn(
-                          "flex items-center gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer transition-colors",
-                          isTagSelected(tag) && "bg-accent"
+                          "flex items-center gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer transition-colors"
                         )}
-                        onClick={() => handleTagToggle(tag)}
                       >
                         <div className="flex items-center gap-2 flex-1">
                           <div
@@ -191,11 +95,6 @@ const TagManagementDialog = ({
                           />
                           <span className="text-sm truncate">{tag.name}</span>
                         </div>
-                        {isTagSelected(tag) && (
-                          <div className="w-4 h-4 bg-primary rounded-sm flex items-center justify-center">
-                            <Check className="w-3 h-3 text-primary-foreground" />
-                          </div>
-                        )}
                       </div>
                       {index < availableTags.length - 1 && (
                         <Separator className="my-1" />
@@ -251,44 +150,10 @@ const TagManagementDialog = ({
                 className="w-full"
               >
                 <Plus className="h-4 w-4 mr-1" />
-                {isCreatingTag ? "Đang tạo..." : "Thêm phân loại"}
+                {isCreatingTag ? "Đang tạo..." : "Thêm tag"}
               </Button>
             </div>
           </div>
-
-          {/* Selected Tags Section */}
-          {selectedTags?.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium mb-2">
-                Thẻ đã chọn ({selectedTags.length}):
-              </h4>
-              <ScrollArea className="max-h-20">
-                <div className="flex flex-wrap gap-1 p-1">
-                  {selectedTags.map((tag) => (
-                    <Badge
-                      key={tag.id}
-                      variant="secondary"
-                      className="text-xs flex items-center gap-1"
-                    >
-                      <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: tag.color || "#6b7280" }}
-                      />
-                      {tag.name}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto p-0 ml-1 hover:bg-transparent"
-                        onClick={() => handleTagToggle(tag)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </Badge>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          )}
         </div>
 
         {/* Action Buttons */}
@@ -296,9 +161,7 @@ const TagManagementDialog = ({
           <Button variant="outline" onClick={handleCancel}>
             Hủy
           </Button>
-          <Button onClick={handleSave} disabled={!conversationId}>
-            Lưu thay đổi
-          </Button>
+          <Button>Lưu thay đổi</Button>
         </div>
       </DialogContent>
     </Dialog>

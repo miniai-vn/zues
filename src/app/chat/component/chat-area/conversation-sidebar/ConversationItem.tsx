@@ -1,26 +1,25 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Conversation } from "@/hooks/data/cs/useCS";
+import { Conversation, useCS } from "@/hooks/data/cs/useCS";
 import { useCsStore } from "@/hooks/data/cs/useCsStore";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import { Circle, MoreHorizontal } from "lucide-react";
+import { Circle } from "lucide-react";
+import ConversationsAction from "./ConversationAction";
 
 interface ConversationItemProps {
   conversation: Conversation;
   isSelected: boolean;
-  onClick: () => void;
-  onTagDialog: (conversation: Conversation) => void;
+  handleOpenTagDialog: () => void;
 }
 
 export const ConversationItem = ({
   conversation,
   isSelected,
-  onClick,
-  onTagDialog,
+  handleOpenTagDialog,
 }: ConversationItemProps) => {
-  const { setSelectedConversation } = useCsStore();
+  const { setSelectedConversation, setSelectedConversationId } = useCsStore();
+  const { markReadConversation } = useCS();
   const defaultAvatar =
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face";
 
@@ -32,7 +31,8 @@ export const ConversationItem = ({
       )}
       onClick={() => {
         setSelectedConversation(conversation);
-        onClick();
+        setSelectedConversationId(conversation.id);
+        markReadConversation(conversation.id);
       }}
     >
       <div className="relative">
@@ -61,20 +61,11 @@ export const ConversationItem = ({
                 ? dayjs(conversation.lastMessageAt).format("HH:mm")
                 : ""}
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hidden group-hover:flex items-center justify-center"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <MoreHorizontal
-                onClick={() => onTagDialog(conversation)}
-                className="h-3 w-3"
-              />
-            </Button>
+            <ConversationsAction
+              conversationId={conversation.id}
+              handleOpenTagDialog={handleOpenTagDialog}
+            />
+
             {conversation.unreadMessagesCount > 0 && (
               <Badge
                 variant="default"

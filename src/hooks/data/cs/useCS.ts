@@ -282,6 +282,9 @@ const useCS = ({
       );
       return response.data;
     },
+    onSuccess: () => {
+      refetchConversations();
+    },
   });
 
   return {

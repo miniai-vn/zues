@@ -214,6 +214,7 @@ export const useChatAreaSocket = ({ conversationId }: UseChatAreaProps) => {
     (conversationId: string) => {
       if (socketChatIo) {
         socketChatIo.emit("markAsRead", { conversationId, userId: user?.id });
+        refetchConversations();
       }
     },
     [socketChatIo]

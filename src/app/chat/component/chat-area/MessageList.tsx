@@ -19,8 +19,6 @@ export const MessageList = ({
   autoScroll = true,
   onLoadMore,
   hasMore,
-  showQuotedMessage,
-  showImageList = true,
 }: MessageListProps) => {
   const { t } = useTranslations();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -41,8 +39,7 @@ export const MessageList = ({
     const topObserver = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          console.log("Loading more messages at the top");
-          onLoadMore("top");
+          // onLoadMore("top");
         }
       },
       { threshold: 1 }
@@ -51,7 +48,7 @@ export const MessageList = ({
     const bottomObserver = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          console.log("Loading more messages at the bottom");
+          // console.log("Loading more messages at the bottom");
           // onLoadMore("bottom");
         }
       },
@@ -88,9 +85,7 @@ export const MessageList = ({
     );
   }
   return (
-    <div
-      className={`p-4 space-y-4 flex flex-col-reverse`}
-    >
+    <div className={`p-4 space-y-4 flex flex-col-reverse`}>
       <div ref={messagesEndRef} />
       {messages.map((message) => {
         const isOwnMessage =
@@ -103,7 +98,8 @@ export const MessageList = ({
           />
         );
       })}
-      <div ref={messagesTopRef} />
+      {hasMore && <div ref={messagesTopRef} />}
+
       {hasMore && (
         <div className="py-2 text-center text-xs text-muted-foreground"></div>
       )}
